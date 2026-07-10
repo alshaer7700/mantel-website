@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mantel — Brand Identity System</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Inter:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --concrete:   #A89F94;
+  --concrete-lt:#C8C2BA;
+  --concrete-dk:#6B6259;
+  --burl:       #C4894A;
+  --burl-lt:    #D9A96A;
+  --matte-blk:  #1C1917;
+  --charcoal:   #2E2A27;
+  --crimson:    #7A1F1F;
+  --crimson-lt: #9E3333;
+  --rug-red:    #8B2020;
+  --linen:      #D4CBBB;
+  --linen-lt:   #EAE4D8;
+  --parchment:  #F2EDE4;
+  --white:      #FAFAF8;
+}
+
+body {
+  background: var(--parchment);
+  font-family: 'Inter', sans-serif;
+  color: var(--matte-blk);
+}
+
+/* ─── PAGE SECTIONS ─── */
+section {
+  padding: 80px 60px;
+  border-bottom: 1px solid var(--linen);
+}
+
+.section-label {
+  font-size: 10px;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--concrete);
+  font-weight: 500;
+  margin-bottom: 40px;
+}
+
+/* ─── COVER ─── */
+.cover {
+  background: var(--matte-blk);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  position: relative;
+  overflow: hidden;
+  padding: 0;
+}
+
+.cover-texture {
+  position: absolute;
+  inset: 0;
+  background-image:
+    repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.012) 2px, rgba(255,255,255,0.012) 3px),
+    repeating-linear-gradient(90deg, transparent, transparent 4px, rgba(255,255,255,0.008) 4px, rgba(255,255,255,0.008) 5px);
+}
+
+.cover-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+}
+
+/* Hand-drawn wordmark SVG */
+.wordmark-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.cover-sub {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 13px;
+  letter-spacing: 0.55em;
+  text-transform: uppercase;
+  color: var(--concrete);
+  font-weight: 300;
+  padding-left: 6px;
+}
+
+.cover-rule {
+  width: 1px;
+  height: 80px;
+  background: linear-gradient(to bottom, transparent, var(--concrete), transparent);
+}
+
+.cover-tagline {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 15px;
+  color: var(--linen);
+  font-style: italic;
+  font-weight: 300;
+  letter-spacing: 0.08em;
+}
+
+.cover-doc-label {
+  position: absolute;
+  bottom: 48px;
+  right: 60px;
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  color: var(--concrete-dk);
+  text-transform: uppercase;
+}
+
+/* ─── PALETTE ─── */
+.palette-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0;
+}
+
+.swatch-block {
+  display: flex;
+  flex-direction: column;
+}
+
+.swatch-color {
+  height: 160px;
+}
+
+.swatch-info {
+  padding: 16px 12px;
+  background: var(--white);
+  border-right: 1px solid var(--linen);
+}
+
+.swatch-name {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: var(--charcoal);
+  margin-bottom: 4px;
+}
+
+.swatch-hex {
+  font-size: 10px;
+  color: var(--concrete-dk);
+  letter-spacing: 0.05em;
+  font-family: 'SF Mono', monospace;
+}
+
+.swatch-role {
+  font-size: 9px;
+  color: var(--concrete);
+  margin-top: 6px;
+  letter-spacing: 0.03em;
+  line-height: 1.4;
+}
+
+/* ─── TYPOGRAPHY ─── */
+.type-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 48px;
+}
+
+.type-sample {
+  border-top: 1px solid var(--linen);
+  padding-top: 24px;
+}
+
+.type-role {
+  font-size: 9px;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--concrete);
+  margin-bottom: 16px;
+}
+
+.type-display {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 56px;
+  font-weight: 300;
+  line-height: 1;
+  color: var(--matte-blk);
+  margin-bottom: 12px;
+}
+
+.type-display-italic {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 40px;
+  font-weight: 300;
+  font-style: italic;
+  line-height: 1;
+  color: var(--charcoal);
+  margin-bottom: 12px;
+}
+
+.type-serif {
+  font-family: 'Playfair Display', serif;
+  font-size: 32px;
+  font-weight: 400;
+  line-height: 1.2;
+  color: var(--matte-blk);
+  margin-bottom: 12px;
+}
+
+.type-body-sample {
+  font-size: 13px;
+  line-height: 1.8;
+  color: var(--charcoal);
+  font-weight: 300;
+}
+
+.type-name-tag {
+  font-size: 10px;
+  color: var(--concrete-dk);
+  letter-spacing: 0.1em;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--linen);
+}
+
+/* ─── LOGO SYSTEM ─── */
+.logo-system {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 2px;
+}
+
+.logo-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 240px;
+  position: relative;
+}
+
+.logo-cell.dark  { background: var(--matte-blk); }
+.logo-cell.light { background: var(--parchment); }
+.logo-cell.concrete { background: var(--concrete-lt); }
+
+.logo-cell-label {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  font-size: 9px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.3);
+}
+.logo-cell.light .logo-cell-label,
+.logo-cell.concrete .logo-cell-label {
+  color: var(--concrete-dk);
+}
+
+/* ─── BRAND ELEMENTS ─── */
+.elements-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+}
+
+.element-block {
+  border-top: 1px solid var(--linen);
+  padding-top: 24px;
+}
+
+.element-title {
+  font-size: 10px;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--concrete);
+  margin-bottom: 20px;
+}
+
+/* ─── MOCKUPS ─── */
+.mockup-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 32px;
+}
+
+.mockup-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.mockup-visual {
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+}
+
+.mockup-label {
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--concrete-dk);
+}
+
+/* Cup mockup */
+.cup-wrap {
+  background: var(--matte-blk);
+  height: 280px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Card mockup */
+.card-wrap {
+  height: 280px;
+  background: var(--linen-lt);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.biz-card {
+  width: 100%;
+  max-width: 240px;
+  aspect-ratio: 1.75;
+  background: var(--matte-blk);
+  border-radius: 2px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 18px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+}
+
+.biz-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.biz-card-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.biz-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 9px;
+  letter-spacing: 0.25em;
+  color: var(--linen);
+  font-weight: 300;
+}
+
+.biz-title {
+  font-size: 7px;
+  letter-spacing: 0.3em;
+  color: var(--concrete);
+  text-transform: uppercase;
+}
+
+.biz-contact {
+  font-size: 6.5px;
+  letter-spacing: 0.1em;
+  color: var(--concrete);
+}
+
+/* Stamp mockup */
+.stamp-wrap {
+  height: 280px;
+  background: var(--linen-lt);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ─── VOICE ─── */
+.voice-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: start;
+}
+
+.voice-block {
+  border-left: 2px solid var(--crimson);
+  padding-left: 24px;
+}
+
+.voice-heading {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--matte-blk);
+  margin-bottom: 12px;
+}
+
+.voice-body {
+  font-size: 13px;
+  line-height: 1.8;
+  color: var(--concrete-dk);
+  font-weight: 300;
+}
+
+.voice-words {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.word-tag {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--crimson);
+  border: 1px solid var(--crimson);
+  padding: 5px 12px;
+  border-radius: 1px;
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════ COVER -->
+<section class="cover">
+  <div class="cover-texture"></div>
+  <div class="cover-content">
+    <div class="wordmark-wrap">
+      <!-- Primary SVG logo — hand-drawn feel matching the banner -->
+      <svg width="320" height="80" viewBox="0 0 320 80" xmlns="http://www.w3.org/2000/svg">
+        <!-- Heart diacritic above M -->
+        <path d="M36,8 C36,5 38,3 40,4 C42,3 44,5 44,8 C44,11 40,14 40,14 C40,14 36,11 36,8 Z" fill="#7A1F1F" opacity="0.9"/>
+        <!-- MANTEL letterforms — slightly irregular, warm, hand-influenced -->
+        <text x="0" y="62" font-family="'Cormorant Garamond', Georgia, serif" font-size="68" font-weight="300" letter-spacing="12" fill="#EAE4D8">MANTEL</text>
+      </svg>
+    </div>
+    <div class="cover-rule"></div>
+    <div class="cover-tagline">Where warmth meets raw material</div>
+    <div class="cover-sub">Specialty Coffee · Brand Identity System</div>
+  </div>
+  <div class="cover-doc-label">2024 — Identity v1</div>
+</section>
+
+<!-- ═══════════════════════════════════ PALETTE -->
+<section>
+  <div class="section-label">01 — Colour Palette</div>
+  <div class="palette-grid">
+    <div class="swatch-block">
+      <div class="swatch-color" style="background:#1C1917;"></div>
+      <div class="swatch-info">
+        <div class="swatch-name">Matte Black</div>
+        <div class="swatch-hex">#1C1917</div>
+        <div class="swatch-role">Primary · Bar counter · Typography</div>
+      </div>
+    </div>
+    <div class="swatch-block">
+      <div class="swatch-color" style="background:#A89F94;"></div>
+      <div class="swatch-info">
+        <div class="swatch-name">Raw Concrete</div>
+        <div class="swatch-hex">#A89F94</div>
+        <div class="swatch-role">Secondary · Walls · UI neutral</div>
+      </div>
+    </div>
+    <div class="swatch-block">
+      <div class="swatch-color" style="background:#C4894A;"></div>
+      <div class="swatch-info">
+        <div class="swatch-name">Burl Amber</div>
+        <div class="swatch-hex">#C4894A</div>
+        <div class="swatch-role">Accent warm · Wood beam</div>
+      </div>
+    </div>
+    <div class="swatch-block">
+      <div class="swatch-color" style="background:#7A1F1F;"></div>
+      <div class="swatch-info">
+        <div class="swatch-name">Crimson</div>
+        <div class="swatch-hex">#7A1F1F</div>
+        <div class="swatch-role">Signature · Logo mark · Rug red</div>
+      </div>
+    </div>
+    <div class="swatch-block">
+      <div class="swatch-color" style="background:#D4CBBB;"></div>
+      <div class="swatch-info">
+        <div class="swatch-name">Linen</div>
+        <div class="swatch-hex">#D4CBBB</div>
+        <div class="swatch-role">Canvas · Banner fabric</div>
+      </div>
+    </div>
+    <div class="swatch-block">
+      <div class="swatch-color" style="background:#F2EDE4;"></div>
+      <div class="swatch-info">
+        <div class="swatch-name">Parchment</div>
+        <div class="swatch-hex">#F2EDE4</div>
+        <div class="swatch-role">Background · Paper · Menus</div>
+      </div>
+    </div>
+    <div class="swatch-block">
+      <div class="swatch-color" style="background:#2E2A27;"></div>
+      <div class="swatch-info">
+        <div class="swatch-name">Charcoal</div>
+        <div class="swatch-hex">#2E2A27</div>
+        <div class="swatch-role">Body text · Leather</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ TYPOGRAPHY -->
+<section>
+  <div class="section-label">02 — Typography</div>
+  <div class="type-grid">
+    <div class="type-sample">
+      <div class="type-role">Display — Cormorant Garamond Light</div>
+      <div class="type-display">Aa</div>
+      <div class="type-display-italic" style="color:var(--crimson)">Specialty</div>
+      <div class="type-body-sample">Used for headlines, the wordmark, and all primary brand expressions. Light weight with generous tracking. The slightly classical form echoes the heritage quality of the space.</div>
+      <div class="type-name-tag">Cormorant Garamond · Light 300 / Italic</div>
+    </div>
+    <div class="type-sample">
+      <div class="type-role">Heading — Playfair Display</div>
+      <div class="type-serif">Menu<br><em style="font-size:24px;color:var(--concrete-dk)">& pricing</em></div>
+      <div class="type-body-sample">Secondary serif for section headings, menu categories, and editorial contexts. More weight than Cormorant — used when a stronger presence is needed.</div>
+      <div class="type-name-tag">Playfair Display · Regular 400</div>
+    </div>
+    <div class="type-sample">
+      <div class="type-role">Body — Inter</div>
+      <div style="font-size:28px;font-weight:300;letter-spacing:0.08em;margin-bottom:12px;color:var(--charcoal)">Aa Bb Cc<br><span style="font-size:18px">1234567890</span></div>
+      <div class="type-body-sample">Clean sans-serif for all operational text: prices, descriptions, addresses, digital interfaces. Weight 300–400 only — never bold in running copy.</div>
+      <div class="type-name-tag">Inter · Light 300 / Regular 400</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ LOGO SYSTEM -->
+<section style="padding-left:60px;padding-right:60px;">
+  <div class="section-label">03 — Logo Usage</div>
+  <div class="logo-system">
+    <!-- Primary: dark bg -->
+    <div class="logo-cell dark">
+      <svg width="220" height="60" viewBox="0 0 220 60" xmlns="http://www.w3.org/2000/svg">
+        <path d="M24,6 C24,3.5 26,2 28,2.8 C30,2 32,3.5 32,6 C32,8.5 28,11 28,11 C28,11 24,8.5 24,6 Z" fill="#7A1F1F"/>
+        <text x="0" y="46" font-family="'Cormorant Garamond', serif" font-size="48" font-weight="300" letter-spacing="10" fill="#EAE4D8">MANTEL</text>
+      </svg>
+      <div class="logo-cell-label">Primary — On Dark</div>
+    </div>
+    <!-- Secondary: linen bg -->
+    <div class="logo-cell light">
+      <svg width="220" height="60" viewBox="0 0 220 60" xmlns="http://www.w3.org/2000/svg">
+        <path d="M24,6 C24,3.5 26,2 28,2.8 C30,2 32,3.5 32,6 C32,8.5 28,11 28,11 C28,11 24,8.5 24,6 Z" fill="#7A1F1F"/>
+        <text x="0" y="46" font-family="'Cormorant Garamond', serif" font-size="48" font-weight="300" letter-spacing="10" fill="#1C1917">MANTEL</text>
+      </svg>
+      <div class="logo-cell-label">Secondary — On Light</div>
+    </div>
+    <!-- Tertiary: concrete bg -->
+    <div class="logo-cell concrete">
+      <svg width="220" height="60" viewBox="0 0 220 60" xmlns="http://www.w3.org/2000/svg">
+        <path d="M24,6 C24,3.5 26,2 28,2.8 C30,2 32,3.5 32,6 C32,8.5 28,11 28,11 C28,11 24,8.5 24,6 Z" fill="#7A1F1F"/>
+        <text x="0" y="46" font-family="'Cormorant Garamond', serif" font-size="48" font-weight="300" letter-spacing="10" fill="#2E2A27">MANTEL</text>
+      </svg>
+      <div class="logo-cell-label">Tertiary — On Concrete</div>
+    </div>
+  </div>
+  <!-- Logo mark only -->
+  <div style="margin-top:2px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:2px;">
+    <div class="logo-cell dark" style="height:160px;">
+      <!-- Mark only: heart above M letter -->
+      <svg width="80" height="70" viewBox="0 0 80 70" xmlns="http://www.w3.org/2000/svg">
+        <path d="M28,10 C28,7 30,5 32,6 C34,5 36,7 36,10 C36,13 32,16 32,16 C32,16 28,13 28,10 Z" fill="#7A1F1F"/>
+        <text x="8" y="60" font-family="'Cormorant Garamond', serif" font-size="60" font-weight="300" fill="#EAE4D8">M</text>
+      </svg>
+      <div class="logo-cell-label">Mark — Dark</div>
+    </div>
+    <div class="logo-cell light" style="height:160px;">
+      <svg width="80" height="70" viewBox="0 0 80 70" xmlns="http://www.w3.org/2000/svg">
+        <path d="M28,10 C28,7 30,5 32,6 C34,5 36,7 36,10 C36,13 32,16 32,16 C32,16 28,13 28,10 Z" fill="#7A1F1F"/>
+        <text x="8" y="60" font-family="'Cormorant Garamond', serif" font-size="60" font-weight="300" fill="#1C1917">M</text>
+      </svg>
+      <div class="logo-cell-label">Mark — Light</div>
+    </div>
+    <div style="background:var(--linen-lt);height:160px;display:flex;align-items:center;justify-content:center;position:relative;">
+      <!-- Wordmark with tagline -->
+      <div style="text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px;">
+        <svg width="180" height="38" viewBox="0 0 180 38" xmlns="http://www.w3.org/2000/svg">
+          <path d="M16,5 C16,3 17.5,2 19,2.6 C20.5,2 22,3 22,5 C22,7 19,9 19,9 C19,9 16,7 16,5 Z" fill="#7A1F1F"/>
+          <text x="0" y="32" font-family="'Cormorant Garamond', serif" font-size="34" font-weight="300" letter-spacing="7" fill="#1C1917">MANTEL</text>
+        </svg>
+        <div style="font-size:8px;letter-spacing:0.4em;color:var(--concrete-dk);text-transform:uppercase;">Specialty Coffee</div>
+      </div>
+      <div style="position:absolute;bottom:16px;left:16px;font-size:9px;letter-spacing:0.3em;text-transform:uppercase;color:var(--concrete-dk);">With descriptor</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ BRAND ELEMENTS -->
+<section>
+  <div class="section-label">04 — Signature Elements</div>
+  <div class="elements-grid">
+    <div class="element-block">
+      <div class="element-title">The Heart Diacritic</div>
+      <div style="display:flex;align-items:center;gap:32px;margin-bottom:20px;">
+        <svg width="100" height="100" viewBox="0 0 100 100">
+          <path d="M35,35 C35,25 42,20 50,24 C58,20 65,25 65,35 C65,48 50,58 50,58 C50,58 35,48 35,35 Z" fill="#7A1F1F"/>
+        </svg>
+        <div style="font-size:13px;line-height:1.8;color:var(--concrete-dk);font-weight:300;">The crimson heart above the M is Mantel's signature mark. It signals warmth inside brutalism — the human element in a raw material world. Used consistently across the wordmark at all scales.</div>
+      </div>
+    </div>
+    <div class="element-block">
+      <div class="element-title">Texture Language</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+        <div style="height:80px;background:repeating-linear-gradient(0deg,rgba(0,0,0,0.05),rgba(0,0,0,0.05) 1px,transparent 1px,transparent 4px),var(--concrete-lt);display:flex;align-items:flex-end;padding:8px;">
+          <span style="font-size:8px;letter-spacing:0.2em;color:var(--charcoal);">Concrete</span>
+        </div>
+        <div style="height:80px;background:repeating-linear-gradient(80deg,#C4894A,#C4894A 1px,#D9A96A 1px,#D9A96A 4px);opacity:0.7;display:flex;align-items:flex-end;padding:8px;">
+          <span style="font-size:8px;letter-spacing:0.2em;color:var(--matte-blk);">Burl</span>
+        </div>
+        <div style="height:80px;background:var(--linen);display:flex;align-items:flex-end;padding:8px;">
+          <span style="font-size:8px;letter-spacing:0.2em;color:var(--charcoal);">Linen</span>
+        </div>
+      </div>
+      <div style="font-size:12px;line-height:1.7;color:var(--concrete-dk);font-weight:300;margin-top:16px;">Three textures mirror the space: concrete, burl wood, and linen canvas. Applied in photography direction, print materials, and digital surfaces.</div>
+    </div>
+    <div class="element-block">
+      <div class="element-title">Ruling & Spacing System</div>
+      <div style="padding:24px 0;display:flex;flex-direction:column;gap:16px;border-top:0.5px solid var(--matte-blk);border-bottom:0.5px solid var(--concrete-lt);">
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;letter-spacing:0.1em;">Espresso</div>
+          <div style="font-size:13px;color:var(--concrete-dk);">3.500</div>
+        </div>
+        <div style="height:0.5px;background:var(--linen);"></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;letter-spacing:0.1em;">Flat White</div>
+          <div style="font-size:13px;color:var(--concrete-dk);">4.000</div>
+        </div>
+        <div style="height:0.5px;background:var(--linen);"></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;letter-spacing:0.1em;">Filter</div>
+          <div style="font-size:13px;color:var(--concrete-dk);">3.000</div>
+        </div>
+      </div>
+      <div style="font-size:11px;color:var(--concrete);margin-top:12px;letter-spacing:0.05em;">Menu layout system — hairline rules, light weight type</div>
+    </div>
+    <div class="element-block">
+      <div class="element-title">Corner Detail Mark</div>
+      <div style="display:flex;gap:32px;align-items:center;">
+        <!-- The small bracket/corner mark seen on the bar counter -->
+        <svg width="80" height="80" viewBox="0 0 80 80">
+          <rect x="10" y="10" width="24" height="24" fill="none" stroke="#7A1F1F" stroke-width="2"/>
+          <rect x="14" y="14" width="16" height="16" fill="#7A1F1F" opacity="0.15"/>
+          <path d="M10,10 L10,2 L2,2" fill="none" stroke="#7A1F1F" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M34,10 L42,10 L42,2" fill="none" stroke="#7A1F1F" stroke-width="1.5" stroke-linecap="round" opacity="0.4"/>
+          <path d="M10,34 L10,42 L2,42" fill="none" stroke="#7A1F1F" stroke-width="1.5" stroke-linecap="round" opacity="0.4"/>
+        </svg>
+        <div style="font-size:13px;line-height:1.8;color:var(--concrete-dk);font-weight:300;">A registration mark-style corner bracket in crimson. Used as a brand detail on packaging corners, tags, and stationery — echoing the small red mark seen on the bar counter in the renders.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ MOCKUPS -->
+<section>
+  <div class="section-label">05 — Applications</div>
+  <div class="mockup-grid">
+
+    <!-- Cup -->
+    <div class="mockup-card">
+      <div class="mockup-visual cup-wrap" style="height:300px;">
+        <!-- Simplified cup illustration -->
+        <svg width="140" height="220" viewBox="0 0 140 220" xmlns="http://www.w3.org/2000/svg">
+          <!-- Cup body -->
+          <path d="M30,40 L15,200 Q15,210 25,210 L115,210 Q125,210 125,200 L110,40 Z" fill="#2E2A27" stroke="#3D3530" stroke-width="1"/>
+          <!-- Cup top rim -->
+          <ellipse cx="70" cy="40" rx="40" ry="10" fill="#1C1917" stroke="#3D3530" stroke-width="1"/>
+          <!-- Logo on cup -->
+          <text x="70" y="120" font-family="'Cormorant Garamond', serif" font-size="20" font-weight="300" letter-spacing="4" fill="#D4CBBB" text-anchor="middle">MANTEL</text>
+          <!-- Heart -->
+          <path d="M57,96 C57,93 58.5,92 60,92.6 C61.5,92 63,93 63,96 C63,98.5 60,101 60,101 C60,101 57,98.5 57,96 Z" fill="#7A1F1F"/>
+          <!-- Subtle horizontal rule -->
+          <line x1="45" y1="128" x2="95" y2="128" stroke="#4A4540" stroke-width="0.5"/>
+          <text x="70" y="140" font-size="7" font-family="'Inter',sans-serif" fill="#6B6259" text-anchor="middle" letter-spacing="2">SPECIALTY COFFEE</text>
+          <!-- Steam -->
+          <path d="M55,28 Q52,18 55,10 Q58,2 55,-6" fill="none" stroke="#D4CBBB" stroke-width="1" opacity="0.2" stroke-linecap="round"/>
+          <path d="M70,28 Q67,18 70,10 Q73,2 70,-6" fill="none" stroke="#D4CBBB" stroke-width="1" opacity="0.2" stroke-linecap="round"/>
+          <path d="M85,28 Q82,18 85,10 Q88,2 85,-6" fill="none" stroke="#D4CBBB" stroke-width="1" opacity="0.2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="mockup-label">Takeaway Cup</div>
+    </div>
+
+    <!-- Business Card -->
+    <div class="mockup-card">
+      <div class="mockup-visual card-wrap" style="height:300px;background:var(--concrete-lt);">
+        <div style="display:flex;flex-direction:column;gap:12px;align-items:center;width:100%;">
+          <!-- Front -->
+          <div class="biz-card" style="max-width:220px;">
+            <div class="biz-card-top">
+              <svg width="60" height="20" viewBox="0 0 60 20">
+                <path d="M7,5 C7,3.5 8,2.5 9,3 C10,2.5 11,3.5 11,5 C11,6.5 9,8 9,8 C9,8 7,6.5 7,5 Z" fill="#7A1F1F"/>
+                <text x="0" y="17" font-family="'Cormorant Garamond',serif" font-size="16" font-weight="300" letter-spacing="3" fill="#EAE4D8">MANTEL</text>
+              </svg>
+              <div style="width:8px;height:8px;background:#7A1F1F;"></div>
+            </div>
+            <div class="biz-card-bottom">
+              <div class="biz-name">Ahmad Al-Mansoori</div>
+              <div class="biz-title">Head Barista</div>
+              <div class="biz-contact" style="margin-top:4px;">+973 3300 0000</div>
+              <div class="biz-contact">hello@mantel.bh</div>
+            </div>
+          </div>
+          <!-- Back -->
+          <div style="width:100%;max-width:220px;aspect-ratio:1.75;background:var(--crimson);border-radius:2px;display:flex;align-items:center;justify-content:center;">
+            <svg width="40" height="36" viewBox="0 0 40 36">
+              <path d="M10,12 C10,7 13,4 17,5.5 C19,4 22,2 26,5.5 C30,7 30,12 24,18 L17,25 L10,18 C10,16 10,14 10,12 Z" fill="none" stroke="#EAE4D8" stroke-width="1.5" opacity="0.7"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="mockup-label">Business Card (Front & Back)</div>
+    </div>
+
+    <!-- Menu / stamp -->
+    <div class="mockup-card">
+      <div class="mockup-visual stamp-wrap" style="height:300px;background:var(--parchment);padding:24px;">
+        <div style="width:100%;border:0.5px solid var(--matte-blk);padding:24px;display:flex;flex-direction:column;gap:0;">
+          <!-- Menu header -->
+          <div style="text-align:center;padding-bottom:16px;border-bottom:0.5px solid var(--concrete-lt);margin-bottom:16px;">
+            <svg width="100" height="28" viewBox="0 0 100 28">
+              <path d="M9,5 C9,3.2 10.2,2.2 11.5,2.7 C12.8,2.2 14,3.2 14,5 C14,6.8 11.5,8.5 11.5,8.5 C11.5,8.5 9,6.8 9,5 Z" fill="#7A1F1F"/>
+              <text x="0" y="23" font-family="'Cormorant Garamond',serif" font-size="22" font-weight="300" letter-spacing="5" fill="#1C1917">MANTEL</text>
+            </svg>
+            <div style="font-size:7px;letter-spacing:0.45em;color:var(--concrete-dk);margin-top:4px;text-transform:uppercase;">Coffee Menu</div>
+          </div>
+          <!-- Menu items -->
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;">
+              <span style="font-family:'Cormorant Garamond',serif;font-size:14px;color:var(--matte-blk);">Espresso</span>
+              <span style="font-size:10px;color:var(--concrete-dk);">3.5</span>
+            </div>
+            <div style="height:0.5px;background:var(--linen);"></div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;">
+              <span style="font-family:'Cormorant Garamond',serif;font-size:14px;color:var(--matte-blk);">Flat White</span>
+              <span style="font-size:10px;color:var(--concrete-dk);">4.0</span>
+            </div>
+            <div style="height:0.5px;background:var(--linen);"></div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;">
+              <span style="font-family:'Cormorant Garamond',serif;font-size:14px;color:var(--matte-blk);">Pour Over</span>
+              <span style="font-size:10px;color:var(--concrete-dk);">4.5</span>
+            </div>
+            <div style="height:0.5px;background:var(--linen);"></div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;">
+              <span style="font-family:'Cormorant Garamond',serif;font-size:14px;color:var(--matte-blk);">Cold Brew</span>
+              <span style="font-size:10px;color:var(--concrete-dk);">5.0</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="mockup-label">Menu Card</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ VOICE -->
+<section>
+  <div class="section-label">06 — Brand Voice</div>
+  <div class="voice-grid">
+    <div>
+      <div class="voice-block" style="margin-bottom:32px;">
+        <div class="voice-heading">Warm, not soft.</div>
+        <div class="voice-body">Mantel speaks with the confidence of raw material — concrete, oak, iron — but tempered by the human warmth of a fireplace, a Persian rug, a handwritten name on linen. Minimal words. No fuss. Direct.</div>
+      </div>
+      <div class="voice-block">
+        <div class="voice-heading">The space speaks first.</div>
+        <div class="voice-body">Copy is secondary to atmosphere. Short phrases, lowercase where intimate, uppercase where structural. Avoid adjectives that explain what the guest should feel — let the space do it.</div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:24px;">
+      <div>
+        <div class="type-role" style="margin-bottom:12px;">Brand keywords</div>
+        <div class="voice-words">
+          <span class="word-tag">Raw</span>
+          <span class="word-tag">Deliberate</span>
+          <span class="word-tag">Warm</span>
+          <span class="word-tag">Structured</span>
+          <span class="word-tag">Quiet</span>
+          <span class="word-tag">Material</span>
+          <span class="word-tag">Craft</span>
+          <span class="word-tag">Grounded</span>
+        </div>
+      </div>
+      <div style="border-top:1px solid var(--linen);padding-top:24px;">
+        <div class="type-role" style="margin-bottom:12px;">Copy examples</div>
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:300;font-style:italic;color:var(--matte-blk);">"A place to sit with something good."</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:300;font-style:italic;color:var(--matte-blk);">"Coffee, made without noise."</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:300;font-style:italic;color:var(--matte-blk);">"Where concrete meets warmth."</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ FOOTER -->
+<section style="background:var(--matte-blk);border-bottom:none;display:flex;justify-content:space-between;align-items:center;padding:40px 60px;">
+  <svg width="120" height="32" viewBox="0 0 120 32">
+    <path d="M6,6 C6,4 7.2,3 8.5,3.5 C9.8,3 11,4 11,6 C11,8 8.5,10 8.5,10 C8.5,10 6,8 6,6 Z" fill="#7A1F1F"/>
+    <text x="0" y="26" font-family="'Cormorant Garamond',serif" font-size="24" font-weight="300" letter-spacing="5" fill="#D4CBBB">MANTEL</text>
+  </svg>
+  <div style="font-size:10px;letter-spacing:0.3em;color:var(--concrete-dk);text-transform:uppercase;">Brand Identity System · 2024</div>
+</section>
+
+</body>
+</html>

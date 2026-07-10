@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mantel — Logo Concepts</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Bebas+Neue&family=Inter:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&family=Cormorant+Garamond:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #F0EDE8;
+    font-family: 'Inter', sans-serif;
+    color: #1A1714;
+    min-height: 100vh;
+    padding: 48px 32px;
+  }
+
+  .page-header {
+    text-align: center;
+    margin-bottom: 64px;
+  }
+
+  .page-header .label {
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: #8A7F72;
+    font-weight: 500;
+    margin-bottom: 12px;
+  }
+
+  .page-header h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 38px;
+    font-weight: 300;
+    letter-spacing: 0.08em;
+    color: #1A1714;
+  }
+
+  .page-header p {
+    margin-top: 10px;
+    font-size: 13px;
+    color: #8A7F72;
+    letter-spacing: 0.05em;
+    font-weight: 400;
+  }
+
+  .concepts-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+
+  .concept-card {
+    background: #FBF9F6;
+    border: 1px solid #DDD8D0;
+    border-radius: 2px;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .concept-preview {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 64px 48px;
+    min-height: 320px;
+    position: relative;
+  }
+
+  .concept-preview.dark { background: #1A1714; }
+  .concept-preview.cream { background: #F2EDE4; }
+  .concept-preview.steel { background: #2C3038; }
+
+  .concept-info {
+    padding: 48px 40px;
+    border-left: 1px solid #DDD8D0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 24px;
+  }
+
+  .concept-number {
+    font-size: 10px;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: #B5A99A;
+    font-weight: 500;
+  }
+
+  .concept-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 26px;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    color: #1A1714;
+    line-height: 1.2;
+  }
+
+  .concept-desc {
+    font-size: 13px;
+    line-height: 1.75;
+    color: #6B6259;
+    font-weight: 400;
+  }
+
+  .palette-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-top: 4px;
+  }
+
+  .swatch {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid rgba(0,0,0,0.08);
+  }
+
+  .swatch-label {
+    font-size: 10px;
+    color: #9A8F82;
+    letter-spacing: 0.05em;
+    margin-top: 2px;
+    margin-left: 4px;
+  }
+
+  .tag {
+    display: inline-block;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #B5A99A;
+    border: 1px solid #DDD8D0;
+    padding: 4px 10px;
+    border-radius: 1px;
+    margin-top: 8px;
+  }
+
+  /* ─── LOGO A: Architectural Mark ─── */
+  .logo-a {
+    text-align: center;
+  }
+
+  .logo-a .arch-wordmark {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .logo-a .rule-top {
+    width: 80px;
+    height: 1px;
+    background: #C8B89A;
+  }
+
+  .logo-a .arch-text {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 64px;
+    letter-spacing: 0.22em;
+    color: #F2EDE4;
+    line-height: 1;
+    padding-left: 14px;
+  }
+
+  .logo-a .arch-sub {
+    font-family: 'Inter', sans-serif;
+    font-size: 9px;
+    letter-spacing: 0.55em;
+    text-transform: uppercase;
+    color: #C8B89A;
+    font-weight: 400;
+    padding-left: 4px;
+  }
+
+  .logo-a .rule-bottom {
+    width: 80px;
+    height: 1px;
+    background: #C8B89A;
+  }
+
+  /* ─── LOGO B: Serif Heritage ─── */
+  .logo-b {
+    text-align: center;
+  }
+
+  .logo-b-wrap {
+    position: relative;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+
+  .logo-b .arc-top {
+    width: 120px;
+    height: 60px;
+    border: 1.5px solid #2C2218;
+    border-bottom: none;
+    border-radius: 60px 60px 0 0;
+    position: relative;
+    margin-bottom: -1px;
+  }
+
+  .logo-b .arc-top::after {
+    content: '☕';
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 18px;
+    filter: grayscale(1) brightness(0.2);
+  }
+
+  .logo-b .serif-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 46px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: #2C2218;
+    line-height: 1;
+    padding-left: 6px;
+  }
+
+  .logo-b .serif-sub {
+    font-size: 9px;
+    letter-spacing: 0.55em;
+    text-transform: uppercase;
+    color: #8A7060;
+    font-weight: 500;
+    padding-left: 4px;
+    margin-top: 6px;
+    border-top: 1px solid #C0A882;
+    padding-top: 8px;
+    width: 100%;
+    text-align: center;
+  }
+
+  /* ─── LOGO C: Industrial Badge ─── */
+  .logo-c {
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .badge {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+  }
+
+  .badge-hex {
+    position: absolute;
+    inset: 0;
+  }
+
+  .badge-hex svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .badge-inner {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+  }
+
+  .badge-est {
+    font-size: 8px;
+    letter-spacing: 0.5em;
+    text-transform: uppercase;
+    color: #8CA8B4;
+    font-weight: 500;
+    padding-left: 4px;
+  }
+
+  .badge-line {
+    width: 80px;
+    height: 0.5px;
+    background: #4E6B78;
+  }
+
+  .badge-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 40px;
+    letter-spacing: 0.28em;
+    color: #E8EFF2;
+    line-height: 1;
+    padding-left: 11px;
+  }
+
+  .badge-sub {
+    font-size: 7.5px;
+    letter-spacing: 0.55em;
+    text-transform: uppercase;
+    color: #8CA8B4;
+    font-weight: 400;
+    padding-left: 4px;
+  }
+
+  .concept-divider {
+    width: 32px;
+    height: 1px;
+    background: #DDD8D0;
+  }
+
+  @media (max-width: 700px) {
+    .concept-card { grid-template-columns: 1fr; }
+    .concept-info { border-left: none; border-top: 1px solid #DDD8D0; }
+  }
+</style>
+</head>
+<body>
+
+<header class="page-header">
+  <div class="label">Brand Identity Exploration</div>
+  <h1>Mantel Coffee</h1>
+  <p>Three logo directions — Modern · Classic · Industrial</p>
+</header>
+
+<div class="concepts-grid">
+
+  <!-- CONCEPT A -->
+  <div class="concept-card">
+    <div class="concept-preview dark">
+      <div class="logo-a">
+        <div class="arch-wordmark">
+          <div class="rule-top"></div>
+          <div class="arch-text">MANTEL</div>
+          <div class="arch-sub">Coffee &nbsp;•&nbsp; Est. 2024</div>
+          <div class="rule-bottom"></div>
+        </div>
+      </div>
+    </div>
+    <div class="concept-info">
+      <div class="concept-number">Concept 01</div>
+      <div class="concept-name">The Industrial Letterpress</div>
+      <div class="concept-divider"></div>
+      <p class="concept-desc">Bold Bebas Neue condensed all-caps set between two horizontal rules. Clean, structural, and commanding — like factory signage meets refined typesetting. The generous tracking and thin rule lines bring elegance to the raw weight of the letterforms.</p>
+      <div>
+        <div class="palette-row">
+          <div class="swatch" style="background:#1A1714"></div>
+          <div class="swatch" style="background:#F2EDE4"></div>
+          <div class="swatch" style="background:#C8B89A"></div>
+        </div>
+        <div class="swatch-label">Charcoal · Parchment · Warm Brass</div>
+      </div>
+      <span class="tag">Best for: Signage · Cups · Packaging</span>
+    </div>
+  </div>
+
+  <!-- CONCEPT B -->
+  <div class="concept-card">
+    <div class="concept-preview cream">
+      <div class="logo-b">
+        <div class="logo-b-wrap">
+          <div class="arc-top"></div>
+          <div class="serif-text">MANTEL</div>
+          <div class="serif-sub">Specialty Coffee</div>
+        </div>
+      </div>
+    </div>
+    <div class="concept-info">
+      <div class="concept-number">Concept 02</div>
+      <div class="concept-name">The Heritage Arch</div>
+      <div class="concept-divider"></div>
+      <p class="concept-desc">A Playfair Display serif wordmark crowned by a hand-drawn arch — echoing the literal architectural mantel shelf. The semicircle frames a small coffee icon, nodding to tradition and craft. Warm parchment tones give it an heirloom quality without feeling dated.</p>
+      <div>
+        <div class="palette-row">
+          <div class="swatch" style="background:#2C2218"></div>
+          <div class="swatch" style="background:#F2EDE4"></div>
+          <div class="swatch" style="background:#C0A882"></div>
+        </div>
+        <div class="swatch-label">Deep Oak · Parchment · Antique Gold</div>
+      </div>
+      <span class="tag">Best for: Menu · Stationery · Tote Bags</span>
+    </div>
+  </div>
+
+  <!-- CONCEPT C -->
+  <div class="concept-card">
+    <div class="concept-preview steel">
+      <div class="logo-c">
+        <div class="badge">
+          <div class="badge-hex">
+            <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+              <!-- Outer hex shape -->
+              <polygon points="100,8 180,52 180,148 100,192 20,148 20,52" fill="none" stroke="#4E6B78" stroke-width="1.5"/>
+              <!-- Inner hex shape -->
+              <polygon points="100,22 166,60 166,140 100,178 34,140 34,60" fill="none" stroke="#4E6B78" stroke-width="0.5" opacity="0.5"/>
+              <!-- Rivet dots -->
+              <circle cx="100" cy="8" r="2.5" fill="#4E6B78"/>
+              <circle cx="180" cy="52" r="2.5" fill="#4E6B78"/>
+              <circle cx="180" cy="148" r="2.5" fill="#4E6B78"/>
+              <circle cx="100" cy="192" r="2.5" fill="#4E6B78"/>
+              <circle cx="20" cy="52" r="2.5" fill="#4E6B78"/>
+              <circle cx="20" cy="148" r="2.5" fill="#4E6B78"/>
+            </svg>
+          </div>
+          <div class="badge-inner">
+            <div class="badge-est">Est. 2024</div>
+            <div class="badge-line"></div>
+            <div class="badge-name">MANTEL</div>
+            <div class="badge-line"></div>
+            <div class="badge-sub">Specialty Coffee Co.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="concept-info">
+      <div class="concept-number">Concept 03</div>
+      <div class="concept-name">The Steel Badge</div>
+      <div class="concept-divider"></div>
+      <p class="concept-desc">A hexagonal industrial badge with rivet-corner details and double-rule containment. The steel-blue palette references raw metal and pipe fittings — a direct nod to the industrial aesthetic. Clean layering inside the badge creates hierarchy without clutter, like an old factory plate.</p>
+      <div>
+        <div class="palette-row">
+          <div class="swatch" style="background:#2C3038"></div>
+          <div class="swatch" style="background:#4E6B78"></div>
+          <div class="swatch" style="background:#E8EFF2"></div>
+        </div>
+        <div class="swatch-label">Forge Dark · Steel Blue · Mist White</div>
+      </div>
+      <span class="tag">Best for: Merch · Stamps · Brand Marks</span>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
