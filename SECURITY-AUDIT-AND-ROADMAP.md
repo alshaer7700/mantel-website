@@ -207,7 +207,7 @@ Deliberately **cut from the original 10-phase brief** as not applicable to a 14-
 
 **Pre-launch (browse-only):**
 - [x] 003 applied + verified live (done 2026-07-10)
-- [x] `place_order` execute revoked from anon — **in `supabase/004_pre_launch_lockdown.sql`, paste into SQL editor to apply** (also adds email regex M-2 + `updated_at` trigger L-1)
+- [x] `place_order` execute revoked from anon — 004 applied to live DB 2026-07-10 and verified externally (RPC returns 42501 permission denied; menu reads unaffected). Also live: email regex (M-2) + `updated_at` trigger (L-1)
 - [ ] Supabase public signups disabled (M-6) — dashboard only
 - [x] FormSubmit activated + random alias (H-2) — done 2026-07-10: endpoint now uses the alias, delivery verified, bundle no longer contains the email as an endpoint. Note: the Gmail address still appears as the *displayed* contact in the Privacy/Terms/Refund text — required content; replace with a business address when one exists. `_captcha:false` stays (FormSubmit captcha can't render over AJAX; the alias is the fix)
 - [x] Vite 6.4.3, `npm audit`: 0 vulnerabilities (done 2026-07-10)
