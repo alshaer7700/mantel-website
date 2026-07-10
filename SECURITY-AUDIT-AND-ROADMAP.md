@@ -150,7 +150,9 @@ Security posture is already better than typical for this stage: migration `003_s
 ### Phase 0 — Lockdown & Hygiene *(the 10 items above)* — ~1–2 days
 Everything in section 3, plus dependency prune (M-4). No feature work until done.
 
-### Phase 1 — Deploy the browse-only site — ~half a day
+### Phase 1 — Deploy the browse-only site — ✅ DONE 2026-07-11
+**Live at https://curious-madeleine-fa7fed.netlify.app** — Netlify, auto-deploys from GitHub `main`, env vars in Netlify UI, headers verified live, menu loading from Supabase confirmed in-browser. Outstanding within this phase: real Instagram URL, custom domain, securityheaders.com grade check after domain.
+
 - **Objective:** site live on a real domain, HTTPS, ordering hidden or "coming soon".
 - Host `dist/` on Netlify/Vercel/Cloudflare Pages; set `VITE_*` env vars in host build settings (not committed); custom domain + HSTS; headers file (M-3).
 - Real Instagram URL (L-3); confirm contact + newsletter deliver end-to-end.
