@@ -563,7 +563,7 @@ export default function App() {
               />
               <button
                 type="submit"
-                className="mt-1 px-6 py-2 rounded-full bg-[#f2a8c4] text-white text-sm hover:opacity-90 transition-opacity self-start"
+                className={`mt-1 px-6 py-2 text-sm self-start ${HEART_BUTTON_CLASS}`}
               >
                 Save
               </button>
