@@ -1,0 +1,8 @@
+# Netlify build settings — env vars (VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY)
+# are set in the Netlify UI, not here. Security headers ship via public/_headers.
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
