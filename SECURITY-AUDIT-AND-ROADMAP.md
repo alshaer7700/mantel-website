@@ -207,14 +207,14 @@ Deliberately **cut from the original 10-phase brief** as not applicable to a 14-
 
 **Pre-launch (browse-only):**
 - [x] 003 applied + verified live (done 2026-07-10)
-- [ ] `place_order` execute revoked from anon (until Phase 2)
-- [ ] Supabase public signups disabled (M-6)
-- [ ] FormSubmit activated + random alias + captcha on (H-2)
-- [ ] Vite ≥ 6.4.3, `npm audit` clean of high (H-3)
-- [ ] Deps pruned; build passes; all 8 pages click-tested (M-4)
-- [ ] Git repo + private remote (M-5)
-- [ ] Host env vars set; `.env.local` never committed
-- [ ] Security headers live; securityheaders.com grade A (M-3)
+- [x] `place_order` execute revoked from anon — **in `supabase/004_pre_launch_lockdown.sql`, paste into SQL editor to apply** (also adds email regex M-2 + `updated_at` trigger L-1)
+- [ ] Supabase public signups disabled (M-6) — dashboard only
+- [ ] FormSubmit activated + random alias (H-2) — needs the alias from your FormSubmit email; `_captcha:false` must stay (FormSubmit's captcha can't render over AJAX; the alias is the real fix)
+- [x] Vite 6.4.3, `npm audit`: 0 vulnerabilities (done 2026-07-10)
+- [x] Deps pruned to 5 runtime packages; unused `ui/` folder deleted; build passes (done 2026-07-10 — click-test pages before deploy)
+- [x] Git repo initialized, initial commit `556eeb2` (2026-07-10) — private remote still to add
+- [ ] Host env vars set; `.env.local` never committed (verified untracked in git)
+- [ ] Security headers live; securityheaders.com grade A (M-3) — configs ready: `public/_headers` (Netlify/Cloudflare, ships in dist) + `vercel.json`
 - [ ] HTTPS + HSTS on custom domain
 - [ ] Real Instagram URL
 - [ ] Privacy policy re-read against final feature set
