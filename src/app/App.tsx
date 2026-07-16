@@ -8,10 +8,10 @@ import { FaqAccordion } from "@/app/components/FaqAccordion";
 import { NewsletterSignup } from "@/app/components/NewsletterSignup";
 import { PRIVACY_POLICY, TERMS_OF_SERVICE, REFUND_POLICY, FAQ_ITEMS } from "@/app/content/legal";
 import { ChevronDown, Instagram, Search, ShoppingBag, User, X } from "lucide-react";
-// @ts-ignore
 import logoHeart from "@/imports/Logo-1.png.PNG";
 import logoWordmark from "@/imports/Digital__RGB_.png";
 import { supabase } from "@/lib/supabaseClient";
+import { loadCart, loadProfile } from "@/lib/storage";
 import { formatBD, CATEGORY_LABELS } from "@/lib/format";
 import type { Page, MenuCategory, MenuItem, CartItem, Profile } from "@/app/types";
 import { CONTACT_ENDPOINT } from "@/lib/constants";
@@ -77,9 +77,9 @@ export default function App() {
 
   /* ── cart (persisted) ── */
   const [cartOpen, setCartOpen] = useState(false);
-  const [cart, setCart] = useState<CartItem[]>(() => {
-    try { return JSON.parse(localStorage.getItem("mantel-cart-v2") || "[]"); } catch { return []; }
-  });
+  // Loaded through a sanitizer — localStorage is user-editable, so the shape
+  // and bounds of every line are validated before reaching state.
+  const [cart, setCart] = useState<CartItem[]>(() => loadCart("mantel-cart-v2"));
   const [orderStatus, setOrderStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   // Card-only for now — the "Order for Pick Up" button stays disabled until
   // the real payment gateway is wired in; kept as state for when it isn't.
@@ -94,9 +94,7 @@ export default function App() {
   const [policiesOpen, setPoliciesOpen] = useState(false);
   const [localeOpen, setLocaleOpen] = useState(false);
 
-  const [profile, setProfile] = useState<Profile | null>(() => {
-    try { return JSON.parse(localStorage.getItem("mantel-profile") || "null"); } catch { return null; }
-  });
+  const [profile, setProfile] = useState<Profile | null>(() => loadProfile("mantel-profile"));
   const [profileDraft, setProfileDraft] = useState<Profile>({ name: "", email: "" });
 
   useEffect(() => {
@@ -120,6 +118,7 @@ export default function App() {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
+        setSidebarOpen(false);
         setSearchOpen(false);
         setAccountOpen(false);
         setCartOpen(false);
@@ -159,8 +158,20 @@ export default function App() {
       ),
     );
 
+  // Anti-abuse for the FormSubmit relay (its captcha can't render over AJAX):
+  // a hidden honeypot field bots tend to fill — FormSubmit silently discards
+  // any submission where _honey is non-empty — plus a short client cooldown
+  // so the send button can't be hammered.
+  const [honeypot, setHoneypot] = useState("");
+  const lastSentAt = useRef(0);
+  const CONTACT_COOLDOWN_MS = 30_000;
+
   const submitContact = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (Date.now() - lastSentAt.current < CONTACT_COOLDOWN_MS) {
+      setSendError("Please wait a moment before sending again.");
+      return;
+    }
     setSending(true);
     setSendError("");
     try {
@@ -168,16 +179,18 @@ export default function App() {
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({
-          name: form.name,
-          email: form.email,
-          phone: form.phone,
-          comment: form.comment,
+          name: form.name.trim().slice(0, 120),
+          email: form.email.trim().slice(0, 254),
+          phone: form.phone.trim().slice(0, 40),
+          comment: form.comment.trim().slice(0, 2000),
+          _honey: honeypot,
           _subject: "MANTEL website contact",
           _captcha: "false",
           _template: "table",
         }),
       });
       if (!res.ok) throw new Error(`status ${res.status}`);
+      lastSentAt.current = Date.now();
       setSent(true);
     } catch {
       setSendError("Couldn't send right now — please try again in a moment.");
@@ -549,6 +562,7 @@ export default function App() {
                 type="text"
                 placeholder="Name"
                 required
+                maxLength={120}
                 value={profileDraft.name}
                 onChange={(e) => setProfileDraft((d) => ({ ...d, name: e.target.value }))}
                 className="rounded-full border border-border bg-white px-4 py-2 text-sm placeholder:text-muted-foreground outline-none focus:border-foreground/40 transition-colors"
@@ -557,6 +571,7 @@ export default function App() {
                 type="email"
                 placeholder="Email"
                 required
+                maxLength={254}
                 value={profileDraft.email}
                 onChange={(e) => setProfileDraft((d) => ({ ...d, email: e.target.value }))}
                 className="rounded-full border border-border bg-white px-4 py-2 text-sm placeholder:text-muted-foreground outline-none focus:border-foreground/40 transition-colors"
@@ -654,17 +669,18 @@ export default function App() {
                 alt="Mantel heart"
                 className="h-full w-auto object-contain"
               />
-              {/* Overlaid buttons — nudged slightly left of dead-center */}
-              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 -translate-x-4">
+              {/* Overlaid buttons — nudged slightly left of dead-center.
+                  Sized down on phones so they stay inside the smaller heart. */}
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 sm:gap-3 -translate-x-2 sm:-translate-x-4">
                 <button
                   onClick={() => goTo("contact")}
-                  className={`px-6 py-2 text-base ${BRAND_BUTTON_CLASS}`}
+                  className={`px-4 py-1.5 text-xs sm:px-6 sm:py-2 sm:text-base ${BRAND_BUTTON_CLASS}`}
                 >
                   Our Story
                 </button>
                 <button
                   onClick={() => goTo("menu")}
-                  className={`px-6 py-2 text-base ${BRAND_BUTTON_CLASS}`}
+                  className={`px-4 py-1.5 text-xs sm:px-6 sm:py-2 sm:text-base ${BRAND_BUTTON_CLASS}`}
                 >
                   Menu
                 </button>
@@ -863,11 +879,25 @@ export default function App() {
               </div>
             ) : (
               <form onSubmit={submitContact} className="flex flex-col gap-3">
+                {/* Honeypot — visually hidden and skipped by keyboard/screen
+                    readers; humans never fill it, spam bots usually do, and
+                    FormSubmit discards submissions where it's non-empty. */}
+                <input
+                  type="text"
+                  name="_honey"
+                  value={honeypot}
+                  onChange={(e) => setHoneypot(e.target.value)}
+                  tabIndex={-1}
+                  autoComplete="off"
+                  aria-hidden="true"
+                  className="absolute -left-[9999px] h-0 w-0 opacity-0"
+                />
                 {/* Name + Email row */}
                 <div className="flex gap-3">
                   <input
                     type="text"
                     placeholder="Name"
+                    maxLength={120}
                     value={form.name}
                     onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
                     className="flex-1 min-w-0 rounded-full border border-border bg-white px-5 py-3 text-sm placeholder:text-muted-foreground outline-none focus:border-foreground/40 transition-colors"
@@ -876,6 +906,7 @@ export default function App() {
                     type="email"
                     placeholder="Email *"
                     required
+                    maxLength={254}
                     value={form.email}
                     onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
                     className="flex-1 min-w-0 rounded-full border border-border bg-white px-5 py-3 text-sm placeholder:text-muted-foreground outline-none focus:border-foreground/40 transition-colors"
@@ -886,6 +917,7 @@ export default function App() {
                 <input
                   type="tel"
                   placeholder="Phone number"
+                  maxLength={40}
                   value={form.phone}
                   onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
                   className="rounded-full border border-border bg-white px-5 py-3 text-sm placeholder:text-muted-foreground outline-none focus:border-foreground/40 transition-colors"
@@ -895,6 +927,7 @@ export default function App() {
                 <textarea
                   placeholder="Comment"
                   rows={5}
+                  maxLength={2000}
                   value={form.comment}
                   onChange={(e) => setForm((f) => ({ ...f, comment: e.target.value }))}
                   className="rounded-3xl border border-border bg-white px-5 py-4 text-sm placeholder:text-muted-foreground outline-none focus:border-foreground/40 transition-colors resize-none"
