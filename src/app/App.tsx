@@ -247,7 +247,7 @@ export default function App() {
   const footer = (
     <footer className="flex flex-col items-center gap-4 pb-10 pt-6">
       <a
-        href="https://instagram.com"
+        href="https://www.instagram.com/mantelbh/"
         target="_blank"
         rel="noopener noreferrer"
         className="text-foreground/60 hover:text-foreground transition-colors"
@@ -462,7 +462,7 @@ export default function App() {
         {/* Drawer footer */}
         <div className="px-5 pb-6">
           <a
-            href="https://instagram.com"
+            href="https://www.instagram.com/mantelbh/"
             target="_blank"
             rel="noopener noreferrer"
             className="text-foreground/60 hover:text-foreground transition-colors"
