@@ -9,7 +9,7 @@ import { NewsletterSignup } from "@/app/components/NewsletterSignup";
 import { PRIVACY_POLICY, TERMS_OF_SERVICE, REFUND_POLICY, FAQ_ITEMS } from "@/app/content/legal";
 import { ChevronDown, Instagram, Search, ShoppingBag, User, X } from "lucide-react";
 import logoHeart from "@/imports/Logo-1.png.PNG";
-import logoWordmark from "@/imports/Digital__RGB_.png";
+import logoWordmark from "@/imports/logos-05.png";
 import { supabase } from "@/lib/supabaseClient";
 import { loadCart, loadProfile } from "@/lib/storage";
 import { formatBD, CATEGORY_LABELS } from "@/lib/format";
@@ -315,8 +315,7 @@ export default function App() {
               <ImageWithFallback
                 src={logoWordmark}
                 alt="Mantel"
-                className="h-[22px] w-auto object-contain"
-                style={{ mixBlendMode: "multiply" }}
+                className="h-[26px] w-auto object-contain"
               />
             </button>
           </div>
@@ -414,8 +413,7 @@ export default function App() {
           <ImageWithFallback
             src={logoWordmark}
             alt="Mantel"
-            className="h-[18px] w-auto object-contain"
-            style={{ mixBlendMode: "multiply" }}
+            className="h-[21px] w-auto object-contain"
           />
           <div className="w-[18px]" />
         </div>
