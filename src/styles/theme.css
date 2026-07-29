@@ -81,8 +81,9 @@
 }
 
 @theme inline {
-  --font-display: "Mantel", "Playfair Display", Georgia, serif;
-  --font-body: "Mantel", "Figtree", system-ui, sans-serif;
+  --font-sans: var(--font-app);
+  --font-display: var(--font-app);
+  --font-body: var(--font-app);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
