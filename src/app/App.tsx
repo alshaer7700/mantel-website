@@ -31,6 +31,12 @@ const HEART_BUTTON_CLASS =
   "hover:opacity-90 transition-opacity " +
   "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-heart-red";
 
+// Intrinsic size of the heart artwork. The canvas is padded on the left so the
+// heart's tip lands at exactly 50% width — the tip, the CTAs and the footer
+// then share one vertical axis.
+const HEART_W = 1515;
+const HEART_H = 1540;
+
 export default function App() {
   const [page, setPage] = useState<Page>("home");
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -162,6 +168,25 @@ export default function App() {
       setSending(false);
     }
   };
+
+  /* The heart is object-contained, so its rendered height is whichever of the
+     available height / width-derived height is smaller. The CTA stack sits at
+     62% of the ARTWORK height (see the note by the markup), which is 12% of
+     that height below the centre — measured here rather than expressed as a
+     CSS percentage, because a percentage would resolve against the element box
+     and that box is letterboxed whenever width is the binding constraint. */
+  const heartBoxRef = useRef<HTMLDivElement>(null);
+  const [heartH, setHeartH] = useState(0);
+  useEffect(() => {
+    const el = heartBoxRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(([entry]) => {
+      const { width, height } = entry.contentRect;
+      setHeartH(Math.min(height, width * (HEART_H / HEART_W)));
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
 
   const navHeight = "57px";
 
@@ -497,27 +522,35 @@ export default function App() {
               so object-contain centres the heart itself and the wrapper shrinks
               to the image box; the buttons then centre on the heart with no
               nudge. */}
-          <div className="flex-1 min-h-0 flex items-center justify-center px-6 py-4">
-            <div className="relative h-full flex items-center justify-center">
-              <ImageWithFallback
-                src={logoHeart}
-                alt="Mantel heart"
-                className="h-full w-auto object-contain"
-              />
+          <div
+            ref={heartBoxRef}
+            className="flex-1 min-h-0 relative flex items-center justify-center px-6 py-4"
+          >
+            {/* max-* with auto width/height lets the image size itself: its box
+                then equals the rendered artwork at every viewport. No wrapper
+                can do this — a div with aspect-ratio fits only whichever axis
+                happens to bind, so it letterboxes on the other one. */}
+            <ImageWithFallback
+              src={logoHeart}
+              alt="Mantel heart"
+              className="block max-h-full max-w-full w-auto h-auto"
+            />
               {/* Placed on the heart's OPTICAL centre, not the box centre. A
                   heart is notched at the top and pointed at the bottom, so the
                   bounding-box centre lands in the cleft. Measured off the
                   artwork's alpha: the notch reaches down to 43.9% of the
-                  height, and the centre of mass sits at 60% vertical / 49%
-                  horizontal. Sweeping the button box against the alpha shows it
-                  still clips the notch at 55% (96.2% covered) and is fully
-                  inside from 58% down — 60% both clears the notch and matches
-                  the centre of mass.
+                  height, and sweeping the CTA box against the alpha shows it
+                  still clips at 56% (97.8% covered) and is fully inside from
+                  58% down. 62% is the smallest value that stays fully inside
+                  at 360px too, where the stack is a much larger share of the
+                  heart (22.7% of its height vs 15.4% at desktop).
+                  The canvas is padded so the heart's tip sits at 50% width, so
+                  tip, CTAs and footer all share one vertical axis.
                   Sized down on phones so they stay inside the smaller heart. */}
-              <div
-                className="absolute flex flex-col items-center gap-2 sm:gap-3"
-                style={{ top: "60%", left: "49%", transform: "translate(-50%, -50%)" }}
-              >
+            <div
+              className="absolute left-1/2 top-1/2 flex flex-col items-center gap-2 sm:gap-3"
+              style={{ transform: `translate(-50%, calc(-50% + ${heartH * 0.12}px))` }}
+            >
                 <button
                   onClick={() => goTo("contact")}
                   className={`px-4 py-1.5 text-xs sm:px-6 sm:py-2 sm:text-base ${BRAND_BUTTON_CLASS}`}
@@ -528,9 +561,8 @@ export default function App() {
                   onClick={() => goTo("menu")}
                   className={`px-4 py-1.5 text-xs sm:px-6 sm:py-2 sm:text-base ${BRAND_BUTTON_CLASS}`}
                 >
-                  Menu
-                </button>
-              </div>
+                Menu
+              </button>
             </div>
           </div>
           {footer}
