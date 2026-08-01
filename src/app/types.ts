@@ -1,7 +1,6 @@
 export type Page =
   | "home"
   | "menu"
-  | "order"
   | "contact"
   | "faq"
   | "privacy"
@@ -19,7 +18,5 @@ export type MenuItem = {
   is_available: boolean;
   sort_order: number;
 };
-
-export type CartItem = { id: string; name: string; price: number; qty: number };
 
 export type Profile = { name: string; email: string };

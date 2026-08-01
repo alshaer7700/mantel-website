@@ -4,3 +4,7 @@ dist
 .env.local
 .DS_Store
 _archive/
+
+# Ephemeral git worktrees created for background agents — full repo checkouts,
+# removed when the agent finishes. Never part of a commit.
+.claude/worktrees/

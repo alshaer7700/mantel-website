@@ -41,14 +41,14 @@ export function NewsletterSignup() {
 
   return (
     <section className="max-w-2xl w-full mx-auto px-6 py-16 text-center">
-      <h2 className="font-display text-4xl md:text-5xl font-semibold mb-4">
+      <h2 className="font-serif font-semibold text-4xl md:text-5xl mb-4">
         New Sips, First Look.
       </h2>
-      <p className="text-sm text-muted-foreground mb-8">
+      <p className="font-mono font-normal text-sm text-muted-foreground mb-8">
         Be the first to know when new drinks land at Mantel.
       </p>
       {status === "sent" ? (
-        <p className="text-sm text-muted-foreground py-4">
+        <p className="font-mono font-normal text-sm text-muted-foreground py-4">
           You{"'"}re on the list. 💌
         </p>
       ) : (
@@ -70,7 +70,7 @@ export function NewsletterSignup() {
             placeholder="Email address"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="flex-1 min-w-0 bg-transparent px-6 py-3.5 text-sm placeholder:text-muted-foreground outline-none rounded-full"
+            className="flex-1 min-w-0 bg-transparent px-6 py-3.5 font-serif font-normal text-base placeholder:text-muted-foreground outline-none rounded-full"
           />
           <button
             type="submit"
@@ -83,7 +83,7 @@ export function NewsletterSignup() {
         </form>
       )}
       {status === "error" && (
-        <p className="text-xs text-destructive mt-3">
+        <p className="font-mono font-normal text-xs text-destructive mt-3">
           Couldn{"'"}t sign you up right now — please try again.
         </p>
       )}
