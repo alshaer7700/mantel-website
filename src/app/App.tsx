@@ -359,25 +359,25 @@ export default function App() {
         {/* Drawer links */}
         <nav className="flex flex-col px-5 pt-7 gap-5 flex-1">
           <button
-            className="text-left font-mono font-medium text-xl text-foreground hover:opacity-50 transition-opacity"
+            className="text-left font-serif font-normal text-2xl text-foreground hover:opacity-50 transition-opacity"
             onClick={() => goTo("menu")}
           >
             Menu
           </button>
           <button
-            className="text-left font-mono font-medium text-xl text-foreground hover:opacity-50 transition-opacity"
+            className="text-left font-serif font-normal text-2xl text-foreground hover:opacity-50 transition-opacity"
             onClick={() => goTo("contact")}
           >
             Contact
           </button>
           <button
-            className="text-left font-mono font-medium text-xl text-foreground hover:opacity-50 transition-opacity"
+            className="text-left font-serif font-normal text-2xl text-foreground hover:opacity-50 transition-opacity"
             onClick={() => goTo("home")}
           >
             Our Story
           </button>
           <button
-            className="text-left font-mono font-medium text-xl text-foreground hover:opacity-50 transition-opacity"
+            className="text-left font-serif font-normal text-2xl text-foreground hover:opacity-50 transition-opacity"
             onClick={() => goTo("faq")}
           >
             FAQ
@@ -733,7 +733,7 @@ export default function App() {
       {page === "faq" && (
         <main className="min-h-screen flex flex-col" style={{ paddingTop: navHeight }}>
           <div className="flex-1 max-w-2xl w-full mx-auto px-6 py-14">
-            <h1 className="font-mono font-medium text-4xl sm:text-5xl tracking-tight mb-12">FAQ</h1>
+            <h1 className="font-serif font-semibold text-5xl mb-12">FAQ</h1>
             <FaqAccordion items={FAQ_ITEMS} />
           </div>
           <NewsletterSignup />
