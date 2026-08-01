@@ -70,7 +70,7 @@ export function NewsletterSignup() {
             placeholder="Email address"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="flex-1 min-w-0 bg-transparent px-6 py-3.5 font-mono font-medium text-sm placeholder:text-muted-foreground outline-none rounded-full"
+            className="flex-1 min-w-0 bg-transparent px-6 py-3.5 font-serif font-normal text-base placeholder:text-muted-foreground outline-none rounded-full"
           />
           <button
             type="submit"

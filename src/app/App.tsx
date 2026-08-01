@@ -467,7 +467,7 @@ export default function App() {
               </p>
               <button
                 onClick={() => { setProfile(null); setProfileDraft({ name: "", email: "" }); }}
-                className="self-start font-mono font-medium text-[11px] tracking-[0.14em] uppercase text-muted-foreground hover:text-foreground transition-colors"
+                className="self-start font-serif font-medium text-[12px] tracking-[0.14em] uppercase text-muted-foreground hover:text-foreground transition-colors"
               >
                 Sign out
               </button>
@@ -503,7 +503,7 @@ export default function App() {
               />
               <button
                 type="submit"
-                className={`mt-1 px-6 py-2 font-mono font-medium text-sm self-start ${HEART_BUTTON_CLASS}`}
+                className={`mt-1 px-6 py-2 font-serif font-medium text-base self-start ${HEART_BUTTON_CLASS}`}
               >
                 Save
               </button>
@@ -612,7 +612,7 @@ export default function App() {
             <div className="flex-1 max-w-xl mx-auto w-full px-6 py-14">
               <button
                 onClick={() => setMenuCategory(null)}
-                className="font-mono font-medium text-[11px] tracking-[0.18em] uppercase text-muted-foreground hover:text-foreground transition-colors mb-10 flex items-center gap-2"
+                className="font-serif font-medium text-[12px] tracking-[0.18em] uppercase text-muted-foreground hover:text-foreground transition-colors mb-10 flex items-center gap-2"
               >
                 <ArrowLeft size={13} strokeWidth={1.75} />
                 Back
@@ -712,7 +712,7 @@ export default function App() {
                   <button
                     type="submit"
                     disabled={sending}
-                    className={`px-9 py-3 font-mono font-medium text-sm disabled:opacity-60 ${HEART_BUTTON_CLASS}`}
+                    className={`px-9 py-3 font-serif font-normal text-base disabled:opacity-60 ${HEART_BUTTON_CLASS}`}
                   >
                     {sending ? "Sending…" : "Send"}
                   </button>
