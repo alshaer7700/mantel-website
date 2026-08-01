@@ -181,16 +181,25 @@ export default function App() {
      and that box is letterboxed whenever width is the binding constraint. */
   const heartBoxRef = useRef<HTMLDivElement>(null);
   const [heartH, setHeartH] = useState(0);
+  // Keyed on `page`: the observed element only exists while the home page is
+  // mounted, so the effect has to re-attach every time we come back to it.
+  // With an empty dep list it observed the first instance only — leaving home
+  // fired a 0x0 measurement and returning never re-measured, so the CTAs
+  // dropped to the heart's geometric centre, which is inside the cleft.
   useEffect(() => {
     const el = heartBoxRef.current;
     if (!el) return;
+    const measure = (w: number, h: number) => {
+      if (w > 0 && h > 0) setHeartH(Math.min(h, w * (HEART_H / HEART_W)));
+    };
+    measure(el.clientWidth, el.clientHeight);
     const ro = new ResizeObserver(([entry]) => {
       const { width, height } = entry.contentRect;
-      setHeartH(Math.min(height, width * (HEART_H / HEART_W)));
+      measure(width, height);
     });
     ro.observe(el);
     return () => ro.disconnect();
-  }, []);
+  }, [page]);
 
   const navHeight = "57px";
 
@@ -528,10 +537,11 @@ export default function App() {
               so object-contain centres the heart itself and the wrapper shrinks
               to the image box; the buttons then centre on the heart with no
               nudge. */}
-          <div
-            ref={heartBoxRef}
-            className="flex-1 min-h-0 relative flex items-center justify-center px-6 py-4"
-          >
+          <div className="flex-1 min-h-0 flex px-6 py-4">
+            <div
+              ref={heartBoxRef}
+              className="relative flex-1 min-h-0 flex items-center justify-center"
+            >
             {/* max-* with auto width/height lets the image size itself: its box
                 then equals the rendered artwork at every viewport. No wrapper
                 can do this — a div with aspect-ratio fits only whichever axis
@@ -569,6 +579,7 @@ export default function App() {
                 >
                 Menu
               </button>
+              </div>
             </div>
           </div>
           {footer}
