@@ -486,23 +486,38 @@ export default function App() {
 
 
       {page === "home" && (
-        <main className="relative h-screen overflow-hidden">
-          {/* Heart fills the full space below the nav — footer is overlaid
-              below (not a flex sibling), so it no longer eats into the
-              heart's available height */}
-          <div
-            className="absolute inset-x-0 bottom-0 flex items-center justify-center"
-            style={{ top: navHeight }}
-          >
-            <div className="relative flex items-center justify-center h-full w-full">
+        <main
+          className="flex flex-col h-screen overflow-hidden"
+          style={{ paddingTop: navHeight }}
+        >
+          {/* Heart and CTAs are one unit, centred in the space that is left
+              once the footer has taken its own height — the footer is a flex
+              sibling here, not an overlay, so nothing runs underneath it.
+              The artwork is cropped to its own edges (no transparent padding),
+              so object-contain centres the heart itself and the wrapper shrinks
+              to the image box; the buttons then centre on the heart with no
+              nudge. */}
+          <div className="flex-1 min-h-0 flex items-center justify-center px-6 py-4">
+            <div className="relative h-full flex items-center justify-center">
               <ImageWithFallback
                 src={logoHeart}
                 alt="Mantel heart"
                 className="h-full w-auto object-contain"
               />
-              {/* Overlaid buttons — nudged slightly left of dead-center.
+              {/* Placed on the heart's OPTICAL centre, not the box centre. A
+                  heart is notched at the top and pointed at the bottom, so the
+                  bounding-box centre lands in the cleft. Measured off the
+                  artwork's alpha: the notch reaches down to 43.9% of the
+                  height, and the centre of mass sits at 60% vertical / 49%
+                  horizontal. Sweeping the button box against the alpha shows it
+                  still clips the notch at 55% (96.2% covered) and is fully
+                  inside from 58% down — 60% both clears the notch and matches
+                  the centre of mass.
                   Sized down on phones so they stay inside the smaller heart. */}
-              <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 sm:gap-3 -translate-x-2 sm:-translate-x-4">
+              <div
+                className="absolute flex flex-col items-center gap-2 sm:gap-3"
+                style={{ top: "60%", left: "49%", transform: "translate(-50%, -50%)" }}
+              >
                 <button
                   onClick={() => goTo("contact")}
                   className={`px-4 py-1.5 text-xs sm:px-6 sm:py-2 sm:text-base ${BRAND_BUTTON_CLASS}`}
@@ -518,9 +533,7 @@ export default function App() {
               </div>
             </div>
           </div>
-          <div className="absolute bottom-0 inset-x-0">
-            {footer}
-          </div>
+          {footer}
         </main>
       )}
 
