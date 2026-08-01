@@ -81,9 +81,14 @@
 }
 
 @theme inline {
-  --font-sans: var(--font-app);
-  --font-display: var(--font-app);
-  --font-body: var(--font-app);
+  /* Two real families — `font-serif` and `font-mono` are now distinct.
+     `font-display` / `font-body` are kept as aliases so any missed call site
+     still resolves; they should be migrated to serif/mono and then dropped. */
+  --font-serif: var(--font-serif);
+  --font-mono: var(--font-mono);
+  --font-sans: var(--font-mono);
+  --font-display: var(--font-serif);
+  --font-body: var(--font-mono);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);

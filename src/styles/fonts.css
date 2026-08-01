@@ -1,84 +1,44 @@
 /*
- * EB Garamond Italic — self-hosted, applied site-wide via --font-app.
- * The italic faces are registered under font-style: normal so every element
- * renders the italic design without needing font-style overrides; the same
- * files are also registered as font-style: italic so `italic`-styled text
- * doesn't get a synthetic slant on top.
+ * Mantel type system — two families, self-hosted, latin subsets from Google Fonts.
+ *
+ *   EB Garamond  — variable roman, wght 400–800. Serves Regular (400) and
+ *                  SemiBold (600) from one 43 KB file. Upright only: the site
+ *                  no longer uses italic anywhere.
+ *   Fira Mono    — static Regular (400) and Medium (500).
+ *
+ * Total payload 64 KB, replacing the 1.72 MB of unsubset italic TTFs that
+ * shipped before. Emoji are absent from all three subsets, so flag and symbol
+ * glyphs fall through to the system emoji font on their own.
  */
+
 @font-face {
   font-family: "EB Garamond";
-  src: url("../assets/fonts/EBGaramond-Italic.ttf") format("truetype");
+  src: url("../assets/fonts/EBGaramond-Variable.woff2") format("woff2-variations");
+  font-weight: 400 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Fira Mono";
+  src: url("../assets/fonts/FiraMono-Regular.woff2") format("woff2");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
-  unicode-range: U+0000-1F1E5, U+1F200-10FFFF;
 }
 
 @font-face {
-  font-family: "EB Garamond";
-  src: url("../assets/fonts/EBGaramond-MediumItalic.ttf") format("truetype");
+  font-family: "Fira Mono";
+  src: url("../assets/fonts/FiraMono-Medium.woff2") format("woff2");
   font-weight: 500;
   font-style: normal;
   font-display: swap;
-  unicode-range: U+0000-1F1E5, U+1F200-10FFFF;
-}
-
-@font-face {
-  font-family: "EB Garamond";
-  src: url("../assets/fonts/EBGaramond-SemiBoldItalic.ttf") format("truetype");
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
-  unicode-range: U+0000-1F1E5, U+1F200-10FFFF;
-}
-
-@font-face {
-  font-family: "EB Garamond";
-  src: url("../assets/fonts/EBGaramond-BoldItalic.ttf") format("truetype");
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-  unicode-range: U+0000-1F1E5, U+1F200-10FFFF;
-}
-
-@font-face {
-  font-family: "EB Garamond";
-  src: url("../assets/fonts/EBGaramond-Italic.ttf") format("truetype");
-  font-weight: 400;
-  font-style: italic;
-  font-display: swap;
-  unicode-range: U+0000-1F1E5, U+1F200-10FFFF;
-}
-
-@font-face {
-  font-family: "EB Garamond";
-  src: url("../assets/fonts/EBGaramond-MediumItalic.ttf") format("truetype");
-  font-weight: 500;
-  font-style: italic;
-  font-display: swap;
-  unicode-range: U+0000-1F1E5, U+1F200-10FFFF;
-}
-
-@font-face {
-  font-family: "EB Garamond";
-  src: url("../assets/fonts/EBGaramond-SemiBoldItalic.ttf") format("truetype");
-  font-weight: 600;
-  font-style: italic;
-  font-display: swap;
-  unicode-range: U+0000-1F1E5, U+1F200-10FFFF;
-}
-
-@font-face {
-  font-family: "EB Garamond";
-  src: url("../assets/fonts/EBGaramond-BoldItalic.ttf") format("truetype");
-  font-weight: 700;
-  font-style: italic;
-  font-display: swap;
-  unicode-range: U+0000-1F1E5, U+1F200-10FFFF;
 }
 
 :root {
-  --font-app: "EB Garamond", Georgia, serif, "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji";
+  --font-emoji: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji";
+  --font-serif: "EB Garamond", Georgia, "Times New Roman", serif, var(--font-emoji);
+  --font-mono: "Fira Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace, var(--font-emoji);
 }
 
 @keyframes marquee {

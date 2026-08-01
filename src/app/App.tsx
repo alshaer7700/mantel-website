@@ -1,19 +1,16 @@
 import { useEffect, useRef, useState } from "react";
 import { ImageWithFallback } from "@/app/components/figma/ImageWithFallback";
 import { MenuItemRow } from "@/app/components/MenuItemRow";
-import { OrderItemRow } from "@/app/components/OrderItemRow";
-import { CartLineItem } from "@/app/components/CartLineItem";
 import { PolicyPage } from "@/app/components/PolicyPage";
 import { FaqAccordion } from "@/app/components/FaqAccordion";
 import { NewsletterSignup } from "@/app/components/NewsletterSignup";
 import { PRIVACY_POLICY, TERMS_OF_SERVICE, REFUND_POLICY, FAQ_ITEMS } from "@/app/content/legal";
-import { ChevronDown, Instagram, Search, ShoppingBag, User, X } from "lucide-react";
+import { ArrowLeft, ChevronDown, Instagram, Search, User, X } from "lucide-react";
 import logoHeart from "@/imports/Logo-1.webp";
-import logoWordmark from "@/imports/logos-05.webp";
 import { supabase } from "@/lib/supabaseClient";
-import { loadCart, loadProfile } from "@/lib/storage";
+import { loadProfile } from "@/lib/storage";
 import { formatBD, CATEGORY_LABELS } from "@/lib/format";
-import type { Page, MenuCategory, MenuItem, CartItem, Profile } from "@/app/types";
+import type { Page, MenuCategory, MenuItem, Profile } from "@/app/types";
 import { CONTACT_ENDPOINT } from "@/lib/constants";
 
 // Shared style for primary CTAs across Homepage / Menu / Pickup, per ux-changes.md:
@@ -75,17 +72,6 @@ export default function App() {
       )
     : [];
 
-  /* ── cart (persisted) ── */
-  const [cartOpen, setCartOpen] = useState(false);
-  // Loaded through a sanitizer — localStorage is user-editable, so the shape
-  // and bounds of every line are validated before reaching state.
-  const [cart, setCart] = useState<CartItem[]>(() => loadCart("mantel-cart-v2"));
-  const [orderStatus, setOrderStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
-  // Card-only for now — the "Order for Pick Up" button stays disabled until
-  // the real payment gateway is wired in; kept as state for when it isn't.
-  const [paymentMethod] = useState<"card">("card");
-  const cartCount = cart.reduce((n, x) => n + x.qty, 0);
-  const subtotal = cart.reduce((n, x) => n + x.price * x.qty, 0);
 
   /* ── account (persisted) ── */
   const [accountOpen, setAccountOpen] = useState(false);
@@ -96,10 +82,6 @@ export default function App() {
 
   const [profile, setProfile] = useState<Profile | null>(() => loadProfile("mantel-profile"));
   const [profileDraft, setProfileDraft] = useState<Profile>({ name: "", email: "" });
-
-  useEffect(() => {
-    localStorage.setItem("mantel-cart-v2", JSON.stringify(cart));
-  }, [cart]);
 
   useEffect(() => {
     if (profile) localStorage.setItem("mantel-profile", JSON.stringify(profile));
@@ -121,7 +103,6 @@ export default function App() {
         setSidebarOpen(false);
         setSearchOpen(false);
         setAccountOpen(false);
-        setCartOpen(false);
         setPoliciesOpen(false);
         setLocaleOpen(false);
       }
@@ -136,27 +117,10 @@ export default function App() {
     setSidebarOpen(false);
     setSearchOpen(false);
     setAccountOpen(false);
-    setCartOpen(false);
     setPoliciesOpen(false);
     setLocaleOpen(false);
     window.scrollTo(0, 0);
-    if (p === "order") setOrderStatus("idle");
   };
-
-  const addToCart = (item: MenuItem) =>
-    setCart((c) => {
-      const found = c.find((x) => x.id === item.id);
-      return found
-        ? c.map((x) => (x.id === item.id ? { ...x, qty: x.qty + 1 } : x))
-        : [...c, { id: item.id, name: item.name, price: item.price, qty: 1 }];
-    });
-
-  const changeQty = (id: string, delta: number) =>
-    setCart((c) =>
-      c.flatMap((x) =>
-        x.id === id ? (x.qty + delta <= 0 ? [] : [{ ...x, qty: x.qty + delta }]) : [x],
-      ),
-    );
 
   // Anti-abuse for the FormSubmit relay (its captcha can't render over AJAX):
   // a hidden honeypot field bots tend to fill — FormSubmit silently discards
@@ -196,48 +160,6 @@ export default function App() {
       setSendError("Couldn't send right now — please try again in a moment.");
     } finally {
       setSending(false);
-    }
-  };
-
-  const placeOrder = async () => {
-    setOrderStatus("sending");
-    try {
-      // Server-priced, atomic order placement (supabase/003) — the client only
-      // sends item ids and quantities; prices, names, and the subtotal are
-      // resolved from menu_items inside the database, so cart tampering can't
-      // change what an order costs.
-      const { error } = await supabase.rpc("place_order", {
-        items: cart.map((x) => ({ menu_item_id: x.id, qty: x.qty })),
-        customer_name: profile?.name || "Guest",
-        customer_email: profile?.email || null,
-        payment_method: paymentMethod,
-      });
-      if (error) throw error;
-
-      // Best-effort owner notification — a failed email shouldn't undo an
-      // already-recorded order; the Supabase row is the durable record.
-      try {
-        await fetch(CONTACT_ENDPOINT, {
-          method: "POST",
-          headers: { "Content-Type": "application/json", Accept: "application/json" },
-          body: JSON.stringify({
-            name: profile?.name || "Guest",
-            email: profile?.email || "",
-            order: cart.map((x) => `${x.qty} × ${x.name} (${formatBD(x.price)})`).join(" | "),
-            total: formatBD(subtotal),
-            _subject: "MANTEL pick-up order",
-            _captcha: "false",
-            _template: "table",
-          }),
-        });
-      } catch (emailErr) {
-        console.warn("Order saved but notification email failed:", emailErr);
-      }
-
-      setOrderStatus("sent");
-      setCart([]);
-    } catch {
-      setOrderStatus("error");
     }
   };
 
@@ -311,12 +233,11 @@ export default function App() {
               <span className="block w-[18px] h-px bg-foreground" />
               <span className="block w-[18px] h-px bg-foreground" />
             </button>
-            <button onClick={() => goTo("home")} className="hover:opacity-80 transition-opacity">
-              <ImageWithFallback
-                src={logoWordmark}
-                alt="Mantel"
-                className="h-[26px] w-auto object-contain"
-              />
+            <button
+              onClick={() => goTo("home")}
+              className="font-serif font-semibold text-[30px] leading-none tracking-[-0.01em] text-foreground hover:opacity-80 transition-opacity"
+            >
+              Mantel.
             </button>
           </div>
 
@@ -326,7 +247,7 @@ export default function App() {
                 shown as a dropdown to match the reference layout */}
             <div className="relative hidden sm:block">
               <button
-                onClick={() => { setLocaleOpen((v) => !v); setSearchOpen(false); setAccountOpen(false); setCartOpen(false); }}
+                onClick={() => { setLocaleOpen((v) => !v); setSearchOpen(false); setAccountOpen(false); }}
                 className="flex items-center gap-1.5 hover:text-foreground transition-colors"
                 aria-label="Country and language"
               >
@@ -348,7 +269,7 @@ export default function App() {
               )}
             </div>
             <button
-              onClick={() => { setSearchOpen((v) => !v); setAccountOpen(false); setCartOpen(false); setLocaleOpen(false); }}
+              onClick={() => { setSearchOpen((v) => !v); setAccountOpen(false); setLocaleOpen(false); }}
               className="hover:text-foreground transition-colors"
               aria-label="Search"
             >
@@ -358,8 +279,7 @@ export default function App() {
               onClick={() => {
                 setAccountOpen((v) => !v);
                 setSearchOpen(false);
-                setCartOpen(false);
-                setLocaleOpen(false);
+                        setLocaleOpen(false);
                 if (profile) setProfileDraft(profile);
               }}
               className="hover:text-foreground transition-colors"
@@ -367,21 +287,10 @@ export default function App() {
             >
               <User size={17} strokeWidth={1.5} />
             </button>
-            <button
-              onClick={() => { setCartOpen((v) => !v); setSearchOpen(false); setAccountOpen(false); setLocaleOpen(false); setOrderStatus("idle"); }}
-              className="relative hover:text-foreground transition-colors"
-              aria-label="Cart"
-            >
-              <ShoppingBag size={17} strokeWidth={1.5} />
-              {cartCount > 0 && (
-                <span className="absolute -top-1.5 -right-2 min-w-[15px] h-[15px] px-0.5 rounded-full bg-heart-red text-heart-red-foreground text-[9px] leading-[15px] text-center font-medium">
-                  {cartCount}
-                </span>
-              )}
-            </button>
           </div>
         </div>
       </nav>
+
 
       {/* ══ SIDEBAR ══ */}
       {/* Overlay */}
@@ -410,11 +319,9 @@ export default function App() {
           >
             <X size={18} strokeWidth={1.5} />
           </button>
-          <ImageWithFallback
-            src={logoWordmark}
-            alt="Mantel"
-            className="h-[21px] w-auto object-contain"
-          />
+          <span className="font-serif font-semibold text-[24px] leading-none tracking-[-0.01em] text-foreground">
+            Mantel.
+          </span>
           <div className="w-[18px]" />
         </div>
 
@@ -437,17 +344,6 @@ export default function App() {
             onClick={() => goTo("home")}
           >
             Our Story
-          </button>
-          <button
-            className="text-left group"
-            onClick={() => goTo("order")}
-          >
-            <span className="block font-display text-2xl text-foreground group-hover:opacity-50 transition-opacity">
-              Pick Up
-            </span>
-            <span className="block font-body text-[11px] tracking-wide text-muted-foreground mt-0.5">
-              order before you reach
-            </span>
           </button>
           <button
             className="text-left font-display text-2xl text-foreground hover:opacity-50 transition-opacity"
@@ -536,7 +432,7 @@ export default function App() {
               <p className="font-display text-xl">Hi, {profile.name}</p>
               <p className="text-xs text-muted-foreground -mt-2">{profile.email}</p>
               <p className="text-xs text-muted-foreground">
-                Your details pre-fill the contact form and pick-up orders on this device.
+                Your details pre-fill the contact form on this device.
               </p>
               <button
                 onClick={() => { setProfile(null); setProfileDraft({ name: "", email: "" }); }}
@@ -581,77 +477,14 @@ export default function App() {
                 Save
               </button>
               <p className="text-[11px] text-muted-foreground">
-                Saved on this device only — used to pre-fill forms and orders.
+                Saved on this device only — used to pre-fill the contact form.
               </p>
             </form>
           )}
         </div>
       )}
 
-      {/* ══ CART DRAWER ══ */}
-      {/* Quick-glance view of the bag, separate from the full "Order Before
-          Reach" page (reachable via the sidebar's Pick Up link) */}
-      <div
-        className={`fixed inset-0 z-40 bg-black/20 transition-opacity duration-300 ${
-          cartOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-        }`}
-        onClick={() => setCartOpen(false)}
-      />
-      <div
-        className={`fixed top-0 right-0 z-50 h-full bg-white flex flex-col transition-transform duration-300 ease-in-out ${
-          cartOpen ? "translate-x-0" : "translate-x-full"
-        }`}
-        style={{ width: "320px", maxWidth: "90vw" }}
-      >
-        <div
-          className="flex items-center justify-between px-5 border-b border-border shrink-0"
-          style={{ height: navHeight }}
-        >
-          <p className="font-display text-xl">Your Bag</p>
-          <button
-            onClick={() => setCartOpen(false)}
-            className="hover:opacity-60 transition-opacity"
-            aria-label="Close cart"
-          >
-            <X size={18} strokeWidth={1.5} />
-          </button>
-        </div>
 
-        <div className="flex-1 overflow-y-auto px-5 py-5">
-          {orderStatus === "sent" ? (
-            <p className="text-sm text-muted-foreground pt-6 text-center">
-              Order received — it{"'"}ll be ready when you reach. 💌
-            </p>
-          ) : cart.length === 0 ? (
-            <p className="text-sm text-muted-foreground pt-6 text-center">
-              Your bag is empty — add something from Order Before Reach.
-            </p>
-          ) : (
-            <div className="divide-y divide-border">
-              {cart.map((x) => (
-                <CartLineItem key={x.id} item={x} onChangeQty={changeQty} />
-              ))}
-            </div>
-          )}
-        </div>
-
-        {cart.length > 0 && orderStatus !== "sent" && (
-          <div className="px-5 pb-6 pt-4 border-t border-border shrink-0 flex flex-col gap-3">
-            <div className="flex justify-between text-sm">
-              <span className="text-muted-foreground">Subtotal</span>
-              <span className="font-medium">{formatBD(subtotal)}</span>
-            </div>
-            <button
-              onClick={() => goTo("order")}
-              className={`w-full py-2.5 text-sm ${HEART_BUTTON_CLASS}`}
-            >
-              Go to Order Before Reach
-            </button>
-          </div>
-        )}
-      </div>
-
-      {/* ══ HOME PAGE ══ */}
       {page === "home" && (
         <main className="relative h-screen overflow-hidden">
           {/* Heart fills the full space below the nav — footer is overlaid
@@ -730,7 +563,8 @@ export default function App() {
                 onClick={() => setMenuCategory(null)}
                 className="text-[11px] tracking-[0.18em] uppercase text-muted-foreground hover:text-foreground transition-colors mb-10 flex items-center gap-2"
               >
-                ← Back
+                <ArrowLeft size={13} strokeWidth={1.75} />
+                Back
               </button>
               <h2 className="font-display text-2xl font-semibold mb-8">
                 {CATEGORY_LABELS[menuCategory]}
@@ -746,116 +580,7 @@ export default function App() {
         </main>
       )}
 
-      {/* ══ ORDER BEFORE REACH PAGE ══ */}
-      {/* All ordering (browse-and-add, cart, payment, checkout) lives only
-          here, per ux-changes.md — the Menu page above is display-only. */}
-      {page === "order" && (
-        <main
-          className="flex flex-col min-h-screen"
-          style={{ paddingTop: navHeight }}
-        >
-          <div className="flex-1 max-w-2xl w-full mx-auto px-6 py-14">
-            <h1 className="font-display text-3xl font-semibold mb-2">Order Before Reach</h1>
-            <p className="text-sm text-muted-foreground mb-10">order before you reach</p>
 
-            {menuLoading ? (
-              <p className="text-sm text-muted-foreground py-12 text-center">Loading menu…</p>
-            ) : menuError ? (
-              <p className="text-sm text-muted-foreground py-12 text-center">
-                Couldn{"'"}t load the menu right now — please try again shortly.
-              </p>
-            ) : (
-              <>
-                {/* Browse + add */}
-                <section className="mb-12">
-                  <h2 className="font-display text-xl font-semibold mb-4">
-                    {CATEGORY_LABELS.coffee}
-                  </h2>
-                  <div className="divide-y divide-border mb-10">
-                    {coffeeItems.map((item) => (
-                      <OrderItemRow key={item.id} item={item} onAdd={addToCart} />
-                    ))}
-                  </div>
-                  <h2 className="font-display text-xl font-semibold mb-4">
-                    {CATEGORY_LABELS.food}
-                  </h2>
-                  <div className="divide-y divide-border">
-                    {foodItems.map((item) => (
-                      <OrderItemRow key={item.id} item={item} onAdd={addToCart} />
-                    ))}
-                  </div>
-                </section>
-
-                {/* Cart + checkout */}
-                <section className="border-t border-border pt-8">
-                  <h2 className="font-display text-xl font-semibold mb-4">Your Bag</h2>
-
-                  {orderStatus === "sent" ? (
-                    <p className="text-sm text-muted-foreground py-6 text-center">
-                      Order received — it{"'"}ll be ready when you reach. 💌
-                    </p>
-                  ) : cart.length === 0 ? (
-                    <p className="text-sm text-muted-foreground py-6 text-center">
-                      Your bag is empty — add something above.
-                    </p>
-                  ) : (
-                    <>
-                      <div className="divide-y divide-border mb-4">
-                        {cart.map((x) => (
-                          <CartLineItem key={x.id} item={x} onChangeQty={changeQty} />
-                        ))}
-                      </div>
-
-                      <div className="flex flex-col gap-3">
-                        <div className="flex justify-between text-sm">
-                          <span className="text-muted-foreground">Subtotal</span>
-                          <span className="font-medium">{formatBD(subtotal)}</span>
-                        </div>
-
-                        {/* Payment method — card-only; disabled until the
-                            payment gateway your company is building is
-                            wired in */}
-                        <div className="flex flex-col gap-1.5">
-                          <span className="text-[11px] tracking-[0.14em] uppercase text-muted-foreground">
-                            Payment
-                          </span>
-                          <button
-                            type="button"
-                            disabled
-                            title="Card payment is coming soon"
-                            className="w-full py-2 rounded-full border border-border text-xs text-muted-foreground/50 cursor-not-allowed"
-                          >
-                            Card — Coming Soon
-                          </button>
-                        </div>
-
-                        {orderStatus === "error" && (
-                          <p className="text-xs text-destructive">
-                            Couldn{"'"}t place the order — please try again.
-                          </p>
-                        )}
-                        <button
-                          onClick={placeOrder}
-                          disabled
-                          className={`w-full py-2.5 text-sm disabled:opacity-60 ${HEART_BUTTON_CLASS}`}
-                        >
-                          Ordering Opens Soon
-                        </button>
-                        <p className="text-[11px] text-muted-foreground text-center">
-                          Online ordering is launching shortly — check back soon.
-                        </p>
-                      </div>
-                    </>
-                  )}
-                </section>
-              </>
-            )}
-          </div>
-          {footer}
-        </main>
-      )}
-
-      {/* ══ CONTACT PAGE ══ */}
       {page === "contact" && (
         <main
           className="min-h-screen flex flex-col"
@@ -863,8 +588,8 @@ export default function App() {
         >
           <div className="flex-1 max-w-2xl w-full mx-auto px-6 pt-14 pb-16">
             <h1
-              className="font-display font-bold italic mb-14"
-              style={{ fontSize: "clamp(2.8rem, 8vw, 4.5rem)", lineHeight: 1.05, color: "#3a0d1e" }}
+              className="font-serif font-semibold mb-12"
+              style={{ fontSize: "clamp(2.1rem, 5.5vw, 3.1rem)", lineHeight: 1.1, color: "#3a0d1e" }}
             >
               Contact
             </h1>
