@@ -6,10 +6,12 @@ export function MenuItemRow({ item }: { item: MenuItem }) {
   return (
     <div className="py-5 flex justify-between items-start gap-6">
       <div>
-        <p className="text-[15px] font-medium">{item.name}</p>
-        <p className="text-sm text-muted-foreground mt-0.5">{item.desc}</p>
+        <p className="font-mono font-medium text-[15px]">{item.name}</p>
+        <p className="font-mono font-normal text-sm text-muted-foreground mt-0.5">{item.desc}</p>
       </div>
-      <span className="text-[14px] text-foreground shrink-0">{formatBD(item.price)}</span>
+      <span className="font-mono font-normal text-[14px] tabular-nums text-foreground shrink-0">
+        {formatBD(item.price)}
+      </span>
     </div>
   );
 }

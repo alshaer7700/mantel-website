@@ -81,14 +81,15 @@
 }
 
 @theme inline {
-  /* Two real families — `font-serif` and `font-mono` are now distinct.
-     `font-display` / `font-body` are kept as aliases so any missed call site
-     still resolves; they should be migrated to serif/mono and then dropped. */
+  /* Two real families, two utilities. `font-serif` = EB Garamond (400/600),
+     `font-mono` = Fira Mono (400/500). Every call site names one of them
+     explicitly; the old `font-display` / `font-body` aliases are gone.
+     `font-sans` is pointed at the mono stack so that any third-party or
+     preflight rule reaching for it lands on the primary face rather than
+     the system UI font. */
   --font-serif: var(--font-serif);
   --font-mono: var(--font-mono);
   --font-sans: var(--font-mono);
-  --font-display: var(--font-serif);
-  --font-body: var(--font-mono);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -136,8 +137,11 @@
     @apply border-border outline-ring/50;
   }
 
+  /* Root default. Fira Mono is the primary face in this direction, so an
+     element that somehow escapes an explicit family still lands on it
+     rather than on the browser's default serif. */
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-mono font-normal;
   }
 
   /**

@@ -17,9 +17,13 @@ import { CONTACT_ENDPOINT } from "@/lib/constants";
 // solid white background (matching --background), foreground text for contrast,
 // a visible border since white-on-white has no edge otherwise, smaller than the
 // original size, with a focus-visible ring for keyboard accessibility.
+// The families are deliberately NOT baked into these two constants: most
+// buttons are Fira Mono Medium, but the Menu category pills are EB Garamond
+// SemiBold. Tailwind can't resolve two competing `font-*` utilities in one
+// class string, so each call site names its own family + weight.
 const BRAND_BUTTON_CLASS =
   "rounded-full border-2 border-black bg-transparent text-foreground " +
-  "font-display tracking-[0.16em] uppercase hover:bg-foreground/10 transition-colors " +
+  "tracking-[0.16em] uppercase hover:bg-foreground/10 transition-colors " +
   "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground";
 
 // Heart-red CTA style for Menu / Pickup / Contact buttons — the homepage heart
@@ -27,7 +31,7 @@ const BRAND_BUTTON_CLASS =
 // need contrast against it; buttons elsewhere sit on the plain white page, so
 // heart-red gives them brand-colored contrast there instead.
 const HEART_BUTTON_CLASS =
-  "rounded-full bg-heart-red text-heart-red-foreground font-display tracking-[0.16em] uppercase " +
+  "rounded-full bg-heart-red text-heart-red-foreground tracking-[0.16em] uppercase " +
   "hover:opacity-90 transition-opacity " +
   "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-heart-red";
 
@@ -219,7 +223,7 @@ export default function App() {
               <button
                 key={target}
                 onClick={() => goTo(target)}
-                className="w-full text-left px-5 py-2 text-sm hover:bg-foreground/5 transition-colors"
+                className="w-full text-left px-5 py-2 font-serif font-normal text-[15px] hover:bg-foreground/5 transition-colors"
               >
                 {label}
               </button>
@@ -228,18 +232,18 @@ export default function App() {
         )}
         <button
           onClick={() => setPoliciesOpen((v) => !v)}
-          className="text-[13px] text-muted-foreground hover:text-foreground transition-colors"
+          className="font-serif font-normal text-[15px] text-muted-foreground hover:text-foreground transition-colors"
         >
           Terms and Policies
         </button>
       </div>
 
-      <p className="font-display text-[13px] text-muted-foreground tracking-wide">© 2026, Mantel</p>
+      <p className="font-serif font-normal text-[15px] text-muted-foreground tracking-wide">© 2026, Mantel</p>
     </footer>
   );
 
   return (
-    <div className="bg-white text-foreground font-body min-h-screen">
+    <div className="bg-white text-foreground font-mono font-normal min-h-screen">
 
       {/* ══ NAV ══ */}
       <nav
@@ -276,18 +280,20 @@ export default function App() {
                 className="flex items-center gap-1.5 hover:text-foreground transition-colors"
                 aria-label="Country and language"
               >
-                <span className="text-[14px] leading-none">🇧🇭</span>
-                <span className="text-[12px] tracking-wide">BD / EN</span>
+                <span className="font-mono text-[14px] leading-none">🇧🇭</span>
+                <span className="font-mono font-medium text-[12px] tracking-wide">BD / EN</span>
                 <ChevronDown
                   size={12}
                   strokeWidth={1.5}
                   className={`transition-transform duration-200 ${localeOpen ? "rotate-180" : ""}`}
                 />
               </button>
+              {/* w-72, not w-56: Fira Mono sets much wider than the old
+                  proportional face, and the locale line wrapped at w-56. */}
               {localeOpen && (
-                <div className="absolute right-0 top-full mt-3 w-56 bg-white border border-border rounded-2xl shadow-lg px-5 py-4 z-50">
-                  <p className="text-sm text-foreground">🇧🇭 Bahrain — BD · English</p>
-                  <p className="text-[11px] text-muted-foreground mt-1.5">
+                <div className="absolute right-0 top-full mt-3 w-72 bg-white border border-border rounded-2xl shadow-lg px-5 py-4 z-50">
+                  <p className="font-mono font-normal text-sm text-foreground">🇧🇭 Bahrain — BD · English</p>
+                  <p className="font-mono font-normal text-[11px] text-muted-foreground mt-1.5">
                     More regions and languages coming soon.
                   </p>
                 </div>
@@ -353,25 +359,25 @@ export default function App() {
         {/* Drawer links */}
         <nav className="flex flex-col px-5 pt-7 gap-5 flex-1">
           <button
-            className="text-left font-display text-2xl text-foreground hover:opacity-50 transition-opacity"
+            className="text-left font-mono font-medium text-xl text-foreground hover:opacity-50 transition-opacity"
             onClick={() => goTo("menu")}
           >
             Menu
           </button>
           <button
-            className="text-left font-display text-2xl text-foreground hover:opacity-50 transition-opacity"
+            className="text-left font-mono font-medium text-xl text-foreground hover:opacity-50 transition-opacity"
             onClick={() => goTo("contact")}
           >
             Contact
           </button>
           <button
-            className="text-left font-display text-2xl text-foreground hover:opacity-50 transition-opacity"
+            className="text-left font-mono font-medium text-xl text-foreground hover:opacity-50 transition-opacity"
             onClick={() => goTo("home")}
           >
             Our Story
           </button>
           <button
-            className="text-left font-display text-2xl text-foreground hover:opacity-50 transition-opacity"
+            className="text-left font-mono font-medium text-xl text-foreground hover:opacity-50 transition-opacity"
             onClick={() => goTo("faq")}
           >
             FAQ
@@ -405,7 +411,7 @@ export default function App() {
                 placeholder="Search the menu…"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                className="flex-1 rounded-full border border-border bg-white px-5 py-2.5 text-sm placeholder:text-muted-foreground outline-none focus:border-foreground/40 transition-colors"
+                className="flex-1 rounded-full border border-border bg-white px-5 py-2.5 font-mono font-normal text-sm placeholder:text-muted-foreground outline-none focus:border-foreground/40 transition-colors"
               />
               <button
                 onClick={() => { setSearchOpen(false); setQuery(""); }}
@@ -418,7 +424,7 @@ export default function App() {
             {query.trim() && (
               <div className="mt-4 max-h-72 overflow-y-auto divide-y divide-border">
                 {results.length === 0 ? (
-                  <p className="py-4 text-sm text-muted-foreground">No matches — try “latte” or “croissant”.</p>
+                  <p className="py-4 font-mono font-normal text-sm text-muted-foreground">No matches — try “latte” or “croissant”.</p>
                 ) : (
                   results.map((item) => (
                     <button
@@ -431,12 +437,12 @@ export default function App() {
                       className="w-full py-3 flex justify-between items-center gap-4 text-left hover:opacity-60 transition-opacity"
                     >
                       <span>
-                        <span className="block text-[14px] font-medium">{item.name}</span>
-                        <span className="block text-[11px] tracking-[0.14em] uppercase text-muted-foreground mt-0.5">
+                        <span className="block font-mono font-medium text-[14px]">{item.name}</span>
+                        <span className="block font-mono font-normal text-[11px] tracking-[0.14em] uppercase text-muted-foreground mt-0.5">
                           {CATEGORY_LABELS[item.category]}
                         </span>
                       </span>
-                      <span className="text-[13px] shrink-0">{formatBD(item.price)}</span>
+                      <span className="font-mono font-normal text-[13px] tabular-nums shrink-0">{formatBD(item.price)}</span>
                     </button>
                   ))
                 )}
@@ -454,14 +460,14 @@ export default function App() {
         >
           {profile ? (
             <div className="flex flex-col gap-3">
-              <p className="font-display text-xl">Hi, {profile.name}</p>
-              <p className="text-xs text-muted-foreground -mt-2">{profile.email}</p>
-              <p className="text-xs text-muted-foreground">
+              <p className="font-mono font-medium text-lg">Hi, {profile.name}</p>
+              <p className="font-mono font-normal text-xs text-muted-foreground -mt-2">{profile.email}</p>
+              <p className="font-mono font-normal text-xs text-muted-foreground">
                 Your details pre-fill the contact form on this device.
               </p>
               <button
                 onClick={() => { setProfile(null); setProfileDraft({ name: "", email: "" }); }}
-                className="self-start text-[11px] tracking-[0.14em] uppercase text-muted-foreground hover:text-foreground transition-colors"
+                className="self-start font-mono font-medium text-[11px] tracking-[0.14em] uppercase text-muted-foreground hover:text-foreground transition-colors"
               >
                 Sign out
               </button>
@@ -476,7 +482,7 @@ export default function App() {
               }}
               className="flex flex-col gap-2.5"
             >
-              <p className="font-display text-xl mb-1">Your details</p>
+              <p className="font-mono font-medium text-lg mb-1">Your details</p>
               <input
                 type="text"
                 placeholder="Name"
@@ -484,7 +490,7 @@ export default function App() {
                 maxLength={120}
                 value={profileDraft.name}
                 onChange={(e) => setProfileDraft((d) => ({ ...d, name: e.target.value }))}
-                className="rounded-full border border-border bg-white px-4 py-2 text-sm placeholder:text-muted-foreground outline-none focus:border-foreground/40 transition-colors"
+                className="rounded-full border border-border bg-white px-4 py-2 font-mono font-normal text-sm placeholder:text-muted-foreground outline-none focus:border-foreground/40 transition-colors"
               />
               <input
                 type="email"
@@ -493,15 +499,15 @@ export default function App() {
                 maxLength={254}
                 value={profileDraft.email}
                 onChange={(e) => setProfileDraft((d) => ({ ...d, email: e.target.value }))}
-                className="rounded-full border border-border bg-white px-4 py-2 text-sm placeholder:text-muted-foreground outline-none focus:border-foreground/40 transition-colors"
+                className="rounded-full border border-border bg-white px-4 py-2 font-mono font-normal text-sm placeholder:text-muted-foreground outline-none focus:border-foreground/40 transition-colors"
               />
               <button
                 type="submit"
-                className={`mt-1 px-6 py-2 text-sm self-start ${HEART_BUTTON_CLASS}`}
+                className={`mt-1 px-6 py-2 font-mono font-medium text-sm self-start ${HEART_BUTTON_CLASS}`}
               >
                 Save
               </button>
-              <p className="text-[11px] text-muted-foreground">
+              <p className="font-mono font-normal text-[11px] text-muted-foreground">
                 Saved on this device only — used to pre-fill the contact form.
               </p>
             </form>
@@ -553,13 +559,13 @@ export default function App() {
             >
                 <button
                   onClick={() => goTo("contact")}
-                  className={`px-4 py-1.5 text-xs sm:px-6 sm:py-2 sm:text-base ${BRAND_BUTTON_CLASS}`}
+                  className={`px-4 py-1.5 font-mono font-medium text-xs sm:px-6 sm:py-2 sm:text-base ${BRAND_BUTTON_CLASS}`}
                 >
                   Our Story
                 </button>
                 <button
                   onClick={() => goTo("menu")}
-                  className={`px-4 py-1.5 text-xs sm:px-6 sm:py-2 sm:text-base ${BRAND_BUTTON_CLASS}`}
+                  className={`px-4 py-1.5 font-mono font-medium text-xs sm:px-6 sm:py-2 sm:text-base ${BRAND_BUTTON_CLASS}`}
                 >
                 Menu
               </button>
@@ -577,11 +583,11 @@ export default function App() {
         >
           {menuLoading ? (
             <div className="flex-1 flex items-center justify-center py-24">
-              <p className="text-sm text-muted-foreground">Loading menu…</p>
+              <p className="font-mono font-normal text-sm text-muted-foreground">Loading menu…</p>
             </div>
           ) : menuError ? (
             <div className="flex-1 flex items-center justify-center py-24">
-              <p className="text-sm text-muted-foreground">
+              <p className="font-mono font-normal text-sm text-muted-foreground">
                 Couldn{"'"}t load the menu right now — please try again shortly.
               </p>
             </div>
@@ -590,13 +596,13 @@ export default function App() {
             <div className="flex-1 flex flex-col items-center justify-center gap-3 py-24">
               <button
                 onClick={() => setMenuCategory("coffee")}
-                className={`px-6 py-2 text-sm ${HEART_BUTTON_CLASS}`}
+                className={`px-6 py-2 font-serif font-semibold text-base ${HEART_BUTTON_CLASS}`}
               >
                 {CATEGORY_LABELS.coffee}
               </button>
               <button
                 onClick={() => setMenuCategory("food")}
-                className={`px-6 py-2 text-sm ${HEART_BUTTON_CLASS}`}
+                className={`px-6 py-2 font-serif font-semibold text-base ${HEART_BUTTON_CLASS}`}
               >
                 {CATEGORY_LABELS.food}
               </button>
@@ -606,12 +612,12 @@ export default function App() {
             <div className="flex-1 max-w-xl mx-auto w-full px-6 py-14">
               <button
                 onClick={() => setMenuCategory(null)}
-                className="text-[11px] tracking-[0.18em] uppercase text-muted-foreground hover:text-foreground transition-colors mb-10 flex items-center gap-2"
+                className="font-mono font-medium text-[11px] tracking-[0.18em] uppercase text-muted-foreground hover:text-foreground transition-colors mb-10 flex items-center gap-2"
               >
                 <ArrowLeft size={13} strokeWidth={1.75} />
                 Back
               </button>
-              <h2 className="font-display text-2xl font-semibold mb-8">
+              <h2 className="font-serif font-semibold text-3xl mb-8">
                 {CATEGORY_LABELS[menuCategory]}
               </h2>
               <div className="divide-y divide-border">
@@ -641,7 +647,7 @@ export default function App() {
 
             {sent ? (
               <div className="py-12 text-center">
-                <p className="text-muted-foreground text-sm tracking-wide">
+                <p className="font-mono font-normal text-muted-foreground text-sm tracking-wide">
                   Thank you — we{"'"}ll be in touch soon.
                 </p>
               </div>
@@ -668,7 +674,7 @@ export default function App() {
                     maxLength={120}
                     value={form.name}
                     onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-                    className="flex-1 min-w-0 rounded-full border border-border bg-white px-5 py-3 text-sm placeholder:text-muted-foreground outline-none focus:border-foreground/40 transition-colors"
+                    className="flex-1 min-w-0 rounded-full border border-border bg-white px-5 py-3 font-mono font-normal text-sm placeholder:text-muted-foreground outline-none focus:border-foreground/40 transition-colors"
                   />
                   <input
                     type="email"
@@ -677,7 +683,7 @@ export default function App() {
                     maxLength={254}
                     value={form.email}
                     onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
-                    className="flex-1 min-w-0 rounded-full border border-border bg-white px-5 py-3 text-sm placeholder:text-muted-foreground outline-none focus:border-foreground/40 transition-colors"
+                    className="flex-1 min-w-0 rounded-full border border-border bg-white px-5 py-3 font-mono font-normal text-sm placeholder:text-muted-foreground outline-none focus:border-foreground/40 transition-colors"
                   />
                 </div>
 
@@ -688,7 +694,7 @@ export default function App() {
                   maxLength={40}
                   value={form.phone}
                   onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
-                  className="rounded-full border border-border bg-white px-5 py-3 text-sm placeholder:text-muted-foreground outline-none focus:border-foreground/40 transition-colors"
+                  className="rounded-full border border-border bg-white px-5 py-3 font-mono font-normal text-sm placeholder:text-muted-foreground outline-none focus:border-foreground/40 transition-colors"
                 />
 
                 {/* Comment */}
@@ -698,15 +704,15 @@ export default function App() {
                   maxLength={2000}
                   value={form.comment}
                   onChange={(e) => setForm((f) => ({ ...f, comment: e.target.value }))}
-                  className="rounded-3xl border border-border bg-white px-5 py-4 text-sm placeholder:text-muted-foreground outline-none focus:border-foreground/40 transition-colors resize-none"
+                  className="rounded-3xl border border-border bg-white px-5 py-4 font-mono font-normal text-sm placeholder:text-muted-foreground outline-none focus:border-foreground/40 transition-colors resize-none"
                 />
 
-                {sendError && <p className="text-xs text-destructive">{sendError}</p>}
+                {sendError && <p className="font-mono font-normal text-xs text-destructive">{sendError}</p>}
                 <div className="mt-1">
                   <button
                     type="submit"
                     disabled={sending}
-                    className={`px-9 py-3 text-sm disabled:opacity-60 ${HEART_BUTTON_CLASS}`}
+                    className={`px-9 py-3 font-mono font-medium text-sm disabled:opacity-60 ${HEART_BUTTON_CLASS}`}
                   >
                     {sending ? "Sending…" : "Send"}
                   </button>
@@ -727,7 +733,7 @@ export default function App() {
       {page === "faq" && (
         <main className="min-h-screen flex flex-col" style={{ paddingTop: navHeight }}>
           <div className="flex-1 max-w-2xl w-full mx-auto px-6 py-14">
-            <h1 className="font-display text-5xl font-semibold mb-12">FAQ</h1>
+            <h1 className="font-mono font-medium text-4xl sm:text-5xl tracking-tight mb-12">FAQ</h1>
             <FaqAccordion items={FAQ_ITEMS} />
           </div>
           <NewsletterSignup />
