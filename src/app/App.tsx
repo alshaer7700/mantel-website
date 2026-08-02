@@ -569,13 +569,13 @@ export default function App() {
             >
                 <button
                   onClick={() => goTo("contact")}
-                  className={`px-4 py-1.5 font-mono font-medium text-xs sm:px-6 sm:py-2 sm:text-base ${BRAND_BUTTON_CLASS}`}
+                  className={`px-4 py-1.5 font-serif font-normal text-xs sm:px-6 sm:py-2 sm:text-base ${BRAND_BUTTON_CLASS}`}
                 >
                   Our Story
                 </button>
                 <button
                   onClick={() => goTo("menu")}
-                  className={`px-4 py-1.5 font-mono font-medium text-xs sm:px-6 sm:py-2 sm:text-base ${BRAND_BUTTON_CLASS}`}
+                  className={`px-4 py-1.5 font-serif font-normal text-xs sm:px-6 sm:py-2 sm:text-base ${BRAND_BUTTON_CLASS}`}
                 >
                 Menu
               </button>
@@ -687,7 +687,7 @@ export default function App() {
                     maxLength={120}
                     value={form.name}
                     onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-                    className="flex-1 min-w-0 rounded-full border border-border bg-white px-5 py-3 font-mono font-normal text-sm placeholder:text-muted-foreground outline-none focus:border-foreground/40 transition-colors"
+                    className="flex-1 min-w-0 rounded-full border border-border bg-white px-5 py-3 font-serif font-normal text-sm placeholder:text-muted-foreground outline-none focus:border-foreground/40 transition-colors"
                   />
                   <input
                     type="email"
@@ -696,7 +696,7 @@ export default function App() {
                     maxLength={254}
                     value={form.email}
                     onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
-                    className="flex-1 min-w-0 rounded-full border border-border bg-white px-5 py-3 font-mono font-normal text-sm placeholder:text-muted-foreground outline-none focus:border-foreground/40 transition-colors"
+                    className="flex-1 min-w-0 rounded-full border border-border bg-white px-5 py-3 font-serif font-normal text-sm placeholder:text-muted-foreground outline-none focus:border-foreground/40 transition-colors"
                   />
                 </div>
 
@@ -707,7 +707,7 @@ export default function App() {
                   maxLength={40}
                   value={form.phone}
                   onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
-                  className="rounded-full border border-border bg-white px-5 py-3 font-mono font-normal text-sm placeholder:text-muted-foreground outline-none focus:border-foreground/40 transition-colors"
+                  className="rounded-full border border-border bg-white px-5 py-3 font-serif font-normal text-sm placeholder:text-muted-foreground outline-none focus:border-foreground/40 transition-colors"
                 />
 
                 {/* Comment */}
@@ -717,7 +717,7 @@ export default function App() {
                   maxLength={2000}
                   value={form.comment}
                   onChange={(e) => setForm((f) => ({ ...f, comment: e.target.value }))}
-                  className="rounded-3xl border border-border bg-white px-5 py-4 font-mono font-normal text-sm placeholder:text-muted-foreground outline-none focus:border-foreground/40 transition-colors resize-none"
+                  className="rounded-3xl border border-border bg-white px-5 py-4 font-serif font-normal text-sm placeholder:text-muted-foreground outline-none focus:border-foreground/40 transition-colors resize-none"
                 />
 
                 {sendError && <p className="font-mono font-normal text-xs text-destructive">{sendError}</p>}
