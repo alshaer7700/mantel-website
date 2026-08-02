@@ -631,7 +631,9 @@ export default function App() {
               <h2 className="font-serif font-normal text-3xl mb-8">
                 {CATEGORY_LABELS[menuCategory]}
               </h2>
-              <div className="divide-y divide-border">
+              {/* Top rule + a bottom rule on every row — the same construction
+                  as FaqAccordion, so the menu list reads identically. */}
+              <div className="border-t border-foreground/60">
                 {(menuCategory === "coffee" ? coffeeItems : foodItems).map((item) => (
                   <MenuItemRow key={item.id} item={item} />
                 ))}
