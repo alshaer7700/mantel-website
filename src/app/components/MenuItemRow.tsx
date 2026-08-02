@@ -8,7 +8,14 @@ export function MenuItemRow({ item }: { item: MenuItem }) {
   return (
     <div className="py-5 flex justify-between items-start gap-6 border-b border-foreground/60">
       <div>
-        <p className="font-mono font-medium text-[15px]">{item.name}</p>
+        {/* Underline sits on an inline-block so it spans the name only, not the
+            full column. Same rule as the FAQ and the row divider: 1px solid
+            foreground/60. */}
+        <p className="font-mono font-medium text-[15px]">
+          <span className="inline-block border-b border-foreground/60 pb-[3px]">
+            {item.name}
+          </span>
+        </p>
         <p className="font-mono font-normal text-sm text-muted-foreground mt-0.5">{item.desc}</p>
       </div>
       <span className="font-mono font-normal text-[14px] tabular-nums text-foreground shrink-0">
