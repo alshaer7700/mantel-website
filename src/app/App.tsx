@@ -19,7 +19,7 @@ import { CONTACT_ENDPOINT } from "@/lib/constants";
 // original size, with a focus-visible ring for keyboard accessibility.
 // The families are deliberately NOT baked into these two constants: most
 // buttons are Fira Mono Medium, but the Menu category pills are EB Garamond
-// SemiBold. Tailwind can't resolve two competing `font-*` utilities in one
+// Regular. Tailwind can't resolve two competing `font-*` utilities in one
 // class string, so each call site names its own family + weight.
 const BRAND_BUTTON_CLASS =
   "rounded-full border-2 border-black bg-transparent text-foreground " +
@@ -607,13 +607,13 @@ export default function App() {
             <div className="flex-1 flex flex-col items-center justify-center gap-3 py-24">
               <button
                 onClick={() => setMenuCategory("coffee")}
-                className={`px-6 py-2 font-serif font-semibold text-base ${HEART_BUTTON_CLASS}`}
+                className={`px-6 py-2 font-serif font-normal text-base ${HEART_BUTTON_CLASS}`}
               >
                 {CATEGORY_LABELS.coffee}
               </button>
               <button
                 onClick={() => setMenuCategory("food")}
-                className={`px-6 py-2 font-serif font-semibold text-base ${HEART_BUTTON_CLASS}`}
+                className={`px-6 py-2 font-serif font-normal text-base ${HEART_BUTTON_CLASS}`}
               >
                 {CATEGORY_LABELS.food}
               </button>
@@ -628,10 +628,12 @@ export default function App() {
                 <ArrowLeft size={13} strokeWidth={1.75} />
                 Back
               </button>
-              <h2 className="font-serif font-semibold text-3xl mb-8">
+              <h2 className="font-serif font-normal text-3xl mb-8">
                 {CATEGORY_LABELS[menuCategory]}
               </h2>
-              <div className="divide-y divide-border">
+              {/* Top rule + a bottom rule on every row — the same construction
+                  as FaqAccordion, so the menu list reads identically. */}
+              <div className="border-t border-foreground/60">
                 {(menuCategory === "coffee" ? coffeeItems : foodItems).map((item) => (
                   <MenuItemRow key={item.id} item={item} />
                 ))}
