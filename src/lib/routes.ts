@@ -1,4 +1,4 @@
-import type { Page } from "@/app/types";
+import type { Page, MenuCategory } from "@/app/types";
 
 /*
  * The single source of truth for page ↔ URL. `page` used to be pure component
@@ -7,6 +7,9 @@ import type { Page } from "@/app/types";
  * it. Every navigation now goes through here, and the host configs
  * (netlify.toml, vercel.json) rewrite unknown paths to index.html so a refresh
  * on a deep link still boots the app.
+ *
+ * The menu carries a category in the path — /menu/coffee, /menu/food — so a
+ * category can be linked, bookmarked and shared. Bare /menu is the chooser.
  */
 export const ROUTES: Record<Page, string> = {
   home: "/",
@@ -19,7 +22,13 @@ export const ROUTES: Record<Page, string> = {
   refund: "/refund",
 };
 
-export function pathFor(page: Page): string {
+/** Category slugs double as the DB `category` values, so no mapping is needed. */
+const CATEGORIES: MenuCategory[] = ["coffee", "food"];
+
+export type Route = { page: Page; menuCategory: MenuCategory };
+
+export function pathFor(page: Page, menuCategory: MenuCategory = null): string {
+  if (page === "menu" && menuCategory) return `${ROUTES.menu}/${menuCategory}`;
   return ROUTES[page];
 }
 
@@ -27,19 +36,30 @@ const BY_PATH = new Map<string, Page>(
   (Object.entries(ROUTES) as [Page, string][]).map(([page, path]) => [path, page]),
 );
 
-/**
- * Resolve a pathname to a page. Trailing slashes and case are normalised so
- * /Menu/ and /menu land on the same place. Anything unrecognised falls back to
- * home — the caller replaces the URL to match, so the address bar never claims
- * to be somewhere the app isn't.
- */
-export function pageFor(pathname: string): Page {
-  const normalised = pathname.toLowerCase().replace(/\/+$/, "") || "/";
-  return BY_PATH.get(normalised) ?? "home";
+function normalise(pathname: string): string {
+  return pathname.toLowerCase().replace(/\/+$/, "") || "/";
 }
 
-/** True when the pathname maps to a real route, so callers know to correct it. */
-export function isKnownPath(pathname: string): boolean {
-  const normalised = pathname.toLowerCase().replace(/\/+$/, "") || "/";
-  return BY_PATH.has(normalised);
+/**
+ * Resolve a pathname to a page and, for the menu, a category. Trailing slashes
+ * and case are normalised, so /Menu/Coffee/ and /menu/coffee land together.
+ *
+ * Anything unrecognised degrades to the nearest real thing rather than a dead
+ * end: /menu/decaf becomes the menu chooser, and a path that matches nothing
+ * becomes home. Callers compare the result against pathFor() and correct the
+ * address bar, so it never claims to be somewhere the app isn't.
+ */
+export function routeFor(pathname: string): Route {
+  const path = normalise(pathname);
+
+  const exact = BY_PATH.get(path);
+  if (exact) return { page: exact, menuCategory: null };
+
+  if (path.startsWith(`${ROUTES.menu}/`)) {
+    const slug = path.slice(ROUTES.menu.length + 1);
+    const category = CATEGORIES.find((c) => c === slug) ?? null;
+    return { page: "menu", menuCategory: category };
+  }
+
+  return { page: "home", menuCategory: null };
 }

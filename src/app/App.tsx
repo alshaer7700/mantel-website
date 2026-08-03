@@ -11,7 +11,7 @@ import { supabase } from "@/lib/supabaseClient";
 import { loadProfile } from "@/lib/storage";
 import { formatBD, CATEGORY_LABELS } from "@/lib/format";
 import type { Page, MenuCategory, MenuItem, Profile } from "@/app/types";
-import { pathFor, pageFor, isKnownPath } from "@/lib/routes";
+import { pathFor, routeFor } from "@/lib/routes";
 import { CONTACT_ENDPOINT } from "@/lib/constants";
 
 // Shared style for primary CTAs across Homepage / Menu / Pickup, per ux-changes.md:
@@ -45,9 +45,11 @@ const HEART_H = 1540;
 export default function App() {
   // Boot from the URL, not from a hardcoded "home", so a deep link or a
   // refresh lands where it says it does.
-  const [page, setPage] = useState<Page>(() => pageFor(window.location.pathname));
+  const [page, setPage] = useState<Page>(() => routeFor(window.location.pathname).page);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [menuCategory, setMenuCategory] = useState<MenuCategory>(null);
+  const [menuCategory, setMenuCategory] = useState<MenuCategory>(
+    () => routeFor(window.location.pathname).menuCategory,
+  );
   const [form, setForm] = useState({ name: "", email: "", phone: "", comment: "" });
   const [sent, setSent] = useState(false);
   const [sending, setSending] = useState(false);
@@ -125,9 +127,9 @@ export default function App() {
   }, []);
 
   /* Everything a navigation closes, regardless of what triggered it. */
-  const settle = (p: Page) => {
+  const settle = (p: Page, category: MenuCategory = null) => {
     setPage(p);
-    setMenuCategory(null);
+    setMenuCategory(category);
     setSidebarOpen(false);
     setSearchOpen(false);
     setAccountOpen(false);
@@ -136,26 +138,34 @@ export default function App() {
     window.scrollTo(0, 0);
   };
 
-  const goTo = (p: Page) => {
-    if (window.location.pathname !== pathFor(p)) {
-      window.history.pushState({}, "", pathFor(p));
+  const goTo = (p: Page, category: MenuCategory = null) => {
+    const next = pathFor(p, category);
+    if (window.location.pathname !== next) {
+      window.history.pushState({}, "", next);
     }
-    settle(p);
+    settle(p, category);
   };
 
   /* Back and Forward move through the site instead of leaving it. */
   useEffect(() => {
-    const onPop = () => settle(pageFor(window.location.pathname));
+    const onPop = () => {
+      const r = routeFor(window.location.pathname);
+      settle(r.page, r.menuCategory);
+    };
     window.addEventListener("popstate", onPop);
     return () => window.removeEventListener("popstate", onPop);
   }, []);
 
-  /* An unrecognised path renders home; correct the address bar to match so it
-     never claims to be somewhere the app isn't. replaceState keeps the bad URL
-     out of history, so Back doesn't return to it. */
+  /* Correct the address bar to the canonical form of whatever the path
+     resolved to — a trailing slash, odd casing, an unknown category or an
+     unknown path all end up pointing at the page actually being rendered.
+     replaceState keeps the uncorrected URL out of history, so Back doesn't
+     return to it. */
   useEffect(() => {
-    if (!isKnownPath(window.location.pathname)) {
-      window.history.replaceState({}, "", pathFor("home"));
+    const r = routeFor(window.location.pathname);
+    const canonical = pathFor(r.page, r.menuCategory);
+    if (window.location.pathname !== canonical) {
+      window.history.replaceState({}, "", canonical);
     }
   }, []);
 
@@ -165,13 +175,13 @@ export default function App() {
    * crawlers. The click handler only takes over the plain left-click —
    * modified clicks fall through to the browser so ⌘-click still opens a tab.
    */
-  const linkTo = (p: Page) => ({
-    href: pathFor(p),
+  const linkTo = (p: Page, category: MenuCategory = null) => ({
+    href: pathFor(p, category),
     onClick: (e: React.MouseEvent) => {
       if (e.defaultPrevented || e.button !== 0) return;
       if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
       e.preventDefault();
-      goTo(p);
+      goTo(p, category);
     },
   });
 
@@ -482,8 +492,7 @@ export default function App() {
                     <button
                       key={item.id}
                       onClick={() => {
-                        goTo("menu");
-                        setMenuCategory(item.category);
+                        goTo("menu", item.category);
                         setQuery("");
                       }}
                       className="w-full py-3 flex justify-between items-center gap-4 text-left hover:opacity-60 transition-opacity"
@@ -648,29 +657,29 @@ export default function App() {
           ) : menuCategory === null ? (
             /* Category selection — two blush pills centered in whitespace */
             <div className="flex-1 flex flex-col items-center justify-center gap-3 py-24">
-              <button
-                onClick={() => setMenuCategory("coffee")}
-                className={`px-6 py-2 font-serif font-normal text-base ${HEART_BUTTON_CLASS}`}
+              <a
+                {...linkTo("menu", "coffee")}
+                className={`inline-block px-6 py-2 font-serif font-normal text-base ${HEART_BUTTON_CLASS}`}
               >
                 {CATEGORY_LABELS.coffee}
-              </button>
-              <button
-                onClick={() => setMenuCategory("food")}
-                className={`px-6 py-2 font-serif font-normal text-base ${HEART_BUTTON_CLASS}`}
+              </a>
+              <a
+                {...linkTo("menu", "food")}
+                className={`inline-block px-6 py-2 font-serif font-normal text-base ${HEART_BUTTON_CLASS}`}
               >
                 {CATEGORY_LABELS.food}
-              </button>
+              </a>
             </div>
           ) : (
             /* Menu items list */
             <div className="flex-1 max-w-xl mx-auto w-full px-6 py-14">
-              <button
-                onClick={() => setMenuCategory(null)}
-                className="font-serif font-medium text-[12px] tracking-[0.18em] uppercase text-muted-foreground hover:text-foreground transition-colors mb-10 flex items-center gap-2"
+              <a
+                {...linkTo("menu")}
+                className="font-serif font-medium text-[12px] tracking-[0.18em] uppercase text-muted-foreground hover:text-foreground transition-colors mb-10 flex items-center gap-2 w-fit"
               >
                 <ArrowLeft size={13} strokeWidth={1.75} />
                 Back
-              </button>
+              </a>
               <h2 className="font-serif font-normal text-3xl mb-8">
                 {CATEGORY_LABELS[menuCategory]}
               </h2>
