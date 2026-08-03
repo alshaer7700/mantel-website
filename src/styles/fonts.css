@@ -35,11 +35,9 @@
   font-display: swap;
 }
 
-:root {
-  --font-emoji: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji";
-  --font-serif: "EB Garamond", Georgia, "Times New Roman", serif, var(--font-emoji);
-  --font-mono: "Fira Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace, var(--font-emoji);
-}
+/* The --font-serif / --font-mono / --font-emoji stacks moved to tokens.css, so
+   every custom property lives in one file. This one keeps the @font-face
+   rules, next to the files they load. */
 
 @keyframes marquee {
   from { transform: translateX(0); }
