@@ -144,6 +144,36 @@ a{color:inherit}
 .cv-bottom{text-align:center;font-family:var(--font-mono);font-size:11px;letter-spacing:.05em;
            color:#8A8A8A;padding:40px 0;border-top:1px solid #EEEEEE}
 
+/* newsletter — the pill field and the mono subline both go */
+.cv-news{max-width:620px;margin:0 auto;padding:64px 24px;text-align:center}
+.cv-news-t{font-family:var(--font-serif);font-size:32px;font-weight:500;margin:0 0 16px}
+.cv-news-s{font-family:var(--font-serif);font-size:14px;color:#8A8A8A;margin:0 0 40px}
+.cv-news-f{display:flex;align-items:flex-end;gap:16px;max-width:400px;margin:0 auto}
+.cv-field{flex:1;min-width:0;border:0;border-bottom:1px solid #1A1A1A;border-radius:0;
+          background:transparent;font-family:var(--font-serif);font-size:17px;color:#1A1A1A;
+          padding:0 0 8px}
+.cv-field::placeholder{color:#8A8A8A}
+.cv-submit{border:0;border-bottom:1px solid #1A1A1A;border-radius:0;background:transparent;
+           font-family:var(--font-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;
+           color:#1A1A1A;padding:0 0 3px;cursor:pointer}
+.cv-sent{font-family:var(--font-serif);font-size:17px;color:#1A1A1A;padding:13px 0}
+
+/* cookie notice — a disclosure bar, not a consent manager */
+.cv-cookie{border-top:1px solid #EEEEEE;padding:24px 40px;display:flex;flex-wrap:wrap;
+           align-items:center;justify-content:space-between;gap:16px 40px}
+.cv-cookie p{font-family:var(--font-serif);font-size:15px;color:#1A1A1A;margin:0;max-width:56ch}
+.cv-cookie a{color:#1A1A1A;text-decoration:none;border-bottom:1px solid #1A1A1A}
+.cv-btn{background:#1A1A1A;color:#FFFFFF;border:0;border-radius:0;font-family:var(--font-mono);
+        font-size:12px;letter-spacing:.12em;text-transform:uppercase;padding:12px 24px;cursor:pointer}
+
+/* second line — the MM6 pattern */
+.cv-tabs{display:flex;gap:8px;padding:16px 40px 0}
+.cv-tab{font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+        padding:8px 16px;border:1px solid transparent;color:#8A8A8A;text-decoration:none}
+.cv-tab.is-on{border-color:#EEEEEE;color:#1A1A1A}
+
+.states{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-3)}
+
 /* ── surface blocks: defect list beside the target ────────── */
 .surface{display:grid;gap:var(--s-3)}
 .surface-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:var(--s-2) var(--s-3)}
@@ -203,6 +233,7 @@ a{color:inherit}
   .seq-row{grid-template-columns:34px 1fr;gap:var(--s-1) var(--s-3)}
   .seq-w{grid-column:2}
   .docfoot-grid,.cv-footer{grid-template-columns:1fr;gap:var(--s-4)}
+  .states{grid-template-columns:1fr}
   .scrollhint{display:block}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
@@ -604,7 +635,7 @@ a{color:inherit}
           <div><h4>Information</h4>
             <a href="#0">Menu</a><a href="#0">Our Story</a><a href="#0">FAQ</a><a href="#0">Terms &amp; Policies</a></div>
           <div><h4>Follow</h4>
-            <a href="#0">Instagram</a></div>
+            <a href="https://www.instagram.com/mantelbh/" target="_blank" rel="noopener noreferrer">Instagram</a></div>
         </div>
         <div class="cv-bottom">© 2026, Mantel</div>
       </div>
@@ -613,9 +644,123 @@ a{color:inherit}
     </div>
   </section>
 
+  <!-- ══ EXPANSION — surfaces the brief did not scope ══ -->
+  <section class="band">
+    <div class="rail"><b>09</b>Expansion<br>phase 5</div>
+    <div class="col stack-5">
+      <div class="stack-2">
+        <h2 class="h2">Three things the four surfaces don't cover</h2>
+        <p class="body">Added after checking the Margiela reference against the repo. The first two
+          already exist in the product and contradict the system; the third is the growth path the
+          brief points at but never draws.</p>
+      </div>
+
+      <!-- ── newsletter ── -->
+      <div class="stack-3">
+        <div class="surface-head">
+          <h3 class="h3">Newsletter</h3>
+          <p class="note">Already built · four conflicts</p>
+        </div>
+        <p class="body"><span class="mono-in">NewsletterSignup.tsx</span> ships today and breaks the
+          system in four places at once. It is the clearest example of why the tokens have to land
+          before anything else gets styled.</p>
+        <div class="faults">
+          <div class="fault"><span>—</span><span>The field and its wrapper are
+            <span class="mono-in">rounded-full</span> — the pill the brief bans outright</span></div>
+          <div class="fault"><span>—</span><span>The subline is Fira Mono, which principle 1 reserves
+            for functional text</span></div>
+          <div class="fault"><span>—</span><span>The headline is
+            <span class="mono-in">text-4xl md:text-5xl</span>, a size that appears nowhere in the
+            type table</span></div>
+          <div class="fault"><span>—</span><span>The confirmation ends in an emoji, which no font
+            subset carries and which falls through to the system face</span></div>
+        </div>
+        <p class="caption">Target — live render, both states</p>
+        <div class="states">
+          <div class="canvas">
+            <div class="cv-news">
+              <h4 class="cv-news-t">New sips, first look.</h4>
+              <p class="cv-news-s">Be the first to know when new drinks land at Mantel.</p>
+              <form class="cv-news-f" onsubmit="return false">
+                <input class="cv-field" type="email" placeholder="Email address" aria-label="Email address">
+                <button class="cv-submit" type="button">Sign up</button>
+              </form>
+            </div>
+          </div>
+          <div class="canvas">
+            <div class="cv-news">
+              <h4 class="cv-news-t">New sips, first look.</h4>
+              <p class="cv-news-s">Be the first to know when new drinks land at Mantel.</p>
+              <p class="cv-sent">You're on the list.</p>
+            </div>
+          </div>
+        </div>
+        <p class="note">The rule becomes the underline: the field is a ruled line, the submit is the
+          same mono underlined link used in the hero. One CTA treatment across the whole site.</p>
+      </div>
+
+      <!-- ── cookies ── -->
+      <div class="stack-3">
+        <div class="surface-head">
+          <h3 class="h3">Cookie notice</h3>
+          <p class="note">A disclosure, not a manager</p>
+        </div>
+        <div class="finding">
+          <p class="kicker">Smaller than Margiela's</p>
+          <p>Mantel runs no advertising or analytics technology. Nothing matched a search for
+            gtag, GA, GTM, Plausible, PostHog, Mixpanel, Segment, Meta or Hotjar across
+            <span class="mono-in">src/</span>, <span class="mono-in">index.html</span> and
+            <span class="mono-in">public/</span>, and the CSP allows connections only to Supabase and
+            FormSubmit. The stored values — <span class="mono-in">mantel-cart</span> and
+            <span class="mono-in">mantel-profile</span> — are functional, set by the user's own
+            actions. So what is owed here is a plain notice, not the preferences manager the
+            reference site needs. Copy Margiela's modal and you inherit a consent flow for tracking
+            that does not exist.</p>
+        </div>
+        <p class="caption">Target — live render</p>
+        <div class="canvas">
+          <div class="cv-cookie">
+            <p>We keep your bag and your details on this device so the site remembers you.
+              Nothing is shared, and we don't track you. <a href="#0">Privacy policy</a></p>
+            <button class="cv-btn" type="button">Got it</button>
+          </div>
+        </div>
+        <p class="note">Sits at the bottom of the page, dismissible, one solid rectangle — a
+          rectangle is not a pill. If analytics is ever added, this stops being sufficient: the
+          scripts must then be gated behind consent rather than announced after the fact.</p>
+      </div>
+
+      <!-- ── second line ── -->
+      <div class="stack-3">
+        <div class="surface-head">
+          <h3 class="h3">A second line</h3>
+          <p class="note">The MM6 pattern</p>
+        </div>
+        <p class="body">Phase 5 names MM6 as the model but never draws it. Margiela's answer is two
+          small tabs above the header — the identity switches, nothing else does. Same header, same
+          footer, same tokens; only the hero content and the copy voice change.</p>
+        <p class="caption">Target — live render</p>
+        <div class="canvas">
+          <div class="cv-tabs">
+            <a class="cv-tab is-on" href="#0">Mantel</a>
+            <a class="cv-tab" href="#0">Mantel Beans</a>
+          </div>
+          <div class="cv-header">
+            <nav class="cv-nav"><a href="#0">Menu</a><a href="#0">Our Story</a><a href="#0">Contact</a></nav>
+            <div class="cv-logo"><div class="n">Mantel.</div><div class="s">BAHRAIN</div></div>
+            <div class="cv-tools"><span>BD / EN</span><span>Search</span><span>Account</span><span>Cart</span></div>
+          </div>
+        </div>
+        <p class="scrollhint">Swipe the bar sideways to see the centred wordmark →</p>
+        <p class="note">The switcher appears only once a second line exists. Until then it is not a
+          disabled tab or a coming-soon label — it is absent.</p>
+      </div>
+    </div>
+  </section>
+
   <!-- ══ SEQUENCE ══ -->
   <section class="band">
-    <div class="rail"><b>09</b>Order<br>of work</div>
+    <div class="rail"><b>10</b>Order<br>of work</div>
     <div class="col stack-4">
       <div class="stack-2">
         <h2 class="h2">Build it in this order</h2>
@@ -641,7 +786,7 @@ a{color:inherit}
 
   <!-- ══ DONE ══ -->
   <section class="band">
-    <div class="rail"><b>10</b>Done<br>verify live</div>
+    <div class="rail"><b>11</b>Done<br>verify live</div>
     <div class="col stack-4">
       <div class="stack-2">
         <h2 class="h2">Checked on the deployed URL, not localhost</h2>
@@ -671,7 +816,7 @@ a{color:inherit}
     <div><h4>Information</h4>
       <a href="#0">Menu</a><a href="#0">Our Story</a><a href="#0">FAQ</a><a href="#0">Terms &amp; Policies</a></div>
     <div><h4>Follow</h4>
-      <a href="#0">Instagram</a></div>
+      <a href="https://www.instagram.com/mantelbh/" target="_blank" rel="noopener noreferrer">Instagram</a></div>
   </div>
   <div class="docfoot-bottom">© 2026, Mantel — this footer is the Phase 4 specification, running live</div>
 </footer>
