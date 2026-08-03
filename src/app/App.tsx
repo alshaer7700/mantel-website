@@ -11,6 +11,7 @@ import { supabase } from "@/lib/supabaseClient";
 import { loadProfile } from "@/lib/storage";
 import { formatBD, CATEGORY_LABELS } from "@/lib/format";
 import type { Page, MenuCategory, MenuItem, Profile } from "@/app/types";
+import { pathFor, pageFor, isKnownPath } from "@/lib/routes";
 import { CONTACT_ENDPOINT } from "@/lib/constants";
 
 // Shared style for primary CTAs across Homepage / Menu / Pickup, per ux-changes.md:
@@ -42,7 +43,9 @@ const HEART_W = 1515;
 const HEART_H = 1540;
 
 export default function App() {
-  const [page, setPage] = useState<Page>("home");
+  // Boot from the URL, not from a hardcoded "home", so a deep link or a
+  // refresh lands where it says it does.
+  const [page, setPage] = useState<Page>(() => pageFor(window.location.pathname));
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [menuCategory, setMenuCategory] = useState<MenuCategory>(null);
   const [form, setForm] = useState({ name: "", email: "", phone: "", comment: "" });
@@ -121,7 +124,8 @@ export default function App() {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  const goTo = (p: Page) => {
+  /* Everything a navigation closes, regardless of what triggered it. */
+  const settle = (p: Page) => {
     setPage(p);
     setMenuCategory(null);
     setSidebarOpen(false);
@@ -131,6 +135,45 @@ export default function App() {
     setLocaleOpen(false);
     window.scrollTo(0, 0);
   };
+
+  const goTo = (p: Page) => {
+    if (window.location.pathname !== pathFor(p)) {
+      window.history.pushState({}, "", pathFor(p));
+    }
+    settle(p);
+  };
+
+  /* Back and Forward move through the site instead of leaving it. */
+  useEffect(() => {
+    const onPop = () => settle(pageFor(window.location.pathname));
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, []);
+
+  /* An unrecognised path renders home; correct the address bar to match so it
+     never claims to be somewhere the app isn't. replaceState keeps the bad URL
+     out of history, so Back doesn't return to it. */
+  useEffect(() => {
+    if (!isKnownPath(window.location.pathname)) {
+      window.history.replaceState({}, "", pathFor("home"));
+    }
+  }, []);
+
+  /*
+   * Props for anything that navigates. These are real anchors with real hrefs,
+   * so they can be copied, bookmarked, opened in a new tab and read by
+   * crawlers. The click handler only takes over the plain left-click —
+   * modified clicks fall through to the browser so ⌘-click still opens a tab.
+   */
+  const linkTo = (p: Page) => ({
+    href: pathFor(p),
+    onClick: (e: React.MouseEvent) => {
+      if (e.defaultPrevented || e.button !== 0) return;
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      e.preventDefault();
+      goTo(p);
+    },
+  });
 
   // Anti-abuse for the FormSubmit relay (its captcha can't render over AJAX):
   // a hidden honeypot field bots tend to fill — FormSubmit silently discards
@@ -229,13 +272,13 @@ export default function App() {
                 ["Contact information", "contact"],
               ] as [string, Page][]
             ).map(([label, target]) => (
-              <button
+              <a
                 key={target}
-                onClick={() => goTo(target)}
-                className="w-full text-left px-5 py-2 font-serif font-normal text-[15px] hover:bg-foreground/5 transition-colors"
+                {...linkTo(target)}
+                className="block w-full text-left px-5 py-2 font-serif font-normal text-[15px] hover:bg-foreground/5 transition-colors"
               >
                 {label}
-              </button>
+              </a>
             ))}
           </div>
         )}
@@ -271,12 +314,12 @@ export default function App() {
               <span className="block w-[18px] h-px bg-foreground" />
               <span className="block w-[18px] h-px bg-foreground" />
             </button>
-            <button
-              onClick={() => goTo("home")}
+            <a
+              {...linkTo("home")}
               className="font-serif font-semibold text-[30px] leading-none tracking-[-0.01em] text-foreground hover:opacity-80 transition-opacity"
             >
               Mantel.
-            </button>
+            </a>
           </div>
 
           {/* Right: icons */}
@@ -367,30 +410,30 @@ export default function App() {
 
         {/* Drawer links */}
         <nav className="flex flex-col px-5 pt-7 gap-5 flex-1">
-          <button
+          <a
             className="text-left font-serif font-normal text-2xl text-foreground hover:opacity-50 transition-opacity"
-            onClick={() => goTo("menu")}
+            {...linkTo("menu")}
           >
             Menu
-          </button>
-          <button
+          </a>
+          <a
             className="text-left font-serif font-normal text-2xl text-foreground hover:opacity-50 transition-opacity"
-            onClick={() => goTo("contact")}
+            {...linkTo("contact")}
           >
             Contact
-          </button>
-          <button
+          </a>
+          <a
             className="text-left font-serif font-normal text-2xl text-foreground hover:opacity-50 transition-opacity"
-            onClick={() => goTo("home")}
+            {...linkTo("story")}
           >
             Our Story
-          </button>
-          <button
+          </a>
+          <a
             className="text-left font-serif font-normal text-2xl text-foreground hover:opacity-50 transition-opacity"
-            onClick={() => goTo("faq")}
+            {...linkTo("faq")}
           >
             FAQ
-          </button>
+          </a>
         </nav>
 
         {/* Drawer footer */}
@@ -567,18 +610,18 @@ export default function App() {
               className="absolute left-1/2 top-1/2 flex flex-col items-center gap-2 sm:gap-3"
               style={{ transform: `translate(-50%, calc(-50% + ${heartH * 0.12}px))` }}
             >
-                <button
-                  onClick={() => goTo("contact")}
+                <a
+                  {...linkTo("story")}
                   className={`px-4 py-1.5 font-serif font-normal text-xs sm:px-6 sm:py-2 sm:text-base ${BRAND_BUTTON_CLASS}`}
                 >
                   Our Story
-                </button>
-                <button
-                  onClick={() => goTo("menu")}
+                </a>
+                <a
+                  {...linkTo("menu")}
                   className={`px-4 py-1.5 font-serif font-normal text-xs sm:px-6 sm:py-2 sm:text-base ${BRAND_BUTTON_CLASS}`}
                 >
                 Menu
-              </button>
+              </a>
               </div>
             </div>
           </div>
@@ -644,6 +687,36 @@ export default function App() {
         </main>
       )}
 
+
+      {/* ══ OUR STORY ══ */}
+      {page === "story" && (
+        <main
+          className="min-h-screen flex flex-col"
+          style={{ paddingTop: navHeight }}
+        >
+          <div className="flex-1 max-w-2xl w-full mx-auto px-6 pt-14 pb-16">
+            <h1
+              className="font-serif font-semibold mb-12"
+              style={{ fontSize: "clamp(2.1rem, 5.5vw, 3.1rem)", lineHeight: 1.1, color: "#3a0d1e" }}
+            >
+              Our Story
+            </h1>
+            {/* The route, the layout and the one factual line are real. The
+                account of how Mantel started is the owner's to write — this
+                stays deliberately short rather than inventing a history. */}
+            <p className="font-serif font-normal text-[17px] leading-relaxed">
+              Mantel is a specialty coffee shop in Al Hidd, Bahrain.
+            </p>
+            <a
+              {...linkTo("menu")}
+              className="inline-block mt-10 font-mono font-normal text-[12px] tracking-[0.12em] uppercase border-b border-foreground pb-[3px] hover:opacity-60 transition-opacity"
+            >
+              View menu
+            </a>
+          </div>
+          {footer}
+        </main>
+      )}
 
       {page === "contact" && (
         <main

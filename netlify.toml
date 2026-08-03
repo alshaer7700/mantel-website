@@ -6,3 +6,14 @@
 
 [build.environment]
   NODE_VERSION = "24"
+
+# The app routes on the client, and Vite emits a single index.html. Without
+# this, a direct hit or a refresh on /menu asks Netlify for a file that was
+# never built and gets a 404. Status 200 rewrites rather than redirects, so the
+# URL the visitor typed survives for the app to read. Keep this last: Netlify
+# evaluates redirect rules in order, and a catch-all above a specific rule
+# would swallow it.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
