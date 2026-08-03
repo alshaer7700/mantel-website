@@ -42,6 +42,15 @@ const HEART_BUTTON_CLASS =
 const HEART_W = 1515;
 const HEART_H = 1540;
 
+// Header nav link — Fira Mono 13 / 400 / 0.08em / uppercase, straight off the
+// typography table. Every value is a token; none is written as a literal here.
+const HEADER_TYPE_CLASS =
+  "font-mono font-normal text-[length:var(--fs-nav)] tracking-[var(--ls-nav)] uppercase whitespace-nowrap";
+const HEADER_LINK_CLASS =
+  `${HEADER_TYPE_CLASS} text-[color:var(--ink)] hover:opacity-60 transition-opacity ` +
+  "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 " +
+  "focus-visible:outline-[color:var(--brand)]";
+
 export default function App() {
   // Boot from the URL, not from a hardcoded "home", so a deep link or a
   // refresh lands where it says it does.
@@ -254,7 +263,9 @@ export default function App() {
     return () => ro.disconnect();
   }, [page]);
 
-  const navHeight = "57px";
+  // 22px wordmark + the 7px sub-line under it, centred in the 20px of vertical
+  // padding the header spec asks for. The hero reads this to size its stage.
+  const navHeight = "70px";
 
   /* ── shared footer ── */
   const footer = (
@@ -309,31 +320,45 @@ export default function App() {
 
       {/* ══ NAV ══ */}
       <nav
-        className="fixed top-0 inset-x-0 z-50 bg-white border-b border-border"
+        className="fixed top-0 inset-x-0 z-50 bg-[color:var(--bg)] border-b border-[color:var(--line)]"
         style={{ height: navHeight }}
       >
-        <div className="flex items-center justify-between h-full px-5 md:px-8">
-          {/* Left: hamburger + wordmark */}
-          <div className="flex items-center gap-4">
+        {/* Three columns, equal outer tracks — that is what keeps the wordmark
+            optically centred no matter how long the nav or the tools get. */}
+        <div className="grid grid-cols-[1fr_auto_1fr] items-center h-full px-[var(--s-3)] lg:px-[var(--s-4)]">
+          {/* Left: nav on desktop, hamburger below 1024px */}
+          <div className="flex items-center">
             <button
               onClick={() => setSidebarOpen(true)}
-              className="flex flex-col gap-[5px] p-1 hover:opacity-60 transition-opacity"
+              className="flex flex-col gap-[5px] p-1 hover:opacity-60 transition-opacity lg:hidden"
               aria-label="Open navigation"
             >
               <span className="block w-[18px] h-px bg-foreground" />
               <span className="block w-[18px] h-px bg-foreground" />
               <span className="block w-[18px] h-px bg-foreground" />
             </button>
-            <a
-              {...linkTo("home")}
-              className="font-serif font-semibold text-[30px] leading-none tracking-[-0.01em] text-foreground hover:opacity-80 transition-opacity"
-            >
-              Mantel.
-            </a>
+            <nav className="hidden lg:flex items-center gap-[28px]" aria-label="Primary">
+              <a {...linkTo("menu")} className={HEADER_LINK_CLASS}>Menu</a>
+              <a {...linkTo("story")} className={HEADER_LINK_CLASS}>Our Story</a>
+              <a {...linkTo("contact")} className={HEADER_LINK_CLASS}>Contact</a>
+            </nav>
           </div>
 
-          {/* Right: icons */}
-          <div className="flex items-center gap-4 text-foreground/70">
+          {/* Centre: identity */}
+          <a
+            {...linkTo("home")}
+            className="justify-self-center text-center leading-[1.15] hover:opacity-80 transition-opacity"
+          >
+            <span className="block font-serif font-medium text-[length:var(--fs-logo)] tracking-[var(--ls-logo)] text-[color:var(--ink)]">
+              Mantel.
+            </span>
+            <span className="block font-mono font-normal text-[7px] tracking-[0.2em] uppercase text-[color:var(--ink-muted)]">
+              Bahrain
+            </span>
+          </a>
+
+          {/* Right: tools */}
+          <div className="justify-self-end flex items-center gap-[var(--s-2)] lg:gap-[20px] text-foreground/70">
             {/* Locale pill — single locale for now (Bahrain / BD / English),
                 shown as a dropdown to match the reference layout */}
             <div className="relative hidden sm:block">
@@ -343,7 +368,7 @@ export default function App() {
                 aria-label="Country and language"
               >
                 <span className="font-mono text-[14px] leading-none">🇧🇭</span>
-                <span className="font-mono font-medium text-[12px] tracking-wide">BD / EN</span>
+                <span className={HEADER_TYPE_CLASS}>BD / EN</span>
                 <ChevronDown
                   size={12}
                   strokeWidth={1.5}
@@ -366,7 +391,8 @@ export default function App() {
               className="hover:text-foreground transition-colors"
               aria-label="Search"
             >
-              <Search size={17} strokeWidth={1.5} />
+              <Search size={17} strokeWidth={1.5} className="lg:hidden" />
+              <span className={`hidden lg:inline ${HEADER_TYPE_CLASS}`}>Search</span>
             </button>
             <button
               onClick={() => {
@@ -378,7 +404,8 @@ export default function App() {
               className="hover:text-foreground transition-colors"
               aria-label="Account"
             >
-              <User size={17} strokeWidth={1.5} />
+              <User size={17} strokeWidth={1.5} className="lg:hidden" />
+              <span className={`hidden lg:inline ${HEADER_TYPE_CLASS}`}>Account</span>
             </button>
           </div>
         </div>
