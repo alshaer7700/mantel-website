@@ -62,7 +62,7 @@ a{color:inherit}
    padding:var(--s-3) var(--s-4);display:inline-flex;flex-direction:column;
    align-items:center;gap:2px;align-self:flex-start}
 .wordmark{font-family:var(--font-serif);font-size:22px;font-weight:500;letter-spacing:.02em;line-height:1.1}
-.wordmark-sub{font-family:var(--font-mono);font-size:8px;font-weight:400;letter-spacing:.2em;
+.wordmark-sub{font-family:var(--font-mono);font-size:7px;font-weight:400;letter-spacing:.2em;
               text-transform:uppercase;color:#8A8A8A}
 .meta{display:grid;grid-template-columns:auto 1fr;gap:var(--s-1) var(--s-3);
       font-family:var(--font-mono);font-size:12px;line-height:1.7;max-width:620px}
@@ -112,12 +112,16 @@ a{color:inherit}
            text-transform:uppercase;color:#1A1A1A;text-decoration:none}
 .cv-logo{justify-self:center;text-align:center;line-height:1.15}
 .cv-logo .n{font-family:var(--font-serif);font-size:22px;font-weight:500;letter-spacing:.02em}
-.cv-logo .s{font-family:var(--font-mono);font-size:8px;font-weight:400;letter-spacing:.2em;
+.cv-logo .s{font-family:var(--font-mono);font-size:7px;font-weight:400;letter-spacing:.2em;
             text-transform:uppercase;color:#8A8A8A}
 .cv-tools{justify-self:end;display:flex;gap:20px}
 .cv-hero{height:520px;display:flex;flex-direction:column;align-items:center;
          justify-content:center;gap:40px;padding:24px}
-.cv-heart{height:65%;width:auto;object-fit:contain;transform:translateX(-3%)}
+/* The embedded artwork is trimmed to its own edges, so the tip no longer sits
+   at 50% of the box the way the untrimmed asset does. Its tip measures at
+   41.76% of the width, so +8.24% puts it back on the page's centre axis —
+   the same axis the caption, the CTA and the footer sit on. */
+.cv-heart{height:65%;width:auto;object-fit:contain;transform:translateX(8.24%)}
 .cv-cap{font-family:var(--font-serif);font-size:18px;text-align:center}
 .cv-link{font-family:var(--font-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;
          border-bottom:1px solid #1A1A1A;padding-bottom:3px;text-decoration:none;color:#1A1A1A}
