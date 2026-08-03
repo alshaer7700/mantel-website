@@ -1,18 +1,32 @@
 import type { MenuItem } from "@/app/types";
-import { formatBD } from "@/lib/format";
+import { formatPrice } from "@/lib/format";
 
-// Pure display — no cart interaction. Used only by the browse-only Menu page.
-// The rule under each row matches the FAQ accordion exactly: a bottom border
-// at foreground/60, with the list container supplying the matching top rule.
+/*
+ * One menu item. Pure display — no cart interaction.
+ *
+ * There is no rule under the row. A divider under every item made the menu
+ * read as a spreadsheet; the only rule on the page now sits between
+ * categories. What separates one item from the next is space: 24px between
+ * items against 4px between a name and its own description, so the pair binds
+ * and the rows stay apart.
+ *
+ * The description is EB Garamond, not Fira Mono. Mono is for functional text —
+ * a description is narrative, and setting it in a code face broke the reading
+ * rhythm. The price stays mono, where the decimals line up.
+ */
 export function MenuItemRow({ item }: { item: MenuItem }) {
   return (
-    <div className="py-5 flex justify-between items-start gap-6 border-b border-foreground/60">
+    <div className="flex justify-between items-baseline mb-[var(--s-3)]">
       <div>
-        <p className="font-serif font-semibold text-[15px]">{item.name}</p>
-        <p className="font-mono font-normal text-sm text-muted-foreground mt-0.5">{item.desc}</p>
+        <p className="font-serif font-medium text-[length:var(--fs-item)] text-[color:var(--ink)]">
+          {item.name}
+        </p>
+        <p className="font-serif font-normal text-[length:var(--fs-desc)] leading-[1.45] text-[color:var(--ink-muted)] mt-[4px]">
+          {item.desc}
+        </p>
       </div>
-      <span className="font-mono font-normal text-[14px] tabular-nums text-foreground shrink-0">
-        {formatBD(item.price)}
+      <span className="font-mono font-normal text-[length:var(--fs-price)] tabular-nums whitespace-nowrap ml-[var(--s-2)] text-[color:var(--ink)]">
+        {formatPrice(item.price)}
       </span>
     </div>
   );
