@@ -1,0 +1,98 @@
+/*
+ * Mantel design tokens — the entire vocabulary of the brand, in one file.
+ *
+ * The rule this file exists to enforce: if a value is not here, it does not
+ * ship. Five colours, six gaps, two families, eleven type roles. Anything a
+ * component needs beyond that is a design decision, not a coding one.
+ *
+ * This layer is additive. theme.css still carries the older Figma-export
+ * variables (blush --accent, --radius: 9999px, the shadcn scale) because live
+ * components still read them; those retire as each redesign phase lands, not
+ * in one sweep. Where the two disagree, this file is the intended direction.
+ */
+
+:root {
+  /* ── Families ───────────────────────────────────────────────────────────
+     Moved here from fonts.css so every custom property lives in one place;
+     fonts.css keeps the @font-face rules, next to the files they load.
+
+     The fallback stacks are deliberate and worth preserving: Georgia and
+     Times carry the serif if EB Garamond fails, and --font-emoji sits last in
+     both because neither subset contains emoji — without it, a flag or symbol
+     glyph would drop to a random system face mid-sentence. */
+  --font-emoji: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji";
+  --font-serif: "EB Garamond", Georgia, "Times New Roman", serif, var(--font-emoji);
+  --font-mono:  "Fira Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace, var(--font-emoji);
+
+  /* ── Colour ─────────────────────────────────────────────────────────────
+     Five values. The red belongs to the heart: it is an accent, never a
+     button fill, a background or a hover state. */
+  --ink:       #1A1A1A;  /* all primary text */
+  --ink-muted: #8A8A8A;  /* descriptions, secondary */
+  --brand:     #8B1A1A;  /* heart red — accents only */
+  --line:      #EEEEEE;  /* category dividers only */
+  --bg:        #FFFFFF;  /* the ground, everywhere */
+
+  /*
+   * One deliberate deviation from the brief, which names this token --muted.
+   * theme.css already defines --muted as #F5F5F5 — the shadcn *surface* fill
+   * behind bg-muted — and it is imported later, so a token called --muted here
+   * would silently lose to it. Worse, forcing the order the other way would
+   * repaint every muted background with a text grey. They are different
+   * things that happened to want the same name, so this one is --ink-muted:
+   * the muted member of the ink family. When theme.css retires as the
+   * redesign phases land, it can take the brief's name.
+   */
+
+  /*
+   * Accessibility note, carried from the redesign audit.
+   * #8A8A8A on #FFFFFF measures 3.45:1. That clears WCAG AA for large text
+   * but not the 4.5:1 that 14px menu descriptions need. #767676 measures
+   * 4.54:1 and is visually indistinguishable at that size. The brief
+   * specifies #8A8A8A, so that is what ships here — changing a brand value is
+   * the owner's call, not a build-time one. If it is approved, this is the
+   * only line that changes.
+   */
+
+  /* ── Spacing ────────────────────────────────────────────────────────────
+     The only permitted gaps. If a layout wants 30px, the answer is 24 or 40. */
+  --s-1: 8px;
+  --s-2: 16px;
+  --s-3: 24px;
+  --s-4: 40px;
+  --s-5: 64px;
+  --s-6: 96px;
+
+  /* ── Type roles ─────────────────────────────────────────────────────────
+     One token per row of the typography table. Named by job rather than by
+     size so two roles that happen to share 14px can diverge later without a
+     rename, and so a call site reads as intent instead of measurement. */
+  --fs-logo:         22px;
+  --fs-nav:          13px;
+  --fs-heading:      32px;
+  --fs-item:         17px;
+  --fs-desc:         14px;
+  --fs-price:        14px;
+  --fs-hero-caption: 18px;
+  --fs-hero-link:    12px;
+  --fs-foot-title:   12px;
+  --fs-foot-link:    15px;
+  --fs-copyright:    11px;
+
+  /* Tracking. Only the roles that carry it — everything else is 0. */
+  --ls-logo:       0.02em;
+  --ls-nav:        0.08em;
+  --ls-hero-link:  0.12em;
+  --ls-foot-title: 0.1em;
+  --ls-copyright:  0.05em;
+
+  /*
+   * Weights are 400 or 500 throughout and are stated at the call site, with
+   * one exception worth a token because it encodes a decision rather than a
+   * value: the table asks for 600 on the footer column title, and the Fira
+   * Mono subset ships only 400 and 500. Rather than let the browser
+   * synthesise a fake bold — which smears a monospace face badly — the role
+   * sets 500. Add the real SemiBold cut and this becomes 600.
+   */
+  --fw-foot-title: 500;
+}

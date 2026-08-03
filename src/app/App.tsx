@@ -6,7 +6,6 @@ import { FaqAccordion } from "@/app/components/FaqAccordion";
 import { NewsletterSignup } from "@/app/components/NewsletterSignup";
 import { PRIVACY_POLICY, TERMS_OF_SERVICE, REFUND_POLICY, FAQ_ITEMS } from "@/app/content/legal";
 import { ArrowLeft, ChevronDown, Instagram, Search, User, X } from "lucide-react";
-import logoHeart from "@/imports/Logo-1.webp";
 import { supabase } from "@/lib/supabaseClient";
 import { loadProfile } from "@/lib/storage";
 import { formatBD, CATEGORY_LABELS } from "@/lib/format";
@@ -14,33 +13,28 @@ import type { Page, MenuCategory, MenuItem, Profile } from "@/app/types";
 import { pathFor, routeFor } from "@/lib/routes";
 import { CONTACT_ENDPOINT } from "@/lib/constants";
 
-// Shared style for primary CTAs across Homepage / Menu / Pickup, per ux-changes.md:
-// solid white background (matching --background), foreground text for contrast,
-// a visible border since white-on-white has no edge otherwise, smaller than the
-// original size, with a focus-visible ring for keyboard accessibility.
-// The families are deliberately NOT baked into these two constants: most
-// buttons are Fira Mono Medium, but the Menu category pills are EB Garamond
-// Regular. Tailwind can't resolve two competing `font-*` utilities in one
-// class string, so each call site names its own family + weight.
-const BRAND_BUTTON_CLASS =
-  "rounded-full border-2 border-black bg-transparent text-foreground " +
-  "tracking-[0.16em] uppercase hover:bg-foreground/10 transition-colors " +
-  "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground";
+// Served from public/ rather than bundled: a brand asset with its own stable
+// URL, re-exported clean from the 5788px original with the tip on the centre
+// axis. The pill CTAs that used to sit on it are gone, and with them the two
+// rounded-button constants that dressed them.
+const heartArtwork = "/heart.webp";
 
-// Heart-red CTA style for Menu / Pickup / Contact buttons — the homepage heart
-// buttons stay white (BRAND_BUTTON_CLASS) since they sit ON the red heart and
-// need contrast against it; buttons elsewhere sit on the plain white page, so
-// heart-red gives them brand-colored contrast there instead.
+// Still worn by the account panel and the contact form's send button, neither
+// of which the redesign phases touch. The homepage pills that shared this
+// vocabulary are gone; these retire when those surfaces get their own pass.
 const HEART_BUTTON_CLASS =
   "rounded-full bg-heart-red text-heart-red-foreground tracking-[0.16em] uppercase " +
   "hover:opacity-90 transition-opacity " +
   "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-heart-red";
 
-// Intrinsic size of the heart artwork. The canvas is padded on the left so the
-// heart's tip lands at exactly 50% width — the tip, the CTAs and the footer
-// then share one vertical axis.
-const HEART_W = 1515;
-const HEART_H = 1540;
+// Header nav link — Fira Mono 13 / 400 / 0.08em / uppercase, straight off the
+// typography table. Every value is a token; none is written as a literal here.
+const HEADER_TYPE_CLASS =
+  "font-mono font-normal text-[length:var(--fs-nav)] tracking-[var(--ls-nav)] uppercase whitespace-nowrap";
+const HEADER_LINK_CLASS =
+  `${HEADER_TYPE_CLASS} text-[color:var(--ink)] hover:opacity-60 transition-opacity ` +
+  "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 " +
+  "focus-visible:outline-[color:var(--brand)]";
 
 export default function App() {
   // Boot from the URL, not from a hardcoded "home", so a deep link or a
@@ -91,8 +85,7 @@ export default function App() {
   /* ── account (persisted) ── */
   const [accountOpen, setAccountOpen] = useState(false);
 
-  /* ── small popovers: footer "Terms and Policies" + nav locale pill ── */
-  const [policiesOpen, setPoliciesOpen] = useState(false);
+  /* ── nav locale pill ── */
   const [localeOpen, setLocaleOpen] = useState(false);
 
   const [profile, setProfile] = useState<Profile | null>(() => loadProfile("mantel-profile"));
@@ -118,7 +111,6 @@ export default function App() {
         setSidebarOpen(false);
         setSearchOpen(false);
         setAccountOpen(false);
-        setPoliciesOpen(false);
         setLocaleOpen(false);
       }
     };
@@ -133,7 +125,6 @@ export default function App() {
     setSidebarOpen(false);
     setSearchOpen(false);
     setAccountOpen(false);
-    setPoliciesOpen(false);
     setLocaleOpen(false);
     window.scrollTo(0, 0);
   };
@@ -226,81 +217,60 @@ export default function App() {
     }
   };
 
-  /* The heart is object-contained, so its rendered height is whichever of the
-     available height / width-derived height is smaller. The CTA stack sits at
-     62% of the ARTWORK height (see the note by the markup), which is 12% of
-     that height below the centre — measured here rather than expressed as a
-     CSS percentage, because a percentage would resolve against the element box
-     and that box is letterboxed whenever width is the binding constraint. */
-  const heartBoxRef = useRef<HTMLDivElement>(null);
-  const [heartH, setHeartH] = useState(0);
-  // Keyed on `page`: the observed element only exists while the home page is
-  // mounted, so the effect has to re-attach every time we come back to it.
-  // With an empty dep list it observed the first instance only — leaving home
-  // fired a 0x0 measurement and returning never re-measured, so the CTAs
-  // dropped to the heart's geometric centre, which is inside the cleft.
-  useEffect(() => {
-    const el = heartBoxRef.current;
-    if (!el) return;
-    const measure = (w: number, h: number) => {
-      if (w > 0 && h > 0) setHeartH(Math.min(h, w * (HEART_H / HEART_W)));
-    };
-    measure(el.clientWidth, el.clientHeight);
-    const ro = new ResizeObserver(([entry]) => {
-      const { width, height } = entry.contentRect;
-      measure(width, height);
-    });
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, [page]);
 
-  const navHeight = "57px";
+  // 22px wordmark + the 7px sub-line under it, centred in the 20px of vertical
+  // padding the header spec asks for. The hero reads this to size its stage.
+  const navHeight = "70px";
 
   /* ── shared footer ── */
+  /* Three columns above a centred strip. It used to be three centred lines of
+     near-identical size — three orphans with no grouping and nothing leading.
+     Grouping under mono titles gives each link a reason to be where it is.
+     Exactly three type levels: column title, link, copyright. */
+  const footerLink =
+    "font-serif font-normal text-[length:var(--fs-foot-link)] text-[color:var(--ink)] " +
+    "block mb-[14px] w-fit hover:opacity-60 transition-opacity " +
+    "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 " +
+    "focus-visible:outline-[color:var(--brand)]";
+  const footerTitle =
+    "font-mono text-[length:var(--fs-foot-title)] font-[number:var(--fw-foot-title)] " +
+    "tracking-[var(--ls-foot-title)] uppercase text-[color:var(--ink)] mb-[var(--s-3)]";
+
   const footer = (
-    <footer className="flex flex-col items-center gap-4 pb-10 pt-6">
-      <a
-        href="https://www.instagram.com/mantelbh/"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-foreground/60 hover:text-foreground transition-colors"
-        aria-label="Instagram"
-      >
-        <Instagram size={20} strokeWidth={1.5} />
-      </a>
-
-      {/* Terms and Policies — trigger + upward popover, per the reference */}
-      <div className="relative">
-        {policiesOpen && (
-          <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-52 bg-white border border-border rounded-2xl shadow-lg py-2 z-50">
-            {(
-              [
-                ["Privacy policy", "privacy"],
-                ["Terms of service", "terms"],
-                ["Refund policy", "refund"],
-                ["FAQ", "faq"],
-                ["Contact information", "contact"],
-              ] as [string, Page][]
-            ).map(([label, target]) => (
-              <a
-                key={target}
-                {...linkTo(target)}
-                className="block w-full text-left px-5 py-2 font-serif font-normal text-[15px] hover:bg-foreground/5 transition-colors"
-              >
-                {label}
-              </a>
-            ))}
-          </div>
-        )}
-        <button
-          onClick={() => setPoliciesOpen((v) => !v)}
-          className="font-serif font-normal text-[15px] text-muted-foreground hover:text-foreground transition-colors"
-        >
-          Terms and Policies
-        </button>
+    /* 96px of clearance above the footer on every page. */
+    <footer className="mt-[var(--s-6)]">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-[var(--s-4)] max-w-[1000px] mx-auto px-[var(--s-3)] pb-[var(--s-4)]">
+        <div>
+          <h4 className={footerTitle}>Contact</h4>
+          <p className="font-serif font-normal text-[length:var(--fs-foot-link)] text-[color:var(--ink)] mb-[14px]">
+            Al Hidd, Bahrain
+          </p>
+          <a {...linkTo("contact")} className={footerLink}>Get in touch</a>
+        </div>
+        <div>
+          <h4 className={footerTitle}>Information</h4>
+          <a {...linkTo("menu")} className={footerLink}>Menu</a>
+          <a {...linkTo("story")} className={footerLink}>Our Story</a>
+          <a {...linkTo("faq")} className={footerLink}>FAQ</a>
+          <a {...linkTo("privacy")} className={footerLink}>Privacy policy</a>
+          <a {...linkTo("terms")} className={footerLink}>Terms of service</a>
+          <a {...linkTo("refund")} className={footerLink}>Refund policy</a>
+        </div>
+        <div>
+          <h4 className={footerTitle}>Follow</h4>
+          <a
+            href="https://www.instagram.com/mantelbh/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={footerLink}
+          >
+            Instagram
+          </a>
+        </div>
       </div>
-
-      <p className="font-serif font-normal text-[15px] text-muted-foreground tracking-wide">© 2026, Mantel</p>
+      <div className="border-t border-[color:var(--line)] py-[var(--s-4)] px-[var(--s-3)] text-center font-mono font-normal text-[length:var(--fs-copyright)] tracking-[var(--ls-copyright)] text-[color:var(--ink-muted)]">
+        © 2026, Mantel
+      </div>
     </footer>
   );
 
@@ -309,31 +279,45 @@ export default function App() {
 
       {/* ══ NAV ══ */}
       <nav
-        className="fixed top-0 inset-x-0 z-50 bg-white border-b border-border"
+        className="fixed top-0 inset-x-0 z-50 bg-[color:var(--bg)] border-b border-[color:var(--line)]"
         style={{ height: navHeight }}
       >
-        <div className="flex items-center justify-between h-full px-5 md:px-8">
-          {/* Left: hamburger + wordmark */}
-          <div className="flex items-center gap-4">
+        {/* Three columns, equal outer tracks — that is what keeps the wordmark
+            optically centred no matter how long the nav or the tools get. */}
+        <div className="grid grid-cols-[1fr_auto_1fr] items-center h-full px-[var(--s-3)] lg:px-[var(--s-4)]">
+          {/* Left: nav on desktop, hamburger below 1024px */}
+          <div className="flex items-center">
             <button
               onClick={() => setSidebarOpen(true)}
-              className="flex flex-col gap-[5px] p-1 hover:opacity-60 transition-opacity"
+              className="flex flex-col gap-[5px] p-1 hover:opacity-60 transition-opacity lg:hidden"
               aria-label="Open navigation"
             >
               <span className="block w-[18px] h-px bg-foreground" />
               <span className="block w-[18px] h-px bg-foreground" />
               <span className="block w-[18px] h-px bg-foreground" />
             </button>
-            <a
-              {...linkTo("home")}
-              className="font-serif font-semibold text-[30px] leading-none tracking-[-0.01em] text-foreground hover:opacity-80 transition-opacity"
-            >
-              Mantel.
-            </a>
+            <nav className="hidden lg:flex items-center gap-[28px]" aria-label="Primary">
+              <a {...linkTo("menu")} className={HEADER_LINK_CLASS}>Menu</a>
+              <a {...linkTo("story")} className={HEADER_LINK_CLASS}>Our Story</a>
+              <a {...linkTo("contact")} className={HEADER_LINK_CLASS}>Contact</a>
+            </nav>
           </div>
 
-          {/* Right: icons */}
-          <div className="flex items-center gap-4 text-foreground/70">
+          {/* Centre: identity */}
+          <a
+            {...linkTo("home")}
+            className="justify-self-center text-center leading-[1.15] hover:opacity-80 transition-opacity"
+          >
+            <span className="block font-serif font-medium text-[length:var(--fs-logo)] tracking-[var(--ls-logo)] text-[color:var(--ink)]">
+              Mantel.
+            </span>
+            <span className="block font-mono font-normal text-[7px] tracking-[0.2em] uppercase text-[color:var(--ink-muted)]">
+              Bahrain
+            </span>
+          </a>
+
+          {/* Right: tools */}
+          <div className="justify-self-end flex items-center gap-[var(--s-2)] lg:gap-[20px] text-foreground/70">
             {/* Locale pill — single locale for now (Bahrain / BD / English),
                 shown as a dropdown to match the reference layout */}
             <div className="relative hidden sm:block">
@@ -343,7 +327,7 @@ export default function App() {
                 aria-label="Country and language"
               >
                 <span className="font-mono text-[14px] leading-none">🇧🇭</span>
-                <span className="font-mono font-medium text-[12px] tracking-wide">BD / EN</span>
+                <span className={HEADER_TYPE_CLASS}>BD / EN</span>
                 <ChevronDown
                   size={12}
                   strokeWidth={1.5}
@@ -366,7 +350,8 @@ export default function App() {
               className="hover:text-foreground transition-colors"
               aria-label="Search"
             >
-              <Search size={17} strokeWidth={1.5} />
+              <Search size={17} strokeWidth={1.5} className="lg:hidden" />
+              <span className={`hidden lg:inline ${HEADER_TYPE_CLASS}`}>Search</span>
             </button>
             <button
               onClick={() => {
@@ -378,7 +363,8 @@ export default function App() {
               className="hover:text-foreground transition-colors"
               aria-label="Account"
             >
-              <User size={17} strokeWidth={1.5} />
+              <User size={17} strokeWidth={1.5} className="lg:hidden" />
+              <span className={`hidden lg:inline ${HEADER_TYPE_CLASS}`}>Account</span>
             </button>
           </div>
         </div>
@@ -578,60 +564,32 @@ export default function App() {
 
 
       {page === "home" && (
-        <main
-          className="flex flex-col h-screen overflow-hidden"
-          style={{ paddingTop: navHeight }}
-        >
-          {/* Heart and CTAs are one unit, centred in the space that is left
-              once the footer has taken its own height — the footer is a flex
-              sibling here, not an overlay, so nothing runs underneath it.
-              The artwork is cropped to its own edges (no transparent padding),
-              so object-contain centres the heart itself and the wrapper shrinks
-              to the image box; the buttons then centre on the heart with no
-              nudge. */}
-          <div className="flex-1 min-h-0 flex px-6 py-4">
-            <div
-              ref={heartBoxRef}
-              className="relative flex-1 min-h-0 flex items-center justify-center"
-            >
-            {/* max-* with auto width/height lets the image size itself: its box
-                then equals the rendered artwork at every viewport. No wrapper
-                can do this — a div with aspect-ratio fits only whichever axis
-                happens to bind, so it letterboxes on the other one. */}
+        /* The stage is the viewport minus the header; the footer is a flex
+           sibling below it, in the page flow, not glued under the artwork. */
+        <main className="flex flex-col min-h-screen" style={{ paddingTop: navHeight }}>
+          <div
+            className="flex flex-col items-center justify-center gap-[var(--s-4)] px-[var(--s-3)]"
+            style={{ height: `calc(100vh - ${navHeight})` }}
+          >
+            {/* Nothing sits on the artwork. The heart is the campaign image:
+                65% of the stage on desktop, 50% on phones where the caption
+                and link take a larger share of the height. */}
             <ImageWithFallback
-              src={logoHeart}
+              src={heartArtwork}
               alt="Mantel heart"
-              className="block max-h-full max-w-full w-auto h-auto"
+              className="h-[50%] sm:h-[65%] w-auto max-w-full object-contain"
             />
-              {/* Placed on the heart's OPTICAL centre, not the box centre. A
-                  heart is notched at the top and pointed at the bottom, so the
-                  bounding-box centre lands in the cleft. Measured off the
-                  artwork's alpha: the notch reaches down to 43.9% of the
-                  height, and sweeping the CTA box against the alpha shows it
-                  still clips at 56% (97.8% covered) and is fully inside from
-                  58% down. 62% is the smallest value that stays fully inside
-                  at 360px too, where the stack is a much larger share of the
-                  heart (22.7% of its height vs 15.4% at desktop).
-                  The canvas is padded so the heart's tip sits at 50% width, so
-                  tip, CTAs and footer all share one vertical axis.
-                  Sized down on phones so they stay inside the smaller heart. */}
-            <div
-              className="absolute left-1/2 top-1/2 flex flex-col items-center gap-2 sm:gap-3"
-              style={{ transform: `translate(-50%, calc(-50% + ${heartH * 0.12}px))` }}
-            >
-                <a
-                  {...linkTo("story")}
-                  className={`px-4 py-1.5 font-serif font-normal text-xs sm:px-6 sm:py-2 sm:text-base ${BRAND_BUTTON_CLASS}`}
-                >
-                  Our Story
-                </a>
-                <a
-                  {...linkTo("menu")}
-                  className={`px-4 py-1.5 font-serif font-normal text-xs sm:px-6 sm:py-2 sm:text-base ${BRAND_BUTTON_CLASS}`}
-                >
-                Menu
+            <div className="flex flex-col items-center gap-[var(--s-2)]">
+              <p className="font-serif font-normal text-[length:var(--fs-hero-caption)] text-[color:var(--ink)] text-center">
+                Specialty coffee, Al Hidd
+              </p>
+              {/* A ruled link, not a pill. Same treatment as every other CTA. */}
+              <a
+                {...linkTo("menu")}
+                className="font-mono font-normal text-[length:var(--fs-hero-link)] tracking-[var(--ls-hero-link)] uppercase text-[color:var(--ink)] border-b border-[color:var(--ink)] pb-[3px] hover:opacity-60 transition-opacity focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[color:var(--brand)]"
+              >
+                View menu
               </a>
-              </div>
             </div>
           </div>
           {footer}
@@ -640,56 +598,53 @@ export default function App() {
 
       {/* ══ MENU PAGE ══ */}
       {page === "menu" && (
-        <main
-          className="flex flex-col min-h-screen"
-          style={{ paddingTop: navHeight }}
-        >
+        <main className="flex flex-col min-h-screen" style={{ paddingTop: navHeight }}>
           {menuLoading ? (
-            <div className="flex-1 flex items-center justify-center py-24">
-              <p className="font-mono font-normal text-sm text-muted-foreground">Loading menu…</p>
+            <div className="flex-1 flex items-center justify-center py-[var(--s-6)]">
+              <p className="font-mono font-normal text-[length:var(--fs-price)] text-[color:var(--ink-muted)]">Loading menu…</p>
             </div>
           ) : menuError ? (
-            <div className="flex-1 flex items-center justify-center py-24">
-              <p className="font-mono font-normal text-sm text-muted-foreground">
+            <div className="flex-1 flex items-center justify-center py-[var(--s-6)]">
+              <p className="font-mono font-normal text-[length:var(--fs-price)] text-[color:var(--ink-muted)]">
                 Couldn{"'"}t load the menu right now — please try again shortly.
               </p>
             </div>
-          ) : menuCategory === null ? (
-            /* Category selection — two blush pills centered in whitespace */
-            <div className="flex-1 flex flex-col items-center justify-center gap-3 py-24">
-              <a
-                {...linkTo("menu", "coffee")}
-                className={`inline-block px-6 py-2 font-serif font-normal text-base ${HEART_BUTTON_CLASS}`}
-              >
-                {CATEGORY_LABELS.coffee}
-              </a>
-              <a
-                {...linkTo("menu", "food")}
-                className={`inline-block px-6 py-2 font-serif font-normal text-base ${HEART_BUTTON_CLASS}`}
-              >
-                {CATEGORY_LABELS.food}
-              </a>
-            </div>
           ) : (
-            /* Menu items list */
-            <div className="flex-1 max-w-xl mx-auto w-full px-6 py-14">
-              <a
-                {...linkTo("menu")}
-                className="font-serif font-medium text-[12px] tracking-[0.18em] uppercase text-muted-foreground hover:text-foreground transition-colors mb-10 flex items-center gap-2 w-fit"
-              >
-                <ArrowLeft size={13} strokeWidth={1.75} />
-                Back
-              </a>
-              <h2 className="font-serif font-normal text-3xl mb-8">
-                {CATEGORY_LABELS[menuCategory]}
-              </h2>
-              {/* Top rule + a bottom rule on every row — the same construction
-                  as FaqAccordion, so the menu list reads identically. */}
-              <div className="border-t border-foreground/60">
-                {(menuCategory === "coffee" ? coffeeItems : foodItems).map((item) => (
-                  <MenuItemRow key={item.id} item={item} />
+            /* Every category on one page, one heading each. The chooser is
+               gone: with fourteen items, making someone pick a category before
+               seeing anything was a gate, not navigation. /menu/coffee still
+               resolves and narrows to that category, so the links already in
+               the wild keep working. */
+            <div className="flex-1 w-full max-w-[620px] mx-auto px-[var(--s-3)] py-[var(--s-6)]">
+              {menuCategory && (
+                <a
+                  {...linkTo("menu")}
+                  className="font-mono font-normal text-[length:var(--fs-hero-link)] tracking-[var(--ls-hero-link)] uppercase text-[color:var(--ink-muted)] hover:text-[color:var(--ink)] transition-colors mb-[var(--s-4)] flex items-center gap-[var(--s-1)] w-fit"
+                >
+                  <ArrowLeft size={13} strokeWidth={1.75} />
+                  Full menu
+                </a>
+              )}
+
+              {/* "BD" once, at the top — it used to repeat on all fourteen rows. */}
+              <p className="font-mono font-normal text-[length:var(--fs-copyright)] tracking-[var(--ls-copyright)] text-[color:var(--ink-muted)] text-center mb-[var(--s-4)]">
+                Prices in BD
+              </p>
+
+              {([["coffee", coffeeItems], ["food", foodItems]] as [Exclude<MenuCategory, null>, MenuItem[]][])
+                .filter(([key, items]) => items.length > 0 && (!menuCategory || menuCategory === key))
+                .map(([key, items], i) => (
+                  <section key={key}>
+                    {/* The only rule on the page, and only between categories. */}
+                    {i > 0 && <hr className="border-0 border-t border-[color:var(--line)] my-[var(--s-5)]" />}
+                    <h2 className="font-serif font-medium text-[length:var(--fs-heading)] text-[color:var(--ink)] text-center mb-[var(--s-5)]">
+                      {CATEGORY_LABELS[key]}
+                    </h2>
+                    {items.map((item) => (
+                      <MenuItemRow key={item.id} item={item} />
+                    ))}
+                  </section>
                 ))}
-              </div>
             </div>
           )}
           {footer}
