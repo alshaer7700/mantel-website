@@ -87,7 +87,7 @@ Security posture is already better than typical for this stage: migration `003_s
 
 - **L-1** `menu_items.updated_at` never updates (no trigger). Integrity nit; add a `before update` trigger when building the admin.
 - **L-2** localStorage profile stores name/email in plaintext on the device. Acceptable, and the privacy policy discloses it accurately.
-- **L-3** Instagram links point to generic `https://instagram.com` (also flagged in PROJECT-STATUS).
+- **L-3** Resolved: Instagram links now point to the real profile (`https://www.instagram.com/bymantel/`).
 - **L-4** Newsletter has no double opt-in and no durable consent record (emails land in Gmail only). Fine at this scale; revisit before real campaigns (see Privacy).
 - **L-5** `menu_items` RLS select policy exposes only `is_available = true` rows — correct — but pricing/menu is fully public by design; no issue, just noting it was checked.
 
