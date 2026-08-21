@@ -40,7 +40,7 @@ npm run build      # production bundle → dist/ (deploy this folder to go live)
 ## ⚠️ Action items for the owner
 - [ ] **Activate FormSubmit:** check naiffuad31@gmail.com for an email from FormSubmit and click the activation link. Until then, form/order submissions return success but are NOT delivered.
 - [ ] **Review BD prices** in `App.tsx` (`coffeeItems` / `foodItems` arrays) — I converted them to plausible values (e.g. Mantel Latte BD 2.200); adjust to the real menu.
-- [ ] Instagram links point to generic `https://instagram.com` — replace with the real profile URL.
+- [x] Instagram links point to the real profile (`https://www.instagram.com/bymantel/`).
 
 ## Ideas / not yet done
 - Real "Our Story" page (the home OUR STORY button currently goes to Contact — likely a leftover to fix).

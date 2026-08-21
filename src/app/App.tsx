@@ -259,7 +259,7 @@ export default function App() {
         <div>
           <h4 className={footerTitle}>Follow</h4>
           <a
-            href="https://www.instagram.com/mantelbh/"
+            href="https://www.instagram.com/bymantel/"
             target="_blank"
             rel="noopener noreferrer"
             className={footerLink}
@@ -435,7 +435,7 @@ export default function App() {
         {/* Drawer footer */}
         <div className="px-5 pb-6">
           <a
-            href="https://www.instagram.com/mantelbh/"
+            href="https://www.instagram.com/bymantel/"
             target="_blank"
             rel="noopener noreferrer"
             className="text-foreground/60 hover:text-foreground transition-colors"
