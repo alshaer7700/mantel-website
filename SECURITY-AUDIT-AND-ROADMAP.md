@@ -30,15 +30,17 @@ Security posture is already better than typical for this stage: migration `003_s
 
 ### Critical
 
-**None open.** The one structural critical (client-priced anon inserts into `orders`/`order_items`, plus Supabase-default `GRANT ALL` drift on the live DB) was fixed by `003_secure_order_placement.sql`, which was **applied to the live project and verified on 2026-07-10** (RPC responds; direct anon inserts denied; menu still readable). Keep 003 in version control (see M-5) — on any fresh database, `schema.sql` alone recreates the insecure policies, so the apply order schema → 002 → 003 must be preserved.
+**None open.** The one structural critical (client-priced anon inserts into `orders`/`order_items`, plus Supabase-default `GRANT ALL` drift on the live DB) was fixed by `003_secure_order_placement.sql`, which was **applied to the live project and verified on 2026-07-10** (RPC responds; direct anon inserts denied; menu still readable). Keep 003 in version control (see M-5) — on any fresh database, `schema.sql` alone recreates the insecure policies, so the apply order schema → 002 → 003 → 004 → 005 must be preserved.
 
 ### High
 
 **H-1 · `place_order` is publicly callable right now, with no rate limiting or bot protection.**
 - The "Ordering Opens Soon" button is disabled **client-side only**. Anyone with the anon key (it ships in the JS bundle — that's normal and by design) can call the RPC today and insert unlimited orders. When ordering goes live, bots can flood the kitchen with fake orders.
 - **Impact:** DB bloat now; operational chaos + fake-order denial of service at launch.
-- **Fix (now):** `revoke execute on function public.place_order from anon, authenticated;` until launch.
+- **Fix (now):** `revoke execute on function public.place_order from anon, authenticated;` until launch. **Done** in `004_pre_launch_lockdown.sql`.
 - **Fix (at launch):** re-grant, fronted by abuse protection — either Cloudflare Turnstile verified inside a Supabase Edge Function that then calls the RPC, or at minimum a per-email/per-interval check inside the function (e.g. reject >3 orders per email per 10 min).
+- **Partially done:** `005_order_rate_limit.sql` adds the in-function half — >3 per email / >6 per IP / >60 total, each per 10 min, rejected with SQLSTATE `PT429` (PostgREST → HTTP 429). The per-IP and global limits exist because `customer_email` is nullable: per-email alone is bypassed by omitting the email. IP comes from `cf-connecting-ip`, falling back to the **last** `x-forwarded-for` element (the first is client-controlled and would be a one-header bypass). Counts read committed orders, not attempts — a rejection rolls its own transaction back, so attempts cannot be recorded without an autonomous transaction.
+- **Still open — this does not close H-1.** A distributed bot with fresh IPs and fresh emails still lands 60 orders per 10-minute window (verified). The acceptance test below is only met by the Turnstile/Edge Function route; the in-function limits are defence in depth for when the RPC is called directly, and they hold whether or not the Edge Function is bypassed.
 - **Priority:** High · **Effort:** Low (revoke) / Medium (Turnstile) · **Acceptance:** RPC call from a bare script fails without a valid captcha token.
 
 **H-2 · Owner's personal Gmail + `_captcha: "false"` shipped in the public bundle.**
@@ -138,7 +140,7 @@ Security posture is already better than typical for this stage: migration `003_s
 6. `git init` + private repo (M-5).
 
 **Before enabling ordering (the disabled button goes live):**
-7. Re-grant `place_order` behind Turnstile-in-Edge-Function or in-function rate limiting (H-1 full).
+7. Re-grant `place_order` behind Turnstile-in-Edge-Function (H-1 full). In-function rate limiting is already in place (`005_order_rate_limit.sql`); the re-grant is the last line of that file, deliberately left commented out.
 8. Server-side order notification via DB webhook/Edge Function; delete the client-side email (M-1).
 9. Email format validation in the RPC (M-2).
 10. An operational answer to "how does staff see orders?" — email alone is not an ops tool (see Phase 6).
@@ -222,11 +224,11 @@ Deliberately **cut from the original 10-phase brief** as not applicable to a 14-
 - [ ] Privacy policy re-read against final feature set
 
 **Pre-ordering-launch additions:**
-- [ ] Turnstile/rate limit proven against a bot script (H-1)
+- [ ] Turnstile proven against a bot script (H-1) — in-function rate limit done (005), Turnstile still outstanding
 - [ ] Server-side order email; client email code deleted (M-1)
 - [ ] Email regex in RPC (M-2)
 - [ ] Staff can see orders (Phase 3, at least v0)
-- [ ] Order flood test: 20 rapid orders → rate limit trips
+- [ ] Order flood test: 20 rapid orders → rate limit trips (passes on a local PG16 run of the full migration chain — 3 accepted, 17 rejected; re-run against the live project once 005 is applied there)
 - [ ] Data retention job scheduled (Privacy #3)
 
 **Post-launch monitoring:**
