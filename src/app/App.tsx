@@ -12,8 +12,9 @@ import { ObjectCard } from "@/app/components/objects/ObjectCard";
 import { Home } from "@/app/pages/Home";
 import { Cafe } from "@/app/pages/Cafe";
 import { Story } from "@/app/pages/Story";
+import { useScrolled } from "@/app/hooks/useScrolled";
+import { SearchOverlay } from "@/app/components/SearchOverlay";
 import { loadProfile } from "@/lib/storage";
-import { formatBD, CATEGORY_LABELS } from "@/lib/format";
 import type { Page, MenuCategory, MenuItem, Profile } from "@/app/types";
 import { pathFor, routeFor } from "@/lib/routes";
 import { CONTACT_ENDPOINT, ORDERING_OPEN } from "@/lib/constants";
@@ -113,6 +114,9 @@ export default function App() {
 
   /* ── nav locale pill ── */
   const [localeOpen, setLocaleOpen] = useState(false);
+
+  /* The header contracts once the page moves — see useScrolled. */
+  const scrolled = useScrolled();
 
   const [profile, setProfile] = useState<Profile | null>(() => loadProfile("mantel-profile"));
   const [profileDraft, setProfileDraft] = useState<Profile>({ name: "", email: "" });
@@ -247,6 +251,8 @@ export default function App() {
   // 22px wordmark + the 7px sub-line under it, centred in the 20px of vertical
   // padding the header spec asks for. The hero reads this to size its stage.
   const navHeight = "70px";
+  /* Contracted: the wordmark alone, at 16px, with the locality line collapsed. */
+  const SCROLLED_NAV_HEIGHT = "52px";
 
   /* ── shared footer ── */
   /* Three columns above a centred strip. It used to be three centred lines of
@@ -322,8 +328,12 @@ export default function App() {
 
       {/* ══ NAV ══ */}
       <nav
-        className="fixed top-0 inset-x-0 z-50 bg-[color:var(--bg)] border-b border-[color:var(--line-soft)]"
-        style={{ height: navHeight }}
+        className={`fixed top-0 inset-x-0 z-50 bg-[color:var(--bg)] transition-[height,border-color] duration-[400ms] ease-[cubic-bezier(.16,.84,.44,1)] ${
+          /* No rule at the top: the header is part of the page until the page
+             starts moving under it, and only then does it need separating. */
+          scrolled ? "border-b border-[color:var(--line-soft)]" : "border-b border-transparent"
+        }`}
+        style={{ height: scrolled ? SCROLLED_NAV_HEIGHT : navHeight }}
       >
         {/* Three columns, equal outer tracks — that is what keeps the wordmark
             optically centred no matter how long the nav or the tools get. */}
@@ -352,10 +362,22 @@ export default function App() {
             {...linkTo("home")}
             className="justify-self-center text-center leading-[1.15] hover:opacity-80 transition-opacity"
           >
-            <span className="block font-serif font-medium text-[length:var(--fs-logo)] tracking-[var(--ls-logo)] text-[color:var(--ink)]">
+            <span
+              className="block font-serif font-medium tracking-[var(--ls-logo)] text-[color:var(--ink)] transition-[font-size] duration-[400ms] ease-[cubic-bezier(.16,.84,.44,1)]"
+              style={{ fontSize: scrolled ? "16px" : "var(--fs-logo)" }}
+            >
               Mantel.
             </span>
-            <span className="block font-mono font-normal text-[7px] tracking-[0.2em] uppercase text-[color:var(--ink-muted)]">
+            {/* The locality line is the part that goes. It earns its place on
+                arrival and becomes noise once someone is reading. Collapsed by
+                max-height rather than unmounted, so the wordmark glides up
+                instead of jumping. */}
+            <span
+              aria-hidden={scrolled}
+              className={`block font-mono font-normal text-[7px] tracking-[0.2em] uppercase text-[color:var(--ink-muted)] overflow-hidden transition-[max-height,opacity] duration-[400ms] ease-[cubic-bezier(.16,.84,.44,1)] ${
+                scrolled ? "max-h-0 opacity-0" : "max-h-[12px] opacity-100"
+              }`}
+            >
               Bahrain
             </span>
           </a>
@@ -497,56 +519,16 @@ export default function App() {
 
       {/* ══ SEARCH PANEL ══ */}
       {searchOpen && (
-        <div
-          className="fixed inset-x-0 z-50 bg-background border-b border-border shadow-sm"
-          style={{ top: navHeight }}
-        >
-          <div className="max-w-xl mx-auto px-6 py-5">
-            <div className="flex items-center gap-3">
-              <input
-                ref={searchInputRef}
-                type="text"
-                placeholder="Search the menu…"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                className="flex-1 rounded-full border border-border bg-background px-5 py-2.5 font-mono font-normal text-sm placeholder:text-muted-foreground outline-none focus:border-foreground/40 transition-colors"
-              />
-              <button
-                onClick={() => { setSearchOpen(false); setQuery(""); }}
-                className="text-foreground/60 hover:text-foreground transition-colors"
-                aria-label="Close search"
-              >
-                <X size={18} strokeWidth={1.5} />
-              </button>
-            </div>
-            {query.trim() && (
-              <div className="mt-4 max-h-72 overflow-y-auto divide-y divide-border">
-                {results.length === 0 ? (
-                  <p className="py-4 font-mono font-normal text-sm text-muted-foreground">No matches — try “latte” or “panini”.</p>
-                ) : (
-                  results.map((item) => (
-                    <button
-                      key={item.id}
-                      onClick={() => {
-                        goTo("menu", item.category);
-                        setQuery("");
-                      }}
-                      className="w-full py-3 flex justify-between items-center gap-4 text-left hover:opacity-60 transition-opacity"
-                    >
-                      <span>
-                        <span className="block font-mono font-medium text-[14px]">{item.name}</span>
-                        <span className="block font-mono font-normal text-[11px] tracking-[0.14em] uppercase text-muted-foreground mt-0.5">
-                          {CATEGORY_LABELS[item.category]}
-                        </span>
-                      </span>
-                      <span className="font-mono font-normal text-[13px] tabular-nums shrink-0">{formatBD(item.price)}</span>
-                    </button>
-                  ))
-                )}
-              </div>
-            )}
-          </div>
-        </div>
+        <SearchOverlay
+          query={query}
+          setQuery={setQuery}
+          results={results}
+          allItems={allItems}
+          inputRef={searchInputRef}
+          navHeight={scrolled ? SCROLLED_NAV_HEIGHT : navHeight}
+          onClose={() => { setSearchOpen(false); setQuery(""); }}
+          onPickCategory={(c) => { goTo("menu", c); setQuery(""); }}
+        />
       )}
 
       {/* ══ ACCOUNT PANEL ══ */}
