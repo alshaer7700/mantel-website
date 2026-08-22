@@ -87,3 +87,32 @@ function PlaceholderBrief({ spec }: { spec: PlateSpec }) {
     </div>
   );
 }
+
+/*
+ * A plate that runs edge to edge, cancelling the page gutter.
+ *
+ * It exists because the margins have to disappear WITH the plate. When an
+ * unfilled plate renders nothing (see above) but its wrapper keeps a bleed and
+ * a bottom margin, the page is left with a tall unexplained void where a
+ * photograph would have been — which reads as a broken image, exactly the
+ * impression rendering nothing was meant to avoid.
+ *
+ * Returning null from one component takes the spacing with it.
+ */
+export function BleedPlate({
+  spec,
+  ratio = "16 / 9",
+  className = "",
+}: {
+  spec: PlateSpec;
+  ratio?: string;
+  className?: string;
+}) {
+  if (spec.src === "" && !import.meta.env.DEV) return null;
+
+  return (
+    <div className={`-mx-[var(--pad)] ${className}`}>
+      <Plate spec={spec} ratio={ratio} className="[&>figcaption]:px-[var(--pad)]" />
+    </div>
+  );
+}

@@ -1,15 +1,17 @@
 import { useEffect, useRef, useState } from "react";
 import { ImageWithFallback } from "@/app/components/figma/ImageWithFallback";
-import { MenuItemRow } from "@/app/components/MenuItemRow";
 import { PolicyPage } from "@/app/components/PolicyPage";
 import { FaqAccordion } from "@/app/components/FaqAccordion";
 import { NewsletterSignup } from "@/app/components/NewsletterSignup";
 import { PRIVACY_POLICY, TERMS_OF_SERVICE, REFUND_POLICY, FAQ_ITEMS } from "@/app/content/legal";
-import { ArrowLeft, ChevronDown, Instagram, Search, User, X } from "lucide-react";
+import { ChevronDown, Instagram, Search, User, X } from "lucide-react";
 import { fetchMenu, groupByCategory } from "@/lib/api/menu";
 import { fetchObjects, type ShopObject } from "@/lib/api/objects";
 import { Shelf } from "@/app/components/Shelf";
 import { ObjectCard } from "@/app/components/objects/ObjectCard";
+import { Home } from "@/app/pages/Home";
+import { Cafe } from "@/app/pages/Cafe";
+import { Story } from "@/app/pages/Story";
 import { loadProfile } from "@/lib/storage";
 import { formatBD, CATEGORY_LABELS } from "@/lib/format";
 import type { Page, MenuCategory, MenuItem, Profile } from "@/app/types";
@@ -21,6 +23,7 @@ import { CONTACT_ENDPOINT, ORDERING_OPEN } from "@/lib/constants";
 // axis. The pill CTAs that used to sit on it are gone, and with them the two
 // rounded-button constants that dressed them.
 const heartArtwork = "/heart.webp";
+import wordmark from "@/imports/logos-05.webp";
 
 // Still worn by the account panel and the contact form's send button, neither
 // of which the redesign phases touch. The homepage pills that shared this
@@ -262,7 +265,23 @@ export default function App() {
   const footer = (
     /* 96px of clearance above the footer on every page. */
     <footer className="mt-[var(--s-6)]">
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-[var(--s-4)] max-w-[1000px] mx-auto px-[var(--s-3)] pb-[var(--s-4)]">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1.4fr_repeat(3,minmax(0,1fr))] gap-[var(--s-4)] max-w-[1000px] mx-auto px-[var(--s-3)] pb-[var(--s-4)]">
+        {/* The mark, as the design direction places it: wordmark with the
+            heart set at its baseline. The heart used to BE the home page; it
+            belongs here and on the order confirmation. */}
+        <div className="flex items-end gap-[0.7rem]">
+          <img
+            src={wordmark}
+            alt="Mantel."
+            className="h-[clamp(2rem,5.4vw,3.3rem)] w-auto"
+          />
+          <ImageWithFallback
+            src={heartArtwork}
+            alt=""
+            aria-hidden="true"
+            className="h-[clamp(1.1rem,2.6vw,1.55rem)] w-auto mb-[0.3rem]"
+          />
+        </div>
         <div>
           <h4 className={footerTitle}>Contact</h4>
           <p className="font-serif font-normal text-[length:var(--fs-foot-link)] text-[color:var(--ink)] mb-[14px]">
@@ -595,33 +614,9 @@ export default function App() {
 
 
       {page === "home" && (
-        /* The stage is the viewport minus the header; the footer is a flex
-           sibling below it, in the page flow, not glued under the artwork. */
         <main className="flex flex-col min-h-screen" style={{ paddingTop: navHeight }}>
-          <div
-            className="flex flex-col items-center justify-center gap-[var(--s-4)] px-[var(--s-3)]"
-            style={{ height: `calc(100vh - ${navHeight})` }}
-          >
-            {/* Nothing sits on the artwork. The heart is the campaign image:
-                65% of the stage on desktop, 50% on phones where the caption
-                and link take a larger share of the height. */}
-            <ImageWithFallback
-              src={heartArtwork}
-              alt="Mantel heart"
-              className="h-[50%] sm:h-[65%] w-auto max-w-full object-contain"
-            />
-            <div className="flex flex-col items-center gap-[var(--s-2)]">
-              <p className="font-serif font-normal text-[length:var(--fs-hero-caption)] text-[color:var(--ink)] text-center">
-                Specialty coffee, Al Hidd
-              </p>
-              {/* A ruled link, not a pill. Same treatment as every other CTA. */}
-              <a
-                {...linkTo("menu")}
-                className="font-mono font-normal text-[length:var(--fs-hero-link)] tracking-[var(--ls-hero-link)] uppercase text-[color:var(--ink)] border-b border-[color:var(--ink)] pb-[3px] hover:opacity-60 transition-opacity focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[color:var(--brand)]"
-              >
-                View menu
-              </a>
-            </div>
+          <div className="flex-1 px-[var(--pad)]">
+            <Home sections={sections} objects={objects} linkTo={linkTo} />
           </div>
           {footer}
         </main>
@@ -630,59 +625,9 @@ export default function App() {
       {/* ══ MENU PAGE ══ */}
       {page === "menu" && (
         <main className="flex flex-col min-h-screen" style={{ paddingTop: navHeight }}>
-          {menuLoading ? (
-            <div className="flex-1 flex items-center justify-center py-[var(--s-6)]">
-              <p className="font-mono font-normal text-[length:var(--fs-price)] text-[color:var(--ink-muted)]">Loading menu…</p>
-            </div>
-          ) : menuError ? (
-            <div className="flex-1 flex items-center justify-center py-[var(--s-6)]">
-              <p className="font-mono font-normal text-[length:var(--fs-price)] text-[color:var(--ink-muted)]">
-                Couldn{"'"}t load the menu right now — please try again shortly.
-              </p>
-            </div>
-          ) : (
-            /* Every category on one page, one heading each. The chooser is
-               gone: with a menu this short, making someone pick a category before
-               seeing anything was a gate, not navigation. /menu/coffee still
-               resolves and narrows to that category, so the links already in
-               the wild keep working. */
-            <div className="flex-1 w-full max-w-[620px] mx-auto px-[var(--s-3)] py-[var(--s-6)]">
-              {menuCategory && (
-                <a
-                  {...linkTo("menu")}
-                  className="font-mono font-normal text-[length:var(--fs-hero-link)] tracking-[var(--ls-hero-link)] uppercase text-[color:var(--ink-muted)] hover:text-[color:var(--ink)] transition-colors mb-[var(--s-4)] flex items-center gap-[var(--s-1)] w-fit"
-                >
-                  <ArrowLeft size={13} strokeWidth={1.75} />
-                  Full menu
-                </a>
-              )}
-
-              {/* "BD" once, at the top — it used to repeat on every row. The
-                  nutrition caveat sits here for the same reason: it belongs to
-                  every figure on the page, so it is stated once rather than
-                  hung off each expanded item. */}
-              <p className="font-mono font-normal text-[length:var(--fs-copyright)] tracking-[var(--ls-copyright)] text-[color:var(--ink-muted)] text-center mb-[var(--s-4)]">
-                Prices in BD · tap an item for ingredients
-                <br />
-                Nutrition is approximate, per serving as prepared
-              </p>
-
-              {sections
-                .filter(([key, items]) => items.length > 0 && (!menuCategory || menuCategory === key))
-                .map(([key, items], i) => (
-                  <section key={key}>
-                    {/* The only rule on the page, and only between categories. */}
-                    {i > 0 && <hr className="border-0 border-t border-[color:var(--line)] my-[var(--s-5)]" />}
-                    <h2 className="font-serif font-medium text-[length:var(--fs-heading)] text-[color:var(--ink)] text-center mb-[var(--s-5)]">
-                      {CATEGORY_LABELS[key]}
-                    </h2>
-                    {items.map((item) => (
-                      <MenuItemRow key={item.id} item={item} />
-                    ))}
-                  </section>
-                ))}
-            </div>
-          )}
+          <div className="flex-1 px-[var(--pad)]">
+            <Cafe sections={sections} category={menuCategory} loading={menuLoading} error={menuError} />
+          </div>
           {footer}
         </main>
       )}
@@ -734,29 +679,9 @@ export default function App() {
       )}
 
       {page === "story" && (
-        <main
-          className="min-h-screen flex flex-col"
-          style={{ paddingTop: navHeight }}
-        >
-          <div className="flex-1 max-w-2xl w-full mx-auto px-6 pt-14 pb-16">
-            <h1
-              className="font-serif font-semibold mb-12"
-              style={{ fontSize: "clamp(2.1rem, 5.5vw, 3.1rem)", lineHeight: 1.1, color: "#3a0d1e" }}
-            >
-              Our Story
-            </h1>
-            {/* The route, the layout and the one factual line are real. The
-                account of how Mantel started is the owner's to write — this
-                stays deliberately short rather than inventing a history. */}
-            <p className="font-serif font-normal text-[17px] leading-relaxed">
-              Mantel is a specialty coffee shop in Al Hidd, Bahrain.
-            </p>
-            <a
-              {...linkTo("menu")}
-              className="inline-block mt-10 font-mono font-normal text-[12px] tracking-[0.12em] uppercase border-b border-foreground pb-[3px] hover:opacity-60 transition-opacity"
-            >
-              View menu
-            </a>
+        <main className="flex flex-col min-h-screen" style={{ paddingTop: navHeight }}>
+          <div className="flex-1 px-[var(--pad)]">
+            <Story linkTo={linkTo} />
           </div>
           {footer}
         </main>
