@@ -52,7 +52,7 @@ export function NewsletterSignup() {
           You{"'"}re on the list. 💌
         </p>
       ) : (
-        <form onSubmit={submit} className="flex items-center max-w-md mx-auto rounded-full border border-border bg-white focus-within:border-foreground/40 transition-colors">
+        <form onSubmit={submit} className="flex items-center max-w-md mx-auto rounded-full border border-border bg-background focus-within:border-foreground/40 transition-colors">
           <input
             type="text"
             name="_honey"

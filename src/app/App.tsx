@@ -272,18 +272,18 @@ export default function App() {
           </a>
         </div>
       </div>
-      <div className="border-t border-[color:var(--line)] py-[var(--s-4)] px-[var(--s-3)] text-center font-mono font-normal text-[length:var(--fs-copyright)] tracking-[var(--ls-copyright)] text-[color:var(--ink-muted)]">
+      <div className="border-t border-[color:var(--line-soft)] py-[var(--s-4)] px-[var(--s-3)] text-center font-mono font-normal text-[length:var(--fs-copyright)] tracking-[var(--ls-copyright)] text-[color:var(--ink-muted)]">
         © 2026, Mantel
       </div>
     </footer>
   );
 
   return (
-    <div className="bg-white text-foreground font-mono font-normal min-h-screen">
+    <div className="bg-background text-foreground font-mono font-normal min-h-screen">
 
       {/* ══ NAV ══ */}
       <nav
-        className="fixed top-0 inset-x-0 z-50 bg-[color:var(--bg)] border-b border-[color:var(--line)]"
+        className="fixed top-0 inset-x-0 z-50 bg-[color:var(--bg)] border-b border-[color:var(--line-soft)]"
         style={{ height: navHeight }}
       >
         {/* Three columns, equal outer tracks — that is what keeps the wordmark
@@ -341,7 +341,7 @@ export default function App() {
               {/* w-72, not w-56: Fira Mono sets much wider than the old
                   proportional face, and the locale line wrapped at w-56. */}
               {localeOpen && (
-                <div className="absolute right-0 top-full mt-3 w-72 bg-white border border-border rounded-2xl shadow-lg px-5 py-4 z-50">
+                <div className="absolute right-0 top-full mt-3 w-72 bg-background border border-border rounded-2xl shadow-lg px-5 py-4 z-50">
                   <p className="font-mono font-normal text-sm text-foreground">🇧🇭 Bahrain — BD · English</p>
                   <p className="font-mono font-normal text-[11px] text-muted-foreground mt-1.5">
                     More regions and languages coming soon.
@@ -385,7 +385,7 @@ export default function App() {
       />
       {/* Drawer */}
       <div
-        className={`fixed top-0 left-0 z-50 h-full bg-white flex flex-col transition-transform duration-300 ease-in-out ${
+        className={`fixed top-0 left-0 z-50 h-full bg-background flex flex-col transition-transform duration-300 ease-in-out ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
         style={{ width: "185px" }}
@@ -452,7 +452,7 @@ export default function App() {
       {/* ══ SEARCH PANEL ══ */}
       {searchOpen && (
         <div
-          className="fixed inset-x-0 z-50 bg-white border-b border-border shadow-sm"
+          className="fixed inset-x-0 z-50 bg-background border-b border-border shadow-sm"
           style={{ top: navHeight }}
         >
           <div className="max-w-xl mx-auto px-6 py-5">
@@ -463,7 +463,7 @@ export default function App() {
                 placeholder="Search the menu…"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                className="flex-1 rounded-full border border-border bg-white px-5 py-2.5 font-mono font-normal text-sm placeholder:text-muted-foreground outline-none focus:border-foreground/40 transition-colors"
+                className="flex-1 rounded-full border border-border bg-background px-5 py-2.5 font-mono font-normal text-sm placeholder:text-muted-foreground outline-none focus:border-foreground/40 transition-colors"
               />
               <button
                 onClick={() => { setSearchOpen(false); setQuery(""); }}
@@ -506,7 +506,7 @@ export default function App() {
       {/* ══ ACCOUNT PANEL ══ */}
       {accountOpen && (
         <div
-          className="fixed right-4 z-50 w-72 bg-white border border-border rounded-3xl shadow-lg p-5"
+          className="fixed right-4 z-50 w-72 bg-background border border-border rounded-3xl shadow-lg p-5"
           style={{ top: `calc(${navHeight} + 10px)` }}
         >
           {profile ? (
@@ -541,7 +541,7 @@ export default function App() {
                 maxLength={120}
                 value={profileDraft.name}
                 onChange={(e) => setProfileDraft((d) => ({ ...d, name: e.target.value }))}
-                className="rounded-full border border-border bg-white px-4 py-2 font-mono font-normal text-sm placeholder:text-muted-foreground outline-none focus:border-foreground/40 transition-colors"
+                className="rounded-full border border-border bg-background px-4 py-2 font-mono font-normal text-sm placeholder:text-muted-foreground outline-none focus:border-foreground/40 transition-colors"
               />
               <input
                 type="email"
@@ -550,7 +550,7 @@ export default function App() {
                 maxLength={254}
                 value={profileDraft.email}
                 onChange={(e) => setProfileDraft((d) => ({ ...d, email: e.target.value }))}
-                className="rounded-full border border-border bg-white px-4 py-2 font-mono font-normal text-sm placeholder:text-muted-foreground outline-none focus:border-foreground/40 transition-colors"
+                className="rounded-full border border-border bg-background px-4 py-2 font-mono font-normal text-sm placeholder:text-muted-foreground outline-none focus:border-foreground/40 transition-colors"
               />
               <button
                 type="submit"
@@ -733,7 +733,7 @@ export default function App() {
                     maxLength={120}
                     value={form.name}
                     onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-                    className="flex-1 min-w-0 rounded-full border border-border bg-white px-5 py-3 font-serif font-normal text-sm placeholder:text-muted-foreground outline-none focus:border-foreground/40 transition-colors"
+                    className="flex-1 min-w-0 rounded-full border border-border bg-background px-5 py-3 font-serif font-normal text-sm placeholder:text-muted-foreground outline-none focus:border-foreground/40 transition-colors"
                   />
                   <input
                     type="email"
@@ -742,7 +742,7 @@ export default function App() {
                     maxLength={254}
                     value={form.email}
                     onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
-                    className="flex-1 min-w-0 rounded-full border border-border bg-white px-5 py-3 font-serif font-normal text-sm placeholder:text-muted-foreground outline-none focus:border-foreground/40 transition-colors"
+                    className="flex-1 min-w-0 rounded-full border border-border bg-background px-5 py-3 font-serif font-normal text-sm placeholder:text-muted-foreground outline-none focus:border-foreground/40 transition-colors"
                   />
                 </div>
 
@@ -753,7 +753,7 @@ export default function App() {
                   maxLength={40}
                   value={form.phone}
                   onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
-                  className="rounded-full border border-border bg-white px-5 py-3 font-serif font-normal text-sm placeholder:text-muted-foreground outline-none focus:border-foreground/40 transition-colors"
+                  className="rounded-full border border-border bg-background px-5 py-3 font-serif font-normal text-sm placeholder:text-muted-foreground outline-none focus:border-foreground/40 transition-colors"
                 />
 
                 {/* Comment */}
@@ -763,7 +763,7 @@ export default function App() {
                   maxLength={2000}
                   value={form.comment}
                   onChange={(e) => setForm((f) => ({ ...f, comment: e.target.value }))}
-                  className="rounded-3xl border border-border bg-white px-5 py-4 font-serif font-normal text-sm placeholder:text-muted-foreground outline-none focus:border-foreground/40 transition-colors resize-none"
+                  className="rounded-3xl border border-border bg-background px-5 py-4 font-serif font-normal text-sm placeholder:text-muted-foreground outline-none focus:border-foreground/40 transition-colors resize-none"
                 />
 
                 {sendError && <p className="font-mono font-normal text-xs text-destructive">{sendError}</p>}
