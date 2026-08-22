@@ -9,6 +9,7 @@ import { ArrowLeft, ChevronDown, Instagram, Search, User, X } from "lucide-react
 import { supabase } from "@/lib/supabaseClient";
 import { loadProfile } from "@/lib/storage";
 import { formatBD, CATEGORY_LABELS } from "@/lib/format";
+import { MENU_CATEGORIES } from "@/app/types";
 import type { Page, MenuCategory, MenuItem, Profile } from "@/app/types";
 import { pathFor, routeFor } from "@/lib/routes";
 import { CONTACT_ENDPOINT } from "@/lib/constants";
@@ -57,7 +58,20 @@ export default function App() {
   useEffect(() => {
     supabase
       .from("menu_items")
-      .select("id, name, desc:description, price, category, image_url, is_available, sort_order")
+      .select(
+        "id, name, desc:description, price, category, image_url, is_available, sort_order, " +
+          "ingredients, calories, protein_g, carbs_g, fat_g",
+      )
+      /*
+       * Belt and braces on availability. RLS already gates this
+       * ("using is_available = true"), but relying on that alone put the whole
+       * guarantee in one place — and that place turned out to be wrong: a
+       * second, permissive policy added outside this repo ORed with the first
+       * and made every row public, unpriced items included (see supabase/008).
+       * A filter here means a policy regression shows up as a missing item
+       * rather than a drink listed at 0.000.
+       */
+      .eq("is_available", true)
       .order("category")
       .order("sort_order")
       .then(({ data, error }) => {
@@ -67,8 +81,16 @@ export default function App() {
       });
   }, []);
 
-  const coffeeItems = menuItems.filter((i) => i.category === "coffee");
-  const foodItems = menuItems.filter((i) => i.category === "food");
+  /*
+   * Grouped in MENU_CATEGORIES order, not in whatever order Postgres returned.
+   * The .order("category") above sorts alphabetically, which would print Aqua
+   * before Coffee — the printed menu's order is the tuple's order, so the
+   * grouping is driven from there and the query's category sort is only there
+   * to keep sort_order stable within each group.
+   */
+  const sections = MENU_CATEGORIES.map(
+    (key) => [key, menuItems.filter((i) => i.category === key)] as const,
+  );
   const allItems = menuItems;
 
   /* ── search ── */
@@ -77,7 +99,9 @@ export default function App() {
   const searchInputRef = useRef<HTMLInputElement>(null);
   const results = query.trim()
     ? allItems.filter((i) =>
-        `${i.name} ${i.desc}`.toLowerCase().includes(query.trim().toLowerCase()),
+        `${i.name} ${i.desc} ${i.ingredients ?? ""}`
+          .toLowerCase()
+          .includes(query.trim().toLowerCase()),
       )
     : [];
 
@@ -472,7 +496,7 @@ export default function App() {
             {query.trim() && (
               <div className="mt-4 max-h-72 overflow-y-auto divide-y divide-border">
                 {results.length === 0 ? (
-                  <p className="py-4 font-mono font-normal text-sm text-muted-foreground">No matches — try “latte” or “croissant”.</p>
+                  <p className="py-4 font-mono font-normal text-sm text-muted-foreground">No matches — try “latte” or “panini”.</p>
                 ) : (
                   results.map((item) => (
                     <button
@@ -611,7 +635,7 @@ export default function App() {
             </div>
           ) : (
             /* Every category on one page, one heading each. The chooser is
-               gone: with fourteen items, making someone pick a category before
+               gone: with a menu this short, making someone pick a category before
                seeing anything was a gate, not navigation. /menu/coffee still
                resolves and narrows to that category, so the links already in
                the wild keep working. */
@@ -626,12 +650,17 @@ export default function App() {
                 </a>
               )}
 
-              {/* "BD" once, at the top — it used to repeat on all fourteen rows. */}
+              {/* "BD" once, at the top — it used to repeat on every row. The
+                  nutrition caveat sits here for the same reason: it belongs to
+                  every figure on the page, so it is stated once rather than
+                  hung off each expanded item. */}
               <p className="font-mono font-normal text-[length:var(--fs-copyright)] tracking-[var(--ls-copyright)] text-[color:var(--ink-muted)] text-center mb-[var(--s-4)]">
-                Prices in BD
+                Prices in BD · tap an item for ingredients
+                <br />
+                Nutrition is approximate, per serving as prepared
               </p>
 
-              {([["coffee", coffeeItems], ["food", foodItems]] as [Exclude<MenuCategory, null>, MenuItem[]][])
+              {sections
                 .filter(([key, items]) => items.length > 0 && (!menuCategory || menuCategory === key))
                 .map(([key, items], i) => (
                   <section key={key}>
