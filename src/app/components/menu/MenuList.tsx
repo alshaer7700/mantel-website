@@ -11,9 +11,20 @@ import { LABEL } from "@/app/components/type";
  *
  * TWO THINGS THE PROTOTYPE DOES NOT HAVE, kept because they are real:
  *
- * 1. Tap to expand ingredients and nutrition. Those are actual columns
+ * 1. Ingredients and nutrition, on hover AND on tap. Those are actual columns
  *    (supabase/006) and the café will fill them. The prototype's row had
  *    nowhere to put them because its menu was invented.
+ *
+ *    Hover alone would have hidden them from most of the audience: a phone has
+ *    no pointer, and this is a café. So the reveal is layered —
+ *
+ *      pointer devices   opens on hover, via CSS only, no state involved
+ *      keyboard          opens on focus-within, so tabbing reaches it
+ *      touch             opens on tap, held by React state until tapped again
+ *
+ *    The hover rule is gated on (hover: hover) and (pointer: fine). Without
+ *    that gate, a tap on a touchscreen fires a synthetic mouseenter, the panel
+ *    opens on hover AND the click toggles state, and the two fight each other.
  *
  * 2. No "Add" affordance. The prototype reveals one on hover, but ordering is
  *    locked (EXECUTE on place_order is revoked), so an Add control would be a
@@ -85,7 +96,7 @@ function Row({ item }: { item: MenuItem }) {
     "border-b border-[color:var(--line-soft)]";
 
   return (
-    <>
+    <div className="group">
       {expandable ? (
         <button
           type="button"
@@ -103,8 +114,24 @@ function Row({ item }: { item: MenuItem }) {
         <div className={SHARED}>{row}</div>
       )}
 
-      {expandable && open && (
-        <div id={panelId} className="py-[var(--s-2)] pr-[var(--s-4)]">
+      {expandable && (
+        <div
+          id={panelId}
+          /* Rendered always, shown by CSS. Toggling it in and out of the DOM
+             would make the hover rule impossible to express without state,
+             and state driven by mouseenter is what breaks on touch. */
+          className={`py-[var(--s-2)] pr-[var(--s-4)] ${
+            open
+              ? "block"
+              : "hidden [@media(hover:hover)_and_(pointer:fine)]:group-hover:block " +
+                /* :focus-visible, not :focus-within. A tap focuses the button
+                   too, so focus-within held the panel open after the second
+                   tap had already toggled it shut — it looked like the close
+                   was broken. :focus-visible is set for keyboard focus only,
+                   which is exactly the case this is here to serve. */
+                "group-[:has(:focus-visible)]:block"
+          }`}
+        >
           {item.ingredients && (
             <>
               <p className={LABEL}>Ingredients</p>
@@ -123,6 +150,6 @@ function Row({ item }: { item: MenuItem }) {
           )}
         </div>
       )}
-    </>
+    </div>
   );
 }
