@@ -11,17 +11,23 @@ export const formatBD = (n: number) => `BD ${n.toFixed(3)}`;
 export const formatPrice = (n: number) => n.toFixed(3);
 
 /**
- * The headings as the café prints them — "Not Coffee", not "Cold Drinks";
- * "Aqua", not "Water". The site used to invent its own two headings ("Coffee &
- * Espresso", "Food & Pastries"), so someone holding the printed menu was
- * reading a different document.
+ * Section headings, in the site's own descriptive voice rather than the bare
+ * words on the printed menu. "Coffee & Espresso" is the original label from
+ * before the menu rebuild; the other four are written to match it, so all five
+ * headings read as one set instead of one long label among four short ones.
+ *
+ * Note this is deliberately NOT the printed wording — the card says "Aqua" and
+ * "Not Coffee". The sections and their order still match the card exactly; only
+ * the words above them differ. If the two should be brought back into line,
+ * this object is the only thing to change: the slugs, the DB constraint and the
+ * routes all key off MENU_CATEGORIES, never off these strings.
  */
 export const CATEGORY_LABELS: Record<MenuCategoryKey, string> = {
-  coffee: "Coffee",
-  "not-coffee": "Not Coffee",
-  aqua: "Aqua",
-  sandwiches: "Sandwiches",
-  desserts: "Desserts",
+  coffee: "Coffee & Espresso",
+  "not-coffee": "Matcha & Infusions",
+  aqua: "Still & Sparkling",
+  sandwiches: "Sandwiches & Panini",
+  desserts: "Desserts & Pastries",
 };
 
 /**
