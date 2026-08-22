@@ -1,5 +1,6 @@
 import { supabase } from "@/lib/supabaseClient";
 import { toAppError, type AppError } from "@/lib/api/errors";
+import { settle } from "@/lib/api/settle";
 
 /*
  * The retail shelf: candles, matches, lighters, whole beans.
@@ -32,7 +33,7 @@ export type ObjectsResult =
   | { ok: false; error: AppError };
 
 export async function fetchObjects(): Promise<ObjectsResult> {
-  const { data, error } = await supabase
+  const { data, error } = await settle(supabase
     .from("objects")
     .select(OBJECT_COLUMNS)
     /*
@@ -43,7 +44,7 @@ export async function fetchObjects(): Promise<ObjectsResult> {
      * confirmed, so a policy regression would list a candle at 0.000.
      */
     .eq("is_available", true)
-    .order("sort_order");
+    .order("sort_order"));
 
   if (error) return { ok: false, error: toAppError(error) };
   return { ok: true, objects: data ?? [] };

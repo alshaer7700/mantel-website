@@ -1,6 +1,7 @@
 export type Page =
   | "home"
   | "menu"
+  | "objects"
   | "story"
   | "contact"
   | "faq"

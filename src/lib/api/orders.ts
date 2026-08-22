@@ -1,5 +1,6 @@
 import { supabase } from "@/lib/supabaseClient";
 import { toAppError, type AppError } from "@/lib/api/errors";
+import { settle } from "@/lib/api/settle";
 
 /*
  * The first client of place_order. The RPC has existed since 003 and has never
@@ -55,7 +56,7 @@ export async function placeOrder(input: PlaceOrderInput): Promise<PlaceOrderResu
   const invalid = validate(input);
   if (invalid) return { ok: false, error: { kind: "unknown", message: invalid } };
 
-  const { data, error } = await supabase.rpc("place_order", {
+  const { data, error } = await settle(supabase.rpc("place_order", {
     items: input.lines.map((l) => ({ menu_item_id: l.menuItemId, qty: l.qty })),
     customer_name: input.customerName.trim().slice(0, 120),
     /*
@@ -72,7 +73,7 @@ export async function placeOrder(input: PlaceOrderInput): Promise<PlaceOrderResu
      */
     pickup_at: input.pickupAt ? input.pickupAt.toISOString() : undefined,
     payment_method: input.paymentMethod,
-  });
+  }));
 
   if (error) return { ok: false, error: toAppError(error) };
   if (!data) return { ok: false, error: { kind: "unknown", message: "No order id returned." } };

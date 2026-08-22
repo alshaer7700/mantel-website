@@ -1,5 +1,3 @@
-import type { PostgrestError } from "@supabase/supabase-js";
-
 /*
  * One place that knows how to read a Postgres failure.
  *
@@ -55,11 +53,25 @@ export function messageFor(error: AppError): string {
  * as-is. The item-validation raise is not: it names internal states, so it is
  * translated rather than surfaced.
  */
-export function toAppError(error: PostgrestError | null): AppError {
+
+/*
+ * Structural, not PostgrestError. This reads exactly two fields, and
+ * PostgrestError is a class in supabase-js — so requiring the real type would
+ * force src/lib/api/settle.ts to fabricate a class instance (toJSON and all)
+ * just to describe a dead socket. The narrow shape says what is actually used.
+ */
+export type QueryError = { code?: string | null; message?: string | null };
+
+export function toAppError(error: QueryError | null): AppError {
   if (!error) return { kind: "unknown", message: "No error supplied." };
 
   if (error.code === "PT429") {
-    return { kind: "rate-limited", message: error.message };
+    /* 005 always attaches a customer-facing sentence to this code, but the
+       fallback keeps the type honest rather than trusting that forever. */
+    return {
+      kind: "rate-limited",
+      message: error.message ?? "Too many orders just now — please try again in a few minutes.",
+    };
   }
 
   if (error.code === "42501") {

@@ -7,11 +7,14 @@ import { NewsletterSignup } from "@/app/components/NewsletterSignup";
 import { PRIVACY_POLICY, TERMS_OF_SERVICE, REFUND_POLICY, FAQ_ITEMS } from "@/app/content/legal";
 import { ArrowLeft, ChevronDown, Instagram, Search, User, X } from "lucide-react";
 import { fetchMenu, groupByCategory } from "@/lib/api/menu";
+import { fetchObjects, type ShopObject } from "@/lib/api/objects";
+import { Shelf } from "@/app/components/Shelf";
+import { ObjectCard } from "@/app/components/objects/ObjectCard";
 import { loadProfile } from "@/lib/storage";
 import { formatBD, CATEGORY_LABELS } from "@/lib/format";
 import type { Page, MenuCategory, MenuItem, Profile } from "@/app/types";
 import { pathFor, routeFor } from "@/lib/routes";
-import { CONTACT_ENDPOINT } from "@/lib/constants";
+import { CONTACT_ENDPOINT, ORDERING_OPEN } from "@/lib/constants";
 
 // Served from public/ rather than bundled: a brand asset with its own stable
 // URL, re-exported clean from the 5788px original with the tip on the centre
@@ -65,6 +68,22 @@ export default function App() {
     /* React 18 StrictMode mounts effects twice in development; without this
        the second response can land after the first and set state on a
        component the first pass already tore down. */
+    return () => {
+      live = false;
+    };
+  }, []);
+
+  /* ── objects (the retail shelf) ── */
+  const [objects, setObjects] = useState<ShopObject[]>([]);
+  const [objectsLoading, setObjectsLoading] = useState(true);
+
+  useEffect(() => {
+    let live = true;
+    fetchObjects().then((result) => {
+      if (!live) return;
+      if (result.ok) setObjects(result.objects);
+      setObjectsLoading(false);
+    });
     return () => {
       live = false;
     };
@@ -254,6 +273,7 @@ export default function App() {
         <div>
           <h4 className={footerTitle}>Information</h4>
           <a {...linkTo("menu")} className={footerLink}>Menu</a>
+          <a {...linkTo("objects")} className={footerLink}>Objects</a>
           <a {...linkTo("story")} className={footerLink}>Our Story</a>
           <a {...linkTo("faq")} className={footerLink}>FAQ</a>
           <a {...linkTo("privacy")} className={footerLink}>Privacy policy</a>
@@ -302,6 +322,7 @@ export default function App() {
             </button>
             <nav className="hidden lg:flex items-center gap-[28px]" aria-label="Primary">
               <a {...linkTo("menu")} className={HEADER_LINK_CLASS}>Menu</a>
+              <a {...linkTo("objects")} className={HEADER_LINK_CLASS}>Objects</a>
               <a {...linkTo("story")} className={HEADER_LINK_CLASS}>Our Story</a>
               <a {...linkTo("contact")} className={HEADER_LINK_CLASS}>Contact</a>
             </nav>
@@ -415,6 +436,12 @@ export default function App() {
             {...linkTo("menu")}
           >
             Menu
+          </a>
+          <a
+            className="text-left font-serif font-normal text-2xl text-foreground hover:opacity-50 transition-opacity"
+            {...linkTo("objects")}
+          >
+            Objects
           </a>
           <a
             className="text-left font-serif font-normal text-2xl text-foreground hover:opacity-50 transition-opacity"
@@ -662,6 +689,50 @@ export default function App() {
 
 
       {/* ══ OUR STORY ══ */}
+      {/* ══ OBJECTS PAGE ══ */}
+      {page === "objects" && (
+        <main className="flex flex-col min-h-screen" style={{ paddingTop: navHeight }}>
+          <div className="flex-1 px-[var(--pad)] pt-[var(--s-5)]">
+            <Shelf tag="Objects" note="Made in small runs">
+              <div className="grid grid-cols-1 sm:grid-cols-2 items-baseline gap-[var(--s-2)] pt-[var(--s-2)] pb-[var(--s-4)]">
+                <h1 className="font-serif text-[clamp(1.9rem,5vw,3.4rem)] leading-[0.94] tracking-[-0.018em] m-0 text-[color:var(--ink)]">
+                  Objects.
+                </h1>
+                <span className="font-mono text-[11px] tracking-[0.2em] uppercase text-[color:var(--ink-muted)] sm:justify-self-end">
+                  Collect in store
+                </span>
+              </div>
+
+              {objectsLoading ? (
+                <p className="font-mono text-[length:var(--fs-price)] text-[color:var(--ink-muted)] py-[var(--s-5)]">
+                  Loading…
+                </p>
+              ) : objects.length === 0 ? (
+                /* The table is real and empty: 009 created it, and the object
+                   list lands hidden at price 0 until prices are confirmed
+                   (objects_available_has_price). Saying so plainly beats an
+                   empty grid that reads as a broken page. */
+                <div className="py-[var(--s-5)] max-w-[46ch]">
+                  <p className="font-serif text-[length:var(--fs-item)] text-[color:var(--ink)] mb-[var(--s-2)]">
+                    The shelf is being set.
+                  </p>
+                  <p className="font-mono text-[length:var(--fs-desc)] text-[color:var(--ink-muted)] leading-[1.6]">
+                    Candles, matches, lighters and whole beans — in store now, on this page shortly.
+                  </p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-[var(--s-3)] pb-[var(--s-5)]">
+                  {objects.map((o) => (
+                    <ObjectCard key={o.id} object={o} onAdd={() => {}} canAdd={ORDERING_OPEN} />
+                  ))}
+                </div>
+              )}
+            </Shelf>
+          </div>
+          {footer}
+        </main>
+      )}
+
       {page === "story" && (
         <main
           className="min-h-screen flex flex-col"

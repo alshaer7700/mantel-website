@@ -206,3 +206,36 @@
     line-height: 1.5;
   }
 }
+
+/* ── Motion ───────────────────────────────────────────────────────────────
+   The shelf rule draws itself in from the left; plates and object cards fade
+   up as they enter the viewport. Both are the design direction's signature,
+   and both are decoration — nothing here conveys information.
+
+   The reduced-motion block is not optional politeness. Before this, the
+   codebase had no prefers-reduced-motion rule at all, so a visitor who asks
+   their OS for less movement got the full set anyway. Durations collapse to
+   ~0 rather than the animation being removed, so the end state (rule drawn,
+   content visible) still applies — removing the animation entirely would
+   leave the shelf rule stuck at scaleX(0) and invisible. */
+
+@keyframes shelf-draw {
+  to { transform: scaleX(1); }
+}
+
+@keyframes plate-reveal {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

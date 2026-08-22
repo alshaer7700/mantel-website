@@ -1,5 +1,6 @@
 import { supabase } from "@/lib/supabaseClient";
 import { toAppError, type AppError } from "@/lib/api/errors";
+import { settle } from "@/lib/api/settle";
 import { MENU_CATEGORIES } from "@/app/types";
 import type { MenuItem, MenuCategoryKey } from "@/app/types";
 
@@ -19,7 +20,7 @@ export type MenuResult =
   | { ok: false; error: AppError };
 
 export async function fetchMenu(): Promise<MenuResult> {
-  const { data, error } = await supabase
+  const { data, error } = await settle(supabase
     .from("menu_items")
     .select(MENU_COLUMNS)
     /*
@@ -34,7 +35,7 @@ export async function fetchMenu(): Promise<MenuResult> {
      */
     .eq("is_available", true)
     .order("category")
-    .order("sort_order");
+    .order("sort_order"));
 
   if (error) return { ok: false, error: toAppError(error) };
 
