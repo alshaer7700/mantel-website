@@ -1,14 +1,24 @@
 /*
  * Mantel type system — two families, self-hosted, latin subsets from Google Fonts.
  *
- *   EB Garamond  — variable roman, wght 400–800. Serves Regular (400) and
- *                  SemiBold (600) from one 43 KB file. Upright only: the site
- *                  no longer uses italic anywhere.
+ *   EB Garamond  — variable roman AND variable italic, wght 400–800. Two
+ *                  files, ~92 KB together.
  *   Fira Mono    — static Regular (400) and Medium (500).
  *
- * Total payload 64 KB, replacing the 1.72 MB of unsubset italic TTFs that
- * shipped before. Emoji are absent from all three subsets, so flag and symbol
- * glyphs fall through to the system emoji font on their own.
+ * The italic came back for the redesign. It had been dropped when the site
+ * stopped using italics anywhere, but the design direction sets the hero's
+ * emphasis, the menu item notes and the editorial asides in it — and with no
+ * italic face loaded the browser synthesises one by shearing the roman, which
+ * on a Garamond reads as a mistake rather than a style.
+ *
+ * Both EB Garamond files are the LATIN subset. That is easy to get wrong:
+ * Google's css2 response lists seven subsets and the FIRST @font-face in it is
+ * cyrillic-ext, so grabbing the first URL yields a face with almost no glyphs
+ * this site uses.
+ *
+ * Emoji are absent from every subset here, so flag and symbol glyphs fall
+ * through to the system emoji font on their own — which is why these rules
+ * carry no unicode-range. See guidelines/FONTS.md for why that mattered.
  */
 
 @font-face {
@@ -16,6 +26,14 @@
   src: url("../assets/fonts/EBGaramond-Variable.woff2") format("woff2-variations");
   font-weight: 400 800;
   font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "EB Garamond";
+  src: url("../assets/fonts/EBGaramond-Italic-Variable.woff2") format("woff2-variations");
+  font-weight: 400 800;
+  font-style: italic;
   font-display: swap;
 }
 
