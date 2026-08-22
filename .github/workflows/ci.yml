@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+
+      - run: npm ci
+
+      # The .tsx files carried type annotations for months with no compiler
+      # installed to check them. This is the gate that keeps them honest.
+      - name: Typecheck
+        run: npm run typecheck
+
+      # A build needs the two VITE_ vars or supabaseClient throws at import
+      # time. Values are irrelevant to a build — nothing connects — so CI uses
+      # placeholders rather than carrying real credentials as secrets.
+      - name: Build
+        env:
+          VITE_SUPABASE_URL: https://example.supabase.co
+          VITE_SUPABASE_ANON_KEY: ci-placeholder
+        run: npm run build

@@ -37,6 +37,15 @@ const HEADER_LINK_CLASS =
   "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 " +
   "focus-visible:outline-[color:var(--brand)]";
 
+/*
+ * One string literal, not a concatenation. supabase-js parses the select list
+ * at the type level, and it can only do that for a literal — the concatenated
+ * form it replaced degraded the result to GenericStringError[], which is why
+ * the row type had to be asserted downstream.
+ */
+const MENU_COLUMNS =
+  "id, name, desc:description, price, category, image_url, is_available, sort_order, ingredients, calories, protein_g, carbs_g, fat_g";
+
 export default function App() {
   // Boot from the URL, not from a hardcoded "home", so a deep link or a
   // refresh lands where it says it does.
@@ -58,10 +67,7 @@ export default function App() {
   useEffect(() => {
     supabase
       .from("menu_items")
-      .select(
-        "id, name, desc:description, price, category, image_url, is_available, sort_order, " +
-          "ingredients, calories, protein_g, carbs_g, fat_g",
-      )
+      .select(MENU_COLUMNS)
       /*
        * Belt and braces on availability. RLS already gates this
        * ("using is_available = true"), but relying on that alone put the whole
