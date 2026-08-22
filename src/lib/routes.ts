@@ -1,3 +1,4 @@
+import { MENU_CATEGORIES } from "@/app/types";
 import type { Page, MenuCategory } from "@/app/types";
 
 /*
@@ -8,8 +9,8 @@ import type { Page, MenuCategory } from "@/app/types";
  * (netlify.toml, vercel.json) rewrite unknown paths to index.html so a refresh
  * on a deep link still boots the app.
  *
- * The menu carries a category in the path — /menu/coffee, /menu/food — so a
- * category can be linked, bookmarked and shared. Bare /menu is the chooser.
+ * The menu carries a category in the path — /menu/coffee, /menu/sandwiches —
+ * so a section can be linked, bookmarked and shared. Bare /menu is everything.
  */
 export const ROUTES: Record<Page, string> = {
   home: "/",
@@ -22,8 +23,13 @@ export const ROUTES: Record<Page, string> = {
   refund: "/refund",
 };
 
-/** Category slugs double as the DB `category` values, so no mapping is needed. */
-const CATEGORIES: MenuCategory[] = ["coffee", "food"];
+/**
+ * Category slugs double as the DB `category` values, so no mapping is needed —
+ * which is also why the taxonomy is imported rather than restated here. /menu/food
+ * is not in the list any more and now degrades to the full menu, as any other
+ * unknown slug does.
+ */
+const CATEGORIES: readonly string[] = MENU_CATEGORIES;
 
 export type Route = { page: Page; menuCategory: MenuCategory };
 
@@ -57,7 +63,7 @@ export function routeFor(pathname: string): Route {
 
   if (path.startsWith(`${ROUTES.menu}/`)) {
     const slug = path.slice(ROUTES.menu.length + 1);
-    const category = CATEGORIES.find((c) => c === slug) ?? null;
+    const category = (CATEGORIES.find((c) => c === slug) ?? null) as MenuCategory;
     return { page: "menu", menuCategory: category };
   }
 

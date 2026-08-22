@@ -39,7 +39,10 @@ npm run build      # production bundle → dist/ (deploy this folder to go live)
 
 ## ⚠️ Action items for the owner
 - [ ] **Activate FormSubmit:** check naiffuad31@gmail.com for an email from FormSubmit and click the activation link. Until then, form/order submissions return success but are NOT delivered.
-- [ ] **Review BD prices** in `App.tsx` (`coffeeItems` / `foodItems` arrays) — I converted them to plausible values (e.g. Mantel Latte BD 2.200); adjust to the real menu.
+- [x] **Real menu loaded** — the invented placeholder items (Mantel Latte, Crimson Cortado …) are gone. `supabase/006` adds the five real headings (Coffee, Not Coffee, Aqua, Sandwiches, Desserts) plus ingredient and nutrition columns; `supabase/007` loads the actual items. Both still need applying in the Supabase SQL editor.
+- [ ] **Confirm eleven missing prices** — Spanish Latte, Latte / Cappuccino, Salted Cardamom Latte, Salted Caramel Latte, V60, Cold Brew, Water, Sparkling Water, Cinnamon Bun, Crêpe and Waffle were cropped out of the source menu. They are loaded but hidden (`is_available = false`), so they do not appear on the site until a price is set. Publish one with:
+  `update public.menu_items set price = 2.400, is_available = true where name = 'Spanish Latte';`
+- [ ] **Fill in ingredients and nutrition** — every item currently has an empty description and no calorie/macro figures, so the menu shows names and prices only. Filling `description`, `ingredients`, `calories`, `protein_g`, `carbs_g` and `fat_g` makes a row tap-to-expand on the site; a row with no data stays a plain line.
 - [x] Instagram links point to the real profile (`https://www.instagram.com/bymantel/`).
 
 ## Ideas / not yet done
