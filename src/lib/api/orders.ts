@@ -29,6 +29,18 @@ export type PlaceOrderInput = {
   /** Optional: the RPC accepts null, and guest checkout must stay possible. */
   customerEmail?: string | null;
   /**
+   * The pickup contact. Optional to the database, but the checkout asks for it
+   * because a counter with a ready order and no way to call anyone is the
+   * whole problem it solves.
+   */
+  customerPhone?: string | null;
+  /**
+   * When they want to collect. Null means "as soon as it's ready", which the
+   * RPC accepts. Anything in the past (beyond 5 minutes of clock skew) or more
+   * than 24 hours out is rejected server-side.
+   */
+  pickupAt?: Date | null;
+  /**
    * 'cash' is pay-at-counter. Card is not wired to any gateway — roadmap
    * Phase 4 — so nothing should pass 'card' until a hosted checkout exists.
    */
@@ -52,6 +64,13 @@ export async function placeOrder(input: PlaceOrderInput): Promise<PlaceOrderResu
      * across the signature change in 009.
      */
     customer_email: input.customerEmail?.trim().slice(0, 254) || undefined,
+    customer_phone: input.customerPhone?.trim().slice(0, 24) || undefined,
+    /*
+     * ISO 8601 with an offset, which is what timestamptz wants. Sending a
+     * local-looking string would have Postgres read it in the server's zone
+     * rather than the customer's, and quietly book a pickup an hour out.
+     */
+    pickup_at: input.pickupAt ? input.pickupAt.toISOString() : undefined,
     payment_method: input.paymentMethod,
   });
 
