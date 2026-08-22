@@ -23,6 +23,21 @@ jobs:
       - name: Typecheck
         run: npm run typecheck
 
+      # Only src/lib/api/* may talk to Supabase directly. Without this, the
+      # next inline query lands back in a component and the data layer quietly
+      # stops being one. There is no ESLint here to express it as a rule.
+      - name: Enforce the data-layer boundary
+        run: |
+          offenders=$(grep -rln "supabaseClient" src \
+            --include=*.ts --include=*.tsx \
+            | grep -v "^src/lib/api/" \
+            | grep -v "^src/lib/supabaseClient.ts$" || true)
+          if [ -n "$offenders" ]; then
+            echo "::error::These files import supabaseClient outside src/lib/api/:"
+            echo "$offenders"
+            exit 1
+          fi
+
       # A build needs the two VITE_ vars or supabaseClient throws at import
       # time. Values are irrelevant to a build — nothing connects — so CI uses
       # placeholders rather than carrying real credentials as secrets.

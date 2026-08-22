@@ -6,10 +6,9 @@ import { FaqAccordion } from "@/app/components/FaqAccordion";
 import { NewsletterSignup } from "@/app/components/NewsletterSignup";
 import { PRIVACY_POLICY, TERMS_OF_SERVICE, REFUND_POLICY, FAQ_ITEMS } from "@/app/content/legal";
 import { ArrowLeft, ChevronDown, Instagram, Search, User, X } from "lucide-react";
-import { supabase } from "@/lib/supabaseClient";
+import { fetchMenu, groupByCategory } from "@/lib/api/menu";
 import { loadProfile } from "@/lib/storage";
 import { formatBD, CATEGORY_LABELS } from "@/lib/format";
-import { MENU_CATEGORIES } from "@/app/types";
 import type { Page, MenuCategory, MenuItem, Profile } from "@/app/types";
 import { pathFor, routeFor } from "@/lib/routes";
 import { CONTACT_ENDPOINT } from "@/lib/constants";
@@ -37,15 +36,6 @@ const HEADER_LINK_CLASS =
   "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 " +
   "focus-visible:outline-[color:var(--brand)]";
 
-/*
- * One string literal, not a concatenation. supabase-js parses the select list
- * at the type level, and it can only do that for a literal — the concatenated
- * form it replaced degraded the result to GenericStringError[], which is why
- * the row type had to be asserted downstream.
- */
-const MENU_COLUMNS =
-  "id, name, desc:description, price, category, image_url, is_available, sort_order, ingredients, calories, protein_g, carbs_g, fat_g";
-
 export default function App() {
   // Boot from the URL, not from a hardcoded "home", so a deep link or a
   // refresh lands where it says it does.
@@ -65,38 +55,22 @@ export default function App() {
   const [menuError, setMenuError] = useState(false);
 
   useEffect(() => {
-    supabase
-      .from("menu_items")
-      .select(MENU_COLUMNS)
-      /*
-       * Belt and braces on availability. RLS already gates this
-       * ("using is_available = true"), but relying on that alone put the whole
-       * guarantee in one place — and that place turned out to be wrong: a
-       * second, permissive policy added outside this repo ORed with the first
-       * and made every row public, unpriced items included (see supabase/008).
-       * A filter here means a policy regression shows up as a missing item
-       * rather than a drink listed at 0.000.
-       */
-      .eq("is_available", true)
-      .order("category")
-      .order("sort_order")
-      .then(({ data, error }) => {
-        if (error) setMenuError(true);
-        else setMenuItems((data as MenuItem[]) ?? []);
-        setMenuLoading(false);
-      });
+    let live = true;
+    fetchMenu().then((result) => {
+      if (!live) return;
+      if (result.ok) setMenuItems(result.items);
+      else setMenuError(true);
+      setMenuLoading(false);
+    });
+    /* React 18 StrictMode mounts effects twice in development; without this
+       the second response can land after the first and set state on a
+       component the first pass already tore down. */
+    return () => {
+      live = false;
+    };
   }, []);
 
-  /*
-   * Grouped in MENU_CATEGORIES order, not in whatever order Postgres returned.
-   * The .order("category") above sorts alphabetically, which would print Aqua
-   * before Coffee — the printed menu's order is the tuple's order, so the
-   * grouping is driven from there and the query's category sort is only there
-   * to keep sort_order stable within each group.
-   */
-  const sections = MENU_CATEGORIES.map(
-    (key) => [key, menuItems.filter((i) => i.category === key)] as const,
-  );
+  const sections = groupByCategory(menuItems);
   const allItems = menuItems;
 
   /* ── search ── */
