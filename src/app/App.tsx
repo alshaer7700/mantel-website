@@ -62,6 +62,16 @@ export default function App() {
         "id, name, desc:description, price, category, image_url, is_available, sort_order, " +
           "ingredients, calories, protein_g, carbs_g, fat_g",
       )
+      /*
+       * Belt and braces on availability. RLS already gates this
+       * ("using is_available = true"), but relying on that alone put the whole
+       * guarantee in one place — and that place turned out to be wrong: a
+       * second, permissive policy added outside this repo ORed with the first
+       * and made every row public, unpriced items included (see supabase/008).
+       * A filter here means a policy regression shows up as a missing item
+       * rather than a drink listed at 0.000.
+       */
+      .eq("is_available", true)
       .order("category")
       .order("sort_order")
       .then(({ data, error }) => {
