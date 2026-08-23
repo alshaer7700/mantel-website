@@ -24,9 +24,12 @@ import { ORDERING_OPEN } from "@/lib/constants";
  *  - The eyebrow reads "Order ahead · Collect at the counter". Ordering is
  *    locked, so that is a promise the site cannot keep. It says so honestly
  *    instead.
- *  - The aside carries "Est. 2026", which the prototype's own notes flag as
- *    unverified. An invented founding year on a real business is not a
- *    placeholder, it is a false claim, so it is omitted rather than guessed.
+ *  - "Est. 2026" was omitted at first: the prototype's own notes flag it as
+ *    unverified, and an invented founding year on a real business is a false
+ *    claim rather than a placeholder. It is back, on evidence — the year is
+ *    printed on the matcha pouch and on the iced cup, alongside "Hidd,
+ *    Kingdom of Bahrain". Packaging the owner had made is better proof than a
+ *    verbal confirmation.
  */
 
 type Props = {
@@ -136,6 +139,7 @@ export function Home({ sections, objects, linkTo }: Props) {
           <div className="grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)] gap-[clamp(1.5rem,6vw,5rem)] pt-[3.5rem]">
             <div className="flex flex-col gap-[1.1rem]">
               <span className={LABEL}>Al Hidd, Muharraq</span>
+              <span className={LABEL}>Est. 2026</span>
             </div>
             <div className="font-serif text-[17px] leading-[1.55] text-[color:var(--ink)]">
               <p className="m-0 mb-[1.35rem] max-w-[60ch] [&::first-letter]:text-[3.4em] [&::first-letter]:float-left [&::first-letter]:leading-[0.78] [&::first-letter]:pr-[0.12em] [&::first-letter]:pt-[0.06em]">
