@@ -4,7 +4,7 @@ import { PolicyPage } from "@/app/components/PolicyPage";
 import { FaqAccordion } from "@/app/components/FaqAccordion";
 import { NewsletterSignup } from "@/app/components/NewsletterSignup";
 import { PRIVACY_POLICY, TERMS_OF_SERVICE, REFUND_POLICY, FAQ_ITEMS } from "@/app/content/legal";
-import { ChevronDown, Instagram, Search, User, X } from "lucide-react";
+import { ChevronDown, Search, User } from "lucide-react";
 import { fetchMenu, groupByCategory } from "@/lib/api/menu";
 import { fetchObjects, type ShopObject } from "@/lib/api/objects";
 import { Shelf } from "@/app/components/Shelf";
@@ -14,6 +14,7 @@ import { Cafe } from "@/app/pages/Cafe";
 import { Story } from "@/app/pages/Story";
 import { useScrolled } from "@/app/hooks/useScrolled";
 import { SearchOverlay } from "@/app/components/SearchOverlay";
+import { NavDrawer } from "@/app/components/NavDrawer";
 import { AccountPanel } from "@/app/components/account/AccountPanel";
 import { getSession, onAuthChange, fetchProfile } from "@/lib/api/auth";
 import type { Session } from "@supabase/supabase-js";
@@ -470,84 +471,14 @@ export default function App() {
 
 
       {/* ══ SIDEBAR ══ */}
-      {/* Overlay */}
-      <div
-        className={`fixed inset-0 z-40 bg-black/20 transition-opacity duration-300 ${
-          sidebarOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-        }`}
-        onClick={() => setSidebarOpen(false)}
+      {/* Full-screen below 1024px, on the reference's pattern — see NavDrawer. */}
+      <NavDrawer
+        open={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+        onSearch={() => { setSidebarOpen(false); setSearchOpen(true); }}
+        linkTo={linkTo}
+        navHeight={scrolled ? SCROLLED_NAV_HEIGHT : navHeight}
       />
-      {/* Drawer */}
-      <div
-        className={`fixed top-0 left-0 z-50 h-full bg-background flex flex-col transition-transform duration-300 ease-in-out ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
-        style={{ width: "185px" }}
-      >
-        {/* Drawer header */}
-        <div
-          className="flex items-center justify-between px-5 border-b border-border shrink-0"
-          style={{ height: navHeight }}
-        >
-          <button
-            onClick={() => setSidebarOpen(false)}
-            className="hover:opacity-60 transition-opacity"
-            aria-label="Close"
-          >
-            <X size={18} strokeWidth={1.5} />
-          </button>
-          <span className="font-serif font-semibold text-[24px] leading-none tracking-[-0.01em] text-foreground">
-            Mantel.
-          </span>
-          <div className="w-[18px]" />
-        </div>
-
-        {/* Drawer links */}
-        <nav className="flex flex-col px-5 pt-7 gap-5 flex-1">
-          <a
-            className="text-left font-serif font-normal text-2xl text-foreground hover:opacity-50 transition-opacity"
-            {...linkTo("menu")}
-          >
-            Menu
-          </a>
-          <a
-            className="text-left font-serif font-normal text-2xl text-foreground hover:opacity-50 transition-opacity"
-            {...linkTo("objects")}
-          >
-            Objects
-          </a>
-          <a
-            className="text-left font-serif font-normal text-2xl text-foreground hover:opacity-50 transition-opacity"
-            {...linkTo("contact")}
-          >
-            Contact
-          </a>
-          <a
-            className="text-left font-serif font-normal text-2xl text-foreground hover:opacity-50 transition-opacity"
-            {...linkTo("story")}
-          >
-            Our Story
-          </a>
-          <a
-            className="text-left font-serif font-normal text-2xl text-foreground hover:opacity-50 transition-opacity"
-            {...linkTo("faq")}
-          >
-            FAQ
-          </a>
-        </nav>
-
-        {/* Drawer footer */}
-        <div className="px-5 pb-6">
-          <a
-            href="https://www.instagram.com/bymantel/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-foreground/60 hover:text-foreground transition-colors"
-          >
-            <Instagram size={18} strokeWidth={1.5} />
-          </a>
-        </div>
-      </div>
 
       {/* ══ SEARCH PANEL ══ */}
       {searchOpen && (
