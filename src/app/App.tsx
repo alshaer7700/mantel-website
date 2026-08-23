@@ -476,6 +476,7 @@ export default function App() {
         open={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
         onSearch={() => { setSidebarOpen(false); setSearchOpen(true); }}
+        onAccount={() => { setSidebarOpen(false); setAccountOpen(true); }}
         linkTo={linkTo}
         navHeight={scrolled ? SCROLLED_NAV_HEIGHT : navHeight}
       />
