@@ -51,7 +51,7 @@ export function Home({ sections, objects, linkTo }: Props) {
       {/* ── hero ── */}
       <div className="pt-[clamp(3rem,9vh,6rem)]">
         <div className="flex justify-between gap-[var(--s-2)] flex-wrap">
-          <span className={LABEL}>Mantel — Al Hidd, Bahrain</span>
+          <span className={LABEL}>Mantel — Hidd, Kingdom of Bahrain</span>
           <span className={LABEL}>
             {ORDERING_OPEN ? "Order ahead · Collect at the counter" : "Ordering opens soon"}
           </span>
@@ -138,7 +138,7 @@ export function Home({ sections, objects, linkTo }: Props) {
         <Shelf tag="The name" note="03">
           <div className="grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)] gap-[clamp(1.5rem,6vw,5rem)] pt-[3.5rem]">
             <div className="flex flex-col gap-[1.1rem]">
-              <span className={LABEL}>Al Hidd, Muharraq</span>
+              <span className={LABEL}>Hidd, Kingdom of Bahrain</span>
               <span className={LABEL}>Est. 2026</span>
             </div>
             <div className="font-serif text-[17px] leading-[1.55] text-[color:var(--ink)]">

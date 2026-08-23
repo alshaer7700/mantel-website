@@ -28,7 +28,11 @@ jobs:
       # stops being one. There is no ESLint here to express it as a rule.
       - name: Enforce the data-layer boundary
         run: |
-          offenders=$(grep -rln "supabaseClient" src \
+          # Matches IMPORTS, not prose. The first version grepped for the
+          # bare word and failed on a comment that merely mentioned the
+          # module — a check that flags documentation is a check people
+          # learn to ignore.
+          offenders=$(grep -rlE "^\s*import[^;]*from\s+[\"']([^\"']*/)?supabaseClient[\"']" src \
             --include=*.ts --include=*.tsx \
             | grep -v "^src/lib/api/" \
             | grep -v "^src/lib/supabaseClient.ts$" || true)

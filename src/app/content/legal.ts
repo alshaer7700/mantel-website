@@ -11,7 +11,7 @@ export const PRIVACY_POLICY: LegalDoc = {
   sections: [
     {
       paragraphs: [
-        "Mantel (“we”, “us”) is a coffee shop in Muharraq, Kingdom of Bahrain. This policy explains what personal information our website collects, how we use it, and the choices you have.",
+        "Mantel (“we”, “us”) is a coffee shop in Hidd, Kingdom of Bahrain. This policy explains what personal information our website collects, how we use it, and the choices you have.",
       ],
     },
     {
@@ -68,7 +68,7 @@ export const TERMS_OF_SERVICE: LegalDoc = {
     {
       heading: "Orders & pick-up",
       paragraphs: [
-        "Orders placed through the site are for pick-up at Mantel in Muharraq, Bahrain. An order is confirmed once you see the confirmation message. Payment is taken at pick-up by cash or card until online payment launches.",
+        "Orders placed through the site are for pick-up at Mantel in Hidd, Kingdom of Bahrain. An order is confirmed once you see the confirmation message. Payment is taken at pick-up by cash or card until online payment launches.",
         "All prices are in Bahraini Dinar (BD). Menu items and availability may change without notice; if something you ordered becomes unavailable, we'll offer an alternative or a refund.",
       ],
     },
@@ -140,7 +140,7 @@ export const FAQ_ITEMS: FaqItem[] = [
   },
   {
     question: "Where are you located?",
-    answer: "Mantel is a curbside coffee spot in Muharraq, Kingdom of Bahrain.",
+    answer: "Mantel is a curbside coffee spot in Hidd, Kingdom of Bahrain.",
   },
   {
     question: "How do I pay?",

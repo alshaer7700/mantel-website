@@ -14,8 +14,10 @@ import { Cafe } from "@/app/pages/Cafe";
 import { Story } from "@/app/pages/Story";
 import { useScrolled } from "@/app/hooks/useScrolled";
 import { SearchOverlay } from "@/app/components/SearchOverlay";
-import { loadProfile } from "@/lib/storage";
-import type { Page, MenuCategory, MenuItem, Profile } from "@/app/types";
+import { AccountPanel } from "@/app/components/account/AccountPanel";
+import { getSession, onAuthChange, fetchProfile } from "@/lib/api/auth";
+import type { Session } from "@supabase/supabase-js";
+import type { Page, MenuCategory, MenuItem } from "@/app/types";
 import { pathFor, routeFor } from "@/lib/routes";
 import { CONTACT_ENDPOINT, ORDERING_OPEN } from "@/lib/constants";
 
@@ -118,18 +120,49 @@ export default function App() {
   /* The header contracts once the page moves — see useScrolled. */
   const scrolled = useScrolled();
 
-  const [profile, setProfile] = useState<Profile | null>(() => loadProfile("mantel-profile"));
-  const [profileDraft, setProfileDraft] = useState<Profile>({ name: "", email: "" });
+  /*
+   * A real session, not the localStorage name-and-email the panel used to
+   * keep. That was never an account — it authenticated nobody and guarded
+   * nothing — and calling it one in the UI was the misleading part.
+   */
+  const [session, setSession] = useState<Session | null>(null);
+
+  /*
+   * True when the page was opened from a password-reset link. Supabase turns
+   * the token in the URL into a session and reports PASSWORD_RECOVERY; without
+   * catching it, the link just silently signs the visitor in and shows a
+   * profile form, which is not what they clicked.
+   */
+  const [recovering, setRecovering] = useState(false);
 
   useEffect(() => {
-    if (profile) localStorage.setItem("mantel-profile", JSON.stringify(profile));
-    else localStorage.removeItem("mantel-profile");
-  }, [profile]);
+    getSession().then(setSession);
+    return onAuthChange((s) => {
+      setSession(s);
+      if (window.location.hash.includes("type=recovery")) {
+        setRecovering(true);
+        setAccountOpen(true);
+      }
+    });
+  }, []);
 
-  /* saved profile pre-fills the contact form */
+  /* A signed-in customer's stored details pre-fill the contact form, which is
+     what the localStorage version was really for. */
   useEffect(() => {
-    if (profile) setForm((f) => ({ ...f, name: f.name || profile.name, email: f.email || profile.email }));
-  }, [profile]);
+    if (!session?.user) return;
+    let live = true;
+    fetchProfile(session.user.id).then((p) => {
+      if (!live || !p) return;
+      setForm((f) => ({
+        ...f,
+        name: f.name || p.full_name,
+        email: f.email || session.user.email || "",
+      }));
+    });
+    return () => {
+      live = false;
+    };
+  }, [session]);
 
   useEffect(() => {
     if (searchOpen) searchInputRef.current?.focus();
@@ -291,7 +324,7 @@ export default function App() {
         <div>
           <h4 className={footerTitle}>Contact</h4>
           <p className="font-serif font-normal text-[length:var(--fs-foot-link)] text-[color:var(--ink)] mb-[14px]">
-            Al Hidd, Bahrain
+            Hidd, Kingdom of Bahrain
           </p>
           <a {...linkTo("contact")} className={footerLink}>Get in touch</a>
         </div>
@@ -423,8 +456,7 @@ export default function App() {
               onClick={() => {
                 setAccountOpen((v) => !v);
                 setSearchOpen(false);
-                        setLocaleOpen(false);
-                if (profile) setProfileDraft(profile);
+                setLocaleOpen(false);
               }}
               className="hover:text-foreground transition-colors"
               aria-label="Account"
@@ -533,65 +565,12 @@ export default function App() {
 
       {/* ══ ACCOUNT PANEL ══ */}
       {accountOpen && (
-        <div
-          className="fixed right-4 z-50 w-72 bg-background border border-border rounded-3xl shadow-lg p-5"
-          style={{ top: `calc(${navHeight} + 10px)` }}
-        >
-          {profile ? (
-            <div className="flex flex-col gap-3">
-              <p className="font-mono font-medium text-lg">Hi, {profile.name}</p>
-              <p className="font-mono font-normal text-xs text-muted-foreground -mt-2">{profile.email}</p>
-              <p className="font-mono font-normal text-xs text-muted-foreground">
-                Your details pre-fill the contact form on this device.
-              </p>
-              <button
-                onClick={() => { setProfile(null); setProfileDraft({ name: "", email: "" }); }}
-                className="self-start font-serif font-medium text-[12px] tracking-[0.14em] uppercase text-muted-foreground hover:text-foreground transition-colors"
-              >
-                Sign out
-              </button>
-            </div>
-          ) : (
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                if (profileDraft.name.trim() && profileDraft.email.trim()) {
-                  setProfile({ name: profileDraft.name.trim(), email: profileDraft.email.trim() });
-                }
-              }}
-              className="flex flex-col gap-2.5"
-            >
-              <p className="font-mono font-medium text-lg mb-1">Your details</p>
-              <input
-                type="text"
-                placeholder="Name"
-                required
-                maxLength={120}
-                value={profileDraft.name}
-                onChange={(e) => setProfileDraft((d) => ({ ...d, name: e.target.value }))}
-                className="rounded-full border border-border bg-background px-4 py-2 font-mono font-normal text-sm placeholder:text-muted-foreground outline-none focus:border-foreground/40 transition-colors"
-              />
-              <input
-                type="email"
-                placeholder="Email"
-                required
-                maxLength={254}
-                value={profileDraft.email}
-                onChange={(e) => setProfileDraft((d) => ({ ...d, email: e.target.value }))}
-                className="rounded-full border border-border bg-background px-4 py-2 font-mono font-normal text-sm placeholder:text-muted-foreground outline-none focus:border-foreground/40 transition-colors"
-              />
-              <button
-                type="submit"
-                className={`mt-1 px-6 py-2 font-serif font-medium text-base self-start ${HEART_BUTTON_CLASS}`}
-              >
-                Save
-              </button>
-              <p className="font-mono font-normal text-[11px] text-muted-foreground">
-                Saved on this device only — used to pre-fill the contact form.
-              </p>
-            </form>
-          )}
-        </div>
+        <AccountPanel
+          session={session}
+          recovering={recovering}
+          navHeight={scrolled ? SCROLLED_NAV_HEIGHT : navHeight}
+          onClose={() => { setAccountOpen(false); setRecovering(false); }}
+        />
       )}
 
 

@@ -54,4 +54,3 @@ export type MenuItem = {
   fat_g: number | null;
 };
 
-export type Profile = { name: string; email: string };

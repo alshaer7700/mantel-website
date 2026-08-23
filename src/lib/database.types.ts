@@ -12,7 +12,7 @@
  * in a migration would have gone unnoticed until it 404'd in a browser. With
  * it, `npm run typecheck` fails instead.
  *
- * Current as of 009 (objects, sellables, pickup details).
+ * Current as of 012 (accounts, profiles, order ownership, object content).
  *
  * Two things to read carefully rather than trust:
  *
@@ -203,6 +203,7 @@ export type Database = {
           pickup_at: string | null
           status: string
           subtotal: number
+          user_id: string | null
         }
         Insert: {
           created_at?: string
@@ -214,6 +215,7 @@ export type Database = {
           pickup_at?: string | null
           status?: string
           subtotal: number
+          user_id?: string | null
         }
         Update: {
           created_at?: string
@@ -225,6 +227,31 @@ export type Database = {
           pickup_at?: string | null
           status?: string
           subtotal?: number
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          full_name: string
+          id: string
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          full_name?: string
+          id: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          full_name?: string
+          id?: string
+          phone?: string | null
+          updated_at?: string
         }
         Relationships: []
       }

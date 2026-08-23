@@ -17,7 +17,7 @@
 const STROKE = "stroke-[color:var(--ink)] [stroke-width:1] fill-none [stroke-linecap:round] [stroke-linejoin:round]";
 const FLAME = "stroke-[color:var(--brand)] [stroke-width:1] fill-none [stroke-linecap:round] [stroke-linejoin:round]";
 
-export type ArtKey = "candle" | "matches" | "lighter" | "bag";
+export type ArtKey = "candle" | "matches" | "lighter" | "bag" | "bottle";
 
 const ART: Record<ArtKey, React.ReactElement> = {
   candle: (
@@ -42,6 +42,17 @@ const ART: Record<ArtKey, React.ReactElement> = {
       <path className={STROKE} d="M14 50h32" />
       <path className={STROKE} d="M24 34v-8h12v8" />
       <path className={FLAME} d="M30 22c0-6-5-7-3-13-6 4-8 8-8 12a11 11 0 0 0 22 0c0-3-1-5-3-7 0 4-3 6-8 8Z" />
+    </svg>
+  ),
+  /* The cold brew flask: square-shouldered body, short neck, screw cap, and
+     the single band the label sits on. Drawn to match the mockup rather than
+     a generic bottle — the flat shoulders are what make it read as theirs. */
+  bottle: (
+    <svg width="66" height="118" viewBox="0 0 66 118" aria-hidden="true">
+      <rect className={STROKE} x="26" y="10" width="14" height="12" rx="1" />
+      <path className={STROKE} d="M28 22v8c0 2-1 3-3 4-5 2-8 5-8 10v56a6 6 0 0 0 6 6h20a6 6 0 0 0 6-6V44c0-5-3-8-8-10-2-1-3-2-3-4v-8" />
+      <path className={STROKE} d="M17 62h32" />
+      <path className={STROKE} d="M17 78h32" />
     </svg>
   ),
   bag: (

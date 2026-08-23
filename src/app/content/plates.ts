@@ -62,7 +62,7 @@ export const PLATES = {
   facade: {
     src: "",
     ref: "PL-06",
-    cap: "Al Hidd, exterior",
+    cap: "Hidd, exterior",
     brief:
       "Wide. The shopfront straight on from across the street. Overcast or early morning, no cars.",
   },

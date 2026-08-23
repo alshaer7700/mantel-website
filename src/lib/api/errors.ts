@@ -24,6 +24,21 @@ export type AppError =
   | { kind: "unavailable"; message: string }
   /** Never reached the database — offline, DNS, CORS, blocked request. */
   | { kind: "network" }
+  /**
+   * A sentence already written FOR the customer, shown verbatim.
+   *
+   * This exists because `unknown` deliberately throws its message away:
+   * toAppError puts raw Postgres text there, which names internal states and
+   * must never reach a visitor. That was right for the database and wrong for
+   * auth — src/lib/api/auth.ts hand-writes every message it returns ("That
+   * email and password don't match"), and those were being replaced by the
+   * generic apology, which is how a login form ends up unable to tell you your
+   * password is wrong.
+   *
+   * The rule: `notice` is for prose a human wrote for a visitor. `unknown` is
+   * for anything a machine produced.
+   */
+  | { kind: "notice"; message: string }
   | { kind: "unknown"; message: string };
 
 /** What the visitor is shown. Deliberately free of jargon and error codes. */
@@ -37,6 +52,8 @@ export function messageFor(error: AppError): string {
       return "Something in your bag just sold out. Take it out and try again.";
     case "network":
       return "Couldn't reach us just now. Check your connection and try again.";
+    case "notice":
+      return error.message;
     case "unknown":
       return "Something went wrong on our end. Please try again in a moment.";
   }

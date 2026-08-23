@@ -8,19 +8,20 @@ import { LABEL, LABEL_INK } from "@/app/components/type";
  * The story, in the design direction's editorial layout: a column of quiet
  * labels beside a measure of serif prose with a drop cap.
  *
- * THE LAYOUT IS THE PROTOTYPE'S. THE COPY IS NOT, deliberately.
+ * THE COPY IS THE OWNER'S, and that matters.
  *
- * The prototype fills this page with a founding story — an argument about what
- * a café is for, why the menu is short, how the objects came second. Its own
- * notes flag that copy as "written as a plausible draft, not from the
- * founders", and the page this replaces carried an explicit comment making the
- * same choice: "the account of how Mantel started is the owner's to write —
- * this stays deliberately short rather than inventing a history."
+ * This page previously carried one factual line and nothing else, because the
+ * prototype's founding story was flagged in its own notes as "a plausible
+ * draft, not from the founders" — and publishing an invented origin story
+ * about real people is worse than an empty page.
  *
- * Publishing an invented origin story for a real business is not placeholder
- * content, it is a fabricated claim about people. So the one factual line
- * stays, and the draft waits for the owner to approve or rewrite it. Dropping
- * it in afterwards is a paragraph of work.
+ * The text below is not that draft. It is the manifesto printed on Mantel's
+ * own matchboxes, transcribed from the packaging. It is the founders' writing,
+ * which is exactly what was missing.
+ *
+ * Set as three paragraphs rather than the box's single block: the matchbox
+ * justifies one dense column of mono because it is 5cm wide and you read it
+ * holding the thing. At web measure the same block is a wall.
  */
 
 type Props = {
@@ -36,8 +37,9 @@ export function Story({ linkTo }: Props) {
       <Shelf tag="Story" note="04">
         <div className="grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)] gap-[clamp(1.5rem,6vw,5rem)] pt-[3.5rem]">
           <div className="flex flex-col gap-[1.1rem]">
-            <span className={LABEL}>Al Hidd, Muharraq</span>
-            <span className={LABEL}>One counter, one shelf</span>
+            <span className={LABEL}>Hidd, Kingdom of Bahrain</span>
+            <span className={LABEL}>Est. 2026</span>
+            <span className={LABEL}>Printed on the matchbox</span>
             <a href="mailto:hello@bymantel.com" className={LABEL_INK}>
               hello@bymantel.com
             </a>
@@ -45,13 +47,25 @@ export function Story({ linkTo }: Props) {
 
           <div className="font-serif text-[17px] leading-[1.55] text-[color:var(--ink)]">
             <h1 className="sr-only">Our story</h1>
+
             <p className="m-0 mb-[1.35rem] max-w-[60ch] [&::first-letter]:text-[3.4em] [&::first-letter]:float-left [&::first-letter]:leading-[0.78] [&::first-letter]:pr-[0.12em] [&::first-letter]:pt-[0.06em]">
-              Mantel is a specialty coffee shop in Al Hidd, Bahrain.
+              Every “Mantel” starts the same. What makes a “Mantel” different is never its
+              shape alone, but everything that gathers around it. A “Mantel” is shaped by
+              routine, by people, by time, and by the small details left behind.
             </p>
-            <p className="m-0 mb-[1.35rem] max-w-[60ch] text-[color:var(--ink-muted)]">
-              A café and a small house of objects — coffee poured at the counter, candles and
-              matches wrapped at the shelf.
+
+            <p className="m-0 mb-[1.35rem] max-w-[60ch]">
+              It changes quietly, little by little, not because it moves, but because life
+              around it never stands still. Some will see a “Mantel” as something familiar.
+              Others will see the memories, the objects, or the moments it holds. Neither is
+              wrong.
             </p>
+
+            <p className="m-0 mb-[1.35rem] max-w-[60ch]">
+              A “Mantel” never asks to be seen in only one way. It simply continues to collect
+              what life leaves behind. The rest is waiting to catch fire.
+            </p>
+
             <a {...linkTo("menu")} className={`${LABEL_INK} inline-block mt-[0.5rem]`}>
               View the menu →
             </a>
