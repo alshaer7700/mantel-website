@@ -1,0 +1,43 @@
+{
+  /*
+   * The project shipped as .tsx with no TypeScript installed: Vite's esbuild
+   * transform strips annotations without ever checking them, so every type in
+   * src/app/types.ts was decorative. `npm run typecheck` is what makes them
+   * load-bearing, and CI runs it on every push.
+   *
+   * noEmit only — Vite still does the building. This config exists to be a
+   * checker, not a compiler.
+   */
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "types": ["vite/client"],
+
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    /* Reads from Supabase and localStorage are the two places this codebase
+       indexes into things it did not create, which is exactly where an
+       undefined slips through an index signature. */
+    "noUncheckedIndexedAccess": true,
+
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "allowImportingTsExtensions": false,
+    "resolveJsonModule": true,
+    "forceConsistentCasingInFileNames": true,
+
+    /* Mirrors the alias in vite.config.ts. If one moves, both move. */
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
+  },
+  "include": ["src"]
+}

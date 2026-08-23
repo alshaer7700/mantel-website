@@ -1,17 +1,33 @@
 // Legal pages + FAQ content. Drafted from what the site actually collects and
-// does (contact form, pick-up orders, localStorage cart/profile, Supabase,
-// FormSubmit) — owner should review before launch; this is not legal advice.
+// does (contact form, pick-up orders, customer accounts, localStorage bag,
+// Supabase, FormSubmit) — owner should review before launch; this is not legal
+// advice.
+//
+// The contact address here is the business one, not the owner's personal
+// Gmail. Audit H-2 wanted "no @gmail.com in the built bundle" and accepted the
+// personal address as required legal content while the site carried
+// noindex/nofollow. Removing that tag makes these pages crawlable, so the
+// address would be harvested — the exact exposure H-2 described. hello@ is
+// used because the site already publishes it; the project plan assigns
+// support@bymantel.com to complaints and order issues, which is the better
+// home for the refund and PDPL contacts once that mailbox exists.
+//
+// KEEP THIS IN SYNC WITH THE CODE. The security audit singled the policy out
+// for matching what the site really did, and that is only true while someone
+// maintains it: accounts (supabase/010) made the previous wording wrong, since
+// it described the account panel as a name and email in local storage when it
+// now creates a real login with a password Supabase holds.
 
 export type LegalSection = { heading?: string; paragraphs: string[] };
 export type LegalDoc = { title: string; updated: string; sections: LegalSection[] };
 
 export const PRIVACY_POLICY: LegalDoc = {
   title: "Privacy Policy",
-  updated: "10 July 2026",
+  updated: "22 August 2026",
   sections: [
     {
       paragraphs: [
-        "Mantel (“we”, “us”) is a coffee shop in Muharraq, Kingdom of Bahrain. This policy explains what personal information our website collects, how we use it, and the choices you have.",
+        "Mantel (“we”, “us”) is a coffee shop in Hidd, Kingdom of Bahrain. This policy explains what personal information our website collects, how we use it, and the choices you have.",
       ],
     },
     {
@@ -19,7 +35,9 @@ export const PRIVACY_POLICY: LegalDoc = {
       paragraphs: [
         "Contact form — your name, email address, phone number, and message, so we can reply to you.",
         "Pick-up orders — your name, email address, the items you order, and your chosen payment method, so we can prepare your order and confirm it.",
-        "Saved on your device only — your bag and the name/email you save in the account panel are stored in your browser's local storage. They stay on your device and are only sent to us when you place an order or submit a form.",
+        "Account — if you create one, your email address and a password. The password is stored by Supabase in hashed form; we never see it. You may also save a name and mobile number to your profile, which we use to fill in your details at checkout.",
+        "Order history — orders you place while signed in are linked to your account so you can see them. Orders placed as a guest are not linked to anyone, and you never need an account to order.",
+        "Saved on your device only — your bag is stored in your browser's local storage, and if you sign in, so is the token that keeps you signed in. Both stay on your device; the bag reaches us only when you place an order.",
         "Newsletter — your email address, if you choose to sign up for updates.",
       ],
     },
@@ -32,25 +50,25 @@ export const PRIVACY_POLICY: LegalDoc = {
     {
       heading: "Who processes it for us",
       paragraphs: [
-        "Orders are stored securely with Supabase, our database hosting provider. Messages and sign-ups are delivered to our inbox via FormSubmit, a form email service. Both act only on our instructions.",
+        "Orders and accounts are stored securely with Supabase, our database and authentication provider, on servers in Tokyo, Japan. Messages and sign-ups are delivered to our inbox via FormSubmit, a form email service. Both act only on our instructions.",
       ],
     },
     {
       heading: "Cookies & tracking",
       paragraphs: [
-        "We don't use advertising cookies or analytics trackers. The only data kept in your browser is the local storage described above, which you can clear at any time from your browser settings or by signing out in the account panel.",
+        "This site sets no cookies at all — not for advertising, not for analytics, and not for signing in. Everything kept in your browser is the local storage described above, including the sign-in token, which is why you are not asked to accept cookies. You can clear it at any time from your browser settings, or by signing out.",
       ],
     },
     {
       heading: "Your rights",
       paragraphs: [
-        "Under Bahrain's Personal Data Protection Law (Law No. 30 of 2018) you may ask us to show you, correct, or delete the personal information we hold about you. Email us at naiffuad31@gmail.com and we'll take care of it.",
+        "Under Bahrain's Personal Data Protection Law (Law No. 30 of 2018) you may ask us to show you, correct, or delete the personal information we hold about you. You can correct your own name and mobile at any time in the account panel. Email us at hello@bymantel.com and we'll take care of anything else, including closing your account — which deletes your profile with it.",
       ],
     },
     {
       heading: "Changes",
       paragraphs: [
-        "If we change this policy, we'll update it here with a new date at the top. Questions? Email naiffuad31@gmail.com.",
+        "If we change this policy, we'll update it here with a new date at the top. Questions? Email hello@bymantel.com.",
       ],
     },
   ],
@@ -68,7 +86,7 @@ export const TERMS_OF_SERVICE: LegalDoc = {
     {
       heading: "Orders & pick-up",
       paragraphs: [
-        "Orders placed through the site are for pick-up at Mantel in Muharraq, Bahrain. An order is confirmed once you see the confirmation message. Payment is taken at pick-up by cash or card until online payment launches.",
+        "Orders placed through the site are for pick-up at Mantel in Hidd, Kingdom of Bahrain. An order is confirmed once you see the confirmation message. Payment is taken at pick-up by cash or card until online payment launches.",
         "All prices are in Bahraini Dinar (BD). Menu items and availability may change without notice; if something you ordered becomes unavailable, we'll offer an alternative or a refund.",
       ],
     },
@@ -93,7 +111,7 @@ export const TERMS_OF_SERVICE: LegalDoc = {
     {
       heading: "Governing law",
       paragraphs: [
-        "These terms are governed by the laws of the Kingdom of Bahrain. Questions? Email naiffuad31@gmail.com.",
+        "These terms are governed by the laws of the Kingdom of Bahrain. Questions? Email hello@bymantel.com.",
       ],
     },
   ],
@@ -124,7 +142,7 @@ export const REFUND_POLICY: LegalDoc = {
     {
       heading: "How to reach us",
       paragraphs: [
-        "Email naiffuad31@gmail.com or use the contact form and we'll sort it out quickly.",
+        "Email hello@bymantel.com or use the contact form and we'll sort it out quickly.",
       ],
     },
   ],
@@ -140,7 +158,7 @@ export const FAQ_ITEMS: FaqItem[] = [
   },
   {
     question: "Where are you located?",
-    answer: "Mantel is a curbside coffee spot in Muharraq, Kingdom of Bahrain.",
+    answer: "Mantel is a curbside coffee spot in Hidd, Kingdom of Bahrain.",
   },
   {
     question: "How do I pay?",

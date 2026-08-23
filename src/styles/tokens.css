@@ -25,33 +25,65 @@
   --font-mono:  "Fira Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace, var(--font-emoji);
 
   /* ── Colour ─────────────────────────────────────────────────────────────
-     Five values. The red belongs to the heart: it is an accent, never a
-     button fill, a background or a hover state. */
-  --ink:       #1A1A1A;  /* all primary text */
-  --ink-muted: #8A8A8A;  /* descriptions, secondary */
-  --brand:     #8B1A1A;  /* heart red — accents only */
-  --line:      #EEEEEE;  /* category dividers only */
-  --bg:        #FFFFFF;  /* the ground, everywhere */
+     Values from the design prototype: warm paper rather than pure white, and
+     an ink that is nearly black but carries a trace of brown. The red belongs
+     to the heart: it is an accent, never a button fill, a background or a
+     hover state, and should stay under roughly 1% of visible surface — the
+     bag badge, the flame strokes in the line drawings, form errors, the mark
+     itself.
+
+     theme.css maps its own --background / --foreground / --border /
+     --muted-foreground / --heart-red onto these, so the Figma-export classes
+     still in the tree (bg-background, text-muted-foreground, border-border)
+     follow the same five values instead of drifting from them. */
+  --paper:     #F6F5F2;  /* the ground, everywhere */
+  --bg:        var(--paper);
+  /* Named --card-surface, not --card, for exactly the reason --ink-muted is
+     not --muted: theme.css defines a shadcn --card and is imported later, so a
+     token by that name here would silently lose to it. */
+  --card-surface: #FCFBF9;  /* raised surfaces — the checkout summary panel */
+  --ink:       #171310;  /* all primary text */
+  --ink-muted: #8C867D;  /* descriptions, secondary, every .label */
+  --brand:     #9A1C1F;  /* heart red — accents only */
+
+  /* Two rules, not one. The shelf hairline has to read as a drawn line; the
+     divider between two menu rows must not. Collapsing them makes either the
+     shelf invisible or the menu striped. */
+  --line:      #D9D4CB;  /* the shelf rule, section hairlines */
+  --line-soft: #E8E4DC;  /* row dividers inside a list */
+
+  /* Page gutter. The one fluid value in the file: the prototype's layout is
+     built on it, and pinning it to a step would break the bleed plates that
+     cancel it with a negative margin. */
+  --pad:   clamp(1.25rem, 5vw, 5rem);
+  --shelf: 1px;
 
   /*
    * One deliberate deviation from the brief, which names this token --muted.
-   * theme.css already defines --muted as #F5F5F5 — the shadcn *surface* fill
-   * behind bg-muted — and it is imported later, so a token called --muted here
-   * would silently lose to it. Worse, forcing the order the other way would
-   * repaint every muted background with a text grey. They are different
-   * things that happened to want the same name, so this one is --ink-muted:
-   * the muted member of the ink family. When theme.css retires as the
-   * redesign phases land, it can take the brief's name.
+   * theme.css already defines --muted as the shadcn *surface* fill behind
+   * bg-muted, and it is imported later, so a token called --muted here would
+   * silently lose to it. Worse, forcing the order the other way would repaint
+   * every muted background with a text grey. They are different things that
+   * happened to want the same name, so this one is --ink-muted: the muted
+   * member of the ink family.
    */
 
   /*
-   * Accessibility note, carried from the redesign audit.
-   * #8A8A8A on #FFFFFF measures 3.45:1. That clears WCAG AA for large text
-   * but not the 4.5:1 that 14px menu descriptions need. #767676 measures
-   * 4.54:1 and is visually indistinguishable at that size. The brief
-   * specifies #8A8A8A, so that is what ships here — changing a brand value is
-   * the owner's call, not a build-time one. If it is approved, this is the
-   * only line that changes.
+   * Accessibility note, measured rather than assumed.
+   *
+   *   #171310 on #F6F5F2   16.94:1   passes AA for body text
+   *   #9A1C1F on #F6F5F2    7.52:1   passes AA for body text
+   *   #8C867D on #F6F5F2    3.31:1   large text only — FAILS AA at 14px
+   *
+   * --ink-muted is the same problem the previous palette had (#8A8A8A on
+   * white measured 3.45:1), very slightly worse. It carries the 14px menu
+   * descriptions and every .label, which is exactly the size that needs
+   * 4.5:1. #767066 measures 4.50:1 on this paper and is visually
+   * indistinguishable at that size.
+   *
+   * The prototype specifies #8C867D, so that is what ships: changing a brand
+   * value is the owner's call, not a build-time one. If it is approved, this
+   * is the only line that changes.
    */
 
   /* ── Spacing ────────────────────────────────────────────────────────────

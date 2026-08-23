@@ -2,27 +2,38 @@
 
 :root {
   --font-size: 16px;
-  --background: #ffffff;
-  --foreground: #1a1a1a;
-  --card: #ffffff;
-  --card-foreground: #1a1a1a;
-  --popover: #ffffff;
-  --popover-foreground: #1a1a1a;
-  --primary: #1a1a1a;
-  --primary-foreground: #ffffff;
-  --secondary: #f5f5f5;
-  --secondary-foreground: #1a1a1a;
-  --muted: #f5f5f5;
-  --muted-foreground: #888888;
+
+  /* These are the Figma-export names the surviving shadcn-era classes read
+     (bg-background, text-muted-foreground, border-border, and so on). They are
+     no longer independent values: each points at the token in tokens.css that
+     owns it, so the two palettes cannot drift. The literals they replaced were
+     pure white and neutral greys — the reason the page still rendered #ffffff
+     after tokens.css moved to warm paper.
+
+     --card here is the shadcn *surface* name and now resolves to the paper
+     card in tokens.css; --muted stays a distinct light fill and is not the
+     same thing as --ink-muted (see the note in tokens.css). */
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --card: var(--card-surface);
+  --card-foreground: var(--ink);
+  --popover: var(--card-surface);
+  --popover-foreground: var(--ink);
+  --primary: var(--ink);
+  --primary-foreground: var(--paper);
+  --secondary: #EFEDE8;
+  --secondary-foreground: var(--ink);
+  --muted: #EFEDE8;
+  --muted-foreground: var(--ink-muted);
   --accent: #f2a8c4;
   --accent-foreground: #ffffff;
-  --heart-red: #9c1a20;
-  --heart-red-foreground: #ffffff;
-  --destructive: #d4183d;
-  --destructive-foreground: #ffffff;
-  --border: #e5e5e5;
+  --heart-red: var(--brand);
+  --heart-red-foreground: var(--paper);
+  --destructive: var(--brand);
+  --destructive-foreground: var(--paper);
+  --border: var(--line-soft);
   --input: transparent;
-  --input-background: #ffffff;
+  --input-background: var(--card-surface);
   --switch-background: #cbced4;
   --font-weight-medium: 500;
   --font-weight-normal: 400;
@@ -193,5 +204,38 @@
     font-size: var(--text-base);
     font-weight: var(--font-weight-normal);
     line-height: 1.5;
+  }
+}
+
+/* ── Motion ───────────────────────────────────────────────────────────────
+   The shelf rule draws itself in from the left; plates and object cards fade
+   up as they enter the viewport. Both are the design direction's signature,
+   and both are decoration — nothing here conveys information.
+
+   The reduced-motion block is not optional politeness. Before this, the
+   codebase had no prefers-reduced-motion rule at all, so a visitor who asks
+   their OS for less movement got the full set anyway. Durations collapse to
+   ~0 rather than the animation being removed, so the end state (rule drawn,
+   content visible) still applies — removing the animation entirely would
+   leave the shelf rule stuck at scaleX(0) and invisible. */
+
+@keyframes shelf-draw {
+  to { transform: scaleX(1); }
+}
+
+@keyframes plate-reveal {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
   }
 }

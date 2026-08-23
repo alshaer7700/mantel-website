@@ -1,6 +1,7 @@
 export type Page =
   | "home"
   | "menu"
+  | "objects"
   | "story"
   | "contact"
   | "faq"
@@ -53,4 +54,3 @@ export type MenuItem = {
   fat_g: number | null;
 };
 
-export type Profile = { name: string; email: string };
