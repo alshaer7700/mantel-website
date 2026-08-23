@@ -55,9 +55,11 @@ export function Plate({ spec, ratio = "4 / 5", alt, className = "" }: Props) {
           <PlaceholderRef spec={spec} />
         )}
       </div>
-      <figcaption className="flex justify-between gap-[var(--s-2)] pt-[var(--s-1)]">
-        <span className={CAPTION}>{spec.ref}</span>
-        <span className={CAPTION}>{spec.cap}</span>
+      {/* One line, not a ref pushed left and a caption pushed right. Split
+          across the plate's full width the two halves read as two unrelated
+          labels; joined, they read as one catalogue entry. */}
+      <figcaption className={`${CAPTION} pt-[var(--s-1)]`}>
+        {spec.ref} · {spec.cap}
       </figcaption>
     </figure>
   );

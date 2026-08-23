@@ -1,62 +1,56 @@
-import type { MenuItem, MenuCategoryKey, Page, MenuCategory } from "@/app/types";
-import type { ShopObject } from "@/lib/api/objects";
+import type { Page, MenuCategory } from "@/app/types";
 import { Shelf } from "@/app/components/Shelf";
 import { Plate, BleedPlate } from "@/app/components/Plate";
 import { SectionHead } from "@/app/components/SectionHead";
-import { Index } from "@/app/components/Index";
-import { SpecCard } from "@/app/components/objects/SpecCard";
 import { PLATES } from "@/app/content/plates";
 import { LABEL, LABEL_INK, DISPLAY } from "@/app/components/type";
-import { ORDERING_OPEN } from "@/lib/constants";
 
 /*
- * The home page: a type hero, then two numbered sections hanging off a shelf
- * rule — the café and the objects.
+ * The home page is now a contents page: an eyebrow, a headline, and two
+ * numbered sections that are each a word and a way in.
  *
- * WHAT WAS CUT, and why the page is better for it:
+ * WHAT IT USED TO CARRY, and no longer does:
  *
- *  - The hero's sub-paragraph ("A café and a small house of objects…"). The
- *    headline and the eyebrow above it already say that; the paragraph was
- *    the same sentence in a quieter voice.
+ *  - A sub-paragraph under the headline, saying in a quieter voice what the
+ *    headline and eyebrow already said.
+ *  - Two-line section slogans — "Poured to order, never to impress." and
+ *    "Things worth keeping after."
+ *  - Section 03, "The name", which was the Story page restated with a link to
+ *    the Story page underneath it.
+ *  - The index: the whole inventory, numbered, printed under section 01. It
+ *    was the right answer to a different brief — put everything on one screen
+ *    — and this brief is the opposite one. Recoverable from 5502411 if the
+ *    argument turns back around.
+ *  - The object cards under section 02, for the same reason. Both sections now
+ *    say what they are and where they go, and the pages themselves hold the
+ *    goods.
  *
- *  - Section 03, "The name" — the mantel-is-the-shelf-above-a-fire passage.
- *    It was the Story page, restated on the home page, with the Story page
- *    linked underneath it. One of the two had to go and it was not the page
- *    whose whole job it is.
+ * The shelf rules carry only their number. The word that used to hang on the
+ * left of each — "The shop", "The objects" — labelled a section whose heading
+ * is one word directly beneath it.
  *
- *  - Two-line section headings. "Poured to order, never to impress." and
- *    "Things worth keeping after." became "Café." and "Objects." A section
- *    that already carries a shelf tag, a number and an index beneath it does
- *    not need a slogan to introduce itself.
- *
- * The eyebrow still reads "Ordering opens soon" rather than the prototype's
- * "Order ahead · Collect at the counter": ordering is locked, so the second
- * is a promise the site cannot keep.
- *
- * "Est. 2026" is on evidence, not assumption — the year is printed on the
- * matcha pouch and the iced cup, alongside "Hidd, Kingdom of Bahrain".
+ * ONE THING TO KNOW ABOUT THE EYEBROW: it reads "Order ahead", flat. Ordering
+ * is locked in the database (EXECUTE on place_order is revoked), so today the
+ * site invites something it cannot yet accept. That is the owner's call, made
+ * explicitly; the conditional that used to soften it to "Ordering opens soon"
+ * is gone.
  */
 
 type Props = {
-  sections: ReadonlyArray<readonly [MenuCategoryKey, MenuItem[]]>;
-  objects: ShopObject[];
   linkTo: (p: Page, c?: MenuCategory) => {
     href: string;
     onClick: (e: React.MouseEvent) => void;
   };
 };
 
-export function Home({ sections, objects, linkTo }: Props) {
-
+export function Home({ linkTo }: Props) {
   return (
     <>
       {/* ── hero ── */}
       <div className="pt-[clamp(3rem,9vh,6rem)]">
         <div className="flex justify-between gap-[var(--s-2)] flex-wrap">
-          <span className={LABEL}>Mantel — Hidd, Kingdom of Bahrain</span>
-          <span className={LABEL}>
-            {ORDERING_OPEN ? "Order ahead · Collect at the counter" : "Ordering opens soon"}
-          </span>
+          <span className={LABEL}>Al Hidd, Bahrain</span>
+          <span className={LABEL}>Order ahead</span>
         </div>
 
         <h1
@@ -68,39 +62,33 @@ export function Home({ sections, objects, linkTo }: Props) {
         <BleedPlate spec={PLATES.hero} />
       </div>
 
-      {/* ── 01 · everything, on one screen ──
-          The index direction's whole argument: a customer deciding what to
-          have should not have to scroll to see what is on offer. It replaces
-          a two-category teaser that showed nine of sixteen lines and made the
-          rest a click away. */}
+      {/* ── 01 ── */}
       <section className="pt-[clamp(4rem,11vh,8rem)]">
-        <Shelf tag="The shop" note="01">
+        <Shelf tag="01">
           <SectionHead
             title="Café."
             aside={
               <a {...linkTo("menu")} className={LABEL_INK}>
-                Full menu →
+                Menu →
               </a>
             }
           />
 
-          {/* Same reasoning as BleedPlate: the grid and its margin go with the
-              plates, rather than leaving a void where the pair would hang. */}
+          {/* The grid goes with the plates rather than leaving a void where the
+              pair would hang — see BleedPlate for the same reasoning. */}
           {(PLATES.counter.src || PLATES.pour.src || import.meta.env.DEV) && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-[clamp(1rem,3vw,2.5rem)] mb-[clamp(3rem,8vh,5rem)]">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-[clamp(1rem,3vw,2.5rem)]">
               <Plate spec={PLATES.counter} />
               {/* Offset, so the pair reads as two hung plates rather than a row. */}
               <Plate spec={PLATES.pour} className="sm:mt-[clamp(2rem,8vw,5rem)]" />
             </div>
           )}
-
-          <Index sections={sections} objects={objects} linkTo={linkTo} />
         </Shelf>
       </section>
 
-      {/* ── 02 · the objects ── */}
+      {/* ── 02 ── */}
       <section className="pt-[clamp(4rem,11vh,8rem)]">
-        <Shelf tag="The objects" note="02">
+        <Shelf tag="02">
           <SectionHead
             title="Objects."
             aside={
@@ -109,17 +97,8 @@ export function Home({ sections, objects, linkTo }: Props) {
               </a>
             }
           />
-
-          {objects.length > 0 && (
-            <div className="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-[clamp(1.5rem,3vw,2.5rem)]">
-              {objects.map((o) => (
-                <SpecCard key={o.id} object={o} onAdd={() => {}} />
-              ))}
-            </div>
-          )}
         </Shelf>
       </section>
-
     </>
   );
 }

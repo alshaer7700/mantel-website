@@ -4,10 +4,14 @@ import { formatPrice, formatMacros, CATEGORY_LABELS } from "@/lib/format";
 import { LABEL } from "@/app/components/type";
 
 /*
- * The menu, in the design direction's row: name in mono, note in italic
- * serif, a dotted leader running to the price. The leader is the whole idea —
- * it ties a name to its price across the gap without drawing a rule under
- * every row, which is what made the old list read as a spreadsheet.
+ * The menu row: a name in mono, a dotted leader, a price. The leader is the
+ * whole idea — it ties a name to its price across the gap without drawing a
+ * rule under every row, which is what made the old list read as a spreadsheet.
+ *
+ * The italic note that used to sit between the name and the leader is gone.
+ * Only one item ever carried one worth keeping ("single origin, changes
+ * weekly", on the V60), and one note across twenty-three rows is an
+ * inconsistency rather than a system. The text is still in the database.
  *
  * TWO THINGS THE PROTOTYPE DOES NOT HAVE, kept because they are real:
  *
@@ -74,11 +78,6 @@ function Row({ item }: { item: MenuItem }) {
       <span className="font-mono text-[14px] tracking-[0.01em] text-[color:var(--ink)] shrink-0">
         {item.name}
       </span>
-      {item.desc && (
-        <span className="font-serif italic text-[0.95rem] text-[color:var(--ink-muted)] shrink-0">
-          {item.desc}
-        </span>
-      )}
       {/* The leader. A dotted bottom border on a flex-grow span, nudged up to
           sit on the type's baseline rather than under its descenders. */}
       <span

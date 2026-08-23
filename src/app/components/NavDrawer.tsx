@@ -57,6 +57,7 @@ const PRIMARY: ReadonlyArray<[Page, string]> = [
   ["menu", "Menu"],
   ["objects", "Objects"],
   ["story", "Our Story"],
+  ["visit", "Visit"],
   ["contact", "Contact"],
 ];
 

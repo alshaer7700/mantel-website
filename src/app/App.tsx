@@ -12,6 +12,7 @@ import { SpecCard } from "@/app/components/objects/SpecCard";
 import { Home } from "@/app/pages/Home";
 import { Cafe } from "@/app/pages/Cafe";
 import { Story } from "@/app/pages/Story";
+import { Visit } from "@/app/pages/Visit";
 import { useScrolled } from "@/app/hooks/useScrolled";
 import { SearchOverlay } from "@/app/components/SearchOverlay";
 import { NavDrawer } from "@/app/components/NavDrawer";
@@ -387,6 +388,7 @@ export default function App() {
               <a {...linkTo("menu")} className={HEADER_LINK_CLASS}>Menu</a>
               <a {...linkTo("objects")} className={HEADER_LINK_CLASS}>Objects</a>
               <a {...linkTo("story")} className={HEADER_LINK_CLASS}>Our Story</a>
+              <a {...linkTo("visit")} className={HEADER_LINK_CLASS}>Visit</a>
               <a {...linkTo("contact")} className={HEADER_LINK_CLASS}>Contact</a>
             </nav>
           </div>
@@ -509,7 +511,7 @@ export default function App() {
       {page === "home" && (
         <main className="flex flex-col min-h-screen" style={{ paddingTop: navHeight }}>
           <div className="flex-1 px-[var(--pad)]">
-            <Home sections={sections} objects={objects} linkTo={linkTo} />
+            <Home linkTo={linkTo} />
           </div>
           {footer}
         </main>
@@ -531,14 +533,11 @@ export default function App() {
       {page === "objects" && (
         <main className="flex flex-col min-h-screen" style={{ paddingTop: navHeight }}>
           <div className="flex-1 px-[var(--pad)] pt-[var(--s-5)]">
-            <Shelf tag="Objects" note="Made in small runs">
-              <div className="grid grid-cols-1 sm:grid-cols-2 items-baseline gap-[var(--s-2)] pt-[var(--s-2)] pb-[var(--s-4)]">
+            <Shelf>
+              <div className="pt-[var(--s-2)] pb-[var(--s-4)]">
                 <h1 className="font-serif text-[clamp(1.9rem,5vw,3.4rem)] leading-[0.94] tracking-[-0.018em] m-0 text-[color:var(--ink)]">
                   Objects.
                 </h1>
-                <span className="font-mono text-[11px] tracking-[0.2em] uppercase text-[color:var(--ink-muted)] sm:justify-self-end">
-                  Collect in store
-                </span>
               </div>
 
               {objectsLoading ? (
@@ -550,18 +549,13 @@ export default function App() {
                    list lands hidden at price 0 until prices are confirmed
                    (objects_available_has_price). Saying so plainly beats an
                    empty grid that reads as a broken page. */
-                <div className="py-[var(--s-5)] max-w-[46ch]">
-                  <p className="font-serif text-[length:var(--fs-item)] text-[color:var(--ink)] mb-[var(--s-2)]">
-                    The shelf is being set.
-                  </p>
-                  <p className="font-mono text-[length:var(--fs-desc)] text-[color:var(--ink-muted)] leading-[1.6]">
-                    Candles, matches, lighters and whole beans — in store now, on this page shortly.
-                  </p>
-                </div>
+                <p className="font-serif text-[length:var(--fs-item)] text-[color:var(--ink)] py-[var(--s-5)]">
+                  The shelf is being set.
+                </p>
               ) : (
                 <div className="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-[var(--s-3)] pb-[var(--s-5)]">
                   {objects.map((o) => (
-                    <SpecCard key={o.id} object={o} onAdd={() => {}} />
+                    <SpecCard key={o.id} object={o} />
                   ))}
                 </div>
               )}
@@ -574,7 +568,16 @@ export default function App() {
       {page === "story" && (
         <main className="flex flex-col min-h-screen" style={{ paddingTop: navHeight }}>
           <div className="flex-1 px-[var(--pad)]">
-            <Story linkTo={linkTo} />
+            <Story />
+          </div>
+          {footer}
+        </main>
+      )}
+
+      {page === "visit" && (
+        <main className="flex flex-col min-h-screen" style={{ paddingTop: navHeight }}>
+          <div className="flex-1 px-[var(--pad)]">
+            <Visit />
           </div>
           {footer}
         </main>

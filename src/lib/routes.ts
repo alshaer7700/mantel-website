@@ -17,6 +17,7 @@ export const ROUTES: Record<Page, string> = {
   menu: "/menu",
   objects: "/objects",
   story: "/story",
+  visit: "/visit",
   contact: "/contact",
   faq: "/faq",
   privacy: "/privacy",

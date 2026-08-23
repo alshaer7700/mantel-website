@@ -17,8 +17,8 @@ import type { ReactNode } from "react";
  */
 
 type Props = {
-  /** The label that hangs below the rule, left. */
-  tag: string;
+  /** The label that hangs below the rule, left. Omit for a bare rule. */
+  tag?: string;
   /** What hangs below the rule, right — a section number, or a note. */
   note?: string;
   children: ReactNode;
@@ -33,9 +33,11 @@ export function Shelf({ tag, note, children, className = "" }: Props) {
         className="absolute top-0 left-0 right-0 origin-left animate-[shelf-draw_1.1s_cubic-bezier(.16,.84,.44,1)_forwards]"
         style={{ height: "var(--shelf)", background: "var(--line)", transform: "scaleX(0)" }}
       />
-      <span className={`${TAG} absolute left-0`} style={{ top: "calc(var(--shelf) + 9px)" }}>
-        {tag}
-      </span>
+      {tag && (
+        <span className={`${TAG} absolute left-0`} style={{ top: "calc(var(--shelf) + 9px)" }}>
+          {tag}
+        </span>
+      )}
       {note && (
         <span className={`${TAG} absolute right-0`} style={{ top: "calc(var(--shelf) + 9px)" }}>
           {note}

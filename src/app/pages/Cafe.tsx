@@ -4,16 +4,19 @@ import { BleedPlate } from "@/app/components/Plate";
 import { SectionHead } from "@/app/components/SectionHead";
 import { MenuList } from "@/app/components/menu/MenuList";
 import { PLATES } from "@/app/content/plates";
-import { LABEL } from "@/app/components/type";
 import { CATEGORY_LABELS } from "@/lib/format";
-import { ORDERING_OPEN } from "@/lib/constants";
 
 /*
- * The full menu, on the shelf.
+ * The full menu, on the shelf: names and prices.
  *
- * The right-hand note under the rule says "Prices in BD" — the prototype's
- * line, and the reason MenuList prints bare numbers. Repeating "BD" on every
- * one of twelve rows is noise once it has been said at the top.
+ * "Prices in BD" is the only thing hanging off the rule, and it is the one
+ * piece of copy on this page that is not a name or a number. It stays because
+ * it is what makes the numbers prices — MenuList prints bare figures, so
+ * without this line the column is twenty-three unlabelled decimals. Repeating
+ * "BD" on every row is the noise it exists to avoid.
+ *
+ * The right-hand note that used to sit beside it ("Ready in 15 minutes." when
+ * ordering opens, "Ordering opens soon" while it is locked) is gone.
  */
 
 type Props = {
@@ -33,16 +36,8 @@ export function Cafe({ sections, category, loading, error }: Props) {
 
   return (
     <div className="pt-[clamp(3rem,9vh,6rem)]">
-      <Shelf tag="Menu" note="Prices in BD">
-        <SectionHead
-          as="h1"
-          title={category ? CATEGORY_LABELS[category] + "." : "The café."}
-          aside={
-            <span className={LABEL}>
-              {ORDERING_OPEN ? "Ready in 15 minutes." : "Ordering opens soon"}
-            </span>
-          }
-        />
+      <Shelf tag="Prices in BD">
+        <SectionHead as="h1" title={category ? CATEGORY_LABELS[category] + "." : "Café."} />
 
         <BleedPlate spec={PLATES.pour} className="mb-[clamp(3rem,8vh,5rem)]" />
 

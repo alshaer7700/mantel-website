@@ -3,6 +3,7 @@ export type Page =
   | "menu"
   | "objects"
   | "story"
+  | "visit"
   | "contact"
   | "faq"
   | "privacy"

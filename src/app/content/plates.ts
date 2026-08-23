@@ -18,9 +18,9 @@
 export type PlateSpec = {
   /** Empty until a real photograph exists. */
   src: string;
-  /** Printed under the plate, left. */
+  /** Printed under the plate: "PL-01 · Counter, 07:40". */
   ref: string;
-  /** Printed under the plate, right. */
+  /** The other half of that line. Two words at most — the rule is the point. */
   cap: string;
   /** What to shoot. Never shown to visitors. */
   brief: string;
@@ -37,7 +37,7 @@ export const PLATES = {
   counter: {
     src: "",
     ref: "PL-02",
-    cap: "Portafilter, in hand",
+    cap: "Portafilter, close",
     brief: "Close. Hands only, no faces. Coffee grounds, brass, matte black. Shot at f/2.8.",
   },
   pour: {
@@ -49,20 +49,20 @@ export const PLATES = {
   room: {
     src: "",
     ref: "PL-04",
-    cap: "The shelf, afternoon",
+    cap: "Shelf, afternoon",
     brief:
       "Wide. The retail shelf straight on, symmetrical, objects evenly spaced. Empty wall above.",
   },
   hands: {
     src: "",
     ref: "PL-05",
-    cap: "Wick, first light",
+    cap: "Wick, lit",
     brief: "Close. A match meeting a candle wick. Dark surround, single warm point of light.",
   },
   facade: {
     src: "",
     ref: "PL-06",
-    cap: "Hidd, exterior",
+    cap: "Al Hidd",
     brief:
       "Wide. The shopfront straight on from across the street. Overcast or early morning, no cars.",
   },
