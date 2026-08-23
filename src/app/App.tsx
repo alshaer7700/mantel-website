@@ -8,7 +8,7 @@ import { ChevronDown, Instagram, Search, User, X } from "lucide-react";
 import { fetchMenu, groupByCategory } from "@/lib/api/menu";
 import { fetchObjects, type ShopObject } from "@/lib/api/objects";
 import { Shelf } from "@/app/components/Shelf";
-import { ObjectCard } from "@/app/components/objects/ObjectCard";
+import { SpecCard } from "@/app/components/objects/SpecCard";
 import { Home } from "@/app/pages/Home";
 import { Cafe } from "@/app/pages/Cafe";
 import { Story } from "@/app/pages/Story";
@@ -19,7 +19,7 @@ import { getSession, onAuthChange, fetchProfile } from "@/lib/api/auth";
 import type { Session } from "@supabase/supabase-js";
 import type { Page, MenuCategory, MenuItem } from "@/app/types";
 import { pathFor, routeFor } from "@/lib/routes";
-import { CONTACT_ENDPOINT, ORDERING_OPEN } from "@/lib/constants";
+import { CONTACT_ENDPOINT } from "@/lib/constants";
 
 // Served from public/ rather than bundled: a brand asset with its own stable
 // URL, re-exported clean from the 5788px original with the tip on the centre
@@ -629,7 +629,7 @@ export default function App() {
               ) : (
                 <div className="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-[var(--s-3)] pb-[var(--s-5)]">
                   {objects.map((o) => (
-                    <ObjectCard key={o.id} object={o} onAdd={() => {}} canAdd={ORDERING_OPEN} />
+                    <SpecCard key={o.id} object={o} onAdd={() => {}} />
                   ))}
                 </div>
               )}

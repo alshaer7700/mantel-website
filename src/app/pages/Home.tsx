@@ -3,9 +3,8 @@ import type { ShopObject } from "@/lib/api/objects";
 import { Shelf } from "@/app/components/Shelf";
 import { Plate, BleedPlate } from "@/app/components/Plate";
 import { SectionHead } from "@/app/components/SectionHead";
-import { MenuList } from "@/app/components/menu/MenuList";
-import { Strip } from "@/app/components/home/Strip";
-import { ObjectCard } from "@/app/components/objects/ObjectCard";
+import { Index } from "@/app/components/Index";
+import { SpecCard } from "@/app/components/objects/SpecCard";
 import { PLATES } from "@/app/content/plates";
 import { LABEL, LABEL_INK, DISPLAY } from "@/app/components/type";
 import { ORDERING_OPEN } from "@/lib/constants";
@@ -24,6 +23,15 @@ import { ORDERING_OPEN } from "@/lib/constants";
  *  - The eyebrow reads "Order ahead · Collect at the counter". Ordering is
  *    locked, so that is a promise the site cannot keep. It says so honestly
  *    instead.
+ * The line-drawing strip that used to close section 02 is gone. It captioned
+ * three drawings "01 / Candle, 02 / Safety matches, 03 / Brass lighter" from a
+ * hardcoded list — and there is no brass lighter. It was the prototype's
+ * invented product range advertised on the real homepage. Its drawings also
+ * now appear on the spec cards directly above it, so the page was showing the
+ * same candle twice within one screen. The "drawn, not photographed" statement
+ * it made is made better by the cards, which attach a drawing to a product
+ * that exists.
+ *
  *  - "Est. 2026" was omitted at first: the prototype's own notes flag it as
  *    unverified, and an invented founding year on a real business is a false
  *    claim rather than a placeholder. It is back, on evidence — the year is
@@ -42,9 +50,6 @@ type Props = {
 };
 
 export function Home({ sections, objects, linkTo }: Props) {
-  /* The home page shows a taste of the menu, not all of it — the first two
-     categories that actually have something available. */
-  const preview = sections.filter(([, items]) => items.length > 0).slice(0, 2);
 
   return (
     <>
@@ -71,9 +76,13 @@ export function Home({ sections, objects, linkTo }: Props) {
         <BleedPlate spec={PLATES.hero} />
       </div>
 
-      {/* ── 01 · the café ── */}
+      {/* ── 01 · everything, on one screen ──
+          The index direction's whole argument: a customer deciding what to
+          have should not have to scroll to see what is on offer. It replaces
+          a two-category teaser that showed nine of sixteen lines and made the
+          rest a click away. */}
       <section className="pt-[clamp(4rem,11vh,8rem)]">
-        <Shelf tag="The café" note="01">
+        <Shelf tag="The shop" note="01">
           <SectionHead
             title={
               <>
@@ -99,7 +108,7 @@ export function Home({ sections, objects, linkTo }: Props) {
             </div>
           )}
 
-          <MenuList sections={preview} />
+          <Index sections={sections} objects={objects} linkTo={linkTo} />
         </Shelf>
       </section>
 
@@ -123,14 +132,12 @@ export function Home({ sections, objects, linkTo }: Props) {
 
           {objects.length > 0 && (
             <div className="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-[clamp(1.5rem,3vw,2.5rem)]">
-              {objects.slice(0, 3).map((o) => (
-                <ObjectCard key={o.id} object={o} onAdd={() => {}} canAdd={ORDERING_OPEN} />
+              {objects.map((o) => (
+                <SpecCard key={o.id} object={o} onAdd={() => {}} />
               ))}
             </div>
           )}
         </Shelf>
-
-        <Strip />
       </section>
 
       {/* ── 03 · the name ── */}

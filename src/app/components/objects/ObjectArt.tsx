@@ -9,6 +9,11 @@
  * The only colour in any of them is the flame, in ember. That is the accent
  * budget the direction allows: under ~1% of visible surface.
  *
+ * The lighter has no product behind it. The prototype's invented range
+ * included one and the packaging does not, so nothing selects this key today —
+ * it stays because the drawing costs nothing to keep and the range may grow.
+ * A drawing in this file is not a claim; only a row in `objects` is.
+ *
  * `objects.art_key` in the database selects one of these. An unknown key
  * renders nothing rather than throwing, so adding a product before drawing its
  * art degrades to a card with no drawing instead of a blank page.
@@ -69,6 +74,3 @@ export function ObjectArt({ artKey }: { artKey: string | null }) {
   if (!artKey || !(artKey in ART)) return null;
   return ART[artKey as ArtKey];
 }
-
-/** The three drawings the home page strip shows, in order. */
-export const STRIP_KEYS: readonly ArtKey[] = ["candle", "matches", "lighter"];
