@@ -39,7 +39,7 @@ export function Cafe({ sections, category, loading, error }: Props) {
           title={category ? CATEGORY_LABELS[category] + "." : "The café."}
           aside={
             <span className={LABEL}>
-              {ORDERING_OPEN ? "Add to bag · collect in 15 min" : "Ordering opens soon"}
+              {ORDERING_OPEN ? "Ready in 15 minutes." : "Ordering opens soon"}
             </span>
           }
         />

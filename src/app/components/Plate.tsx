@@ -15,7 +15,7 @@ import type { PlateSpec } from "@/app/content/plates";
  * photograph should be is looking at a building site, and right now every one
  * of the six plates is empty. So:
  *
- *   development  unfilled plate renders the brief, as the prototype does
+ *   development  unfilled plate renders its ref, and nothing else
  *   production   unfilled plate renders NOTHING
  *
  * A section without its photograph still reads as a finished section — the
@@ -52,7 +52,7 @@ export function Plate({ spec, ratio = "4 / 5", alt, className = "" }: Props) {
             className="w-full h-full object-cover"
           />
         ) : (
-          <PlaceholderBrief spec={spec} />
+          <PlaceholderRef spec={spec} />
         )}
       </div>
       <figcaption className="flex justify-between gap-[var(--s-2)] pt-[var(--s-1)]">
@@ -67,7 +67,7 @@ const CAPTION =
   "font-mono text-[11px] tracking-[0.2em] uppercase text-[color:var(--ink-muted)] leading-[1.4]";
 
 /** Development only — see the note at the top of this file. */
-function PlaceholderBrief({ spec }: { spec: PlateSpec }) {
+function PlaceholderRef({ spec }: { spec: PlateSpec }) {
   return (
     <div
       className="absolute inset-0 grid place-items-center text-center p-[var(--s-3)]"
@@ -78,12 +78,12 @@ function PlaceholderBrief({ spec }: { spec: PlateSpec }) {
       }}
     >
       <div className="absolute inset-[12px] border border-[rgba(23,19,16,.09)]" />
-      <span className={`relative max-w-[26ch] ${CAPTION}`}>
-        {spec.ref} — photograph
-        <br />
-        <br />
-        {spec.brief}
-      </span>
+      {/* The ref alone. It used to print the shot brief under it — "Wide. The
+          counter empty before opening…" — which turned an empty slot into a
+          paragraph of production notes and made the frame read as the loudest
+          thing on the page. The brief still lives in content/plates.ts, where
+          the person shooting it will actually look. */}
+      <span className={`relative ${CAPTION}`}>{spec.ref}</span>
     </div>
   );
 }

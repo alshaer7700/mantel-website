@@ -5,23 +5,19 @@ import { PLATES } from "@/app/content/plates";
 import { LABEL, LABEL_INK } from "@/app/components/type";
 
 /*
- * The story, in the design direction's editorial layout: a column of quiet
- * labels beside a measure of serif prose with a drop cap.
+ * The story: two sentences beside a column of quiet labels.
  *
- * THE COPY IS THE OWNER'S, and that matters.
+ * It has been three things. First one factual line and nothing else, because
+ * the prototype's founding story was flagged in its own notes as "a plausible
+ * draft, not from the founders" — and an invented origin story about real
+ * people is worse than an empty page. Then the manifesto transcribed off
+ * Mantel's own matchboxes, set as three paragraphs.
  *
- * This page previously carried one factual line and nothing else, because the
- * prototype's founding story was flagged in its own notes as "a plausible
- * draft, not from the founders" — and publishing an invented origin story
- * about real people is worse than an empty page.
- *
- * The text below is not that draft. It is the manifesto printed on Mantel's
- * own matchboxes, transcribed from the packaging. It is the founders' writing,
- * which is exactly what was missing.
- *
- * Set as three paragraphs rather than the box's single block: the matchbox
- * justifies one dense column of mono because it is 5cm wide and you read it
- * holding the thing. At web measure the same block is a wall.
+ * Now two sentences. The matchbox text is real and it is theirs, but the
+ * matchbox is 5cm wide and you read it holding the thing; at web measure the
+ * same block is a wall, and the page it opens is the one place a reader has
+ * already decided to be patient — which is exactly why it should not spend
+ * that patience. The manifesto is not lost: it is still printed on the box.
  */
 
 type Props = {
@@ -39,7 +35,6 @@ export function Story({ linkTo }: Props) {
           <div className="flex flex-col gap-[1.1rem]">
             <span className={LABEL}>Hidd, Kingdom of Bahrain</span>
             <span className={LABEL}>Est. 2026</span>
-            <span className={LABEL}>Printed on the matchbox</span>
             <a href="mailto:hello@bymantel.com" className={LABEL_INK}>
               hello@bymantel.com
             </a>
@@ -49,21 +44,13 @@ export function Story({ linkTo }: Props) {
             <h1 className="sr-only">Our story</h1>
 
             <p className="m-0 mb-[1.35rem] max-w-[60ch] [&::first-letter]:text-[3.4em] [&::first-letter]:float-left [&::first-letter]:leading-[0.78] [&::first-letter]:pr-[0.12em] [&::first-letter]:pt-[0.06em]">
-              Every “Mantel” starts the same. What makes a “Mantel” different is never its
-              shape alone, but everything that gathers around it. A “Mantel” is shaped by
-              routine, by people, by time, and by the small details left behind.
+              A mantel is the shelf above a fire — where a house keeps the few things it
+              means to look at every day.
             </p>
 
             <p className="m-0 mb-[1.35rem] max-w-[60ch]">
-              It changes quietly, little by little, not because it moves, but because life
-              around it never stands still. Some will see a “Mantel” as something familiar.
-              Others will see the memories, the objects, or the moments it holds. Neither is
-              wrong.
-            </p>
-
-            <p className="m-0 mb-[1.35rem] max-w-[60ch]">
-              A “Mantel” never asks to be seen in only one way. It simply continues to collect
-              what life leaves behind. The rest is waiting to catch fire.
+              We named the shop after it: make a handful of things good enough to earn that
+              place, and leave the rest out.
             </p>
 
             <a {...linkTo("menu")} className={`${LABEL_INK} inline-block mt-[0.5rem]`}>

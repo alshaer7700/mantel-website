@@ -10,34 +10,31 @@ import { LABEL, LABEL_INK, DISPLAY } from "@/app/components/type";
 import { ORDERING_OPEN } from "@/lib/constants";
 
 /*
- * The home page from the design direction: a type hero, then three numbered
- * sections each hanging off a shelf rule — the café, the objects, the name.
+ * The home page: a type hero, then two numbered sections hanging off a shelf
+ * rule — the café and the objects.
  *
- * What this replaced: a single full-viewport heart with one link under it. The
- * heart artwork is not gone, it moves to where the direction puts it — the
- * footer and the order confirmation — rather than being the entire page.
+ * WHAT WAS CUT, and why the page is better for it:
  *
- * TWO PLACES THE PROTOTYPE'S COPY IS NOT USED, both because it would say
- * something untrue today:
+ *  - The hero's sub-paragraph ("A café and a small house of objects…"). The
+ *    headline and the eyebrow above it already say that; the paragraph was
+ *    the same sentence in a quieter voice.
  *
- *  - The eyebrow reads "Order ahead · Collect at the counter". Ordering is
- *    locked, so that is a promise the site cannot keep. It says so honestly
- *    instead.
- * The line-drawing strip that used to close section 02 is gone. It captioned
- * three drawings "01 / Candle, 02 / Safety matches, 03 / Brass lighter" from a
- * hardcoded list — and there is no brass lighter. It was the prototype's
- * invented product range advertised on the real homepage. Its drawings also
- * now appear on the spec cards directly above it, so the page was showing the
- * same candle twice within one screen. The "drawn, not photographed" statement
- * it made is made better by the cards, which attach a drawing to a product
- * that exists.
+ *  - Section 03, "The name" — the mantel-is-the-shelf-above-a-fire passage.
+ *    It was the Story page, restated on the home page, with the Story page
+ *    linked underneath it. One of the two had to go and it was not the page
+ *    whose whole job it is.
  *
- *  - "Est. 2026" was omitted at first: the prototype's own notes flag it as
- *    unverified, and an invented founding year on a real business is a false
- *    claim rather than a placeholder. It is back, on evidence — the year is
- *    printed on the matcha pouch and on the iced cup, alongside "Hidd,
- *    Kingdom of Bahrain". Packaging the owner had made is better proof than a
- *    verbal confirmation.
+ *  - Two-line section headings. "Poured to order, never to impress." and
+ *    "Things worth keeping after." became "Café." and "Objects." A section
+ *    that already carries a shelf tag, a number and an index beneath it does
+ *    not need a slogan to introduce itself.
+ *
+ * The eyebrow still reads "Ordering opens soon" rather than the prototype's
+ * "Order ahead · Collect at the counter": ordering is locked, so the second
+ * is a promise the site cannot keep.
+ *
+ * "Est. 2026" is on evidence, not assumption — the year is printed on the
+ * matcha pouch and the iced cup, alongside "Hidd, Kingdom of Bahrain".
  */
 
 type Props = {
@@ -63,15 +60,10 @@ export function Home({ sections, objects, linkTo }: Props) {
         </div>
 
         <h1
-          className={`${DISPLAY} text-[clamp(2.9rem,10vw,8rem)] max-w-[14ch] mt-[clamp(1.5rem,5vh,3rem)] mb-0 text-[color:var(--ink)]`}
+          className={`${DISPLAY} text-[clamp(2.9rem,10vw,8rem)] max-w-[14ch] mt-[clamp(1.5rem,5vh,3rem)] mb-[clamp(2.5rem,7vh,4.5rem)] text-[color:var(--ink)]`}
         >
           Made to be <em className="italic">set down.</em>
         </h1>
-
-        <p className="font-mono text-[13px] leading-[1.6] max-w-[40ch] mt-[1.75rem] mb-[clamp(2.5rem,7vh,4.5rem)] text-[color:var(--ink-muted)]">
-          A café and a small house of objects. Coffee poured at the counter, candles and
-          matches wrapped at the shelf.
-        </p>
 
         <BleedPlate spec={PLATES.hero} />
       </div>
@@ -84,13 +76,7 @@ export function Home({ sections, objects, linkTo }: Props) {
       <section className="pt-[clamp(4rem,11vh,8rem)]">
         <Shelf tag="The shop" note="01">
           <SectionHead
-            title={
-              <>
-                Poured to order,
-                <br />
-                never to impress.
-              </>
-            }
+            title="Café."
             aside={
               <a {...linkTo("menu")} className={LABEL_INK}>
                 Full menu →
@@ -116,13 +102,7 @@ export function Home({ sections, objects, linkTo }: Props) {
       <section className="pt-[clamp(4rem,11vh,8rem)]">
         <Shelf tag="The objects" note="02">
           <SectionHead
-            title={
-              <>
-                Things worth
-                <br />
-                keeping after.
-              </>
-            }
+            title="Objects."
             aside={
               <a {...linkTo("objects")} className={LABEL_INK}>
                 All objects →
@@ -140,33 +120,6 @@ export function Home({ sections, objects, linkTo }: Props) {
         </Shelf>
       </section>
 
-      {/* ── 03 · the name ── */}
-      <section className="pt-[clamp(4rem,11vh,8rem)]">
-        <Shelf tag="The name" note="03">
-          <div className="grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)] gap-[clamp(1.5rem,6vw,5rem)] pt-[3.5rem]">
-            <div className="flex flex-col gap-[1.1rem]">
-              <span className={LABEL}>Hidd, Kingdom of Bahrain</span>
-              <span className={LABEL}>Est. 2026</span>
-            </div>
-            <div className="font-serif text-[17px] leading-[1.55] text-[color:var(--ink)]">
-              <p className="m-0 mb-[1.35rem] max-w-[60ch] [&::first-letter]:text-[3.4em] [&::first-letter]:float-left [&::first-letter]:leading-[0.78] [&::first-letter]:pr-[0.12em] [&::first-letter]:pt-[0.06em]">
-                A mantel is the shelf above a fire. It is where a house puts the few things it
-                means to look at every day — a photograph, a clock, a candle burned halfway
-                down.
-              </p>
-              <p className="m-0 mb-[1.35rem] max-w-[60ch]">
-                We named the shop after it because that is the whole ambition: make a handful
-                of things good enough to earn a place on the shelf, and leave the rest out.
-              </p>
-              <a {...linkTo("story")} className={`${LABEL_INK} inline-block mt-[0.5rem]`}>
-                Read the story →
-              </a>
-            </div>
-          </div>
-
-          <BleedPlate spec={PLATES.room} className="mt-[clamp(3rem,8vh,5rem)]" />
-        </Shelf>
-      </section>
     </>
   );
 }
