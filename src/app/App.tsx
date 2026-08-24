@@ -12,6 +12,7 @@ import type { CartLine, RetailProduct } from "@/app/content/retail";
 import { EditorialFooter } from "@/app/components/EditorialFooter";
 import { Cafe } from "@/app/pages/Cafe";
 import { Story } from "@/app/pages/Story";
+import { ContactUs, type ContactForm } from "@/app/pages/ContactUs";
 import { useScrolled } from "@/app/hooks/useScrolled";
 import { SearchOverlay } from "@/app/components/SearchOverlay";
 import { AccountPanel } from "@/app/components/account/AccountPanel";
@@ -20,14 +21,6 @@ import type { Session } from "@supabase/supabase-js";
 import type { Page, MenuCategory, MenuItem } from "@/app/types";
 import { pathFor, routeFor } from "@/lib/routes";
 import { CONTACT_ENDPOINT } from "@/lib/constants";
-
-// Still worn by the account panel and the contact form's send button, neither
-// of which the redesign phases touch. The homepage pills that shared this
-// vocabulary are gone; these retire when those surfaces get their own pass.
-const HEART_BUTTON_CLASS =
-  "rounded-full bg-heart-red text-heart-red-foreground tracking-[0.16em] uppercase " +
-  "hover:opacity-90 transition-opacity " +
-  "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-heart-red";
 
 export default function App() {
   // Boot from the URL, not from a hardcoded "home", so a deep link or a
@@ -39,7 +32,7 @@ export default function App() {
   const [menuCategory, setMenuCategory] = useState<MenuCategory>(
     () => routeFor(window.location.pathname).menuCategory,
   );
-  const [form, setForm] = useState({ name: "", email: "", phone: "", comment: "" });
+  const [form, setForm] = useState<ContactForm>({ name: "", lastName: "", email: "", phone: "", topic: "", comment: "" });
   const [sent, setSent] = useState(false);
   const [sending, setSending] = useState(false);
   const [sendError, setSendError] = useState("");
@@ -259,9 +252,11 @@ export default function App() {
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({
-          name: form.name.trim().slice(0, 120),
+          name: [form.name, form.lastName].map((value) => value.trim()).filter(Boolean).join(" ").slice(0, 240),
+          lastName: form.lastName.trim().slice(0, 120),
           email: form.email.trim().slice(0, 254),
           phone: form.phone.trim().slice(0, 40),
+          topic: form.topic.trim().slice(0, 120),
           comment: form.comment.trim().slice(0, 2000),
           _honey: honeypot,
           _subject: "MANTEL website contact",
@@ -508,97 +503,19 @@ export default function App() {
       )}
 
       {page === "contact" && (
-        <main
-          className="min-h-screen flex flex-col"
-          style={{ paddingTop: navHeight }}
-        >
-          <div className="flex-1 max-w-2xl w-full mx-auto px-6 pt-14 pb-16">
-            <h1
-              className="font-serif font-semibold mb-12"
-              style={{ fontSize: "clamp(2.1rem, 5.5vw, 3.1rem)", lineHeight: 1.1, color: "#3a0d1e" }}
-            >
-              Contact
-            </h1>
-
-            {sent ? (
-              <div className="py-12 text-center">
-                <p className="font-mono font-normal text-muted-foreground text-sm tracking-wide">
-                  Thank you — we{"'"}ll be in touch soon.
-                </p>
-              </div>
-            ) : (
-              <form onSubmit={submitContact} className="flex flex-col gap-3">
-                {/* Honeypot — visually hidden and skipped by keyboard/screen
-                    readers; humans never fill it, spam bots usually do, and
-                    FormSubmit discards submissions where it's non-empty. */}
-                <input
-                  type="text"
-                  name="_honey"
-                  value={honeypot}
-                  onChange={(e) => setHoneypot(e.target.value)}
-                  tabIndex={-1}
-                  autoComplete="off"
-                  aria-hidden="true"
-                  className="absolute -left-[9999px] h-0 w-0 opacity-0"
-                />
-                {/* Name + Email row */}
-                <div className="flex gap-3">
-                  <input
-                    type="text"
-                    placeholder="Name"
-                    maxLength={120}
-                    value={form.name}
-                    onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-                    className="flex-1 min-w-0 rounded-full border border-border bg-background px-5 py-3 font-serif font-normal text-sm placeholder:text-muted-foreground outline-none focus:border-foreground/40 transition-colors"
-                  />
-                  <input
-                    type="email"
-                    placeholder="Email *"
-                    required
-                    maxLength={254}
-                    value={form.email}
-                    onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
-                    className="flex-1 min-w-0 rounded-full border border-border bg-background px-5 py-3 font-serif font-normal text-sm placeholder:text-muted-foreground outline-none focus:border-foreground/40 transition-colors"
-                  />
-                </div>
-
-                {/* Phone */}
-                <input
-                  type="tel"
-                  placeholder="Phone number"
-                  maxLength={40}
-                  value={form.phone}
-                  onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
-                  className="rounded-full border border-border bg-background px-5 py-3 font-serif font-normal text-sm placeholder:text-muted-foreground outline-none focus:border-foreground/40 transition-colors"
-                />
-
-                {/* Comment */}
-                <textarea
-                  placeholder="Comment"
-                  rows={5}
-                  maxLength={2000}
-                  value={form.comment}
-                  onChange={(e) => setForm((f) => ({ ...f, comment: e.target.value }))}
-                  className="rounded-3xl border border-border bg-background px-5 py-4 font-serif font-normal text-sm placeholder:text-muted-foreground outline-none focus:border-foreground/40 transition-colors resize-none"
-                />
-
-                {sendError && <p className="font-mono font-normal text-xs text-destructive">{sendError}</p>}
-                <div className="mt-1">
-                  <button
-                    type="submit"
-                    disabled={sending}
-                    className={`px-9 py-3 font-serif font-normal text-base disabled:opacity-60 ${HEART_BUTTON_CLASS}`}
-                  >
-                    {sending ? "Sending…" : "Send"}
-                  </button>
-                </div>
-              </form>
-            )}
-          </div>
-
-          {/* Newsletter + footer */}
-          <div className="border-t border-border">
-            <NewsletterSignup />
+        <main className="editorial-page-shell min-h-screen flex flex-col" style={{ paddingTop: navHeight }}>
+          <div className="flex-1">
+            <ContactUs
+              linkTo={linkTo}
+              form={form}
+              setForm={setForm}
+              honeypot={honeypot}
+              setHoneypot={setHoneypot}
+              sent={sent}
+              sending={sending}
+              sendError={sendError}
+              submitContact={submitContact}
+            />
           </div>
           <EditorialFooter linkTo={linkTo} />
         </main>
