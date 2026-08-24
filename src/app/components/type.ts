@@ -17,6 +17,21 @@ export const LABEL_INK =
   "hover:opacity-60 transition-opacity focus-visible:outline focus-visible:outline-2 " +
   "focus-visible:outline-offset-4 focus-visible:outline-[color:var(--brand)]";
 
+/**
+ * The oversized section word — COFFEE, FOOD, OBJECTS, NOTES, PEOPLE.
+ *
+ * The brief asks for typography as a primary visual element and names these
+ * words specifically, against "small generic section titles". It is set in
+ * the display serif at a size nothing else on the site reaches, uppercase,
+ * with the leading pulled under 1 so a two-word run stacks tight.
+ *
+ * It carries no colour of its own: a word on the paper takes ink, a word on
+ * the brown band takes paper, and the call site says which.
+ */
+export const WORD =
+  "font-serif font-normal uppercase m-0 leading-[0.82] tracking-[-0.022em] " +
+  "text-[clamp(2.75rem,13vw,10rem)]";
+
 /** Display serif: tight leading, negative tracking. Headings only. */
 export const DISPLAY = "font-serif font-normal tracking-[-0.018em] leading-[0.94]";
 

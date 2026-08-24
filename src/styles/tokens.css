@@ -44,7 +44,14 @@
   --card-surface: #FCFBF9;  /* raised surfaces — the checkout summary panel */
   --ink:       #171310;  /* all primary text */
   --ink-muted: #726C62;  /* descriptions, secondary, every .label */
-  --brand:     #9A1C1F;  /* heart red — accents only */
+  --brand:     #9A1C1F;  /* heart red — the one accent */
+
+  /* Secondary grounds, from the brief's colour system: warm white and
+     charcoal are the primaries above; these two are the warm neutrals that
+     carry a section when it needs to sit apart from the paper without
+     becoming a card. Beige for a quiet band, brown for a loud one. */
+  --beige:     #EAE4D9;
+  --brown:     #2E241D;
 
   /* Two rules, not one. The shelf hairline has to read as a drawn line; the
      divider between two menu rows must not. Collapsing them makes either the

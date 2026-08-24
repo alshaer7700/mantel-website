@@ -448,6 +448,14 @@ export default function App() {
               <Search size={17} strokeWidth={1.5} className="lg:hidden" />
               <span className={`hidden lg:inline ${HEADER_TYPE_CLASS}`}>Search</span>
             </button>
+            {/* The brief's CTA. It sits in the tools row rather than as a
+                filled button: ordering matters but must never dominate. */}
+            <a
+              {...linkTo("menu")}
+              className={`hidden md:inline border border-[color:var(--line)] px-[14px] py-[7px] hover:border-[color:var(--ink)] hover:text-foreground transition-colors ${HEADER_TYPE_CLASS}`}
+            >
+              Order ahead
+            </a>
             <button
               onClick={() => {
                 setAccountOpen((v) => !v);
