@@ -1007,7 +1007,7 @@
     margin: 12px 0 0;
     color: var(--editorial-ink);
     font-family: var(--font-serif);
-    font-size: clamp(68px, 12vw, 160px);
+    font-size: clamp(54px, 9vw, 132px);
     font-weight: 500;
     letter-spacing: -0.06em;
     line-height: 0.72;
@@ -1175,7 +1175,7 @@
     }
 
     .editorial-objects-intro h1 {
-      font-size: clamp(72px, 23vw, 112px);
+      font-size: clamp(60px, 19vw, 96px);
     }
 
     .editorial-objects-intro-copy {
