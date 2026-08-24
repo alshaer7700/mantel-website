@@ -33,7 +33,31 @@ type Props = {
   className?: string;
 };
 
+/*
+ * WHERE THE CAPTION SITS. Declared on the plate, in content/plates.ts, not
+ * passed at the call site — where it goes and how it reads are both facts
+ * about the photograph, and the layout has no way to know either.
+ *
+ * The reference set puts type inside the picture — a street number across the
+ * cup being pulled, a hiring notice over a flash-lit table. The type is part
+ * of the image, not a line underneath it.
+ *
+ * IT NEEDS A TONE, AND ONE TONE IS NOT ENOUGH. This first shipped as a single
+ * placement with paper-white type and no scrim, on the argument that the shot
+ * brief reserves a dark corner. That holds for the room photographs and fails
+ * completely on the product ones: over a high-key studio frame, white type is
+ * invisible. The references do the obvious thing — white on the dark ones,
+ * dark on the light one — so this does too.
+ *
+ * No scrim either way. The references never use one, and a gradient under a
+ * caption is an admission that the photograph was not composed for it.
+ *
+ * Nothing new is written for it. It is the same ref and caption the
+ * figcaption would have printed, moved.
+ */
+
 export function Plate({ spec, ratio = "var(--ratio-plate)", alt, className = "" }: Props) {
+  const caption = spec.caption ?? "under";
   const filled = spec.src !== "";
 
   if (!filled && !import.meta.env.DEV) return null;
@@ -54,13 +78,26 @@ export function Plate({ spec, ratio = "var(--ratio-plate)", alt, className = "" 
         ) : (
           <PlaceholderRef spec={spec} />
         )}
+
+        {caption !== "under" && (
+          <figcaption
+            className={`${CAPTION} absolute left-[var(--s-3)] bottom-[var(--s-3)] ${
+              caption === "paper" ? "text-[color:var(--bg)]" : "text-[color:var(--ink)]"
+            }`}
+          >
+            {spec.ref} · {spec.cap}
+          </figcaption>
+        )}
       </div>
-      {/* One line, not a ref pushed left and a caption pushed right. Split
-          across the plate's full width the two halves read as two unrelated
-          labels; joined, they read as one catalogue entry. */}
-      <figcaption className={`${CAPTION} pt-[var(--s-1)]`}>
-        {spec.ref} · {spec.cap}
-      </figcaption>
+
+      {caption === "under" && (
+        /* One line, not a ref pushed left and a caption pushed right. Split
+           across the plate's full width the two halves read as two unrelated
+           labels; joined, they read as one catalogue entry. */
+        <figcaption className={`${CAPTION} pt-[var(--s-1)]`}>
+          {spec.ref} · {spec.cap}
+        </figcaption>
+      )}
     </figure>
   );
 }
@@ -114,7 +151,13 @@ export function BleedPlate({
 
   return (
     <div className={`-mx-[var(--pad)] ${className}`}>
-      <Plate spec={spec} ratio={ratio} className="[&>figcaption]:px-[var(--pad)]" />
+      {/* The gutter is only put back on a caption that sits under the plate.
+          One inside the frame is already positioned against the image. */}
+      <Plate
+        spec={spec}
+        ratio={ratio}
+        className={(spec.caption ?? "under") === "under" ? "[&>figcaption]:px-[var(--pad)]" : ""}
+      />
     </div>
   );
 }

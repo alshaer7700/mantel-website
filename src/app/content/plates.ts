@@ -36,8 +36,44 @@
  *   ONE LIGHT, DIRECTIONAL. Warm window light indoors, or the machine's own
  *   pool of light in a dark bar. Not a lit set, not a fill.
  *
- *   CONSISTENT. Same camera, same stock, same hands, ideally the same day.
- *   Six photographs that match matter more than six good ones that do not.
+ *   CONSISTENT WITHIN A MODE — see below. Same camera, same stock, same
+ *   hands, ideally the same day.
+ *
+ * ── TWO MODES, NOT ONE ────────────────────────────────────────────────────
+ *
+ * The second reference set splits cleanly in half, and the halves contradict
+ * each other. Three are grainy and flash-lit or found-light; two are clean,
+ * lit and deliberate — a cup on seamless with one hard shadow, a candle set on
+ * a stack of magazines. Treating those as one instruction would average them
+ * into something that is neither.
+ *
+ *   ROOM (PL-01 to PL-04, PL-06). Everything above. Film, grain, found light,
+ *   people and hands, tight crops, real working surfaces. This is the café.
+ *
+ *   PRODUCT (PL-05, and any photograph attached to an object record). Clean,
+ *   not grainy. Lit rather than found — one source, one hard shadow. Either
+ *   high-key on a plain surface, or the object set down in a real room and
+ *   shot straight. The mark on the object is legible, and the red on it is
+ *   doing the only colour work in the frame. This is the shelf.
+ *
+ * The two modes are why `objects.image_url` exists separately from these
+ * plates: a candle shot the way the café is shot would look like a mistake,
+ * and a barista shot the way the candle is shot would look like an advert.
+ *
+ * ── TYPE IN THE FRAME ─────────────────────────────────────────────────────
+ *
+ * Four of the five references set type over the photograph rather than under
+ * it. A plate declares that itself, in `caption` below — and declares the tone
+ * with it, because white type over the high-key product frame is invisible and
+ * the references do the obvious thing about that. PL-01 takes paper on a dark
+ * room shot, PL-05 takes ink on a lit one; both briefs reserve the corner.
+ *
+ * WHAT IS NOT ADOPTED: the heavy grotesque. Three of these references lead
+ * with a wide, very bold sans — it is most of why they read the way they do.
+ * Mantel has two families and a rule about which does what, and a third face
+ * bought to borrow someone else's volume would cost the one thing the type
+ * system has, which is that you can tell what a thing is by the face it is
+ * set in. Type in the frame here is the site's own mono.
  *
  * ── WHAT CANNOT BE USED ───────────────────────────────────────────────────
  *
@@ -55,6 +91,15 @@ export type PlateSpec = {
   cap: string;
   /** What to shoot. Never shown to visitors. */
   brief: string;
+  /**
+   * Where the ref · caption line sits, and how it reads.
+   *   "under"  below the frame, in ink-muted. The default.
+   *   "paper"  inside the frame, paper white — for a dark photograph.
+   *   "ink"    inside the frame, in ink — for a high-key one.
+   * Setting either of the last two is a promise the brief has to keep: the
+   * lower left of that frame must be clear, and the right way round.
+   */
+  caption?: "under" | "paper" | "ink";
 };
 
 export const PLATES = {
@@ -62,17 +107,20 @@ export const PLATES = {
     src: "",
     ref: "PL-01",
     cap: "Counter, 07:40",
+    caption: "paper",
     brief:
-      "The pour, from the side, at the counter. Both hands in — kettle in one, " +
-      "the neck of the brewer in the other. Steam catching the window light. " +
-      "Crop at the shoulders; the face can be in it, in profile, out of focus.",
+      "ROOM. The pour, from the side, at the counter. Both hands in — kettle " +
+      "in one, the neck of the brewer in the other. Steam catching the window " +
+      "light. Crop at the shoulders; the face can be in it, in profile, out " +
+      "of focus. Leave the lower left quiet and dark: the caption sits in the " +
+      "frame on this one.",
   },
   counter: {
     src: "",
     ref: "PL-02",
     cap: "Portafilter, close",
     brief:
-      "Hands and machine, nothing else. Grounds on the steel, the light coming " +
+      "ROOM. Hands and machine, nothing else. Grounds on the steel, the light coming " +
       "off the group head. Shot into the dark so the metal is the brightest " +
       "thing in frame. Tight enough that the edges are all machine.",
   },
@@ -81,7 +129,7 @@ export const PLATES = {
     ref: "PL-03",
     cap: "Milk, 62°C",
     brief:
-      "The pitcher tipping into the cup, mid-pour, held in the other hand. " +
+      "ROOM. The pitcher tipping into the cup, mid-pour, held in the other hand. " +
       "Dark bar behind, one light source. The stream is the subject — freeze " +
       "it, but let the background go soft.",
   },
@@ -90,25 +138,29 @@ export const PLATES = {
     ref: "PL-04",
     cap: "Room, afternoon",
     brief:
-      "The full-bleed frame. Someone at a table with a cup, seen from across " +
+      "ROOM. The full-bleed frame. Someone at a table with a cup, seen from across " +
       "the room, late light through the window. Not a portrait and not an " +
       "empty interior — the room with a person in it, at rest.",
   },
   hands: {
     src: "",
     ref: "PL-05",
-    cap: "Held, close",
+    cap: "Candle, lit",
+    caption: "ink",
     brief:
-      "The retail shot: a candle, a matchbox or a bottle held in two hands, " +
-      "or set down where it is actually used. Overhead is good — hands, the " +
-      "object, the floor or the table, and the person's shoes in the corner.",
+      "PRODUCT, not ROOM. One object — the candle tin is the strongest — lit " +
+      "with a single source so it throws one hard shadow. High-key on a plain " +
+      "surface, or set down on something real and shot straight. Clean: no " +
+      "grain, no flash. The label legible and square to the camera, the red " +
+      "on it the only colour in the frame. Keep the lower left clear; the " +
+      "caption sits in the frame on this one.",
   },
   facade: {
     src: "",
     ref: "PL-06",
     cap: "Al Hidd",
     brief:
-      "The shopfront, from across the street, early. Someone walking out with " +
+      "ROOM. The shopfront, from across the street, early. Someone walking out with " +
       "a cup if the timing allows. Overcast or first light; the sign legible " +
       "but not centred.",
   },
