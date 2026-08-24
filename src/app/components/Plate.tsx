@@ -1,4 +1,5 @@
 import type { PlateSpec } from "@/app/content/plates";
+import { FigureArt } from "@/app/components/FigureArt";
 
 /*
  * A photo slot.
@@ -79,6 +80,11 @@ export function Plate({ spec, ratio = "var(--ratio-plate)", alt, className = "" 
           <PlaceholderRef spec={spec} />
         )}
 
+        {/* Above the photograph, below the caption. Drawn in dev over the
+            placeholder too — composing the figure against the frame is most
+            of the work, and it should not wait on the shoot. */}
+        {spec.figure && <FigureArt art={spec.figure.art} tone={spec.figure.tone} />}
+
         {caption !== "under" && (
           <figcaption
             className={`${CAPTION} absolute left-[var(--s-3)] bottom-[var(--s-3)] ${
@@ -105,24 +111,39 @@ export function Plate({ spec, ratio = "var(--ratio-plate)", alt, className = "" 
 const CAPTION =
   "font-mono text-[11px] tracking-[0.2em] uppercase text-[color:var(--ink-muted)] leading-[1.4]";
 
-/** Development only — see the note at the top of this file. */
+/*
+ * Development only — see the note at the top of this file.
+ *
+ * The placeholder stands in for the photograph the brief describes, so it
+ * takes that photograph's tone. A plate whose caption or figure is set to
+ * "paper" has declared its frame is dark; drawing white line work over a pale
+ * placeholder made both invisible, which defeated the point of being able to
+ * compose the figure before the shoot.
+ */
 function PlaceholderRef({ spec }: { spec: PlateSpec }) {
+  const dark = spec.figure?.tone === "paper" || spec.caption === "paper";
+
   return (
     <div
       className="absolute inset-0 grid place-items-center text-center p-[var(--s-3)]"
       style={{
-        background:
-          "radial-gradient(120% 90% at 30% 20%, rgba(255,255,255,.65), transparent 60%)," +
-          "linear-gradient(158deg,#EFECE6 0%,#E3DFD7 52%,#EBE7E0 100%)",
+        background: dark
+          ? "radial-gradient(120% 90% at 30% 20%, rgba(255,255,255,.10), transparent 60%)," +
+            "linear-gradient(158deg,#4A443C 0%,#332F29 52%,#413B34 100%)"
+          : "radial-gradient(120% 90% at 30% 20%, rgba(255,255,255,.65), transparent 60%)," +
+            "linear-gradient(158deg,#EFECE6 0%,#E3DFD7 52%,#EBE7E0 100%)",
       }}
     >
-      <div className="absolute inset-[12px] border border-[rgba(23,19,16,.09)]" />
-      {/* The ref alone. It used to print the shot brief under it — "Wide. The
-          counter empty before opening…" — which turned an empty slot into a
-          paragraph of production notes and made the frame read as the loudest
-          thing on the page. The brief still lives in content/plates.ts, where
-          the person shooting it will actually look. */}
-      <span className={`relative ${CAPTION}`}>{spec.ref}</span>
+      <div
+        className="absolute inset-[12px] border"
+        style={{ borderColor: dark ? "rgba(255,255,255,.12)" : "rgba(23,19,16,.09)" }}
+      />
+      <span
+        className={`relative ${CAPTION}`}
+        style={dark ? { color: "rgba(255,255,255,.45)" } : undefined}
+      >
+        {spec.ref}
+      </span>
     </div>
   );
 }

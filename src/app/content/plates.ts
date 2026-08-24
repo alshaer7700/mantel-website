@@ -82,6 +82,8 @@
  * is a real shop's site, not a mood board. They are the brief, not the assets.
  */
 
+import type { FigureKey } from "@/app/components/FigureArt";
+
 export type PlateSpec = {
   /** Empty until a real photograph exists. */
   src: string;
@@ -100,6 +102,17 @@ export type PlateSpec = {
    * lower left of that frame must be clear, and the right way round.
    */
   caption?: "under" | "paper" | "ink";
+  /**
+   * A drawn figure laid over the photograph — see components/FigureArt.
+   * `tone` is a fact about the frame underneath, exactly as it is for the
+   * caption: white line over a mid or dark photograph, ink over a pale one.
+   *
+   * A plate with a figure is shot EMPTY. That is the whole technique and it
+   * changes the brief: no model, no release, no waiting for the right person
+   * at the right moment — photograph the room and the real objects, and draw
+   * the people in afterwards.
+   */
+  figure?: { art: FigureKey; tone: "paper" | "ink" };
 };
 
 export const PLATES = {
@@ -137,10 +150,14 @@ export const PLATES = {
     src: "",
     ref: "PL-04",
     cap: "Room, afternoon",
+    caption: "under",
+    figure: { art: "pair", tone: "paper" },
     brief:
-      "ROOM. The full-bleed frame. Someone at a table with a cup, seen from across " +
-      "the room, late light through the window. Not a portrait and not an " +
-      "empty interior — the room with a person in it, at rest.",
+      "ROOM, SHOT EMPTY — a figure is drawn onto this one. Two chairs at a " +
+      "table, straight on, nobody in them. Put two real cups on the table at " +
+      "about two fifths of the frame height and leave the wall behind plain: " +
+      "the drawn hands close around those cups, so their position is the shot. " +
+      "Late light through the window. Do not photograph people for this frame.",
   },
   hands: {
     src: "",
@@ -159,10 +176,12 @@ export const PLATES = {
     src: "",
     ref: "PL-06",
     cap: "Al Hidd",
+    figure: { art: "walking", tone: "paper" },
     brief:
-      "ROOM. The shopfront, from across the street, early. Someone walking out with " +
-      "a cup if the timing allows. Overcast or first light; the sign legible " +
-      "but not centred.",
+      "ROOM, SHOT EMPTY — a figure is drawn onto this one. The shopfront from " +
+      "across the street, early, with nobody in front of it. Overcast or first " +
+      "light; the sign legible but not centred. Leave the right half of the " +
+      "pavement clear for the drawn figure walking out.",
   },
 } as const satisfies Record<string, PlateSpec>;
 
