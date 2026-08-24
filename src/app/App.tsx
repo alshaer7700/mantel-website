@@ -7,6 +7,8 @@ import { Instagram, Search, ShoppingBag, User } from "lucide-react";
 import { fetchMenu, groupByCategory } from "@/lib/api/menu";
 import { Home } from "@/app/pages/Home";
 import { Objects } from "@/app/pages/Objects";
+import { CartDrawer } from "@/app/components/cart/CartDrawer";
+import type { CartLine, RetailProduct } from "@/app/content/retail";
 import { EditorialFooter } from "@/app/components/EditorialFooter";
 import { Cafe } from "@/app/pages/Cafe";
 import { Story } from "@/app/pages/Story";
@@ -32,6 +34,8 @@ export default function App() {
   // refresh lands where it says it does.
   const [page, setPage] = useState<Page>(() => routeFor(window.location.pathname).page);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [cartOpen, setCartOpen] = useState(false);
+  const [cartLines, setCartLines] = useState<CartLine[]>([]);
   const [menuCategory, setMenuCategory] = useState<MenuCategory>(
     () => routeFor(window.location.pathname).menuCategory,
   );
@@ -137,6 +141,7 @@ export default function App() {
         setSidebarOpen(false);
         setSearchOpen(false);
         setAccountOpen(false);
+        setCartOpen(false);
       }
     };
     window.addEventListener("keydown", onKey);
@@ -150,6 +155,7 @@ export default function App() {
     setSidebarOpen(false);
     setSearchOpen(false);
     setAccountOpen(false);
+    setCartOpen(false);
     window.scrollTo(0, 0);
   };
 
@@ -190,6 +196,38 @@ export default function App() {
    * crawlers. The click handler only takes over the plain left-click —
    * modified clicks fall through to the browser so ⌘-click still opens a tab.
    */
+  const addToCart = (product: RetailProduct) => {
+    setCartLines((current) => {
+      const existing = current.find((line) => line.product.id === product.id);
+      if (existing) {
+        return current.map((line) =>
+          line.product.id === product.id ? { ...line, quantity: line.quantity + 1 } : line,
+        );
+      }
+      return [...current, { product, quantity: 1 }];
+    });
+    setCartOpen(true);
+  };
+
+  const incrementCart = (productId: string) => {
+    setCartLines((current) => current.map((line) =>
+      line.product.id === productId ? { ...line, quantity: line.quantity + 1 } : line,
+    ));
+  };
+
+  const decrementCart = (productId: string) => {
+    setCartLines((current) => current.flatMap((line) => {
+      if (line.product.id !== productId) return [line];
+      return line.quantity > 1 ? [{ ...line, quantity: line.quantity - 1 }] : [];
+    }));
+  };
+
+  const removeFromCart = (productId: string) => {
+    setCartLines((current) => current.filter((line) => line.product.id !== productId));
+  };
+
+  const cartCount = cartLines.reduce((total, line) => total + line.quantity, 0);
+
   const linkTo = (p: Page, category: MenuCategory = null) => ({
     href: pathFor(p, category),
     onClick: (e: React.MouseEvent) => {
@@ -293,9 +331,15 @@ export default function App() {
               <User size={16} strokeWidth={1.5} className="sm:hidden" />
               <span>Account</span>
             </button>
-            <a href="#bag" className="editorial-nav-action editorial-nav-icon" aria-label="Cart">
+            <button
+              type="button"
+              className="editorial-nav-action editorial-nav-icon relative"
+              aria-label={`Cart${cartCount > 0 ? `, ${cartCount} item${cartCount === 1 ? "" : "s"}` : ""}`}
+              onClick={() => { setCartOpen(true); setSidebarOpen(false); setSearchOpen(false); setAccountOpen(false); }}
+            >
               <ShoppingBag size={16} strokeWidth={1.5} />
-            </a>
+              {cartCount > 0 && <span className="editorial-cart-badge">{cartCount}</span>}
+            </button>
           </div>
         </div>
       </header>
@@ -311,11 +355,50 @@ export default function App() {
       />
       {/* Drawer */}
       <div
-        className={`fixed left-0 bottom-0 z-50 bg-background flex flex-col transition-transform duration-300 ease-in-out ${
+        className={`fixed inset-0 z-[70] bg-background flex flex-col transition-transform duration-300 ease-in-out ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
-        style={{ width: "min(360px, 48vw)", top: "var(--editorial-nav-h)" }}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Mantel navigation"
       >
+        <div className="editorial-sidebar-header">
+          <button
+            type="button"
+            className="editorial-sidebar-close"
+            onClick={() => setSidebarOpen(false)}
+          >
+            Close
+          </button>
+          <a {...linkTo("home")} className="editorial-sidebar-wordmark" aria-label="Mantel home">
+            Mantel.
+            <small>Bahrain</small>
+          </a>
+          <div className="editorial-sidebar-tools">
+            <button
+              type="button"
+              onClick={() => { setSidebarOpen(false); setSearchOpen(true); setAccountOpen(false); }}
+              aria-label="Search"
+            >
+              <Search size={19} strokeWidth={1.4} />
+            </button>
+            <button
+              type="button"
+              onClick={() => { setSidebarOpen(false); setAccountOpen(true); setSearchOpen(false); }}
+              aria-label="Account"
+            >
+              <User size={19} strokeWidth={1.4} />
+            </button>
+            <button
+              type="button"
+              onClick={() => { setSidebarOpen(false); setCartOpen(true); }}
+              aria-label="Cart"
+            >
+              <ShoppingBag size={19} strokeWidth={1.4} />
+            </button>
+          </div>
+        </div>
+
         {/* Drawer links */}
         <nav className="editorial-sidebar-links">
           <a
@@ -376,6 +459,14 @@ export default function App() {
         />
       )}
 
+      <CartDrawer
+        open={cartOpen}
+        lines={cartLines}
+        onClose={() => setCartOpen(false)}
+        onIncrement={incrementCart}
+        onDecrement={decrementCart}
+        onRemove={removeFromCart}
+      />
 
       {page === "home" && (
         <main className="flex flex-col min-h-screen" style={{ paddingTop: navHeight }}>
@@ -401,7 +492,7 @@ export default function App() {
       {page === "objects" && (
         <main className="flex flex-col min-h-screen" style={{ paddingTop: navHeight }}>
           <div className="flex-1">
-            <Objects linkTo={linkTo} />
+            <Objects linkTo={linkTo} cartLines={cartLines} onAdd={addToCart} />
           </div>
           <EditorialFooter linkTo={linkTo} />
         </main>
