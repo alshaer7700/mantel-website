@@ -41,10 +41,10 @@ export function NewsletterSignup() {
 
   return (
     <section className="max-w-2xl w-full mx-auto px-6 py-16 text-center">
-      <h2 className="font-serif font-semibold text-4xl md:text-5xl mb-4">
+      <h2 className="font-serif font-normal tracking-[-0.018em] leading-[0.94] text-[clamp(1.9rem,5vw,3.4rem)] m-0 mb-[var(--s-2)] text-[color:var(--ink)]">
         New Sips, First Look.
       </h2>
-      <p className="font-mono font-normal text-sm text-muted-foreground mb-8">
+      <p className="font-mono text-[length:var(--fs-desc)] leading-[1.6] text-[color:var(--ink-muted)] mb-[var(--s-4)]">
         Be the first to know when new drinks land at Mantel.
       </p>
       {status === "sent" ? (
@@ -52,7 +52,10 @@ export function NewsletterSignup() {
           You{"'"}re on the list. 💌
         </p>
       ) : (
-        <form onSubmit={submit} className="flex items-center max-w-md mx-auto rounded-full border border-border bg-background focus-within:border-foreground/40 transition-colors">
+        <form
+          onSubmit={submit}
+          className="flex items-center gap-[var(--s-2)] max-w-md mx-auto border-b border-[color:var(--line)] focus-within:border-[color:var(--ink)] transition-colors"
+        >
           <input
             type="text"
             name="_honey"
@@ -63,27 +66,30 @@ export function NewsletterSignup() {
             aria-hidden="true"
             className="absolute -left-[9999px] h-0 w-0 opacity-0"
           />
+          <label htmlFor="nl-email" className="sr-only">Email address</label>
           <input
+            id="nl-email"
             type="email"
             required
             maxLength={254}
             placeholder="Email address"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="flex-1 min-w-0 bg-transparent px-6 py-3.5 font-serif font-normal text-base placeholder:text-muted-foreground outline-none rounded-full"
+            className="flex-1 min-w-0 bg-transparent px-0 py-[10px] font-serif text-[length:var(--fs-item)] text-[color:var(--ink)] placeholder:text-[color:var(--ink-muted)] outline-none text-center"
           />
           <button
             type="submit"
             disabled={status === "sending"}
             aria-label="Sign up"
-            className="px-5 text-foreground hover:opacity-60 transition-opacity disabled:opacity-40"
+            className="shrink-0 text-[color:var(--ink)] hover:opacity-60 transition-opacity disabled:opacity-40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--brand)]"
           >
             <ArrowRight size={20} strokeWidth={1.5} />
           </button>
         </form>
       )}
       {status === "error" && (
-        <p className="font-mono font-normal text-xs text-destructive mt-3">
+        <p role="alert"
+          className="font-mono text-[11px] leading-[1.5] text-[color:var(--brand)] mt-[var(--s-2)]">
           Couldn{"'"}t sign you up right now — please try again.
         </p>
       )}

@@ -43,7 +43,7 @@
      token by that name here would silently lose to it. */
   --card-surface: #FCFBF9;  /* raised surfaces — the checkout summary panel */
   --ink:       #171310;  /* all primary text */
-  --ink-muted: #8C867D;  /* descriptions, secondary, every .label */
+  --ink-muted: #726C62;  /* descriptions, secondary, every .label */
   --brand:     #9A1C1F;  /* heart red — accents only */
 
   /* Two rules, not one. The shelf hairline has to read as a drawn line; the
@@ -73,17 +73,21 @@
    *
    *   #171310 on #F6F5F2   16.94:1   passes AA for body text
    *   #9A1C1F on #F6F5F2    7.52:1   passes AA for body text
-   *   #8C867D on #F6F5F2    3.31:1   large text only — FAILS AA at 14px
+   *   #726C62 on #F6F5F2    4.77:1   passes AA for body text
    *
-   * --ink-muted is the same problem the previous palette had (#8A8A8A on
-   * white measured 3.45:1), very slightly worse. It carries the 14px menu
-   * descriptions and every .label, which is exactly the size that needs
-   * 4.5:1. #767066 measures 4.50:1 on this paper and is visually
-   * indistinguishable at that size.
+   * --ink-muted was #8C867D, which measured 3.31:1 — large text only, and a
+   * fail at every size it was actually used at. It is darker now, and the
+   * change is not cosmetic: after the copy pass, this token carries nearly
+   * everything the site still says. The eyebrow, the shelf numbers, the plate
+   * captions, the opening hours, the prices, the footer titles are all set in
+   * it, at 11px and 13px. A tone chosen to be quiet was making the remaining
+   * text hard to read, which is the one thing a page this sparse cannot
+   * afford. #726C62 keeps the warm cast (r > g > b, same as the ink) and
+   * clears AA with margin at every size.
    *
-   * The prototype specifies #8C867D, so that is what ships: changing a brand
-   * value is the owner's call, not a build-time one. If it is approved, this
-   * is the only line that changes.
+   * The prototype specifies #8C867D. That value is overridden here on the
+   * design brief's instruction to maintain strong contrast and readable text,
+   * which the prototype's grey cannot do at the sizes this site uses it.
    */
 
   /* ── Spacing ────────────────────────────────────────────────────────────

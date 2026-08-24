@@ -21,22 +21,15 @@ import { getSession, onAuthChange, fetchProfile } from "@/lib/api/auth";
 import type { Session } from "@supabase/supabase-js";
 import type { Page, MenuCategory, MenuItem } from "@/app/types";
 import { pathFor, routeFor } from "@/lib/routes";
+import { DISPLAY, BUTTON, FIELD, FIELD_LABEL } from "@/app/components/type";
 import { CONTACT_ENDPOINT } from "@/lib/constants";
 
 // Served from public/ rather than bundled: a brand asset with its own stable
 // URL, re-exported clean from the 5788px original with the tip on the centre
-// axis. The pill CTAs that used to sit on it are gone, and with them the two
-// rounded-button constants that dressed them.
+// axis. The pill CTAs that used to sit on it are gone, and so is the pill
+// vocabulary itself — controls now come from components/type.
 const heartArtwork = "/heart.webp";
 import wordmark from "@/imports/logos-05.webp";
-
-// Still worn by the account panel and the contact form's send button, neither
-// of which the redesign phases touch. The homepage pills that shared this
-// vocabulary are gone; these retire when those surfaces get their own pass.
-const HEART_BUTTON_CLASS =
-  "rounded-full bg-heart-red text-heart-red-foreground tracking-[0.16em] uppercase " +
-  "hover:opacity-90 transition-opacity " +
-  "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-heart-red";
 
 // Header nav link — Fira Mono 13 / 400 / 0.08em / uppercase, straight off the
 // typography table. Every value is a token; none is written as a literal here.
@@ -439,7 +432,7 @@ export default function App() {
               {/* w-72, not w-56: Fira Mono sets much wider than the old
                   proportional face, and the locale line wrapped at w-56. */}
               {localeOpen && (
-                <div className="absolute right-0 top-full mt-3 w-72 bg-background border border-border rounded-2xl shadow-lg px-5 py-4 z-50">
+                <div className="absolute right-0 top-full mt-3 w-72 bg-[color:var(--bg)] border border-[color:var(--line)] px-[var(--s-3)] py-[var(--s-2)] z-50">
                   <p className="font-mono font-normal text-sm text-foreground">🇧🇭 Bahrain — BD · English</p>
                   <p className="font-mono font-normal text-[11px] text-muted-foreground mt-1.5">
                     More regions and languages coming soon.
@@ -584,26 +577,23 @@ export default function App() {
       )}
 
       {page === "contact" && (
-        <main
-          className="min-h-screen flex flex-col"
-          style={{ paddingTop: navHeight }}
-        >
-          <div className="flex-1 max-w-2xl w-full mx-auto px-6 pt-14 pb-16">
+        <main className="min-h-screen flex flex-col" style={{ paddingTop: navHeight }}>
+          {/* Left-aligned on the page gutter, not centred in a 2xl box. The
+              form is the only thing on the page, so it hangs off the same
+              margin every other page's type does. */}
+          <div className="flex-1 px-[var(--pad)] pt-[clamp(3rem,9vh,6rem)] pb-[clamp(3rem,9vh,6rem)]">
             <h1
-              className="font-serif font-semibold mb-12"
-              style={{ fontSize: "clamp(2.1rem, 5.5vw, 3.1rem)", lineHeight: 1.1, color: "#3a0d1e" }}
+              className={`${DISPLAY} text-[clamp(1.9rem,5vw,3.4rem)] m-0 mb-[var(--s-5)] text-[color:var(--ink)]`}
             >
-              Contact
+              Contact.
             </h1>
 
             {sent ? (
-              <div className="py-12 text-center">
-                <p className="font-mono font-normal text-muted-foreground text-sm tracking-wide">
-                  Thank you — we{"'"}ll be in touch soon.
-                </p>
-              </div>
+              <p className="font-serif text-[length:var(--fs-item)] text-[color:var(--ink)] max-w-[42ch]">
+                Thank you — we{"'"}ll be in touch soon.
+              </p>
             ) : (
-              <form onSubmit={submitContact} className="flex flex-col gap-3">
+              <form onSubmit={submitContact} className="flex flex-col gap-[var(--s-3)] max-w-[42ch]">
                 {/* Honeypot — visually hidden and skipped by keyboard/screen
                     readers; humans never fill it, spam bots usually do, and
                     FormSubmit discards submissions where it's non-empty. */}
@@ -617,57 +607,77 @@ export default function App() {
                   aria-hidden="true"
                   className="absolute -left-[9999px] h-0 w-0 opacity-0"
                 />
-                {/* Name + Email row */}
-                <div className="flex gap-3">
+
+                {/* Real labels, not placeholders. A placeholder is gone the
+                    moment someone types, so a filled form loses the only
+                    thing saying what each rule is for — and it is the field's
+                    accessible name too. */}
+                <div>
+                  <label htmlFor="c-name" className={FIELD_LABEL}>Name</label>
                   <input
+                    id="c-name"
                     type="text"
-                    placeholder="Name"
+                    autoComplete="name"
                     maxLength={120}
                     value={form.name}
                     onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-                    className="flex-1 min-w-0 rounded-full border border-border bg-background px-5 py-3 font-serif font-normal text-sm placeholder:text-muted-foreground outline-none focus:border-foreground/40 transition-colors"
+                    className={FIELD}
                   />
+                </div>
+
+                <div>
+                  <label htmlFor="c-email" className={FIELD_LABEL}>
+                    Email <span className="text-[color:var(--brand)]">*</span>
+                  </label>
                   <input
+                    id="c-email"
                     type="email"
-                    placeholder="Email *"
+                    autoComplete="email"
                     required
                     maxLength={254}
                     value={form.email}
                     onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
-                    className="flex-1 min-w-0 rounded-full border border-border bg-background px-5 py-3 font-serif font-normal text-sm placeholder:text-muted-foreground outline-none focus:border-foreground/40 transition-colors"
+                    className={FIELD}
                   />
                 </div>
 
-                {/* Phone */}
-                <input
-                  type="tel"
-                  placeholder="Phone number"
-                  maxLength={40}
-                  value={form.phone}
-                  onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
-                  className="rounded-full border border-border bg-background px-5 py-3 font-serif font-normal text-sm placeholder:text-muted-foreground outline-none focus:border-foreground/40 transition-colors"
-                />
-
-                {/* Comment */}
-                <textarea
-                  placeholder="Comment"
-                  rows={5}
-                  maxLength={2000}
-                  value={form.comment}
-                  onChange={(e) => setForm((f) => ({ ...f, comment: e.target.value }))}
-                  className="rounded-3xl border border-border bg-background px-5 py-4 font-serif font-normal text-sm placeholder:text-muted-foreground outline-none focus:border-foreground/40 transition-colors resize-none"
-                />
-
-                {sendError && <p className="font-mono font-normal text-xs text-destructive">{sendError}</p>}
-                <div className="mt-1">
-                  <button
-                    type="submit"
-                    disabled={sending}
-                    className={`px-9 py-3 font-serif font-normal text-base disabled:opacity-60 ${HEART_BUTTON_CLASS}`}
-                  >
-                    {sending ? "Sending…" : "Send"}
-                  </button>
+                <div>
+                  <label htmlFor="c-phone" className={FIELD_LABEL}>Phone</label>
+                  <input
+                    id="c-phone"
+                    type="tel"
+                    autoComplete="tel"
+                    maxLength={40}
+                    value={form.phone}
+                    onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
+                    className={FIELD}
+                  />
                 </div>
+
+                <div>
+                  <label htmlFor="c-comment" className={FIELD_LABEL}>Comment</label>
+                  <textarea
+                    id="c-comment"
+                    rows={5}
+                    maxLength={2000}
+                    value={form.comment}
+                    onChange={(e) => setForm((f) => ({ ...f, comment: e.target.value }))}
+                    className={`${FIELD} resize-none`}
+                  />
+                </div>
+
+                {sendError && (
+                  <p
+                    role="alert"
+                    className="font-mono text-[11px] leading-[1.5] text-[color:var(--brand)]"
+                  >
+                    {sendError}
+                  </p>
+                )}
+
+                <button type="submit" disabled={sending} className={`${BUTTON} w-fit mt-[var(--s-2)]`}>
+                  {sending ? "Sending…" : "Send"}
+                </button>
               </form>
             )}
           </div>
@@ -683,8 +693,10 @@ export default function App() {
       {/* ══ FAQ PAGE ══ */}
       {page === "faq" && (
         <main className="min-h-screen flex flex-col" style={{ paddingTop: navHeight }}>
-          <div className="flex-1 max-w-2xl w-full mx-auto px-6 py-14">
-            <h1 className="font-serif font-semibold text-5xl mb-12">FAQ</h1>
+          <div className="flex-1 w-full px-[var(--pad)] pt-[clamp(3rem,9vh,6rem)] pb-[clamp(3rem,9vh,6rem)]">
+            <h1 className={`${DISPLAY} text-[clamp(1.9rem,5vw,3.4rem)] m-0 mb-[var(--s-5)] text-[color:var(--ink)]`}>
+              FAQ
+            </h1>
             <FaqAccordion items={FAQ_ITEMS} />
           </div>
           <NewsletterSignup />
