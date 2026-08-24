@@ -1,10 +1,11 @@
 import { useState } from "react";
 import type { MenuCategory, Page } from "@/app/types";
-import menuIllustrationImage from "@/imports/mood-menu-illustration.jpg";
-import bouquetImage from "@/imports/mood-bouquet.jpg";
 import rugImage from "@/imports/mood-rug.jpg";
-import saturdaySignImage from "@/imports/mood-saturday-sign.jpg";
 import coffeeCollageImage from "@/imports/mood-coffee-collage.jpg";
+import retailLighterImage from "@/imports/retail-lighter.png";
+import retailCandleImage from "@/imports/retail-candle.png";
+import retailMatchaImage from "@/imports/retail-matcha.png";
+import retailMatchSticksImage from "@/imports/retail-match-sticks.png";
 
 type Props = {
   linkTo: (page: Page, category?: MenuCategory) => {
@@ -26,14 +27,14 @@ const RETAIL_PRODUCTS: RetailProduct[] = [
     name: "Matcha Powder",
     description: "Bright, clean, and quietly grassy.",
     price: "BD 4.500",
-    image: menuIllustrationImage,
+    image: retailMatchaImage,
     tone: "matcha",
   },
   {
     name: "Candles",
     description: "A soft light for the end of the day.",
     price: "BD 7.000",
-    image: bouquetImage,
+    image: retailCandleImage,
     tone: "candle",
   },
   {
@@ -47,8 +48,15 @@ const RETAIL_PRODUCTS: RetailProduct[] = [
     name: "Lighters",
     description: "A small object with a little ceremony.",
     price: "BD 3.000",
-    image: saturdaySignImage,
+    image: retailLighterImage,
     tone: "lighter",
+  },
+  {
+    name: "Match Sticks",
+    description: "A little fire for the everyday ritual.",
+    price: "BD 2.500",
+    image: retailMatchSticksImage,
+    tone: "matches",
   },
   {
     name: "Custom Bags",

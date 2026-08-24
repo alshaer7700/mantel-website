@@ -1037,7 +1037,7 @@
 
   .editorial-objects-grid {
     display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 1px;
     background: var(--editorial-line);
     border-top: 1px solid var(--editorial-line);
@@ -1078,6 +1078,7 @@
   .editorial-object-card-sticks .editorial-object-image { background: #a69a88; }
   .editorial-object-card-lighter .editorial-object-image { background: #9d4033; }
   .editorial-object-card-bag .editorial-object-image { background: #76604c; }
+  .editorial-object-card-matches .editorial-object-image { background: #b8b4aa; }
 
   .editorial-object-card:hover .editorial-object-image img {
     transform: scale(1.04);
