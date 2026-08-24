@@ -1,4 +1,4 @@
-import retailCandleSticksImage from "@/imports/retail-candle-sticks.png";
+import retailCandleSticksImage from "@/imports/retail-candle-sticks.jpeg";
 import coffeeCollageImage from "@/imports/mood-coffee-collage.jpg";
 import retailLighterImage from "@/imports/retail-lighter.png";
 import retailCandleImage from "@/imports/retail-candle.png";
