@@ -53,6 +53,33 @@
   font-display: swap;
 }
 
+/*
+ * Archivo — the display grotesque, variable 400–900, latin subset, ~35 KB.
+ *
+ * A third family, added on evidence rather than taste. Across four batches of
+ * primary references the display word is a heavy grotesque almost every time —
+ * CAFE MATIN, echo era, ORAZIO, AMBER, 92 ST, ALWAYS LATTE — set enormous and
+ * usually over a photograph. An earlier pass here judged that evidence thin
+ * and kept the section words in EB Garamond; it was thin in the batch that was
+ * in front of me, and it is not thin now.
+ *
+ * It has exactly one job: the oversized word. Editorial prose stays EB
+ * Garamond, labels and prices stay Fira Mono. The references support that too
+ * — where they use a serif at all it is one small word beside the grotesque
+ * ("collective", "club"), never the display itself.
+ *
+ * LATIN SUBSET, and that is easy to get wrong: Google's css2 response lists
+ * vietnamese, latin-ext and latin in that order, so taking the first URL
+ * yields a face missing most of what this site sets. See guidelines/FONTS.md.
+ */
+@font-face {
+  font-family: "Archivo";
+  src: url("../assets/fonts/Archivo-Variable.woff2") format("woff2-variations");
+  font-weight: 400 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* The --font-serif / --font-mono / --font-emoji stacks moved to tokens.css, so
    every custom property lives in one file. This one keeps the @font-face
    rules, next to the files they load. */

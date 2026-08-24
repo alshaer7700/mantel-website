@@ -6,7 +6,7 @@ import { MenuRow } from "@/app/components/menu/MenuList";
 import { ObjectArt } from "@/app/components/objects/ObjectArt";
 import { PLATES } from "@/app/content/plates";
 import { formatPrice } from "@/lib/format";
-import { LABEL, LABEL_INK, DISPLAY, WORD, BUTTON } from "@/app/components/type";
+import { LABEL, LABEL_INK, DISPLAY, WORD, WORDMARK, MICRO, BUTTON } from "@/app/components/type";
 
 /*
  * The home page, on the culture-first brief: seven sections, read in the
@@ -53,33 +53,38 @@ export function Home({ sections, objects, linkTo }: Props) {
 
   return (
     <>
-      {/* ══ 1 · HERO ══════════════════════════════════════════════════════ */}
-      <section className="min-h-[88vh] flex flex-col pt-[clamp(2.5rem,8vh,5rem)]">
-        <div className="flex justify-between gap-[var(--s-2)] flex-wrap">
-          <span className={LABEL}>Al Hidd, Bahrain</span>
-          <span className={LABEL}>Est. 2026</span>
+      {/* ══ 1 · HERO ══════════════════════════════════════════════════════
+          Built on the one reference in the set that is itself a website: the
+          name set edge to edge and enormous, a row of small hard facts under
+          it, the photograph carrying the rest. The name is the largest thing
+          on the site by an order of magnitude — that is the whole device, and
+          shrinking it to be polite would lose it. */}
+      <section className="min-h-[86vh] flex flex-col pt-[clamp(1.5rem,5vh,3rem)]">
+        <h1 className={`${WORDMARK} text-[color:var(--ink)]`}>Mantel.</h1>
+
+        {/* Five facts, evenly spread, in the reference's small bold caps. Real
+            ones — nothing here is filler and nothing promises what the shop
+            cannot yet do. */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-x-[var(--s-3)] gap-y-[var(--s-2)] border-t border-[color:var(--line)] pt-[var(--s-2)] mt-[var(--s-2)]">
+          <span className={MICRO}>Coffee, food<br />and objects</span>
+          <span className={MICRO}>Al Hidd<br />Muharraq</span>
+          <span className={MICRO}>Open daily<br />from 07:00</span>
+          <span className={MICRO}>Made in<br />small runs</span>
+          <span className={MICRO}>Est.<br />2026</span>
         </div>
 
-        <h1 className={`${WORD} mt-[clamp(1.5rem,6vh,3.5rem)] text-[color:var(--ink)]`}>
-          Mantel.
-        </h1>
-
-        <p className="font-serif text-[clamp(1.25rem,3.2vw,2rem)] leading-[1.15] mt-[var(--s-3)] mb-[var(--s-4)] text-[color:var(--ink-muted)]">
-          Coffee, food and objects.
-        </p>
-
-        <a {...linkTo("menu")} className={`${BUTTON} w-fit`}>
-          Order before you reach
-        </a>
-
-        {/* The cinematic frame the brief asks the hero to open on.
-            It keeps its own 16:9 and fills the width. An earlier version
-            stretched it to the hero's remaining height — with an aspect-ratio
-            also set, the width then derived from the height (424 × 16/9 =
-            753px) and the whole page scrolled sideways on a phone. Height is
-            the section's job here, not the picture's. */}
         <div className="mt-auto pt-[clamp(2rem,6vh,3.5rem)]">
           <BleedPlate spec={PLATES.hero} />
+        </div>
+
+        {/* Statement left, action right — the reference's foot. */}
+        <div className="flex justify-between items-end gap-[var(--s-3)] flex-wrap pt-[var(--s-3)]">
+          <p className="font-serif text-[clamp(1.1rem,2.4vw,1.6rem)] leading-[1.2] max-w-[22ch] m-0 text-[color:var(--ink)]">
+            A café and a small house of objects.
+          </p>
+          <a {...linkTo("menu")} className={`${BUTTON} w-fit`}>
+            Order before you reach
+          </a>
         </div>
       </section>
 

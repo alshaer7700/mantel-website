@@ -22,15 +22,35 @@ export const LABEL_INK =
  *
  * The brief asks for typography as a primary visual element and names these
  * words specifically, against "small generic section titles". It is set in
- * the display serif at a size nothing else on the site reaches, uppercase,
- * with the leading pulled under 1 so a two-word run stacks tight.
+ * Archivo at 800, uppercase, at a size nothing else on the site reaches, with
+ * the leading pulled well under 1 and the tracking pulled tight so the letters
+ * touch — which is what the references do and what makes the word read as a
+ * mark rather than a heading.
  *
  * It carries no colour of its own: a word on the paper takes ink, a word on
  * the brown band takes paper, and the call site says which.
  */
 export const WORD =
-  "font-serif font-normal uppercase m-0 leading-[0.82] tracking-[-0.022em] " +
-  "text-[clamp(2.75rem,13vw,10rem)]";
+  "font-grotesk font-[800] uppercase m-0 leading-[0.78] tracking-[-0.035em] " +
+  "text-[clamp(2.75rem,14vw,11rem)]";
+
+/**
+ * The hero wordmark. The same face as WORD, sized to run the full measure.
+ *
+ * The closest reference in the set is an actual café website whose name is set
+ * edge to edge across the top of a photograph, larger than any other element
+ * on the page by a factor of ten. 21vw is what puts "Mantel." on one line at
+ * that width; the clamp floor keeps it from collapsing on a narrow phone and
+ * the ceiling stops it outgrowing a very wide monitor.
+ */
+export const WORDMARK =
+  "font-grotesk font-[800] uppercase m-0 leading-[0.78] tracking-[-0.045em] " +
+  "text-[clamp(3.25rem,21vw,16rem)]";
+
+/** The micro-label row under the wordmark: small, bold, tracked, grotesque. */
+export const MICRO =
+  "font-grotesk font-[700] text-[10px] tracking-[0.1em] uppercase leading-[1.35] " +
+  "text-[color:var(--ink-muted)]";
 
 /** Display serif: tight leading, negative tracking. Headings only. */
 export const DISPLAY = "font-serif font-normal tracking-[-0.018em] leading-[0.94]";

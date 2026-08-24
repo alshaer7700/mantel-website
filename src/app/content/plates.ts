@@ -7,73 +7,75 @@
  *
  * `brief` is a production note, never customer copy. See components/Plate.tsx.
  *
- * ── THE RULES, REWRITTEN AGAINST THE REFERENCE SET ────────────────────────
+ * ── THE RULES, READ OFF THE REFERENCE SET ────────────────────────────────
  *
- * These briefs used to encode: no faces, one subject per frame, flat or
- * single-source light, far more empty space than feels comfortable. The
- * reference photographs contradict three of those four, so they are gone.
+ * These have been rewritten twice. The first version was invented ("no faces,
+ * one subject per frame, far more empty space than feels comfortable"). The
+ * second corrected the parts a first batch of references contradicted. This
+ * one is read off five photographs that were named the primary reference, and
+ * it settles a question the earlier two got wrong in opposite directions.
  *
- *   PEOPLE ARE IN FRAME. Hands especially — holding a cup over a pair of worn
- *   slip-ons, steadying a pitcher, gripping a kettle. One reference is a man's
- *   face in profile over a Chemex. The old "no faces" rule would have thrown
- *   out most of the set, and it was making the shop look unstaffed.
+ *   PEOPLE, BUT NEVER A PORTRAIT. This is the strongest pattern in the set and
+ *   it is in all five: a man seen in profile pouring a kettle, hands holding a
+ *   cup over a pair of worn slip-ons, hands steadying a pitcher, the back of a
+ *   head in a cap, a barista shot from behind at the counter. Not one face is
+ *   presented to the camera.
  *
- *   THE FRAME IS FULL, NOT EMPTY. Every reference is a tight crop that fills
- *   its edges. The old rule asked the photograph to carry the whitespace, but
- *   the page already carries an enormous amount of it — that is the whole
- *   layout. A photograph that is also mostly empty adds nothing and reads as a
- *   mistake. The pictures should be dense so the page around them is not.
+ *   That resolves an argument this file has had with itself. "No faces" was
+ *   the first rule and it was cut for making the shop look unstaffed; "people
+ *   are in frame, faces welcome" replaced it. Both were wrong. The rule is
+ *   that the shop is full of people and none of them is posing — backs,
+ *   profiles, hands, the person cropped by the frame edge. It also happens to
+ *   be the rule that needs no model release and no one to be photogenic at
+ *   07:40.
  *
- *   PHOTOGRAPH THINGS WHERE THEY ARE USED. Never on seamless. A cup in a jean
- *   pocket, cups drying upside down on the group head, a Chemex on a kitchen
- *   island in the afternoon. The working surface is the set.
+ *   HANDS ARE THE SUBJECT, NOT A DETAIL. Three of the five are hands first and
+ *   everything else second. Hands doing something specific: gripping a kettle
+ *   handle, balancing a saucer, tipping a pitcher.
  *
- *   SHOT ON FILM, OR GRADED LIKE IT. Grain, warm halation around highlights,
- *   focus that is sometimes just off. "Slightly imperfect" is in the brief and
- *   it is the single most consistent quality of the reference set — a clean
- *   digital frame will look wrong beside them no matter what is in it.
+ *   ONE LIGHT, AND IT IS USUALLY LOW. Four of the five are dark. Warm window
+ *   light from one side, or the machine's own pool of light in a dim bar. The
+ *   set is not bright, airy or evenly lit, and a photograph that is will look
+ *   like it came from somewhere else.
  *
- *   ONE LIGHT, DIRECTIONAL. Warm window light indoors, or the machine's own
- *   pool of light in a dark bar. Not a lit set, not a fill.
+ *   PORTRAIT. Four of the five are upright, roughly 4:5. They are phone
+ *   photographs of a real place, not widescreen stills.
  *
- *   CONSISTENT WITHIN A MODE — see below. Same camera, same stock, same
- *   hands, ideally the same day.
+ *   IMPERFECT ON PURPOSE. Grain, halation around highlights, motion blur on a
+ *   moving hand, focus that misses. One reference is blurred across both
+ *   hands and is still the best frame in the set.
  *
- * ── TWO MODES, NOT ONE ────────────────────────────────────────────────────
+ *   SHOT WHERE IT HAPPENS. A kitchen island, a concrete floor, the drip tray,
+ *   the counter. Never on seamless, never styled.
  *
- * The second reference set splits cleanly in half, and the halves contradict
- * each other. Three are grainy and flash-lit or found-light; two are clean,
- * lit and deliberate — a cup on seamless with one hard shadow, a candle set on
- * a stack of magazines. Treating those as one instruction would average them
- * into something that is neither.
+ * ── TWO MODES ─────────────────────────────────────────────────────────────
  *
- *   ROOM (PL-01 to PL-04, PL-06). Everything above. Film, grain, found light,
- *   people and hands, tight crops, real working surfaces. This is the café.
+ *   ROOM (PL-01 to PL-04, PL-06). Everything above. This is the café, and it
+ *   is most of the site.
  *
- *   PRODUCT (PL-05, and any photograph attached to an object record). Clean,
- *   not grainy. Lit rather than found — one source, one hard shadow. Either
- *   high-key on a plain surface, or the object set down in a real room and
- *   shot straight. The mark on the object is legible, and the red on it is
- *   doing the only colour work in the frame. This is the shelf.
+ *   PRODUCT (PL-05, and any photograph on an object record). The one place
+ *   the set allows a lit, deliberate frame: one source, one hard shadow, the
+ *   label square to the camera and the red on it the only colour. Even here,
+ *   a hand holding the object beats the object alone.
  *
- * The two modes are why `objects.image_url` exists separately from these
- * plates: a candle shot the way the café is shot would look like a mistake,
- * and a barista shot the way the candle is shot would look like an advert.
+ * The two modes are why `objects.image_url` exists apart from these plates: a
+ * candle shot the way the café is shot looks like a mistake, and a barista
+ * shot the way the candle is shot looks like an advert.
  *
  * ── TYPE IN THE FRAME ─────────────────────────────────────────────────────
  *
- * Four of the five references set type over the photograph rather than under
- * it. A plate declares that itself, in `caption` below — and declares the tone
- * with it, because white type over the high-key product frame is invisible and
- * the references do the obvious thing about that. PL-01 takes paper on a dark
- * room shot, PL-05 takes ink on a lit one; both briefs reserve the corner.
+ * A plate can carry its caption inside — see `caption` below and the note in
+ * components/Plate.tsx. It takes a tone, because white type over the lit
+ * product frame is invisible.
  *
- * WHAT IS NOT ADOPTED: the heavy grotesque. Three of these references lead
- * with a wide, very bold sans — it is most of why they read the way they do.
- * Mantel has two families and a rule about which does what, and a third face
- * bought to borrow someone else's volume would cost the one thing the type
- * system has, which is that you can tell what a thing is by the face it is
- * set in. Type in the frame here is the site's own mono.
+ * WHAT IS NOT ADOPTED, and it is a real departure from the references: their
+ * heavy grotesque. Two of the five set type in a plain bold sans — one is a
+ * garment print, one is an announcement over a photograph. It is worth being
+ * exact about how thin that evidence is: of five images, one shows type on a
+ * page-like surface, and it is a social post. The set is a photography
+ * reference, not a typography one. Mantel has two faces and a rule about
+ * which does what, so type in the frame stays the site's own mono. If the
+ * grotesque is wanted literally, it is one @font-face and one class.
  *
  * ── WHAT CANNOT BE USED ───────────────────────────────────────────────────
  *
@@ -122,29 +124,32 @@ export const PLATES = {
     cap: "Counter, 07:40",
     caption: "paper",
     brief:
-      "ROOM. The pour, from the side, at the counter. Both hands in — kettle " +
-      "in one, the neck of the brewer in the other. Steam catching the window " +
-      "light. Crop at the shoulders; the face can be in it, in profile, out " +
-      "of focus. Leave the lower left quiet and dark: the caption sits in the " +
-      "frame on this one.",
+      "ROOM. The pour, from the side. Both hands in — kettle in one, the neck " +
+      "of the brewer in the other. Steam catching window light from one side. " +
+      "In profile, never facing the camera; crop at the shoulders and let the " +
+      "face fall out of focus. Leave the lower left quiet and dark: the " +
+      "caption sits in the frame on this one.",
   },
   counter: {
     src: "",
     ref: "PL-02",
     cap: "Portafilter, close",
     brief:
-      "ROOM. Hands and machine, nothing else. Grounds on the steel, the light coming " +
-      "off the group head. Shot into the dark so the metal is the brightest " +
-      "thing in frame. Tight enough that the edges are all machine.",
+      "ROOM. Hands and machine, nothing else — the strongest frame in the " +
+      "reference set is exactly this. Grounds on the steel, the light coming " +
+      "off the group head, shot into the dark so the metal is the brightest " +
+      "thing in frame. Tight enough that the edges are all machine. Blur on a " +
+      "moving hand is wanted, not a reject.",
   },
   pour: {
     src: "",
     ref: "PL-03",
     cap: "Milk, 62°C",
     brief:
-      "ROOM. The pitcher tipping into the cup, mid-pour, held in the other hand. " +
-      "Dark bar behind, one light source. The stream is the subject — freeze " +
-      "it, but let the background go soft.",
+      "ROOM. The pitcher tipping into the cup, mid-pour, the cup held in the " +
+      "other hand. Dark bar behind, one light source, sleeve and wrist in " +
+      "frame and no more of the person than that. The stream is the subject — " +
+      "freeze it and let everything behind go soft.",
   },
   room: {
     src: "",
@@ -157,7 +162,7 @@ export const PLATES = {
       "table, straight on, nobody in them. Put two real cups on the table at " +
       "about two fifths of the frame height and leave the wall behind plain: " +
       "the drawn hands close around those cups, so their position is the shot. " +
-      "Late light through the window. Do not photograph people for this frame.",
+      "Late light from one side. Do not photograph people for this frame.",
   },
   hands: {
     src: "",
@@ -166,11 +171,11 @@ export const PLATES = {
     caption: "ink",
     brief:
       "PRODUCT, not ROOM. One object — the candle tin is the strongest — lit " +
-      "with a single source so it throws one hard shadow. High-key on a plain " +
-      "surface, or set down on something real and shot straight. Clean: no " +
-      "grain, no flash. The label legible and square to the camera, the red " +
-      "on it the only colour in the frame. Keep the lower left clear; the " +
-      "caption sits in the frame on this one.",
+      "with a single source so it throws one hard shadow, the label square to " +
+      "the camera and the red on it the only colour in frame. Clean: no grain, " +
+      "no flash. Better still, a hand holding it: the reference set holds " +
+      "everything it photographs. Keep the lower left clear; the caption sits " +
+      "in the frame on this one.",
   },
   facade: {
     src: "",

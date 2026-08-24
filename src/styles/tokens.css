@@ -23,6 +23,10 @@
   --font-emoji: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji";
   --font-serif: "EB Garamond", Georgia, "Times New Roman", serif, var(--font-emoji);
   --font-mono:  "Fira Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace, var(--font-emoji);
+  /* The display grotesque. Its fallbacks are the widest neutral sans faces on
+     each platform, because the thing that breaks if it fails to load is the
+     one place on the site set at 10rem. */
+  --font-grotesk: "Archivo", "Helvetica Neue", Helvetica, Arial, sans-serif;
 
   /* ── Colour ─────────────────────────────────────────────────────────────
      Values from the design prototype: warm paper rather than pure white, and
@@ -64,14 +68,19 @@
      were magic strings in Plate.tsx's default arguments, which is where a
      seventh ratio quietly appears the first time someone needs one.
 
-     Two, and a reason for each. Portrait for a plate that sits in the grid —
-     it matches the reference set, which is shot on 35mm held upright, and it
-     gives a hung photograph more presence than a landscape crop at the same
-     width. Widescreen for a plate that runs edge to edge, because at full
-     bleed a 4:5 frame is taller than most screens and stops being a picture
-     you can see at once. */
+     Two, and a reason for each. Portrait for a plate in the grid: four of the
+     five primary references are upright at roughly 4:5, and an upright frame
+     gives a hung photograph more presence than a landscape crop of the same
+     width.
+
+     The full-bleed ratio was 16:9 and is now 3:2. Nothing in the reference
+     set is widescreen — they are photographs of a room, not film stills — and
+     a letterbox band across the page was importing a cinematic register the
+     photographs will not have. 3:2 is as wide as a frame can go and still
+     read as a photograph; 4:5 cannot run full bleed because it comes out
+     taller than the screen. */
   --ratio-plate: 4 / 5;
-  --ratio-bleed: 16 / 9;
+  --ratio-bleed: 3 / 2;
 
   /* Page gutter. The one fluid value in the file: the prototype's layout is
      built on it, and pinning it to a step would break the bleed plates that
