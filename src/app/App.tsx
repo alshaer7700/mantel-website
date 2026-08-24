@@ -3,7 +3,7 @@ import { PolicyPage } from "@/app/components/PolicyPage";
 import { FaqAccordion } from "@/app/components/FaqAccordion";
 import { NewsletterSignup } from "@/app/components/NewsletterSignup";
 import { PRIVACY_POLICY, TERMS_OF_SERVICE, REFUND_POLICY, FAQ_ITEMS } from "@/app/content/legal";
-import { Instagram, Search, ShoppingBag, User, X } from "lucide-react";
+import { Instagram, Search, ShoppingBag, User } from "lucide-react";
 import { fetchMenu, groupByCategory } from "@/lib/api/menu";
 import { Home } from "@/app/pages/Home";
 import { Objects } from "@/app/pages/Objects";
@@ -258,9 +258,9 @@ export default function App() {
         <div className="editorial-nav-inner">
           <div className="editorial-nav-left">
             <button
-              onClick={() => setSidebarOpen(true)}
+              onClick={() => setSidebarOpen((open) => !open)}
               className="editorial-mobile-trigger"
-              aria-label="Open navigation"
+              aria-label={sidebarOpen ? "Close navigation" : "Open navigation"}
             >
               <span className="sr-only">Open navigation</span>
               <span aria-hidden="true">☰</span>
@@ -304,38 +304,20 @@ export default function App() {
       {/* ══ SIDEBAR ══ */}
       {/* Overlay */}
       <div
-        className={`fixed inset-0 z-40 bg-black/20 transition-opacity duration-300 ${
+        className={`fixed left-0 right-0 bottom-0 top-[var(--editorial-nav-h)] z-40 bg-black/20 transition-opacity duration-300 ${
           sidebarOpen ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
         onClick={() => setSidebarOpen(false)}
       />
       {/* Drawer */}
       <div
-        className={`fixed top-0 left-0 z-50 h-full bg-background flex flex-col transition-transform duration-300 ease-in-out ${
+        className={`fixed left-0 bottom-0 z-50 bg-background flex flex-col transition-transform duration-300 ease-in-out ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
-        style={{ width: "185px" }}
+        style={{ width: "min(360px, 48vw)", top: "var(--editorial-nav-h)" }}
       >
-        {/* Drawer header */}
-        <div
-          className="flex items-center justify-between px-5 border-b border-border shrink-0"
-          style={{ height: navHeight }}
-        >
-          <button
-            onClick={() => setSidebarOpen(false)}
-            className="hover:opacity-60 transition-opacity"
-            aria-label="Close"
-          >
-            <X size={18} strokeWidth={1.5} />
-          </button>
-          <span className="font-serif font-semibold text-[24px] leading-none tracking-[-0.01em] text-foreground">
-            Mantel.
-          </span>
-          <div className="w-[18px]" />
-        </div>
-
         {/* Drawer links */}
-        <nav className="flex flex-col px-5 pt-7 gap-5 flex-1">
+        <nav className="editorial-sidebar-links">
           <a
             className="text-left font-serif font-normal text-2xl text-foreground hover:opacity-50 transition-opacity"
             {...linkTo("menu")}
@@ -357,14 +339,15 @@ export default function App() {
         </nav>
 
         {/* Drawer footer */}
-        <div className="px-5 pb-6">
+        <div className="editorial-sidebar-footer">
           <a
             href="https://www.instagram.com/mantelbh/"
             target="_blank"
             rel="noopener noreferrer"
             className="text-foreground/60 hover:text-foreground transition-colors"
           >
-            <Instagram size={18} strokeWidth={1.5} />
+                          <Instagram size={18} strokeWidth={1.4} />
+
           </a>
         </div>
       </div>
