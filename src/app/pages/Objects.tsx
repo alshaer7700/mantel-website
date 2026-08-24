@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { MenuCategory, Page } from "@/app/types";
-import rugImage from "@/imports/mood-rug.jpg";
+import retailCandleSticksImage from "@/imports/retail-candle-sticks.png";
 import coffeeCollageImage from "@/imports/mood-coffee-collage.jpg";
 import retailLighterImage from "@/imports/retail-lighter.png";
 import retailCandleImage from "@/imports/retail-candle.png";
@@ -41,7 +41,7 @@ const RETAIL_PRODUCTS: RetailProduct[] = [
     name: "Candle Sticks",
     description: "For the shelf, the table, and the in-between.",
     price: "BD 5.500",
-    image: rugImage,
+    image: retailCandleSticksImage,
     tone: "sticks",
   },
   {
