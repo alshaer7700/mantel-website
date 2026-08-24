@@ -32,7 +32,7 @@ export default function App() {
   const [menuCategory, setMenuCategory] = useState<MenuCategory>(
     () => routeFor(window.location.pathname).menuCategory,
   );
-  const [form, setForm] = useState<ContactForm>({ name: "", lastName: "", email: "", phone: "", topic: "", comment: "" });
+  const [form, setForm] = useState<ContactForm>({ name: "", lastName: "", email: "", phone: "", comment: "" });
   const [sent, setSent] = useState(false);
   const [sending, setSending] = useState(false);
   const [sendError, setSendError] = useState("");
@@ -256,7 +256,6 @@ export default function App() {
           lastName: form.lastName.trim().slice(0, 120),
           email: form.email.trim().slice(0, 254),
           phone: form.phone.trim().slice(0, 40),
-          topic: form.topic.trim().slice(0, 120),
           comment: form.comment.trim().slice(0, 2000),
           _honey: honeypot,
           _subject: "MANTEL website contact",

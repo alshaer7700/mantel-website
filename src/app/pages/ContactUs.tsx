@@ -7,7 +7,6 @@ export type ContactForm = {
   lastName: string;
   email: string;
   phone: string;
-  topic: string;
   comment: string;
 };
 
@@ -104,7 +103,7 @@ export function ContactUs({
         <div className="editorial-contact-copy">
           <p>We will respond to every email within 24 hours, from Monday to Saturday.</p>
           <p>You can also call us at <a href="tel:+9733170385098">+973 3170 385098</a> — from 9 AM to 8 PM Bahrain time, Monday to Friday, and from 9 AM to 6 PM on Saturday.</p>
-          <p>For wholesale, press, café, retail, or general feedback, select the relevant topic below and tell us how we can help.</p>
+          <p>For wholesale, press, café, retail, or general feedback, send us a note and tell us how we can help.</p>
         </div>
 
         <div className="editorial-contact-form-wrap" id="mantel-contact-form">
@@ -141,18 +140,6 @@ export function ContactUs({
               <label>
                 Email address <span aria-hidden="true">*</span>
                 <input className={inputClassName} type="email" value={form.email} onChange={(event) => update("email", event.target.value)} maxLength={254} required />
-              </label>
-
-              <label>
-                Topic <span aria-hidden="true">*</span>
-                <select className={inputClassName} value={form.topic} onChange={(event) => update("topic", event.target.value)} required>
-                  <option value="">Select a topic</option>
-                  <option value="Online Store Purchase">Online Store Purchase</option>
-                  <option value="Retail">Retail</option>
-                  <option value="Café">Café</option>
-                  <option value="Wholesale / Press">Wholesale / Press</option>
-                  <option value="Feedback">Feedback</option>
-                </select>
               </label>
 
               <label>
