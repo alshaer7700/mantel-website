@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { ImageWithFallback } from "@/app/components/figma/ImageWithFallback";
 import { PolicyPage } from "@/app/components/PolicyPage";
 import { FaqAccordion } from "@/app/components/FaqAccordion";
 import { NewsletterSignup } from "@/app/components/NewsletterSignup";
@@ -10,6 +9,7 @@ import { fetchObjects, type ShopObject } from "@/lib/api/objects";
 import { Shelf } from "@/app/components/Shelf";
 import { ObjectCard } from "@/app/components/objects/ObjectCard";
 import { Home } from "@/app/pages/Home";
+import { EditorialFooter } from "@/app/components/EditorialFooter";
 import { Cafe } from "@/app/pages/Cafe";
 import { Story } from "@/app/pages/Story";
 import { useScrolled } from "@/app/hooks/useScrolled";
@@ -21,13 +21,6 @@ import type { Page, MenuCategory, MenuItem } from "@/app/types";
 import { pathFor, routeFor } from "@/lib/routes";
 import { CONTACT_ENDPOINT, ORDERING_OPEN } from "@/lib/constants";
 
-// Served from public/ rather than bundled: a brand asset with its own stable
-// URL, re-exported clean from the 5788px original with the tip on the centre
-// axis. The pill CTAs that used to sit on it are gone, and with them the two
-// rounded-button constants that dressed them.
-const heartArtwork = "/heart.webp";
-import wordmark from "@/imports/logos-05.webp";
-
 // Still worn by the account panel and the contact form's send button, neither
 // of which the redesign phases touch. The homepage pills that shared this
 // vocabulary are gone; these retire when those surfaces get their own pass.
@@ -35,15 +28,6 @@ const HEART_BUTTON_CLASS =
   "rounded-full bg-heart-red text-heart-red-foreground tracking-[0.16em] uppercase " +
   "hover:opacity-90 transition-opacity " +
   "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-heart-red";
-
-// Header nav link — Fira Mono 13 / 400 / 0.08em / uppercase, straight off the
-// typography table. Every value is a token; none is written as a literal here.
-const HEADER_TYPE_CLASS =
-  "font-mono font-normal text-[length:var(--fs-nav)] tracking-[var(--ls-nav)] uppercase whitespace-nowrap";
-const HEADER_LINK_CLASS =
-  `${HEADER_TYPE_CLASS} text-[color:var(--ink)] hover:opacity-60 transition-opacity ` +
-  "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 " +
-  "focus-visible:outline-[color:var(--brand)]";
 
 export default function App() {
   // Boot from the URL, not from a hardcoded "home", so a deep link or a
@@ -283,190 +267,82 @@ export default function App() {
 
   // 22px wordmark + the 7px sub-line under it, centred in the 20px of vertical
   // padding the header spec asks for. The hero reads this to size its stage.
-  const navHeight = "70px";
+  const navHeight = "58px";
   /* Contracted: the wordmark alone, at 16px, with the locality line collapsed. */
-  const SCROLLED_NAV_HEIGHT = "52px";
+  const SCROLLED_NAV_HEIGHT = "54px";
 
-  /* ── shared footer ── */
-  /* Three columns above a centred strip. It used to be three centred lines of
-     near-identical size — three orphans with no grouping and nothing leading.
-     Grouping under mono titles gives each link a reason to be where it is.
-     Exactly three type levels: column title, link, copyright. */
-  const footerLink =
-    "font-serif font-normal text-[length:var(--fs-foot-link)] text-[color:var(--ink)] " +
-    "block mb-[14px] w-fit hover:opacity-60 transition-opacity " +
-    "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 " +
-    "focus-visible:outline-[color:var(--brand)]";
-  const footerTitle =
-    "font-mono text-[length:var(--fs-foot-title)] font-[number:var(--fw-foot-title)] " +
-    "tracking-[var(--ls-foot-title)] uppercase text-[color:var(--ink)] mb-[var(--s-3)]";
-
-  const footer = (
-    /* 96px of clearance above the footer on every page. */
-    <footer className="mt-[var(--s-6)]">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1.4fr_repeat(3,minmax(0,1fr))] gap-[var(--s-4)] max-w-[1000px] mx-auto px-[var(--s-3)] pb-[var(--s-4)]">
-        {/* The mark, as the design direction places it: wordmark with the
-            heart set at its baseline. The heart used to BE the home page; it
-            belongs here and on the order confirmation. */}
-        <div className="flex items-end gap-[0.7rem]">
-          <img
-            src={wordmark}
-            alt="Mantel."
-            className="h-[clamp(2rem,5.4vw,3.3rem)] w-auto"
-          />
-          <ImageWithFallback
-            src={heartArtwork}
-            alt=""
-            aria-hidden="true"
-            className="h-[clamp(1.1rem,2.6vw,1.55rem)] w-auto mb-[0.3rem]"
-          />
-        </div>
-        <div>
-          <h4 className={footerTitle}>Contact</h4>
-          <p className="font-serif font-normal text-[length:var(--fs-foot-link)] text-[color:var(--ink)] mb-[14px]">
-            Hidd, Kingdom of Bahrain
-          </p>
-          <a {...linkTo("contact")} className={footerLink}>Get in touch</a>
-        </div>
-        <div>
-          <h4 className={footerTitle}>Information</h4>
-          <a {...linkTo("menu")} className={footerLink}>Menu</a>
-          <a {...linkTo("objects")} className={footerLink}>Objects</a>
-          <a {...linkTo("story")} className={footerLink}>Our Story</a>
-          <a {...linkTo("faq")} className={footerLink}>FAQ</a>
-          <a {...linkTo("privacy")} className={footerLink}>Privacy policy</a>
-          <a {...linkTo("terms")} className={footerLink}>Terms of service</a>
-          <a {...linkTo("refund")} className={footerLink}>Refund policy</a>
-        </div>
-        <div>
-          <h4 className={footerTitle}>Follow</h4>
-          <a
-            href="https://www.instagram.com/bymantel/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={footerLink}
-          >
-            Instagram
-          </a>
-        </div>
-      </div>
-      <div className="border-t border-[color:var(--line-soft)] py-[var(--s-4)] px-[var(--s-3)] text-center font-mono font-normal text-[length:var(--fs-copyright)] tracking-[var(--ls-copyright)] text-[color:var(--ink-muted)]">
-        © 2026, Mantel
-      </div>
-    </footer>
-  );
+  /* Footer rendering lives in EditorialFooter so all routes share the same editorial shell. */
 
   return (
     <div className="bg-background text-foreground font-mono font-normal min-h-screen">
 
       {/* ══ NAV ══ */}
-      <nav
-        className={`fixed top-0 inset-x-0 z-50 bg-[color:var(--bg)] transition-[height,border-color] duration-[400ms] ease-[cubic-bezier(.16,.84,.44,1)] ${
-          /* No rule at the top: the header is part of the page until the page
-             starts moving under it, and only then does it need separating. */
-          scrolled ? "border-b border-[color:var(--line-soft)]" : "border-b border-transparent"
-        }`}
-        style={{ height: scrolled ? SCROLLED_NAV_HEIGHT : navHeight }}
-      >
-        {/* Three columns, equal outer tracks — that is what keeps the wordmark
-            optically centred no matter how long the nav or the tools get. */}
-        <div className="grid grid-cols-[1fr_auto_1fr] items-center h-full px-[var(--s-3)] lg:px-[var(--s-4)]">
-          {/* Left: nav on desktop, hamburger below 1024px */}
-          <div className="flex items-center">
+      <header className="editorial-nav">
+        <div className="editorial-nav-inner">
+          <div className="editorial-nav-left">
             <button
               onClick={() => setSidebarOpen(true)}
-              className="flex flex-col gap-[5px] p-1 hover:opacity-60 transition-opacity lg:hidden"
+              className="editorial-mobile-trigger"
               aria-label="Open navigation"
             >
-              <span className="block w-[18px] h-px bg-foreground" />
-              <span className="block w-[18px] h-px bg-foreground" />
-              <span className="block w-[18px] h-px bg-foreground" />
+              <span className="sr-only">Open navigation</span>
+              <span aria-hidden="true">☰</span>
             </button>
-            <nav className="hidden lg:flex items-center gap-[28px]" aria-label="Primary">
-              <a {...linkTo("menu")} className={HEADER_LINK_CLASS}>Menu</a>
-              <a {...linkTo("objects")} className={HEADER_LINK_CLASS}>Objects</a>
-              <a {...linkTo("story")} className={HEADER_LINK_CLASS}>Our Story</a>
-              <a {...linkTo("contact")} className={HEADER_LINK_CLASS}>Contact</a>
+            <nav className="editorial-nav-primary" aria-label="Primary">
+              <a {...linkTo("menu")} className="editorial-nav-link">Menu</a>
+              <a {...linkTo("objects")} className="editorial-nav-link">Objects</a>
+              <a {...linkTo("story")} className="editorial-nav-link">About us</a>
+              <a href="#visit" className="editorial-nav-link">Visit</a>
             </nav>
           </div>
 
-          {/* Centre: identity */}
-          <a
-            {...linkTo("home")}
-            className="justify-self-center text-center leading-[1.15] hover:opacity-80 transition-opacity"
-          >
-            <span
-              className="block font-serif font-medium tracking-[var(--ls-logo)] text-[color:var(--ink)] transition-[font-size] duration-[400ms] ease-[cubic-bezier(.16,.84,.44,1)]"
-              style={{ fontSize: scrolled ? "16px" : "var(--fs-logo)" }}
-            >
-              Mantel.
-            </span>
-            {/* The locality line is the part that goes. It earns its place on
-                arrival and becomes noise once someone is reading. Collapsed by
-                max-height rather than unmounted, so the wordmark glides up
-                instead of jumping. */}
-            <span
-              aria-hidden={scrolled}
-              className={`block font-mono font-normal text-[7px] tracking-[0.2em] uppercase text-[color:var(--ink-muted)] overflow-hidden transition-[max-height,opacity] duration-[400ms] ease-[cubic-bezier(.16,.84,.44,1)] ${
-                scrolled ? "max-h-0 opacity-0" : "max-h-[12px] opacity-100"
-              }`}
-            >
-              Bahrain
-            </span>
+          <a {...linkTo("home")} className="editorial-wordmark" aria-label="Mantel home">
+            Mantel.
+            <small>Hidd · Bahrain</small>
           </a>
 
-          {/* Right: tools */}
-          <div className="justify-self-end flex items-center gap-[var(--s-2)] lg:gap-[20px] text-foreground/70">
-            {/* Locale pill — single locale for now (Bahrain / BD / English),
-                shown as a dropdown to match the reference layout */}
+          <div className="editorial-nav-tools">
             <div className="relative hidden sm:block">
               <button
-                onClick={() => { setLocaleOpen((v) => !v); setSearchOpen(false); setAccountOpen(false); }}
-                className="flex items-center gap-1.5 hover:text-foreground transition-colors"
+                onClick={() => { setLocaleOpen((value) => !value); setSearchOpen(false); setAccountOpen(false); }}
+                className="editorial-nav-action"
                 aria-label="Country and language"
               >
-                <span className="font-mono text-[14px] leading-none">🇧🇭</span>
-                <span className={HEADER_TYPE_CLASS}>BD / EN</span>
-                <ChevronDown
-                  size={12}
-                  strokeWidth={1.5}
-                  className={`transition-transform duration-200 ${localeOpen ? "rotate-180" : ""}`}
-                />
+                <span>BD / EN</span>
+                <ChevronDown size={11} strokeWidth={1.5} className={`inline ml-1 transition-transform ${localeOpen ? "rotate-180" : ""}`} />
               </button>
-              {/* w-72, not w-56: Fira Mono sets much wider than the old
-                  proportional face, and the locale line wrapped at w-56. */}
               {localeOpen && (
-                <div className="absolute right-0 top-full mt-3 w-72 bg-background border border-border rounded-2xl shadow-lg px-5 py-4 z-50">
-                  <p className="font-mono font-normal text-sm text-foreground">🇧🇭 Bahrain — BD · English</p>
-                  <p className="font-mono font-normal text-[11px] text-muted-foreground mt-1.5">
-                    More regions and languages coming soon.
-                  </p>
+                <div className="absolute right-0 top-full mt-3 w-60 bg-background border border-border px-4 py-3 z-50">
+                  <p className="font-mono text-xs text-foreground">Bahrain — BD · English</p>
+                  <p className="font-mono text-[10px] text-muted-foreground mt-1.5">More regions and languages coming soon.</p>
                 </div>
               )}
             </div>
             <button
-              onClick={() => { setSearchOpen((v) => !v); setAccountOpen(false); setLocaleOpen(false); }}
-              className="hover:text-foreground transition-colors"
+              onClick={() => { setSearchOpen((value) => !value); setAccountOpen(false); setLocaleOpen(false); }}
+              className="editorial-nav-action"
               aria-label="Search"
             >
-              <Search size={17} strokeWidth={1.5} className="lg:hidden" />
-              <span className={`hidden lg:inline ${HEADER_TYPE_CLASS}`}>Search</span>
+              <Search size={16} strokeWidth={1.5} className="sm:hidden" />
+              <span>Search</span>
             </button>
             <button
-              onClick={() => {
-                setAccountOpen((v) => !v);
-                setSearchOpen(false);
-                setLocaleOpen(false);
-              }}
-              className="hover:text-foreground transition-colors"
+              onClick={() => { setAccountOpen((value) => !value); setSearchOpen(false); setLocaleOpen(false); }}
+              className="editorial-nav-action"
               aria-label="Account"
             >
-              <User size={17} strokeWidth={1.5} className="lg:hidden" />
-              <span className={`hidden lg:inline ${HEADER_TYPE_CLASS}`}>Account</span>
+              <User size={16} strokeWidth={1.5} className="sm:hidden" />
+              <span>Account</span>
             </button>
+            <a href="#wishlist" className="editorial-nav-action" aria-label="Wishlist">
+              <span>Wishlist</span>
+            </a>
+            <a href="#bag" className="editorial-nav-action" aria-label="Bag">
+              <span>Bag</span>
+            </a>
           </div>
         </div>
-      </nav>
+      </header>
 
 
       {/* ══ SIDEBAR ══ */}
@@ -576,10 +452,10 @@ export default function App() {
 
       {page === "home" && (
         <main className="flex flex-col min-h-screen" style={{ paddingTop: navHeight }}>
-          <div className="flex-1 px-[var(--pad)]">
+          <div className="flex-1">
             <Home sections={sections} objects={objects} linkTo={linkTo} />
           </div>
-          {footer}
+          <EditorialFooter linkTo={linkTo} />
         </main>
       )}
 
@@ -589,7 +465,7 @@ export default function App() {
           <div className="flex-1 px-[var(--pad)]">
             <Cafe sections={sections} category={menuCategory} loading={menuLoading} error={menuError} />
           </div>
-          {footer}
+          <EditorialFooter linkTo={linkTo} />
         </main>
       )}
 
@@ -635,7 +511,7 @@ export default function App() {
               )}
             </Shelf>
           </div>
-          {footer}
+          <EditorialFooter linkTo={linkTo} />
         </main>
       )}
 
@@ -644,7 +520,7 @@ export default function App() {
           <div className="flex-1 px-[var(--pad)]">
             <Story linkTo={linkTo} />
           </div>
-          {footer}
+          <EditorialFooter linkTo={linkTo} />
         </main>
       )}
 
@@ -741,7 +617,7 @@ export default function App() {
           <div className="border-t border-border">
             <NewsletterSignup />
           </div>
-          {footer}
+          <EditorialFooter linkTo={linkTo} />
         </main>
       )}
 
@@ -753,7 +629,7 @@ export default function App() {
             <FaqAccordion items={FAQ_ITEMS} />
           </div>
           <NewsletterSignup />
-          {footer}
+          <EditorialFooter linkTo={linkTo} />
         </main>
       )}
 
@@ -769,7 +645,7 @@ export default function App() {
                   : REFUND_POLICY
             }
           />
-          {footer}
+          <EditorialFooter linkTo={linkTo} />
         </main>
       )}
     </div>

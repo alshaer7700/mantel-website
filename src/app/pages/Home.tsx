@@ -1,36 +1,15 @@
-import type { MenuItem, MenuCategoryKey, Page, MenuCategory } from "@/app/types";
+import { useState } from "react";
 import type { ShopObject } from "@/lib/api/objects";
-import { Shelf } from "@/app/components/Shelf";
-import { Plate, BleedPlate } from "@/app/components/Plate";
-import { SectionHead } from "@/app/components/SectionHead";
-import { MenuList } from "@/app/components/menu/MenuList";
-import { Strip } from "@/app/components/home/Strip";
-import { ObjectCard } from "@/app/components/objects/ObjectCard";
-import { PLATES } from "@/app/content/plates";
-import { LABEL, LABEL_INK, DISPLAY } from "@/app/components/type";
-import { ORDERING_OPEN } from "@/lib/constants";
-
-/*
- * The home page from the design direction: a type hero, then three numbered
- * sections each hanging off a shelf rule — the café, the objects, the name.
- *
- * What this replaced: a single full-viewport heart with one link under it. The
- * heart artwork is not gone, it moves to where the direction puts it — the
- * footer and the order confirmation — rather than being the entire page.
- *
- * TWO PLACES THE PROTOTYPE'S COPY IS NOT USED, both because it would say
- * something untrue today:
- *
- *  - The eyebrow reads "Order ahead · Collect at the counter". Ordering is
- *    locked, so that is a promise the site cannot keep. It says so honestly
- *    instead.
- *  - "Est. 2026" was omitted at first: the prototype's own notes flag it as
- *    unverified, and an invented founding year on a real business is a false
- *    claim rather than a placeholder. It is back, on evidence — the year is
- *    printed on the matcha pouch and on the iced cup, alongside "Hidd,
- *    Kingdom of Bahrain". Packaging the owner had made is better proof than a
- *    verbal confirmation.
- */
+import type { MenuCategory, MenuCategoryKey, MenuItem, Page } from "@/app/types";
+import heroImage from "@/imports/mantel-landing.png";
+import coffeeBarImage from "@/imports/mood-coffee-bar.jpg";
+import cafeServiceImage from "@/imports/mood-cafe-service.jpg";
+import rugImage from "@/imports/mood-rug.jpg";
+import bouquetImage from "@/imports/mood-bouquet.jpg";
+import menuIllustrationImage from "@/imports/mood-menu-illustration.jpg";
+import coffeeCollageImage from "@/imports/mood-coffee-collage.jpg";
+import saturdaySignImage from "@/imports/mood-saturday-sign.jpg";
+import lateCheckoutImage from "@/imports/mood-late-checkout.jpg";
 
 type Props = {
   sections: ReadonlyArray<readonly [MenuCategoryKey, MenuItem[]]>;
@@ -41,125 +20,184 @@ type Props = {
   };
 };
 
-export function Home({ sections, objects, linkTo }: Props) {
-  /* The home page shows a taste of the menu, not all of it — the first two
-     categories that actually have something available. */
-  const preview = sections.filter(([, items]) => items.length > 0).slice(0, 2);
+type Product = {
+  name: string;
+  type: string;
+  image: string;
+  href: string;
+};
+
+const products: Product[] = [
+  { name: "The Menu", type: "Coffee / food", image: menuIllustrationImage, href: "#menu" },
+  { name: "House Coffee", type: "Beans / 250g", image: coffeeCollageImage, href: "#objects" },
+  { name: "Objects", type: "Small editions", image: rugImage, href: "#objects" },
+  { name: "Saturday", type: "At the counter", image: saturdaySignImage, href: "#story" },
+  { name: "Late Checkout", type: "A place to pause", image: lateCheckoutImage, href: "#story" },
+];
+
+export function Home({ linkTo }: Props) {
+  const [cookieOpen, setCookieOpen] = useState(true);
+  const [showCookieOptions, setShowCookieOptions] = useState(false);
+  const [newsletterEmail, setNewsletterEmail] = useState("");
+  const [newsletterSent, setNewsletterSent] = useState(false);
+
+  const submitNewsletter = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (newsletterEmail.trim()) setNewsletterSent(true);
+  };
 
   return (
-    <>
-      {/* ── hero ── */}
-      <div className="pt-[clamp(3rem,9vh,6rem)]">
-        <div className="flex justify-between gap-[var(--s-2)] flex-wrap">
-          <span className={LABEL}>Mantel — Hidd, Kingdom of Bahrain</span>
-          <span className={LABEL}>
-            {ORDERING_OPEN ? "Order ahead · Collect at the counter" : "Ordering opens soon"}
-          </span>
+    <div className="editorial-home">
+      <section className="editorial-hero" aria-label="Mantel introduction">
+        <img src={heroImage} alt="A Mantel shirt in the warm light of the café" />
+        <div className="editorial-hero-content">
+          <span className="editorial-kicker">Hidd, Kingdom of Bahrain · Est. 2026</span>
+          <h1>Mantel.</h1>
+          <p>A café and a small house of objects.</p>
+          <div className="editorial-hero-links">
+            <a href="#menu" className="editorial-link">The café</a>
+            <a href="#objects" className="editorial-link">The objects</a>
+          </div>
+        </div>
+      </section>
+
+      <section className="editorial-intro" id="menu">
+        <div className="editorial-intro-copy">
+          <p className="editorial-overline">01 — Fall / Winter 2026</p>
+          <h2>Made for the everyday ritual.</h2>
+          <p>
+            Reworked coffee rituals, airy interiors, paper textures, and a small edit of things
+            worth keeping after. Come in for a cup. Leave with a story.
+          </p>
+          <div className="editorial-inline-links">
+            <a {...linkTo("menu")} className="editorial-link">View the menu</a>
+            <a {...linkTo("story")} className="editorial-link">Read the story</a>
+          </div>
+        </div>
+        <div className="editorial-intro-media">
+          <img src={coffeeBarImage} alt="Warm café counter with a barista at work" />
+        </div>
+      </section>
+
+      <section className="editorial-banner" id="objects">
+        <img src={cafeServiceImage} alt="Coffee service in a wood-toned Mantel café" />
+        <div className="editorial-banner-copy">
+          <span className="editorial-kicker">02 — At the counter</span>
+          <h2>Stay a little longer.</h2>
+          <a {...linkTo("objects")} className="editorial-link">Explore the shelf</a>
+        </div>
+      </section>
+
+      <section className="editorial-products" aria-labelledby="objects-heading">
+        <div className="editorial-section-heading">
+          <div>
+            <p className="editorial-overline">03 — A small edit</p>
+            <h2 id="objects-heading">Things worth keeping.</h2>
+          </div>
+          <p>Objects, coffee, and pieces of Mantel to take home with you.</p>
         </div>
 
-        <h1
-          className={`${DISPLAY} text-[clamp(2.9rem,10vw,8rem)] max-w-[14ch] mt-[clamp(1.5rem,5vh,3rem)] mb-0 text-[color:var(--ink)]`}
-        >
-          Made to be <em className="italic">set down.</em>
-        </h1>
-
-        <p className="font-mono text-[13px] leading-[1.6] max-w-[40ch] mt-[1.75rem] mb-[clamp(2.5rem,7vh,4.5rem)] text-[color:var(--ink-muted)]">
-          A café and a small house of objects. Coffee poured at the counter, candles and
-          matches wrapped at the shelf.
+        <div className="editorial-product-grid">
+          {products.map((product) => (
+            <a key={product.name} href={product.href} className="editorial-product-card">
+              <div className="editorial-product-image">
+                <img src={product.image} alt="" />
+              </div>
+              <div className="editorial-product-info">
+                <span className="editorial-product-name">{product.name}</span>
+                <span className="editorial-product-meta">{product.type}</span>
+              </div>
+            </a>
+          ))}
+        </div>
+        <p className="editorial-product-caption">
+          Mantel is a place for the things that sit between a morning coffee and the rest of the
+          day — considered, tactile, and quietly useful.
         </p>
+      </section>
 
-        <BleedPlate spec={PLATES.hero} />
-      </div>
+      <section className="editorial-manifesto" id="story">
+        <div className="editorial-manifesto-media">
+          <img src={bouquetImage} alt="A bouquet of deep red flowers wrapped for the counter" />
+        </div>
+        <div className="editorial-manifesto-copy">
+          <p className="editorial-overline">04 — The name</p>
+          <h2>A place to set things down.</h2>
+          <p>
+            A mantel is the shelf above a fire. It is where a house puts the few things it means
+            to look at every day — a photograph, a clock, a candle burned halfway down.
+          </p>
+          <a {...linkTo("story")} className="editorial-link">Our story</a>
+        </div>
+      </section>
 
-      {/* ── 01 · the café ── */}
-      <section className="pt-[clamp(4rem,11vh,8rem)]">
-        <Shelf tag="The café" note="01">
-          <SectionHead
-            title={
-              <>
-                Poured to order,
-                <br />
-                never to impress.
-              </>
-            }
-            aside={
-              <a {...linkTo("menu")} className={LABEL_INK}>
-                Full menu →
-              </a>
-            }
-          />
-
-          {/* Same reasoning as BleedPlate: the grid and its margin go with the
-              plates, rather than leaving a void where the pair would hang. */}
-          {(PLATES.counter.src || PLATES.pour.src || import.meta.env.DEV) && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-[clamp(1rem,3vw,2.5rem)] mb-[clamp(3rem,8vh,5rem)]">
-              <Plate spec={PLATES.counter} />
-              {/* Offset, so the pair reads as two hung plates rather than a row. */}
-              <Plate spec={PLATES.pour} className="sm:mt-[clamp(2rem,8vw,5rem)]" />
-            </div>
+      <section className="editorial-newsletter" aria-labelledby="newsletter-heading">
+        <div>
+          <p className="editorial-overline">05 — Keep in touch</p>
+          <h2 id="newsletter-heading">Receive the newsletter.</h2>
+        </div>
+        <div className="editorial-newsletter-copy">
+          {newsletterSent ? (
+            <p className="editorial-newsletter-success">You’re on the list. See you at the counter.</p>
+          ) : (
+            <>
+              <p>Stay up to date with new collections, events, and the occasional good idea.</p>
+              <form className="editorial-newsletter-form" onSubmit={submitNewsletter}>
+                <input
+                  type="email"
+                  value={newsletterEmail}
+                  onChange={(event) => setNewsletterEmail(event.target.value)}
+                  placeholder="Email address"
+                  aria-label="Email address"
+                  required
+                />
+                <button type="submit">Submit ↗</button>
+              </form>
+            </>
           )}
-
-          <MenuList sections={preview} />
-        </Shelf>
+        </div>
       </section>
 
-      {/* ── 02 · the objects ── */}
-      <section className="pt-[clamp(4rem,11vh,8rem)]">
-        <Shelf tag="The objects" note="02">
-          <SectionHead
-            title={
-              <>
-                Things worth
-                <br />
-                keeping after.
-              </>
-            }
-            aside={
-              <a {...linkTo("objects")} className={LABEL_INK}>
-                All objects →
-              </a>
-            }
-          />
-
-          {objects.length > 0 && (
-            <div className="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-[clamp(1.5rem,3vw,2.5rem)]">
-              {objects.slice(0, 3).map((o) => (
-                <ObjectCard key={o.id} object={o} onAdd={() => {}} canAdd={ORDERING_OPEN} />
-              ))}
+      {cookieOpen && (
+        <div className="editorial-cookie-backdrop" role="presentation">
+          <section
+            className="editorial-cookie-dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="cookie-title"
+          >
+            <div className="editorial-cookie-top">
+              <h2 className="editorial-cookie-title" id="cookie-title">A note on cookies</h2>
+              <button className="editorial-cookie-dismiss" type="button" onClick={() => setCookieOpen(false)}>
+                Continue without accepting
+              </button>
             </div>
-          )}
-        </Shelf>
-
-        <Strip />
-      </section>
-
-      {/* ── 03 · the name ── */}
-      <section className="pt-[clamp(4rem,11vh,8rem)]">
-        <Shelf tag="The name" note="03">
-          <div className="grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)] gap-[clamp(1.5rem,6vw,5rem)] pt-[3.5rem]">
-            <div className="flex flex-col gap-[1.1rem]">
-              <span className={LABEL}>Hidd, Kingdom of Bahrain</span>
-              <span className={LABEL}>Est. 2026</span>
-            </div>
-            <div className="font-serif text-[17px] leading-[1.55] text-[color:var(--ink)]">
-              <p className="m-0 mb-[1.35rem] max-w-[60ch] [&::first-letter]:text-[3.4em] [&::first-letter]:float-left [&::first-letter]:leading-[0.78] [&::first-letter]:pr-[0.12em] [&::first-letter]:pt-[0.06em]">
-                A mantel is the shelf above a fire. It is where a house puts the few things it
-                means to look at every day — a photograph, a clock, a candle burned halfway
-                down.
-              </p>
-              <p className="m-0 mb-[1.35rem] max-w-[60ch]">
-                We named the shop after it because that is the whole ambition: make a handful
-                of things good enough to earn a place on the shelf, and leave the rest out.
-              </p>
-              <a {...linkTo("story")} className={`${LABEL_INK} inline-block mt-[0.5rem]`}>
-                Read the story →
-              </a>
-            </div>
-          </div>
-
-          <BleedPlate spec={PLATES.room} className="mt-[clamp(3rem,8vh,5rem)]" />
-        </Shelf>
-      </section>
-    </>
+            <p className="editorial-cookie-copy">
+              To offer you a better experience, this site uses cookies and similar technologies for
+              technical purposes and, with your consent, also for personalizing ads. For more
+              information or to select your preferences click on “Monitoring Management” or read our
+              <a href="#cookie-policy"> Cookie Policy</a> and <a href="#privacy-policy">Privacy Policy</a>.
+            </p>
+            {showCookieOptions && (
+              <div className="editorial-cookie-options">
+                <label className="editorial-cookie-option"><input type="checkbox" defaultChecked /> Essential</label>
+                <label className="editorial-cookie-option"><input type="checkbox" /> Analytics</label>
+                <label className="editorial-cookie-option"><input type="checkbox" /> Marketing</label>
+              </div>
+            )}
+            <button
+              className="editorial-cookie-preferences"
+              type="button"
+              onClick={() => setShowCookieOptions((visible) => !visible)}
+            >
+              {showCookieOptions ? "Hide preferences" : "Preferences"}
+            </button>
+            <button className="editorial-cookie-button" type="button" onClick={() => setCookieOpen(false)}>
+              Accept All
+            </button>
+          </section>
+        </div>
+      )}
+    </div>
   );
 }
