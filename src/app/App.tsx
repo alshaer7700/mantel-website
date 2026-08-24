@@ -424,7 +424,7 @@ export default function App() {
         {/* Drawer footer */}
         <div className="editorial-sidebar-footer">
           <a
-            href="https://www.instagram.com/Bymantel/"
+            href="https://www.instagram.com/bymantel?igsi=MTk3NDhxZGVuNWFucA=="
             target="_blank"
             rel="noopener noreferrer"
             className="text-foreground/60 hover:text-foreground transition-colors"
