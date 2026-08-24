@@ -3,12 +3,10 @@ import { PolicyPage } from "@/app/components/PolicyPage";
 import { FaqAccordion } from "@/app/components/FaqAccordion";
 import { NewsletterSignup } from "@/app/components/NewsletterSignup";
 import { PRIVACY_POLICY, TERMS_OF_SERVICE, REFUND_POLICY, FAQ_ITEMS } from "@/app/content/legal";
-import { ChevronDown, Instagram, Search, User, X } from "lucide-react";
+import { Instagram, Search, ShoppingBag, User, X } from "lucide-react";
 import { fetchMenu, groupByCategory } from "@/lib/api/menu";
-import { fetchObjects, type ShopObject } from "@/lib/api/objects";
-import { Shelf } from "@/app/components/Shelf";
-import { ObjectCard } from "@/app/components/objects/ObjectCard";
 import { Home } from "@/app/pages/Home";
+import { Objects } from "@/app/pages/Objects";
 import { EditorialFooter } from "@/app/components/EditorialFooter";
 import { Cafe } from "@/app/pages/Cafe";
 import { Story } from "@/app/pages/Story";
@@ -19,7 +17,7 @@ import { getSession, onAuthChange, fetchProfile } from "@/lib/api/auth";
 import type { Session } from "@supabase/supabase-js";
 import type { Page, MenuCategory, MenuItem } from "@/app/types";
 import { pathFor, routeFor } from "@/lib/routes";
-import { CONTACT_ENDPOINT, ORDERING_OPEN } from "@/lib/constants";
+import { CONTACT_ENDPOINT } from "@/lib/constants";
 
 // Still worn by the account panel and the contact form's send button, neither
 // of which the redesign phases touch. The homepage pills that shared this
@@ -63,22 +61,6 @@ export default function App() {
     };
   }, []);
 
-  /* ── objects (the retail shelf) ── */
-  const [objects, setObjects] = useState<ShopObject[]>([]);
-  const [objectsLoading, setObjectsLoading] = useState(true);
-
-  useEffect(() => {
-    let live = true;
-    fetchObjects().then((result) => {
-      if (!live) return;
-      if (result.ok) setObjects(result.objects);
-      setObjectsLoading(false);
-    });
-    return () => {
-      live = false;
-    };
-  }, []);
-
   const sections = groupByCategory(menuItems);
   const allItems = menuItems;
 
@@ -97,9 +79,6 @@ export default function App() {
 
   /* ── account (persisted) ── */
   const [accountOpen, setAccountOpen] = useState(false);
-
-  /* ── nav locale pill ── */
-  const [localeOpen, setLocaleOpen] = useState(false);
 
   /* The header contracts once the page moves — see useScrolled. */
   const scrolled = useScrolled();
@@ -158,7 +137,6 @@ export default function App() {
         setSidebarOpen(false);
         setSearchOpen(false);
         setAccountOpen(false);
-        setLocaleOpen(false);
       }
     };
     window.addEventListener("keydown", onKey);
@@ -172,7 +150,6 @@ export default function App() {
     setSidebarOpen(false);
     setSearchOpen(false);
     setAccountOpen(false);
-    setLocaleOpen(false);
     window.scrollTo(0, 0);
   };
 
@@ -290,55 +267,34 @@ export default function App() {
             </button>
             <nav className="editorial-nav-primary" aria-label="Primary">
               <a {...linkTo("menu")} className="editorial-nav-link">Menu</a>
-              <a {...linkTo("objects")} className="editorial-nav-link">Objects</a>
-              <a {...linkTo("story")} className="editorial-nav-link">About us</a>
-              <a href="#visit" className="editorial-nav-link">Visit</a>
+              <a {...linkTo("objects")} className="editorial-nav-link">Retail</a>
+              <a {...linkTo("story")} className="editorial-nav-link">About Us</a>
             </nav>
           </div>
 
           <a {...linkTo("home")} className="editorial-wordmark" aria-label="Mantel home">
             Mantel.
-            <small>Hidd · Bahrain</small>
+            <small>Bahrain · English</small>
           </a>
 
           <div className="editorial-nav-tools">
-            <div className="relative hidden sm:block">
-              <button
-                onClick={() => { setLocaleOpen((value) => !value); setSearchOpen(false); setAccountOpen(false); }}
-                className="editorial-nav-action"
-                aria-label="Country and language"
-              >
-                <span>BD / EN</span>
-                <ChevronDown size={11} strokeWidth={1.5} className={`inline ml-1 transition-transform ${localeOpen ? "rotate-180" : ""}`} />
-              </button>
-              {localeOpen && (
-                <div className="absolute right-0 top-full mt-3 w-60 bg-background border border-border px-4 py-3 z-50">
-                  <p className="font-mono text-xs text-foreground">Bahrain — BD · English</p>
-                  <p className="font-mono text-[10px] text-muted-foreground mt-1.5">More regions and languages coming soon.</p>
-                </div>
-              )}
-            </div>
             <button
-              onClick={() => { setSearchOpen((value) => !value); setAccountOpen(false); setLocaleOpen(false); }}
-              className="editorial-nav-action"
+              onClick={() => { setSearchOpen((value) => !value); setAccountOpen(false); }}
+              className="editorial-nav-action editorial-nav-icon"
               aria-label="Search"
             >
-              <Search size={16} strokeWidth={1.5} className="sm:hidden" />
-              <span>Search</span>
+              <Search size={16} strokeWidth={1.5} />
             </button>
             <button
-              onClick={() => { setAccountOpen((value) => !value); setSearchOpen(false); setLocaleOpen(false); }}
+              onClick={() => { setAccountOpen((value) => !value); setSearchOpen(false); }}
               className="editorial-nav-action"
               aria-label="Account"
             >
               <User size={16} strokeWidth={1.5} className="sm:hidden" />
               <span>Account</span>
             </button>
-            <a href="#wishlist" className="editorial-nav-action" aria-label="Wishlist">
-              <span>Wishlist</span>
-            </a>
-            <a href="#bag" className="editorial-nav-action" aria-label="Bag">
-              <span>Bag</span>
+            <a href="#bag" className="editorial-nav-action editorial-nav-icon" aria-label="Cart">
+              <ShoppingBag size={16} strokeWidth={1.5} />
             </a>
           </div>
         </div>
@@ -390,32 +346,20 @@ export default function App() {
             className="text-left font-serif font-normal text-2xl text-foreground hover:opacity-50 transition-opacity"
             {...linkTo("objects")}
           >
-            Objects
-          </a>
-          <a
-            className="text-left font-serif font-normal text-2xl text-foreground hover:opacity-50 transition-opacity"
-            {...linkTo("contact")}
-          >
-            Contact
+            Retail
           </a>
           <a
             className="text-left font-serif font-normal text-2xl text-foreground hover:opacity-50 transition-opacity"
             {...linkTo("story")}
           >
-            Our Story
-          </a>
-          <a
-            className="text-left font-serif font-normal text-2xl text-foreground hover:opacity-50 transition-opacity"
-            {...linkTo("faq")}
-          >
-            FAQ
+            About Us
           </a>
         </nav>
 
         {/* Drawer footer */}
         <div className="px-5 pb-6">
           <a
-            href="https://www.instagram.com/bymantel/"
+            href="https://www.instagram.com/mantelbh/"
             target="_blank"
             rel="noopener noreferrer"
             className="text-foreground/60 hover:text-foreground transition-colors"
@@ -453,7 +397,7 @@ export default function App() {
       {page === "home" && (
         <main className="flex flex-col min-h-screen" style={{ paddingTop: navHeight }}>
           <div className="flex-1">
-            <Home sections={sections} objects={objects} linkTo={linkTo} />
+            <Home sections={sections} linkTo={linkTo} />
           </div>
           <EditorialFooter linkTo={linkTo} />
         </main>
@@ -470,46 +414,11 @@ export default function App() {
       )}
 
 
-      {/* ══ OUR STORY ══ */}
       {/* ══ OBJECTS PAGE ══ */}
       {page === "objects" && (
         <main className="flex flex-col min-h-screen" style={{ paddingTop: navHeight }}>
-          <div className="flex-1 px-[var(--pad)] pt-[var(--s-5)]">
-            <Shelf tag="Objects" note="Made in small runs">
-              <div className="grid grid-cols-1 sm:grid-cols-2 items-baseline gap-[var(--s-2)] pt-[var(--s-2)] pb-[var(--s-4)]">
-                <h1 className="font-serif text-[clamp(1.9rem,5vw,3.4rem)] leading-[0.94] tracking-[-0.018em] m-0 text-[color:var(--ink)]">
-                  Objects.
-                </h1>
-                <span className="font-mono text-[11px] tracking-[0.2em] uppercase text-[color:var(--ink-muted)] sm:justify-self-end">
-                  Collect in store
-                </span>
-              </div>
-
-              {objectsLoading ? (
-                <p className="font-mono text-[length:var(--fs-price)] text-[color:var(--ink-muted)] py-[var(--s-5)]">
-                  Loading…
-                </p>
-              ) : objects.length === 0 ? (
-                /* The table is real and empty: 009 created it, and the object
-                   list lands hidden at price 0 until prices are confirmed
-                   (objects_available_has_price). Saying so plainly beats an
-                   empty grid that reads as a broken page. */
-                <div className="py-[var(--s-5)] max-w-[46ch]">
-                  <p className="font-serif text-[length:var(--fs-item)] text-[color:var(--ink)] mb-[var(--s-2)]">
-                    The shelf is being set.
-                  </p>
-                  <p className="font-mono text-[length:var(--fs-desc)] text-[color:var(--ink-muted)] leading-[1.6]">
-                    Candles, matches, lighters and whole beans — in store now, on this page shortly.
-                  </p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-[var(--s-3)] pb-[var(--s-5)]">
-                  {objects.map((o) => (
-                    <ObjectCard key={o.id} object={o} onAdd={() => {}} canAdd={ORDERING_OPEN} />
-                  ))}
-                </div>
-              )}
-            </Shelf>
+          <div className="flex-1">
+            <Objects linkTo={linkTo} />
           </div>
           <EditorialFooter linkTo={linkTo} />
         </main>
