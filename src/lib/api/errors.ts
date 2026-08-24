@@ -13,12 +13,7 @@
 export type AppError =
   /** PT429 from 005: per-email, per-IP or global window exceeded. */
   | { kind: "rate-limited"; message: string }
-  /**
-   * 42501 insufficient_privilege. For place_order this is not a bug: 004
-   * revoked EXECUTE from anon until ordering launches, and 005 re-asserts the
-   * revoke. Until that grant is run this is the *expected* result of a
-   * checkout, so the UI treats it as "ordering opens soon", not as breakage.
-   */
+  /** 42501 insufficient_privilege or another protected backend action. */
   | { kind: "forbidden" }
   /** An item was delisted between loading the menu and submitting the order. */
   | { kind: "unavailable"; message: string }
@@ -47,7 +42,7 @@ export function messageFor(error: AppError): string {
     case "rate-limited":
       return error.message;
     case "forbidden":
-      return "Ordering opens soon — the menu is here to browse in the meantime.";
+      return "This action is not available right now. Please try again in a moment.";
     case "unavailable":
       return "Something in your bag just sold out. Take it out and try again.";
     case "network":

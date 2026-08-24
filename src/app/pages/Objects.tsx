@@ -1,16 +1,19 @@
 import type { MenuCategory, Page } from "@/app/types";
-import { formatBhd, RETAIL_PRODUCTS, type CartLine, type RetailProduct } from "@/app/content/retail";
+import { formatBhd, type CartLine, type RetailProduct } from "@/app/content/retail";
 
 type Props = {
   linkTo: (page: Page, category?: MenuCategory) => {
     href: string;
     onClick: (event: React.MouseEvent) => void;
   };
+  products: RetailProduct[];
+  loading: boolean;
+  error: boolean;
   cartLines: CartLine[];
   onAdd: (product: RetailProduct) => void;
 };
 
-export function Objects({ linkTo, cartLines, onAdd }: Props) {
+export function Objects({ linkTo, products, loading, error, cartLines, onAdd }: Props) {
   const itemCount = cartLines.reduce((total, line) => total + line.quantity, 0);
 
   return (
@@ -30,11 +33,17 @@ export function Objects({ linkTo, cartLines, onAdd }: Props) {
       </header>
 
       <div className="editorial-objects-status" aria-live="polite">
-        {itemCount > 0 ? `${itemCount} item${itemCount === 1 ? "" : "s"} in your bag` : "Collect in store · Bahrain"}
+        {loading
+          ? "Refreshing the shelf…"
+          : error
+            ? "Showing the last known shelf · Bahrain"
+            : itemCount > 0
+              ? `${itemCount} item${itemCount === 1 ? "" : "s"} in your bag`
+              : "Collect in store · Bahrain"}
       </div>
 
-      <section className="editorial-objects-grid" aria-label="Mantel objects">
-        {RETAIL_PRODUCTS.map((product) => {
+      <section className="editorial-objects-grid" aria-label="Mantel objects" aria-busy={loading}>
+        {products.map((product) => {
           const line = cartLines.find((entry) => entry.product.id === product.id);
           const quantity = line?.quantity ?? 0;
           return (
@@ -49,8 +58,13 @@ export function Objects({ linkTo, cartLines, onAdd }: Props) {
                 </div>
                 <div className="editorial-object-purchase">
                   <span>{formatBhd(product.price)}</span>
-                  <button type="button" onClick={() => onAdd(product)} aria-label={`Add ${product.name} to cart`}>
-                    {quantity > 0 ? `Add another · ${quantity}` : "Add to bag +"}
+                  <button
+                    type="button"
+                    onClick={() => onAdd(product)}
+                    disabled={loading || !product.backendId}
+                    aria-label={`Add ${product.name} to cart`}
+                  >
+                    {loading ? "Loading…" : quantity > 0 ? `Add another · ${quantity}` : "Add to bag +"}
                   </button>
                 </div>
               </div>

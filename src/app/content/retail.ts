@@ -7,6 +7,8 @@ import retailMatchSticksImage from "@/imports/retail-match-sticks.png";
 
 export type RetailProduct = {
   id: string;
+  /** Supabase objects.id used by the secure place_order RPC. */
+  backendId?: string;
   name: string;
   description: string;
   price: number;

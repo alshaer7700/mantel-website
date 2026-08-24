@@ -3,13 +3,13 @@ import { toAppError, type AppError } from "@/lib/api/errors";
 import { settle } from "@/lib/api/settle";
 
 /*
- * The first client of place_order. The RPC has existed since 003 and has never
- * been called from this codebase — the "ordering opens soon" button was only
- * ever disabled in the UI.
+ * Client wrapper for the secure place_order RPC. The RPC resolves product
+ * identity and prices from the live sellables view, so the browser sends only
+ * backend UUIDs and quantities.
  *
  * Read supabase/003→005 before changing anything here. The contract that
- * matters: PRICES ARE NOT SENT. The function resolves name and price from
- * menu_items itself and computes the subtotal server-side, because the anon
+ * matters: PRICES ARE NOT SENT. The function resolves name and price from the
+ * sellables view and computes the subtotal server-side, because the anon
  * key ships in the JS bundle and anything priced by this file would be priced
  * by whoever holds it. Send ids and quantities, nothing else.
  */
@@ -19,7 +19,7 @@ export const MAX_LINE_ITEMS = 50;
 export const MAX_QTY_PER_LINE = 50;
 
 export type OrderLine = {
-  /** menu_items.id — a uuid the server looks up. Never a name, never a price. */
+  /** A UUID from the live sellables view. Never a name, never a price. */
   menuItemId: string;
   qty: number;
 };

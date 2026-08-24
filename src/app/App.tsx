@@ -7,8 +7,11 @@ import { Instagram, Search, ShoppingBag, User } from "lucide-react";
 import { fetchMenu, groupByCategory } from "@/lib/api/menu";
 import { Home } from "@/app/pages/Home";
 import { Objects } from "@/app/pages/Objects";
-import { CartDrawer } from "@/app/components/cart/CartDrawer";
+import { RETAIL_PRODUCTS } from "@/app/content/retail";
+import { fetchObjects } from "@/lib/api/objects";
+import { CartDrawer, type CheckoutDetails } from "@/app/components/cart/CartDrawer";
 import type { CartLine, RetailProduct } from "@/app/content/retail";
+import { placeOrder, type PlaceOrderResult } from "@/lib/api/orders";
 import { EditorialFooter } from "@/app/components/EditorialFooter";
 import { Cafe } from "@/app/pages/Cafe";
 import { Story } from "@/app/pages/Story";
@@ -20,7 +23,10 @@ import { getSession, onAuthChange, fetchProfile } from "@/lib/api/auth";
 import type { Session } from "@supabase/supabase-js";
 import type { Page, MenuCategory, MenuItem } from "@/app/types";
 import { pathFor, routeFor } from "@/lib/routes";
-import { CONTACT_ENDPOINT } from "@/lib/constants";
+import { ORDERING_OPEN } from "@/lib/constants";
+import { formErrorMessage, submitContactMessage } from "@/lib/api/forms";
+
+const CART_STORAGE_KEY = "mantel-cart-v1";
 
 export default function App() {
   // Boot from the URL, not from a hardcoded "home", so a deep link or a
@@ -29,6 +35,10 @@ export default function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
   const [cartLines, setCartLines] = useState<CartLine[]>([]);
+  const [retailProducts, setRetailProducts] = useState<RetailProduct[]>(RETAIL_PRODUCTS);
+  const [retailLoading, setRetailLoading] = useState(true);
+  const [retailError, setRetailError] = useState(false);
+  const [cartHydrated, setCartHydrated] = useState(false);
   const [menuCategory, setMenuCategory] = useState<MenuCategory>(
     () => routeFor(window.location.pathname).menuCategory,
   );
@@ -44,6 +54,28 @@ export default function App() {
 
   useEffect(() => {
     let live = true;
+    fetchObjects().then((result) => {
+      if (!live) return;
+      if (result.ok) {
+        const byName = new Map(result.objects.map((object) => [object.name.toLowerCase(), object]));
+        const byAlias = new Map([
+          ["matcha powder", "matcha refill"],
+          ["candles", "scented candle"],
+          ["match sticks", "safety matches"],
+          ["lighters", "cold brew"],
+        ]);
+        const merged = RETAIL_PRODUCTS.map((product) => {
+          const source = byName.get(product.name.toLowerCase()) ?? byName.get(byAlias.get(product.name.toLowerCase()) ?? "");
+          return source
+            ? { ...product, backendId: source.id, price: Number(source.price), description: source.description || product.description }
+            : product;
+        });
+        setRetailProducts(merged);
+      } else {
+        setRetailError(true);
+      }
+      setRetailLoading(false);
+    });
     fetchMenu().then((result) => {
       if (!live) return;
       if (result.ok) setMenuItems(result.items);
@@ -57,6 +89,39 @@ export default function App() {
       live = false;
     };
   }, []);
+
+  useEffect(() => {
+    if (retailLoading) return;
+    try {
+      const saved = JSON.parse(window.localStorage.getItem(CART_STORAGE_KEY) ?? "null");
+      if (Array.isArray(saved)) {
+        const productsById = new Map(retailProducts.map((product) => [product.id, product]));
+        const restored = saved.flatMap((entry) => {
+          if (!entry || typeof entry.productId !== "string") return [];
+          const product = productsById.get(entry.productId);
+          const quantity = Number(entry.quantity);
+          if (!product || !Number.isInteger(quantity) || quantity < 1) return [];
+          return [{ product, quantity: Math.min(quantity, 50) }];
+        });
+        setCartLines(restored);
+      }
+    } catch {
+      // A blocked or malformed localStorage value should never stop the store.
+    }
+    setCartHydrated(true);
+  }, [retailLoading, retailProducts]);
+
+  useEffect(() => {
+    if (!cartHydrated) return;
+    try {
+      window.localStorage.setItem(
+        CART_STORAGE_KEY,
+        JSON.stringify(cartLines.map((line) => ({ productId: line.product.id, quantity: line.quantity }))),
+      );
+    } catch {
+      // Persistence is an enhancement; checkout still works when storage is blocked.
+    }
+  }, [cartLines, cartHydrated]);
 
   const sections = groupByCategory(menuItems);
   const allItems = menuItems;
@@ -221,6 +286,22 @@ export default function App() {
 
   const cartCount = cartLines.reduce((total, line) => total + line.quantity, 0);
 
+  const submitCartOrder = async (details: CheckoutDetails): Promise<PlaceOrderResult> => {
+    const missingBackendId = cartLines.find((line) => !line.product.backendId);
+    if (missingBackendId) {
+      return { ok: false, error: { kind: "unknown", message: "This item is not available for ordering yet." } };
+    }
+    const result = await placeOrder({
+      lines: cartLines.map((line) => ({ menuItemId: line.product.backendId as string, qty: line.quantity })),
+      customerName: details.customerName,
+      customerEmail: details.customerEmail || null,
+      customerPhone: details.customerPhone || null,
+      paymentMethod: "cash",
+    });
+    if (result.ok) setCartLines([]);
+    return result;
+  };
+
   const linkTo = (p: Page, category: MenuCategory = null) => ({
     href: pathFor(p, category),
     onClick: (e: React.MouseEvent) => {
@@ -231,10 +312,9 @@ export default function App() {
     },
   });
 
-  // Anti-abuse for the FormSubmit relay (its captcha can't render over AJAX):
-  // a hidden honeypot field bots tend to fill — FormSubmit silently discards
-  // any submission where _honey is non-empty — plus a short client cooldown
-  // so the send button can't be hammered.
+  // Anti-abuse for the public Contact RPC: the hidden honeypot drops obvious
+  // automated submissions, while the RPC applies server-side validation and
+  // rate limits. The client cooldown keeps the send button from being hammered.
   const [honeypot, setHoneypot] = useState("");
   const lastSentAt = useRef(0);
   const CONTACT_COOLDOWN_MS = 30_000;
@@ -247,30 +327,25 @@ export default function App() {
     }
     setSending(true);
     setSendError("");
-    try {
-      const res = await fetch(CONTACT_ENDPOINT, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify({
-          name: [form.name, form.lastName].map((value) => value.trim()).filter(Boolean).join(" ").slice(0, 240),
-          lastName: form.lastName.trim().slice(0, 120),
-          email: form.email.trim().slice(0, 254),
-          phone: form.phone.trim().slice(0, 40),
-          comment: form.comment.trim().slice(0, 2000),
-          _honey: honeypot,
-          _subject: "MANTEL website contact",
-          _captcha: "false",
-          _template: "table",
-        }),
-      });
-      if (!res.ok) throw new Error(`status ${res.status}`);
+    if (honeypot.trim()) {
+      setSent(true);
+      setSending(false);
+      return;
+    }
+    const result = await submitContactMessage({
+      firstName: form.name,
+      lastName: form.lastName,
+      email: form.email,
+      phone: form.phone,
+      message: form.comment,
+    });
+    if (!result.ok) {
+      setSendError(formErrorMessage(result.error));
+    } else {
       lastSentAt.current = Date.now();
       setSent(true);
-    } catch {
-      setSendError("Couldn't send right now — please try again in a moment.");
-    } finally {
-      setSending(false);
     }
+    setSending(false);
   };
 
 
@@ -456,10 +531,12 @@ export default function App() {
       <CartDrawer
         open={cartOpen}
         lines={cartLines}
+        orderingOpen={ORDERING_OPEN}
         onClose={() => setCartOpen(false)}
         onIncrement={incrementCart}
         onDecrement={decrementCart}
         onRemove={removeFromCart}
+        onCheckout={submitCartOrder}
       />
 
       {page === "home" && (
@@ -486,7 +563,7 @@ export default function App() {
       {page === "objects" && (
         <main className="flex flex-col min-h-screen" style={{ paddingTop: navHeight }}>
           <div className="flex-1">
-            <Objects linkTo={linkTo} cartLines={cartLines} onAdd={addToCart} />
+            <Objects linkTo={linkTo} products={retailProducts} loading={retailLoading} error={retailError} cartLines={cartLines} onAdd={addToCart} />
           </div>
           <EditorialFooter linkTo={linkTo} />
         </main>

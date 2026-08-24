@@ -2075,3 +2075,15 @@
     }
   }
 }
+
+.editorial-menu-retail-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: opacity 180ms ease;
+}
+
+.editorial-menu-retail-link:hover,
+.editorial-menu-retail-link:focus-visible {
+  opacity: 0.55;
+}

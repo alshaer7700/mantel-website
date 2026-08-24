@@ -38,9 +38,13 @@ export function Cafe({ sections, category, loading, error }: Props) {
           as="h1"
           title={category ? CATEGORY_LABELS[category] + "." : "The café."}
           aside={
-            <span className={LABEL}>
-              {ORDERING_OPEN ? "Add to bag · collect in 15 min" : "Ordering opens soon"}
-            </span>
+            ORDERING_OPEN ? (
+              <a href="/objects" className={`${LABEL} editorial-menu-retail-link`}>
+                Add to bag · collect in 15 min <span aria-hidden="true">↗</span>
+              </a>
+            ) : (
+              <span className={LABEL}>Ordering opens soon</span>
+            )
           }
         />
 

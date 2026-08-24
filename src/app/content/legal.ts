@@ -1,6 +1,6 @@
 // Legal pages + FAQ content. Drafted from what the site actually collects and
 // does (contact form, pick-up orders, customer accounts, localStorage bag,
-// Supabase, FormSubmit) — owner should review before launch; this is not legal
+// Supabase) — owner should review before launch; this is not legal
 // advice.
 //
 // The contact address here is the business one, not the owner's personal
@@ -50,7 +50,7 @@ export const PRIVACY_POLICY: LegalDoc = {
     {
       heading: "Who processes it for us",
       paragraphs: [
-        "Orders and accounts are stored securely with Supabase, our database and authentication provider, on servers in Tokyo, Japan. Messages and sign-ups are delivered to our inbox via FormSubmit, a form email service. Both act only on our instructions.",
+        "Orders and accounts are stored securely with Supabase, our database and authentication provider, on servers in Tokyo, Japan. Contact messages and newsletter sign-ups are stored in protected Supabase tables so they can be managed by Mantel. Supabase acts only on our instructions.",
       ],
     },
     {
