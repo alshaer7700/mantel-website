@@ -1,45 +1,23 @@
 import { useState } from "react";
-import type { ShopObject } from "@/lib/api/objects";
 import type { MenuCategory, MenuCategoryKey, MenuItem, Page } from "@/app/types";
-import heroImage from "@/imports/mantel-landing.png";
-import coffeeBarImage from "@/imports/mood-coffee-bar.jpg";
-import cafeServiceImage from "@/imports/mood-cafe-service.jpg";
-import rugImage from "@/imports/mood-rug.jpg";
-import bouquetImage from "@/imports/mood-bouquet.jpg";
-import menuIllustrationImage from "@/imports/mood-menu-illustration.jpg";
-import coffeeCollageImage from "@/imports/mood-coffee-collage.jpg";
-import saturdaySignImage from "@/imports/mood-saturday-sign.jpg";
-import lateCheckoutImage from "@/imports/mood-late-checkout.jpg";
+import { MenuList } from "@/app/components/menu/MenuList";
+import heroImage from "@/imports/mantel-landing.webp";
+import fridayImage from "@/imports/mood-late-checkout.jpg";
 
 type Props = {
   sections: ReadonlyArray<readonly [MenuCategoryKey, MenuItem[]]>;
-  objects: ShopObject[];
   linkTo: (p: Page, c?: MenuCategory) => {
     href: string;
     onClick: (e: React.MouseEvent) => void;
   };
 };
 
-type Product = {
-  name: string;
-  type: string;
-  image: string;
-  href: string;
-};
-
-const products: Product[] = [
-  { name: "The Menu", type: "Coffee / food", image: menuIllustrationImage, href: "#menu" },
-  { name: "House Coffee", type: "Beans / 250g", image: coffeeCollageImage, href: "#objects" },
-  { name: "Objects", type: "Small editions", image: rugImage, href: "#objects" },
-  { name: "Saturday", type: "At the counter", image: saturdaySignImage, href: "#story" },
-  { name: "Late Checkout", type: "A place to pause", image: lateCheckoutImage, href: "#story" },
-];
-
-export function Home({ linkTo }: Props) {
+export function Home({ sections, linkTo }: Props) {
   const [cookieOpen, setCookieOpen] = useState(true);
   const [showCookieOptions, setShowCookieOptions] = useState(false);
   const [newsletterEmail, setNewsletterEmail] = useState("");
   const [newsletterSent, setNewsletterSent] = useState(false);
+  const preview = sections.filter(([, items]) => items.length > 0).slice(0, 2);
 
   const submitNewsletter = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -51,89 +29,52 @@ export function Home({ linkTo }: Props) {
       <section className="editorial-hero" aria-label="Mantel introduction">
         <img src={heroImage} alt="A Mantel shirt in the warm light of the café" />
         <div className="editorial-hero-content">
-          <span className="editorial-kicker">Hidd, Kingdom of Bahrain · Est. 2026</span>
+          <span className="editorial-kicker">Bahrain</span>
           <h1>Mantel.</h1>
-          <p>A café and a small house of objects.</p>
           <div className="editorial-hero-links">
-            <a href="#menu" className="editorial-link">The café</a>
-            <a href="#objects" className="editorial-link">The objects</a>
+            <a href="#menu" className="editorial-link editorial-link-primary">Try Us</a>
+            <a {...linkTo("menu")} className="editorial-link">Menu</a>
           </div>
         </div>
       </section>
 
       <section className="editorial-intro" id="menu">
         <div className="editorial-intro-copy">
-          <p className="editorial-overline">01 — Fall / Winter 2026</p>
-          <h2>Made for the everyday ritual.</h2>
+          <p className="editorial-overline">01 — A Mantel ritual</p>
+          <h2>Our Friday nights, or our espresso Friday.</h2>
           <p>
-            Reworked coffee rituals, airy interiors, paper textures, and a small edit of things
-            worth keeping after. Come in for a cup. Leave with a story.
+            A small room, a good espresso, and the feeling that the week has finally made it to
+            the other side. Come as you are. Stay for another cup.
           </p>
           <div className="editorial-inline-links">
             <a {...linkTo("menu")} className="editorial-link">View the menu</a>
-            <a {...linkTo("story")} className="editorial-link">Read the story</a>
+            <a {...linkTo("contact")} className="editorial-link">Find us</a>
           </div>
         </div>
         <div className="editorial-intro-media">
-          <img src={coffeeBarImage} alt="Warm café counter with a barista at work" />
+          <img src={fridayImage} alt="A blurred evening moment that evokes a Friday at Mantel" />
         </div>
       </section>
 
-      <section className="editorial-banner" id="objects">
-        <img src={cafeServiceImage} alt="Coffee service in a wood-toned Mantel café" />
-        <div className="editorial-banner-copy">
-          <span className="editorial-kicker">02 — At the counter</span>
-          <h2>Stay a little longer.</h2>
-          <a {...linkTo("objects")} className="editorial-link">Explore the shelf</a>
+      <section className="editorial-cafe-preview" id="cafe" aria-labelledby="cafe-heading">
+        <div className="editorial-cafe-copy">
+          <p className="editorial-overline">02 — The café</p>
+          <h2 id="cafe-heading">Poured at the counter.</h2>
+          <p>Drinks, small plates, and a little time set aside for yourself.</p>
+          <a {...linkTo("menu")} className="editorial-link">Open the full menu</a>
         </div>
-      </section>
-
-      <section className="editorial-products" aria-labelledby="objects-heading">
-        <div className="editorial-section-heading">
-          <div>
-            <p className="editorial-overline">03 — A small edit</p>
-            <h2 id="objects-heading">Things worth keeping.</h2>
-          </div>
-          <p>Objects, coffee, and pieces of Mantel to take home with you.</p>
-        </div>
-
-        <div className="editorial-product-grid">
-          {products.map((product) => (
-            <a key={product.name} href={product.href} className="editorial-product-card">
-              <div className="editorial-product-image">
-                <img src={product.image} alt="" />
-              </div>
-              <div className="editorial-product-info">
-                <span className="editorial-product-name">{product.name}</span>
-                <span className="editorial-product-meta">{product.type}</span>
-              </div>
-            </a>
-          ))}
-        </div>
-        <p className="editorial-product-caption">
-          Mantel is a place for the things that sit between a morning coffee and the rest of the
-          day — considered, tactile, and quietly useful.
-        </p>
-      </section>
-
-      <section className="editorial-manifesto" id="story">
-        <div className="editorial-manifesto-media">
-          <img src={bouquetImage} alt="A bouquet of deep red flowers wrapped for the counter" />
-        </div>
-        <div className="editorial-manifesto-copy">
-          <p className="editorial-overline">04 — The name</p>
-          <h2>A place to set things down.</h2>
-          <p>
-            A mantel is the shelf above a fire. It is where a house puts the few things it means
-            to look at every day — a photograph, a clock, a candle burned halfway down.
-          </p>
-          <a {...linkTo("story")} className="editorial-link">Our story</a>
+        <div className="editorial-cafe-list">
+          {preview.length > 0 ? (
+            <MenuList sections={preview} />
+          ) : (
+            <p className="editorial-cafe-empty">The menu is being set. Check back soon.</p>
+          )}
         </div>
       </section>
 
       <section className="editorial-newsletter" aria-labelledby="newsletter-heading">
         <div>
-          <p className="editorial-overline">05 — Keep in touch</p>
+          <p className="editorial-overline">03 — Keep in touch</p>
           <h2 id="newsletter-heading">Receive the newsletter.</h2>
         </div>
         <div className="editorial-newsletter-copy">
