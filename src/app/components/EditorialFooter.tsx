@@ -1,3 +1,4 @@
+import { Instagram } from "lucide-react";
 import type { MenuCategory, Page } from "@/app/types";
 
 type Props = {
@@ -7,20 +8,12 @@ type Props = {
   };
 };
 
-const socialLinks = [
-  { label: "ig", href: "https://www.instagram.com/bymantel/", name: "Instagram" },
-  { label: "x", href: "https://twitter.com/", name: "X" },
-  { label: "yt", href: "https://www.youtube.com/", name: "YouTube" },
-  { label: "pin", href: "https://www.pinterest.com/", name: "Pinterest" },
-  { label: "ln", href: "https://www.linkedin.com/", name: "LinkedIn" },
-];
-
 export function EditorialFooter({ linkTo }: Props) {
   return (
     <footer className="editorial-footer" id="footer">
       <div className="editorial-footer-grid">
         <div>
-          <p className="editorial-footer-title">Client care</p>
+          <p className="editorial-footer-title">Client Care</p>
           <a {...linkTo("contact")} className="editorial-footer-link">Contact us</a>
           <a {...linkTo("faq")} className="editorial-footer-link">FAQs</a>
           <a href="#packaging" className="editorial-footer-link">Packaging</a>
@@ -31,41 +24,28 @@ export function EditorialFooter({ linkTo }: Props) {
         </div>
 
         <div>
-          <p className="editorial-footer-title">Legal information</p>
+          <p className="editorial-footer-title">Legal Information</p>
           <a {...linkTo("terms")} className="editorial-footer-link">Terms</a>
           <a {...linkTo("privacy")} className="editorial-footer-link">Privacy</a>
           <a href="#cookie-policy" className="editorial-footer-link">Cookie</a>
-          <a href="#accessibility" className="editorial-footer-link">Accessibility statement</a>
+          <a href="#accessibility" className="editorial-footer-link">Accessibility Statement</a>
         </div>
 
-        <div className="editorial-footer-aside">
-          <div>
-            <p className="editorial-footer-title">Visit Mantel</p>
-            <p>Hidd, Kingdom of Bahrain<br />A shelf for the everyday.</p>
-          </div>
-          <div>
-            <p className="editorial-footer-title">Follow us</p>
-            <div className="editorial-footer-socials">
-              {socialLinks.map((social) => (
-                <a
-                  key={social.label}
-                  className="editorial-footer-social"
-                  href={social.href}
-                  target="_blank"
-                  rel="noreferrer"
-                  aria-label={social.name}
-                >
-                  {social.label}
-                </a>
-              ))}
-            </div>
-          </div>
+        <div className="editorial-footer-instagram">
+          <a
+            className="editorial-footer-social"
+            href="https://www.instagram.com/mantelbh/"
+            target="_blank"
+            rel="noreferrer"
+            aria-label="Mantel on Instagram"
+          >
+            <Instagram size={15} strokeWidth={1.4} aria-hidden="true" />
+          </a>
         </div>
       </div>
 
       <div className="editorial-footer-bottom">
-        <span>Mantel. · Hidd, Bahrain</span>
-        <span>© 2026 Mantel. All rights reserved.</span>
+        <span>© 2026 MANTEL.</span>
       </div>
     </footer>
   );
