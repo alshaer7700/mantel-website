@@ -30,7 +30,6 @@ export function Home({ sections, linkTo }: Props) {
         <img src={heroImage} alt="A Mantel shirt in the warm light of the café" />
         <div className="editorial-hero-content">
           <span className="editorial-kicker">Bahrain</span>
-          <h1>Mantel.</h1>
           <div className="editorial-hero-links">
             <a {...linkTo("menu")} className="editorial-link">Menu</a>
           </div>
