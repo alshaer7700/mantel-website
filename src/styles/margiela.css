@@ -857,7 +857,9 @@
     }
 
     .editorial-hero {
-      min-height: 76vh;
+      height: calc(100svh - var(--editorial-nav-h));
+      min-height: 560px;
+      max-height: 900px;
     }
 
     .editorial-hero img {
@@ -866,7 +868,7 @@
 
     .editorial-hero-content {
       right: 20px;
-      bottom: 30px;
+      bottom: calc(30px + env(safe-area-inset-bottom));
       max-width: 82vw;
     }
 

@@ -1,23 +1,20 @@
 import { useState } from "react";
-import type { MenuCategory, MenuCategoryKey, MenuItem, Page } from "@/app/types";
-import { MenuList } from "@/app/components/menu/MenuList";
+import type { MenuCategory, Page } from "@/app/types";
 import heroImage from "@/imports/mantel-landing.webp";
 import fridayImage from "@/imports/mood-late-checkout.jpg";
 
 type Props = {
-  sections: ReadonlyArray<readonly [MenuCategoryKey, MenuItem[]]>;
   linkTo: (p: Page, c?: MenuCategory) => {
     href: string;
     onClick: (e: React.MouseEvent) => void;
   };
 };
 
-export function Home({ sections, linkTo }: Props) {
+export function Home({ linkTo }: Props) {
   const [cookieOpen, setCookieOpen] = useState(true);
   const [showCookieOptions, setShowCookieOptions] = useState(false);
   const [newsletterEmail, setNewsletterEmail] = useState("");
   const [newsletterSent, setNewsletterSent] = useState(false);
-  const preview = sections.filter(([, items]) => items.length > 0).slice(0, 2);
 
   const submitNewsletter = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -29,7 +26,6 @@ export function Home({ sections, linkTo }: Props) {
       <section className="editorial-hero" aria-label="Mantel introduction">
         <img src={heroImage} alt="A Mantel shirt in the warm light of the café" />
         <div className="editorial-hero-content">
-          <span className="editorial-kicker">Bahrain</span>
           <div className="editorial-hero-links">
             <a {...linkTo("menu")} className="editorial-link">Menu</a>
           </div>
@@ -54,25 +50,9 @@ export function Home({ sections, linkTo }: Props) {
         </div>
       </section>
 
-      <section className="editorial-cafe-preview" id="cafe" aria-labelledby="cafe-heading">
-        <div className="editorial-cafe-copy">
-          <p className="editorial-overline">02 — The café</p>
-          <h2 id="cafe-heading">Poured at the counter.</h2>
-          <p>Drinks, small plates, and a little time set aside for yourself.</p>
-          <a {...linkTo("menu")} className="editorial-link">Open the full menu</a>
-        </div>
-        <div className="editorial-cafe-list">
-          {preview.length > 0 ? (
-            <MenuList sections={preview} />
-          ) : (
-            <p className="editorial-cafe-empty">The menu is being set. Check back soon.</p>
-          )}
-        </div>
-      </section>
-
       <section className="editorial-newsletter" aria-labelledby="newsletter-heading">
         <div>
-          <p className="editorial-overline">03 — Keep in touch</p>
+          <p className="editorial-overline">02 — Keep in touch</p>
           <h2 id="newsletter-heading">Receive the newsletter.</h2>
         </div>
         <div className="editorial-newsletter-copy">

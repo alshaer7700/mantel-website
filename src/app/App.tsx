@@ -397,7 +397,7 @@ export default function App() {
       {page === "home" && (
         <main className="flex flex-col min-h-screen" style={{ paddingTop: navHeight }}>
           <div className="flex-1">
-            <Home sections={sections} linkTo={linkTo} />
+            <Home linkTo={linkTo} />
           </div>
           <EditorialFooter linkTo={linkTo} />
         </main>
