@@ -10,11 +10,53 @@ type Props = {
   };
 };
 
+type CookiePreferences = {
+  analytics: boolean;
+  marketing: boolean;
+};
+
+const COOKIE_CONSENT_KEY = "mantel-cookie-consent";
+
+function readCookieConsent(): CookiePreferences | null {
+  try {
+    const saved = window.localStorage.getItem(COOKIE_CONSENT_KEY);
+    if (!saved) return null;
+    const parsed = JSON.parse(saved) as Partial<CookiePreferences> & { status?: string };
+    if (!parsed.status) return null;
+    return {
+      analytics: Boolean(parsed.analytics),
+      marketing: Boolean(parsed.marketing),
+    };
+  } catch {
+    return null;
+  }
+}
+
 export function Home({ linkTo }: Props) {
-  const [cookieOpen, setCookieOpen] = useState(true);
+  const savedCookieConsent = readCookieConsent();
+  const [cookieOpen, setCookieOpen] = useState(savedCookieConsent === null);
   const [showCookieOptions, setShowCookieOptions] = useState(false);
+  const [cookiePreferences, setCookiePreferences] = useState<CookiePreferences>(() => ({
+    analytics: savedCookieConsent?.analytics ?? false,
+    marketing: savedCookieConsent?.marketing ?? false,
+  }));
   const [newsletterEmail, setNewsletterEmail] = useState("");
   const [newsletterSent, setNewsletterSent] = useState(false);
+
+  const saveCookieConsent = (status: "accepted" | "declined" | "custom", preferences: CookiePreferences) => {
+    try {
+      window.localStorage.setItem(COOKIE_CONSENT_KEY, JSON.stringify({
+        status,
+        ...preferences,
+        essential: true,
+        updatedAt: new Date().toISOString(),
+      }));
+    } catch {
+      // The banner still closes if storage is unavailable or blocked.
+    }
+    setCookieOpen(false);
+    setShowCookieOptions(false);
+  };
 
   const submitNewsletter = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -87,7 +129,11 @@ export function Home({ linkTo }: Props) {
           >
             <div className="editorial-cookie-top">
               <h2 className="editorial-cookie-title" id="cookie-title">A note on cookies</h2>
-              <button className="editorial-cookie-dismiss" type="button" onClick={() => setCookieOpen(false)}>
+              <button
+                className="editorial-cookie-dismiss"
+                type="button"
+                onClick={() => saveCookieConsent("declined", { analytics: false, marketing: false })}
+              >
                 Continue without accepting
               </button>
             </div>
@@ -99,19 +145,49 @@ export function Home({ linkTo }: Props) {
             </p>
             {showCookieOptions && (
               <div className="editorial-cookie-options">
-                <label className="editorial-cookie-option"><input type="checkbox" defaultChecked /> Essential</label>
-                <label className="editorial-cookie-option"><input type="checkbox" /> Analytics</label>
-                <label className="editorial-cookie-option"><input type="checkbox" /> Marketing</label>
+                <label className="editorial-cookie-option">
+                  <input type="checkbox" checked disabled />
+                  Essential
+                </label>
+                <label className="editorial-cookie-option">
+                  <input
+                    type="checkbox"
+                    checked={cookiePreferences.analytics}
+                    onChange={(event) => setCookiePreferences((current) => ({ ...current, analytics: event.target.checked }))}
+                  />
+                  Analytics
+                </label>
+                <label className="editorial-cookie-option">
+                  <input
+                    type="checkbox"
+                    checked={cookiePreferences.marketing}
+                    onChange={(event) => setCookiePreferences((current) => ({ ...current, marketing: event.target.checked }))}
+                  />
+                  Marketing
+                </label>
+                <button
+                  className="editorial-cookie-save"
+                  type="button"
+                  onClick={() => saveCookieConsent("custom", cookiePreferences)}
+                >
+                  Save preferences
+                </button>
               </div>
             )}
+            {!showCookieOptions && (
+              <button
+                className="editorial-cookie-preferences"
+                type="button"
+                onClick={() => setShowCookieOptions(true)}
+              >
+                Preferences
+              </button>
+            )}
             <button
-              className="editorial-cookie-preferences"
+              className="editorial-cookie-button"
               type="button"
-              onClick={() => setShowCookieOptions((visible) => !visible)}
+              onClick={() => saveCookieConsent("accepted", { analytics: true, marketing: true })}
             >
-              {showCookieOptions ? "Hide preferences" : "Preferences"}
-            </button>
-            <button className="editorial-cookie-button" type="button" onClick={() => setCookieOpen(false)}>
               Accept All
             </button>
           </section>
