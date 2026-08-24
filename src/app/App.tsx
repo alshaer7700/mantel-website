@@ -274,7 +274,7 @@ export default function App() {
 
           <a {...linkTo("home")} className="editorial-wordmark" aria-label="Mantel home">
             Mantel.
-            <small>Bahrain · English</small>
+            <small>Bahrain</small>
           </a>
 
           <div className="editorial-nav-tools">
