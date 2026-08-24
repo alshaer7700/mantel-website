@@ -16,11 +16,6 @@ export function EditorialFooter({ linkTo }: Props) {
           <p className="editorial-footer-title">Client Care</p>
           <a {...linkTo("contact")} className="editorial-footer-link">Contact us</a>
           <a {...linkTo("faq")} className="editorial-footer-link">FAQs</a>
-          <a href="#packaging" className="editorial-footer-link">Packaging</a>
-          <a href="#returns" className="editorial-footer-link">Return form</a>
-          <a href="#shipping" className="editorial-footer-link">Shipping</a>
-          <a href="#boutiques" className="editorial-footer-link">Boutiques</a>
-          <a href="tel:+9733170385098" className="editorial-footer-link">Call us: +973 3170 385098</a>
         </div>
 
         <div>
