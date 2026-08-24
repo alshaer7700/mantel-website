@@ -141,6 +141,18 @@ export function Home({ sections, objects, linkTo }: Props) {
               </a>
             }
           />
+          {/* §09 asks the retail section to lead with product photography.
+              Portrait and held to one column, not run full bleed: the hero and
+              the featured visual are already 16:9 bands, and a third would
+              make three sections the same shape — the one thing §09 says to
+              avoid. It also matches the reference set, which is shot upright.
+              The drawings carry the section until PL-05 exists. */}
+          {(PLATES.hands.src || import.meta.env.DEV) && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 mb-[clamp(2.5rem,7vh,4rem)]">
+              <Plate spec={PLATES.hands} />
+            </div>
+          )}
+
           {objects.length > 0 ? (
             <div className="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-[clamp(1.5rem,3vw,2.5rem)]">
               {objects.map((o) => (

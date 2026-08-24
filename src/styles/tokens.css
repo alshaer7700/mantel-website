@@ -52,6 +52,20 @@
   --line:      #D9D4CB;  /* the shelf rule, section hairlines */
   --line-soft: #E8E4DC;  /* row dividers inside a list */
 
+  /* ── Image ratios ───────────────────────────────────────────────────────
+     The brief asks for consistent ratios and names them a layout token. They
+     were magic strings in Plate.tsx's default arguments, which is where a
+     seventh ratio quietly appears the first time someone needs one.
+
+     Two, and a reason for each. Portrait for a plate that sits in the grid —
+     it matches the reference set, which is shot on 35mm held upright, and it
+     gives a hung photograph more presence than a landscape crop at the same
+     width. Widescreen for a plate that runs edge to edge, because at full
+     bleed a 4:5 frame is taller than most screens and stops being a picture
+     you can see at once. */
+  --ratio-plate: 4 / 5;
+  --ratio-bleed: 16 / 9;
+
   /* Page gutter. The one fluid value in the file: the prototype's layout is
      built on it, and pinning it to a step would break the bleed plates that
      cancel it with a negative margin. */

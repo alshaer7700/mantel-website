@@ -26,14 +26,14 @@ import type { PlateSpec } from "@/app/content/plates";
 
 type Props = {
   spec: PlateSpec;
-  /** Aspect ratio, CSS form: "4 / 5", "16 / 9", "1 / 1". */
+  /** Aspect ratio, CSS form. Defaults to the portrait plate token. */
   ratio?: string;
   /** Overrides the caption as the alt text when the plate is decorative. */
   alt?: string;
   className?: string;
 };
 
-export function Plate({ spec, ratio = "4 / 5", alt, className = "" }: Props) {
+export function Plate({ spec, ratio = "var(--ratio-plate)", alt, className = "" }: Props) {
   const filled = spec.src !== "";
 
   if (!filled && !import.meta.env.DEV) return null;
@@ -103,7 +103,7 @@ function PlaceholderRef({ spec }: { spec: PlateSpec }) {
  */
 export function BleedPlate({
   spec,
-  ratio = "16 / 9",
+  ratio = "var(--ratio-bleed)",
   className = "",
 }: {
   spec: PlateSpec;
