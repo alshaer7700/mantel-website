@@ -32,7 +32,6 @@ export function Home({ sections, linkTo }: Props) {
           <span className="editorial-kicker">Bahrain</span>
           <h1>Mantel.</h1>
           <div className="editorial-hero-links">
-            <a href="#menu" className="editorial-link editorial-link-primary">Try Us</a>
             <a {...linkTo("menu")} className="editorial-link">Menu</a>
           </div>
         </div>
