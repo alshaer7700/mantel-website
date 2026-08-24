@@ -29,7 +29,7 @@ export function EditorialFooter({ linkTo }: Props) {
         <div className="editorial-footer-instagram">
           <a
             className="editorial-footer-social"
-            href="https://www.instagram.com/mantelbh/"
+            href="https://www.instagram.com/Bymantel/"
             target="_blank"
             rel="noreferrer"
             aria-label="Mantel on Instagram"
