@@ -39,9 +39,10 @@ type Props = {
   recovering: boolean;
   onClose: () => void;
   navHeight: string;
+  id?: string;
 };
 
-export function AccountPanel({ session, recovering, onClose, navHeight }: Props) {
+export function AccountPanel({ session, recovering, onClose, navHeight, id }: Props) {
   const [mode, setMode] = useState<Mode>(() =>
     recovering ? "recover" : session ? "account" : "signin",
   );
@@ -140,6 +141,7 @@ export function AccountPanel({ session, recovering, onClose, navHeight }: Props)
 
   return (
     <div
+      id={id}
       className="fixed inset-x-0 z-50 bg-[color:var(--bg)] border-b border-[color:var(--line)]"
       style={{ top: navHeight }}
       role="dialog"

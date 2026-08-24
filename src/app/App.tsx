@@ -360,6 +360,8 @@ export default function App() {
   return (
     <div className="bg-background text-foreground font-mono font-normal min-h-screen">
 
+      <a className="editorial-skip-link" href="#main-content">Skip to content</a>
+
       {/* ══ NAV ══ */}
       <header className="editorial-nav">
         <div className="editorial-nav-inner">
@@ -367,8 +369,11 @@ export default function App() {
             <button
               onClick={() => setSidebarOpen((open) => !open)}
               className="editorial-mobile-trigger"
-              aria-label={sidebarOpen ? "Close navigation" : "Open navigation"}
-            >
+                            aria-label={sidebarOpen ? "Close navigation" : "Open navigation"}
+              aria-expanded={sidebarOpen}
+              aria-controls="mantel-mobile-drawer"
+              >
+
               <span className="sr-only">Open navigation</span>
               <span aria-hidden="true">☰</span>
             </button>
@@ -389,6 +394,8 @@ export default function App() {
               onClick={() => { setSearchOpen((value) => !value); setAccountOpen(false); }}
               className="editorial-nav-action editorial-nav-icon"
               aria-label="Search"
+              aria-expanded={searchOpen}
+              aria-controls="mantel-search-overlay"
             >
               <Search size={16} strokeWidth={1.5} />
             </button>
@@ -396,6 +403,8 @@ export default function App() {
               onClick={() => { setAccountOpen((value) => !value); setSearchOpen(false); }}
               className="editorial-nav-action"
               aria-label="Account"
+              aria-expanded={accountOpen}
+              aria-controls="mantel-account-panel"
             >
               <User size={16} strokeWidth={1.5} className="sm:hidden" />
               <span>Account</span>
@@ -404,6 +413,8 @@ export default function App() {
               type="button"
               className="editorial-nav-action editorial-nav-icon relative"
               aria-label={`Cart${cartCount > 0 ? `, ${cartCount} item${cartCount === 1 ? "" : "s"}` : ""}`}
+              aria-expanded={cartOpen}
+              aria-controls="mantel-cart-drawer"
               onClick={() => { setCartOpen(true); setSidebarOpen(false); setSearchOpen(false); setAccountOpen(false); }}
             >
               <ShoppingBag size={16} strokeWidth={1.5} />
@@ -424,6 +435,7 @@ export default function App() {
       />
       {/* Drawer */}
       <div
+        id="mantel-mobile-drawer"
         className={`fixed inset-0 z-[70] bg-background flex flex-col transition-transform duration-300 ease-in-out ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
@@ -506,8 +518,10 @@ export default function App() {
 
       {/* ══ SEARCH PANEL ══ */}
       {searchOpen && (
-        <SearchOverlay
-          query={query}
+                  <SearchOverlay
+            id="mantel-search-overlay"
+            query={query}
+
           setQuery={setQuery}
           results={results}
           allItems={allItems}
@@ -520,8 +534,10 @@ export default function App() {
 
       {/* ══ ACCOUNT PANEL ══ */}
       {accountOpen && (
-        <AccountPanel
-          session={session}
+                  <AccountPanel
+            id="mantel-account-panel"
+            session={session}
+
           recovering={recovering}
           navHeight={scrolled ? SCROLLED_NAV_HEIGHT : navHeight}
           onClose={() => { setAccountOpen(false); setRecovering(false); }}
@@ -529,6 +545,7 @@ export default function App() {
       )}
 
       <CartDrawer
+        id="mantel-cart-drawer"
         open={cartOpen}
         lines={cartLines}
         orderingOpen={ORDERING_OPEN}
@@ -540,7 +557,7 @@ export default function App() {
       />
 
       {page === "home" && (
-        <main className="flex flex-col min-h-screen" style={{ paddingTop: navHeight }}>
+        <main id="main-content" className="flex flex-col min-h-screen" style={{ paddingTop: navHeight }}>
           <div className="flex-1">
             <Home linkTo={linkTo} />
           </div>
@@ -550,7 +567,7 @@ export default function App() {
 
       {/* ══ MENU PAGE ══ */}
       {page === "menu" && (
-        <main className="flex flex-col min-h-screen" style={{ paddingTop: navHeight }}>
+        <main id="main-content" className="flex flex-col min-h-screen" style={{ paddingTop: navHeight }}>
           <div className="flex-1 px-[var(--pad)]">
             <Cafe sections={sections} category={menuCategory} loading={menuLoading} error={menuError} />
           </div>
@@ -561,7 +578,7 @@ export default function App() {
 
       {/* ══ OBJECTS PAGE ══ */}
       {page === "objects" && (
-        <main className="flex flex-col min-h-screen" style={{ paddingTop: navHeight }}>
+        <main id="main-content" className="flex flex-col min-h-screen" style={{ paddingTop: navHeight }}>
           <div className="flex-1">
             <Objects linkTo={linkTo} products={retailProducts} loading={retailLoading} error={retailError} cartLines={cartLines} onAdd={addToCart} />
           </div>
@@ -570,7 +587,7 @@ export default function App() {
       )}
 
       {page === "story" && (
-        <main className="flex flex-col min-h-screen" style={{ paddingTop: navHeight }}>
+        <main id="main-content" className="flex flex-col min-h-screen" style={{ paddingTop: navHeight }}>
           <div className="flex-1 px-[var(--pad)]">
             <Story linkTo={linkTo} />
           </div>
@@ -579,7 +596,7 @@ export default function App() {
       )}
 
       {page === "contact" && (
-        <main className="editorial-page-shell min-h-screen flex flex-col" style={{ paddingTop: navHeight }}>
+        <main id="main-content" className="editorial-page-shell min-h-screen flex flex-col" style={{ paddingTop: navHeight }}>
           <div className="flex-1">
             <ContactUs
               linkTo={linkTo}
@@ -599,7 +616,7 @@ export default function App() {
 
       {/* ══ FAQ PAGE ══ */}
       {page === "faq" && (
-        <main className="min-h-screen flex flex-col" style={{ paddingTop: navHeight }}>
+        <main id="main-content" className="min-h-screen flex flex-col" style={{ paddingTop: navHeight }}>
           <div className="flex-1 max-w-2xl w-full mx-auto px-6 py-14">
             <h1 className="font-serif font-semibold text-5xl mb-12">FAQ</h1>
             <FaqAccordion items={FAQ_ITEMS} />
@@ -611,7 +628,7 @@ export default function App() {
 
       {/* ══ POLICY PAGES ══ */}
       {(page === "privacy" || page === "terms" || page === "refund") && (
-        <main className="min-h-screen flex flex-col" style={{ paddingTop: navHeight }}>
+        <main id="main-content" className="min-h-screen flex flex-col" style={{ paddingTop: navHeight }}>
           <PolicyPage
             doc={
               page === "privacy"

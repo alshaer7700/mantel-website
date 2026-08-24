@@ -3,6 +3,7 @@ import type { MenuCategory, Page } from "@/app/types";
 import heroImage from "@/imports/mantel-landing.webp";
 import heartImage from "@/imports/mantel-heart.png";
 import fridayImage from "@/imports/mood-late-checkout.jpg";
+import { formErrorMessage, subscribeNewsletter } from "@/lib/api/forms";
 
 type Props = {
   linkTo: (p: Page, c?: MenuCategory) => {
@@ -42,7 +43,10 @@ export function Home({ linkTo }: Props) {
     marketing: savedCookieConsent?.marketing ?? false,
   }));
   const [newsletterEmail, setNewsletterEmail] = useState("");
-  const [newsletterSent, setNewsletterSent] = useState(false);
+  const [newsletterStatus, setNewsletterStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [newsletterError, setNewsletterError] = useState("");
+  const [newsletterHoneypot, setNewsletterHoneypot] = useState("");
+  const newsletterLastSentAt = useRef(0);
   const [heroHeartVisible, setHeroHeartVisible] = useState(false);
   const heroPointerY = useRef<number | null>(null);
 
@@ -82,9 +86,28 @@ export function Home({ linkTo }: Props) {
     setShowCookieOptions(false);
   };
 
-  const submitNewsletter = (event: React.FormEvent<HTMLFormElement>) => {
+  const submitNewsletter = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (newsletterEmail.trim()) setNewsletterSent(true);
+    if (Date.now() - newsletterLastSentAt.current < 30_000) {
+      setNewsletterStatus("error");
+      setNewsletterError("Please wait a moment before trying again.");
+      return;
+    }
+    setNewsletterStatus("sending");
+    setNewsletterError("");
+    if (newsletterHoneypot.trim()) {
+      setNewsletterStatus("sent");
+      return;
+    }
+
+    const result = await subscribeNewsletter(newsletterEmail);
+    if (!result.ok) {
+      setNewsletterStatus("error");
+      setNewsletterError(formErrorMessage(result.error));
+      return;
+    }
+    newsletterLastSentAt.current = Date.now();
+    setNewsletterStatus("sent");
   };
 
   return (
@@ -128,22 +151,40 @@ export function Home({ linkTo }: Props) {
           <h2 id="newsletter-heading">Receive the newsletter.</h2>
         </div>
         <div className="editorial-newsletter-copy">
-          {newsletterSent ? (
-            <p className="editorial-newsletter-success">You’re on the list. See you at the counter.</p>
+          {newsletterStatus === "sent" ? (
+            <p className="editorial-newsletter-success" role="status">You’re on the list. See you at the counter.</p>
           ) : (
             <>
               <p>Stay up to date with new collections, events, and the occasional good idea.</p>
-              <form className="editorial-newsletter-form" onSubmit={submitNewsletter}>
+              <form className="editorial-newsletter-form" onSubmit={submitNewsletter} aria-busy={newsletterStatus === "sending"}>
                 <input
+                  type="text"
+                  name="website"
+                  value={newsletterHoneypot}
+                  onChange={(event) => setNewsletterHoneypot(event.target.value)}
+                  tabIndex={-1}
+                  autoComplete="off"
+                  aria-hidden="true"
+                  className="absolute -left-[9999px] h-0 w-0 opacity-0"
+                />
+                <label className="sr-only" htmlFor="home-newsletter-email">Email address</label>
+                <input
+                  id="home-newsletter-email"
                   type="email"
+                  name="email"
                   value={newsletterEmail}
                   onChange={(event) => setNewsletterEmail(event.target.value)}
                   placeholder="Email address"
-                  aria-label="Email address"
+                  maxLength={254}
                   required
                 />
-                <button type="submit">Submit ↗</button>
+                <button type="submit" disabled={newsletterStatus === "sending"}>
+                  {newsletterStatus === "sending" ? "Sending…" : "Submit ↗"}
+                </button>
               </form>
+              {newsletterStatus === "error" && (
+                <p className="editorial-newsletter-error" role="alert">{newsletterError}</p>
+              )}
             </>
           )}
         </div>

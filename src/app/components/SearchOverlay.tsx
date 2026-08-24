@@ -31,6 +31,7 @@ type Props = {
   onClose: () => void;
   onPickCategory: (c: MenuCategoryKey) => void;
   navHeight: string;
+  id?: string;
 };
 
 export function SearchOverlay({
@@ -42,6 +43,7 @@ export function SearchOverlay({
   onClose,
   onPickCategory,
   navHeight,
+  id,
 }: Props) {
   const typing = query.trim() !== "";
 
@@ -52,6 +54,7 @@ export function SearchOverlay({
 
   return (
     <div
+      id={id}
       className="fixed inset-x-0 z-50 bg-[color:var(--bg)] border-b border-[color:var(--line)]"
       style={{ top: navHeight }}
       role="dialog"

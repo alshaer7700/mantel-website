@@ -19,6 +19,7 @@ type Props = {
   onDecrement: (productId: string) => void;
   onRemove: (productId: string) => void;
   onCheckout: (details: CheckoutDetails) => Promise<PlaceOrderResult>;
+  id?: string;
 };
 
 export function CartDrawer({
@@ -30,6 +31,7 @@ export function CartDrawer({
   onDecrement,
   onRemove,
   onCheckout,
+  id,
 }: Props) {
   const itemCount = lines.reduce((total, line) => total + line.quantity, 0);
   const subtotal = lines.reduce((total, line) => total + line.product.price * line.quantity, 0);
@@ -74,8 +76,10 @@ export function CartDrawer({
         aria-hidden="true"
       />
       <aside
+        id={id}
         className={`editorial-cart-drawer ${open ? "is-open" : ""}`}
         aria-hidden={!open}
+        aria-modal="true"
         aria-label="Shopping cart"
       >
         <header className="editorial-cart-header">
