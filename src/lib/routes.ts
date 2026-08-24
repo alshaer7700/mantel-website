@@ -15,7 +15,7 @@ import type { Page, MenuCategory } from "@/app/types";
 export const ROUTES: Record<Page, string> = {
   home: "/",
   menu: "/menu",
-  objects: "/objects",
+  shop: "/shop",
   story: "/story",
   visit: "/visit",
   contact: "/contact",
@@ -57,11 +57,25 @@ function normalise(pathname: string): string {
  * becomes home. Callers compare the result against pathFor() and correct the
  * address bar, so it never claims to be somewhere the app isn't.
  */
+/*
+ * Paths that used to be canonical and are still in the wild. /objects shipped
+ * as the retail page's address before the area was renamed to Shop, so it may
+ * be in someone's history or a shared link; it resolves rather than falling
+ * through to home, and the caller's canonical-URL correction rewrites the
+ * address bar to /shop.
+ */
+const ALIASES: Record<string, Page> = {
+  "/objects": "shop",
+};
+
 export function routeFor(pathname: string): Route {
   const path = normalise(pathname);
 
   const exact = BY_PATH.get(path);
   if (exact) return { page: exact, menuCategory: null };
+
+  const alias = ALIASES[path];
+  if (alias) return { page: alias, menuCategory: null };
 
   if (path.startsWith(`${ROUTES.menu}/`)) {
     const slug = path.slice(ROUTES.menu.length + 1);

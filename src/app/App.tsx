@@ -326,7 +326,7 @@ export default function App() {
         <div>
           <h4 className={footerTitle}>Information</h4>
           <a {...linkTo("menu")} className={footerLink}>Menu</a>
-          <a {...linkTo("objects")} className={footerLink}>Objects</a>
+          <a {...linkTo("shop")} className={footerLink}>Shop</a>
           <a {...linkTo("story")} className={footerLink}>Our Story</a>
           <a {...linkTo("faq")} className={footerLink}>FAQ</a>
           <a {...linkTo("privacy")} className={footerLink}>Privacy policy</a>
@@ -379,7 +379,7 @@ export default function App() {
             </button>
             <nav className="hidden lg:flex items-center gap-[28px]" aria-label="Primary">
               <a {...linkTo("menu")} className={HEADER_LINK_CLASS}>Menu</a>
-              <a {...linkTo("objects")} className={HEADER_LINK_CLASS}>Objects</a>
+              <a {...linkTo("shop")} className={HEADER_LINK_CLASS}>Shop</a>
               <a {...linkTo("story")} className={HEADER_LINK_CLASS}>Our Story</a>
               <a {...linkTo("visit")} className={HEADER_LINK_CLASS}>Visit</a>
               <a {...linkTo("contact")} className={HEADER_LINK_CLASS}>Contact</a>
@@ -504,7 +504,7 @@ export default function App() {
       {page === "home" && (
         <main className="flex flex-col min-h-screen" style={{ paddingTop: navHeight }}>
           <div className="flex-1 px-[var(--pad)]">
-            <Home linkTo={linkTo} />
+            <Home sections={sections} objects={objects} linkTo={linkTo} />
           </div>
           {footer}
         </main>
@@ -523,13 +523,13 @@ export default function App() {
 
       {/* ══ OUR STORY ══ */}
       {/* ══ OBJECTS PAGE ══ */}
-      {page === "objects" && (
+      {page === "shop" && (
         <main className="flex flex-col min-h-screen" style={{ paddingTop: navHeight }}>
           <div className="flex-1 px-[var(--pad)] pt-[var(--s-5)]">
             <Shelf>
               <div className="pt-[var(--s-2)] pb-[var(--s-4)]">
                 <h1 className="font-serif text-[clamp(1.9rem,5vw,3.4rem)] leading-[0.94] tracking-[-0.018em] m-0 text-[color:var(--ink)]">
-                  Objects.
+                  Shop.
                 </h1>
               </div>
 

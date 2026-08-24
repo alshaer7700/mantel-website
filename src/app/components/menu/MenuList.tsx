@@ -53,7 +53,7 @@ export function MenuList({
             {CATEGORY_LABELS[key]}
           </h3>
           {items.map((item) => (
-            <Row key={item.id} item={item} />
+            <MenuRow key={item.id} item={item} />
           ))}
         </section>
       ))}
@@ -61,7 +61,7 @@ export function MenuList({
   );
 }
 
-function Row({ item }: { item: MenuItem }) {
+export function MenuRow({ item }: { item: MenuItem }) {
   const [open, setOpen] = useState(false);
   const panelId = `${useId()}-detail`;
 

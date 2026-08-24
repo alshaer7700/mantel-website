@@ -55,7 +55,7 @@ type Props = {
 
 const PRIMARY: ReadonlyArray<[Page, string]> = [
   ["menu", "Menu"],
-  ["objects", "Objects"],
+  ["shop", "Shop"],
   ["story", "Our Story"],
   ["visit", "Visit"],
   ["contact", "Contact"],

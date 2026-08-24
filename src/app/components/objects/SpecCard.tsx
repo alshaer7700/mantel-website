@@ -48,10 +48,13 @@ export function SpecCard({ object }: { object: ShopObject }) {
           {object.name}
         </h3>
 
-        <dl className="m-0 mt-auto pt-[var(--s-3)] flex justify-between gap-[var(--s-2)] items-baseline font-mono text-[11px] leading-[1.6]">
-          <dt className="text-[color:var(--ink-muted)] min-w-0">{object.spec}</dt>
+        {/* Stacked, not a justified row. A spec long enough to wrap — "Scented
+            candle · 165g / 5.8oz" does at card width — pushed the price off
+            its own baseline and left the two colliding. */}
+        <dl className="m-0 mt-auto pt-[var(--s-3)] font-mono text-[11px] leading-[1.6]">
+          <dt className="text-[color:var(--ink-muted)]">{object.spec}</dt>
           {/* Seeded at 0 until priced — a dash, never "0.000". */}
-          <dd className="m-0 text-[color:var(--ink)] tabular-nums shrink-0">
+          <dd className="m-0 mt-[2px] text-[color:var(--ink)] tabular-nums">
             {object.price > 0 ? `${formatPrice(object.price)} BD` : "—"}
           </dd>
         </dl>
