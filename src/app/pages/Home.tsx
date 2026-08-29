@@ -1,7 +1,6 @@
 import type { MenuItem, MenuCategoryKey, Page, MenuCategory } from "@/app/types";
 import type { ShopObject } from "@/lib/api/objects";
 import { Plate, BleedPlate } from "@/app/components/Plate";
-import { FigureArt } from "@/app/components/FigureArt";
 import { MenuRow } from "@/app/components/menu/MenuList";
 import { ObjectArt } from "@/app/components/objects/ObjectArt";
 import { PLATES } from "@/app/content/plates";
@@ -24,11 +23,10 @@ import { LABEL, LABEL_INK, DISPLAY, WORD, WORDMARK, MICRO, BUTTON } from "@/app/
  * word. That is the brief's instruction and it is also what makes the page
  * survive having no photography yet: at this size the word IS the image.
  *
- * ILLUSTRATION IS NOT DECORATION. The drawn figures carry the two sections
- * that have nothing else in them yet — People, and the Notes journal. The
- * brief asks for illustrations "inside empty spaces", and an empty space with
- * a drawing in it is a page; an empty space with a grey box in it is a
- * building site.
+ * NO DRAWN FIGURES. An earlier pass had line drawings carrying the People and
+ * Notes sections while there was no photography. There is photography now —
+ * the owner's — so People shows the two frames that have hands in them and
+ * Notes stands on its type alone.
  *
  * ONE THING THE BRIEF LISTS THAT IS NOT HERE: lighters. The collection is
  * named as "coffee, food, candles, matches, lighters" and there is no lighter
@@ -158,19 +156,16 @@ export function Home({ sections, objects, linkTo }: Props) {
         <SectionWord word="People" note="02 — At Mantel" tone="paper" />
 
         <p className="font-mono text-[13px] leading-[1.7] max-w-[44ch] mt-[var(--s-3)] text-[color:var(--paper)] opacity-70">
-          The counter, the tables, the people who keep both going. Drawn until the
-          photographs exist — then drawn over them.
+          The counter, the tables, the people who keep both going.
         </p>
 
-        {/* Four tracks, not three. The pair is a landscape drawing and the
-            other two are portrait — given equal columns the pair rendered at a
-            third the height of its neighbours and the row read as a mistake.
-            It takes two tracks; they take one each, and everything sits on the
-            same floor line. */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-[clamp(1.5rem,4vw,3rem)] items-end mt-[clamp(2rem,6vh,3.5rem)]">
-          <FigureArt art="sitting" tone="paper" inline />
-          <FigureArt art="pair" tone="paper" inline className="col-span-2 order-last sm:order-none" />
-          <FigureArt art="walking" tone="paper" inline />
+        {/* The two photographs that have people in them. Neither shows a face,
+            which is the pattern running through every reference: a hand around
+            a cup, a hand holding a bag. Offset so the pair reads as a spread
+            rather than a row. */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-[clamp(1.5rem,4vw,3rem)] mt-[clamp(2rem,6vh,3.5rem)] max-w-[860px]">
+          <Plate spec={PLATES.counter} />
+          <Plate spec={PLATES.pour} className="sm:mt-[clamp(2rem,7vw,4.5rem)]" />
         </div>
       </section>
 
@@ -198,7 +193,7 @@ export function Home({ sections, objects, linkTo }: Props) {
         {/* No entries exist. Rather than invent a journal on a real business's
             site, the section says what it is for and shows the hand it will be
             written in. */}
-        <div className="grid grid-cols-1 md:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] gap-[clamp(1.5rem,5vw,4rem)] items-end mt-[var(--s-4)]">
+        <div className="mt-[var(--s-4)]">
           <div>
             <p className="font-serif text-[clamp(1.15rem,2.6vw,1.6rem)] leading-[1.35] max-w-[34ch] m-0 text-[color:var(--ink)]">
               Coffee, design, objects, process — written here when there is something
@@ -208,7 +203,6 @@ export function Home({ sections, objects, linkTo }: Props) {
               The first note is not written yet. It will not be filler.
             </p>
           </div>
-          <FigureArt art="sitting" tone="ink" inline className="max-w-[240px] justify-self-end opacity-90" />
         </div>
       </section>
 
@@ -223,10 +217,9 @@ export function Home({ sections, objects, linkTo }: Props) {
           </a>
         </div>
 
-        {(PLATES.facade.src || PLATES.counter.src || import.meta.env.DEV) && (
+        {(PLATES.facade.src || import.meta.env.DEV) && (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-[clamp(1rem,3vw,2.5rem)] mt-[clamp(2rem,6vh,3.5rem)]">
             <Plate spec={PLATES.facade} />
-            <Plate spec={PLATES.counter} className="sm:mt-[clamp(2rem,8vw,5rem)]" />
           </div>
         )}
       </section>

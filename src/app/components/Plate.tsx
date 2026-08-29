@@ -1,5 +1,4 @@
 import type { PlateSpec } from "@/app/content/plates";
-import { FigureArt } from "@/app/components/FigureArt";
 
 /*
  * A photo slot.
@@ -80,11 +79,6 @@ export function Plate({ spec, ratio = "var(--ratio-plate)", alt, className = "" 
           <PlaceholderRef spec={spec} />
         )}
 
-        {/* Above the photograph, below the caption. Drawn in dev over the
-            placeholder too — composing the figure against the frame is most
-            of the work, and it should not wait on the shoot. */}
-        {spec.figure && <FigureArt art={spec.figure.art} tone={spec.figure.tone} />}
-
         {caption !== "under" && (
           <figcaption
             className={`${CAPTION} absolute left-[var(--s-3)] bottom-[var(--s-3)] ${
@@ -115,13 +109,12 @@ const CAPTION =
  * Development only — see the note at the top of this file.
  *
  * The placeholder stands in for the photograph the brief describes, so it
- * takes that photograph's tone. A plate whose caption or figure is set to
- * "paper" has declared its frame is dark; drawing white line work over a pale
- * placeholder made both invisible, which defeated the point of being able to
- * compose the figure before the shoot.
+ * takes that photograph's tone: a plate whose caption is set to "paper" has
+ * declared its frame is dark, and a pale placeholder under white type would
+ * show nothing.
  */
 function PlaceholderRef({ spec }: { spec: PlateSpec }) {
-  const dark = spec.figure?.tone === "paper" || spec.caption === "paper";
+  const dark = spec.caption === "paper";
 
   return (
     <div

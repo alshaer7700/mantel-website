@@ -62,6 +62,20 @@
  * candle shot the way the café is shot looks like a mistake, and a barista
  * shot the way the candle is shot looks like an advert.
  *
+ * ── FOUR OF THESE ARE REAL NOW ────────────────────────────────────────────
+ *
+ * PL-01 to PL-04 are Mantel's own photographs, supplied by the owner: the
+ * espresso cups under the group head, the iced cup held against pink tile,
+ * the sealed bag with the heart on it, and the two chairs. They are cropped
+ * to the ratio each slot needs and nothing else was done to them.
+ *
+ * PL-05 and PL-06 are still open — the lit product shot and the shopfront.
+ * They render as nothing in production until they exist.
+ *
+ * There are no drawn figures over any of these. An earlier pass laid line
+ * drawings over the empty slots; the photographs are the owner's and they are
+ * what the site shows.
+ *
  * ── TYPE IN THE FRAME ─────────────────────────────────────────────────────
  *
  * A plate can carry its caption inside — see `caption` below and the note in
@@ -84,7 +98,10 @@
  * is a real shop's site, not a mood board. They are the brief, not the assets.
  */
 
-import type { FigureKey } from "@/app/components/FigureArt";
+import plEspresso from "@/assets/photos/pl-01-espresso.jpg";
+import plIced from "@/assets/photos/pl-02-iced.jpg";
+import plBag from "@/assets/photos/pl-03-bag.jpg";
+import plChairs from "@/assets/photos/pl-04-chairs.jpg";
 
 export type PlateSpec = {
   /** Empty until a real photograph exists. */
@@ -104,65 +121,49 @@ export type PlateSpec = {
    * lower left of that frame must be clear, and the right way round.
    */
   caption?: "under" | "paper" | "ink";
-  /**
-   * A drawn figure laid over the photograph — see components/FigureArt.
-   * `tone` is a fact about the frame underneath, exactly as it is for the
-   * caption: white line over a mid or dark photograph, ink over a pale one.
-   *
-   * A plate with a figure is shot EMPTY. That is the whole technique and it
-   * changes the brief: no model, no release, no waiting for the right person
-   * at the right moment — photograph the room and the real objects, and draw
-   * the people in afterwards.
-   */
-  figure?: { art: FigureKey; tone: "paper" | "ink" };
 };
 
 export const PLATES = {
   hero: {
-    src: "",
+    src: plEspresso,
     ref: "PL-01",
-    cap: "Counter, 07:40",
+    cap: "Espresso, poured",
     caption: "paper",
     brief:
-      "ROOM. The pour, from the side. Both hands in — kettle in one, the neck " +
+      "SHOT — the owner's photograph of the espresso cups under the group head. Original brief kept for the reshoot: the pour, from the side. Both hands in — kettle in one, the neck " +
       "of the brewer in the other. Steam catching window light from one side. " +
       "In profile, never facing the camera; crop at the shoulders and let the " +
       "face fall out of focus. Leave the lower left quiet and dark: the " +
       "caption sits in the frame on this one.",
   },
   counter: {
-    src: "",
+    src: plIced,
     ref: "PL-02",
-    cap: "Portafilter, close",
+    cap: "Iced, held",
     brief:
-      "ROOM. Hands and machine, nothing else — the strongest frame in the " +
+      "SHOT — the owner's photograph of the iced cup held against pink tile. Original brief kept for the reshoot: hands and machine, nothing else — the strongest frame in the " +
       "reference set is exactly this. Grounds on the steel, the light coming " +
       "off the group head, shot into the dark so the metal is the brightest " +
       "thing in frame. Tight enough that the edges are all machine. Blur on a " +
       "moving hand is wanted, not a reject.",
   },
   pour: {
-    src: "",
+    src: plBag,
     ref: "PL-03",
-    cap: "Milk, 62°C",
+    cap: "Bag, sealed",
     brief:
-      "ROOM. The pitcher tipping into the cup, mid-pour, the cup held in the " +
+      "SHOT — the owner's photograph of the sealed bag with the heart. Original brief kept for the reshoot: the pitcher tipping into the cup, mid-pour, the cup held in the " +
       "other hand. Dark bar behind, one light source, sleeve and wrist in " +
       "frame and no more of the person than that. The stream is the subject — " +
       "freeze it and let everything behind go soft.",
   },
   room: {
-    src: "",
+    src: plChairs,
     ref: "PL-04",
-    cap: "Room, afternoon",
-    caption: "under",
-    figure: { art: "pair", tone: "paper" },
+    cap: "Chairs, empty",
     brief:
-      "ROOM, SHOT EMPTY — a figure is drawn onto this one. Two chairs at a " +
-      "table, straight on, nobody in them. Put two real cups on the table at " +
-      "about two fifths of the frame height and leave the wall behind plain: " +
-      "the drawn hands close around those cups, so their position is the shot. " +
-      "Late light from one side. Do not photograph people for this frame.",
+      "SHOT — the owner's photograph of the two chairs, straight on against a " +
+      "plain wall. Cropped to 3:2 and otherwise untouched.",
   },
   hands: {
     src: "",
@@ -181,12 +182,10 @@ export const PLATES = {
     src: "",
     ref: "PL-06",
     cap: "Al Hidd",
-    figure: { art: "walking", tone: "paper" },
     brief:
-      "ROOM, SHOT EMPTY — a figure is drawn onto this one. The shopfront from " +
-      "across the street, early, with nobody in front of it. Overcast or first " +
-      "light; the sign legible but not centred. Leave the right half of the " +
-      "pavement clear for the drawn figure walking out.",
+      "STILL WANTED. The shopfront from across the street, early. Overcast or " +
+      "first light; the sign legible but not centred. Someone walking out with " +
+      "a cup if the timing allows — seen from behind, as the reference set is.",
   },
 } as const satisfies Record<string, PlateSpec>;
 
