@@ -10,3 +10,6 @@
 - [ ] Replace the Friday editorial photo with the supplied café-table image and verify its desktop/mobile crop before release.
 - [ ] Verify the final source and build output, then commit and push the full production-improvement release.
 - [ ] Confirm CI and the live `bymantel.com` deployment before delivering the completed-work and next-phase report.
+- [ ] Extract the supplied Figma Menu package, inspect its frame and assets, then map it to Mantel’s live menu data.
+- [ ] Implement and verify the Figma Menu redesign on desktop and mobile without weakening existing accessibility or data behavior.
+- [ ] Pause the Figma Menu redesign and restore the landing Hero to its original static photo and prior dimensions without the heart takeover state.

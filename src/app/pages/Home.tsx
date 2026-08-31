@@ -1,7 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import type { MenuCategory, Page } from "@/app/types";
 import heroImage from "@/imports/mantel-landing.webp";
-import heartImage from "@/imports/mantel-heart.png";
 import fridayImage from "@/imports/mood-friday-cafe-table.jpeg";
 import { formErrorMessage, subscribeNewsletter } from "@/lib/api/forms";
 
@@ -47,29 +46,6 @@ export function Home({ linkTo }: Props) {
   const [newsletterError, setNewsletterError] = useState("");
   const [newsletterHoneypot, setNewsletterHoneypot] = useState("");
   const newsletterLastSentAt = useRef(0);
-  const [heroHeartVisible, setHeroHeartVisible] = useState(false);
-  const heroPointerY = useRef<number | null>(null);
-
-  useEffect(() => {
-    const handleScroll = () => setHeroHeartVisible(window.scrollY > 24);
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  const handleHeroPointerMove = (event: React.PointerEvent<HTMLElement>) => {
-    const bounds = event.currentTarget.getBoundingClientRect();
-    const position = (event.clientY - bounds.top) / bounds.height;
-    const movement = heroPointerY.current === null ? 0 : event.clientY - heroPointerY.current;
-    heroPointerY.current = event.clientY;
-
-    if (movement > 2 || position > 0.58) setHeroHeartVisible(true);
-    if (movement < -2 || position < 0.42) setHeroHeartVisible(false);
-  };
-
-  const resetHeroPointer = () => {
-    heroPointerY.current = null;
-    if (window.scrollY <= 24) setHeroHeartVisible(false);
-  };
 
   const saveCookieConsent = (status: "accepted" | "declined" | "custom", preferences: CookiePreferences) => {
     try {
@@ -112,14 +88,8 @@ export function Home({ linkTo }: Props) {
 
   return (
     <div className="editorial-home">
-      <section
-        className={`editorial-hero ${heroHeartVisible ? "is-heart-visible" : ""}`}
-        aria-label="Mantel introduction"
-        onPointerMove={handleHeroPointerMove}
-        onPointerLeave={resetHeroPointer}
-      >
+      <section className="editorial-hero" aria-label="Mantel introduction">
         <img className="editorial-hero-photo" src={heroImage} alt="A Mantel shirt in the warm light of the café" />
-        <img className="editorial-hero-heart" src={heartImage} alt="Mantel heart artwork" aria-hidden={!heroHeartVisible} />
         <div className="editorial-hero-content">
           <div className="editorial-hero-links">
             <a {...linkTo("menu")} className="editorial-link">Menu</a>
