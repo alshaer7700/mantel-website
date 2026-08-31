@@ -23,7 +23,7 @@ export type LegalDoc = { title: string; updated: string; sections: LegalSection[
 
 export const PRIVACY_POLICY: LegalDoc = {
   title: "Privacy Policy",
-  updated: "22 August 2026",
+  updated: "31 August 2026",
   sections: [
     {
       paragraphs: [
@@ -56,7 +56,7 @@ export const PRIVACY_POLICY: LegalDoc = {
     {
       heading: "Cookies & tracking",
       paragraphs: [
-        "This site sets no cookies at all — not for advertising, not for analytics, and not for signing in. Everything kept in your browser is the local storage described above, including the sign-in token, which is why you are not asked to accept cookies. You can clear it at any time from your browser settings, or by signing out.",
+        "Mantel uses a consent preference saved in your browser’s local storage to remember the choice you make in our consent panel. We also use local storage for your bag and, when you sign in, for the session that keeps you signed in. We do not use advertising cookies. If we add analytics or marketing tools, we will describe them here and present the relevant choice in the consent panel.",
       ],
     },
     {
@@ -76,7 +76,7 @@ export const PRIVACY_POLICY: LegalDoc = {
 
 export const TERMS_OF_SERVICE: LegalDoc = {
   title: "Terms of Service",
-  updated: "10 July 2026",
+  updated: "31 August 2026",
   sections: [
     {
       paragraphs: [
@@ -86,7 +86,7 @@ export const TERMS_OF_SERVICE: LegalDoc = {
     {
       heading: "Orders & pick-up",
       paragraphs: [
-        "Orders placed through the site are for pick-up at Mantel in Hidd, Kingdom of Bahrain. An order is confirmed once you see the confirmation message. Payment is taken at pick-up by cash or card until online payment launches.",
+        "Orders placed through the site are for pick-up at Mantel in Hidd, Kingdom of Bahrain. An order is confirmed once you see the confirmation message. The current online order flow is cash on pick-up only; we do not take card payment through the website until a payment provider is launched and these terms are updated.",
         "All prices are in Bahraini Dinar (BD). Menu items and availability may change without notice; if something you ordered becomes unavailable, we'll offer an alternative or a refund.",
       ],
     },
@@ -163,7 +163,7 @@ export const FAQ_ITEMS: FaqItem[] = [
   {
     question: "How do I pay?",
     answer:
-      "At pick-up, by cash or card. Online card payment is coming soon — you'll be able to pay when you place the order.",
+      "Orders are currently cash on pick-up only. Online card payment is not available yet; we will update this page when it launches.",
   },
   {
     question: "When will my order be ready?",

@@ -13,7 +13,7 @@ export function Story({ linkTo }: Props) {
       <p className="editorial-overline">About Us</p>
       <div className="editorial-about-content">
         <h1>About Us.</h1>
-        <p className="editorial-about-placeholder">Short About Us paragraph coming soon.</p>
+        <p className="editorial-about-placeholder">Mantel is a small place in Hidd for good espresso and the small rituals around it. We keep the counter warm, the menu considered, and the pace a little slower — whether you are passing through or staying for another cup.</p>
         <a {...linkTo("contact")} className="editorial-link">Contact Mantel</a>
       </div>
     </div>
