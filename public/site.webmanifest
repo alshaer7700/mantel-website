@@ -1,0 +1,17 @@
+{
+  "name": "Mantel — Bahrain",
+  "short_name": "Mantel",
+  "description": "A café and small house of objects in Hidd, Bahrain.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f7f5f0",
+  "theme_color": "#f7f5f0",
+  "icons": [
+    {
+      "src": "/heart.webp",
+      "sizes": "2000x2000",
+      "type": "image/webp",
+      "purpose": "any"
+    }
+  ]
+}

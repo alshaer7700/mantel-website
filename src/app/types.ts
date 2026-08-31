@@ -7,7 +7,8 @@ export type Page =
   | "faq"
   | "privacy"
   | "terms"
-  | "refund";
+  | "refund"
+  | "admin";
 
 /*
  * The five headings on the printed menu, in the order they are printed. This

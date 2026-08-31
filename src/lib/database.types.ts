@@ -164,6 +164,24 @@ export type Database = {
         }
         Relationships: []
       }
+      order_ip_events: {
+        Row: {
+          created_at: string
+          id: number
+          ip: string
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          ip: string
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          ip?: string
+        }
+        Relationships: []
+      }
       order_items: {
         Row: {
           created_at: string
@@ -282,6 +300,27 @@ export type Database = {
         }
         Relationships: []
       }
+      staff_members: {
+        Row: {
+          active: boolean
+          created_at: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          role?: string
+          user_id: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       sellables: {
@@ -296,6 +335,27 @@ export type Database = {
       }
     }
     Functions: {
+      admin_dashboard: { Args: never; Returns: Json }
+      admin_update_contact_status: {
+        Args: { p_message_id: string; p_status: string }
+        Returns: boolean
+      }
+      admin_update_menu_availability: {
+        Args: { p_is_available: boolean; p_menu_item_id: string }
+        Returns: boolean
+      }
+      admin_update_newsletter_status: {
+        Args: { p_email: string; p_status: string }
+        Returns: boolean
+      }
+      admin_update_object_availability: {
+        Args: { p_is_available: boolean; p_object_id: string }
+        Returns: boolean
+      }
+      admin_update_order_status: {
+        Args: { p_order_id: string; p_status: string }
+        Returns: boolean
+      }
       assert_valid_customer: {
         Args: {
           customer_email: string
@@ -309,6 +369,7 @@ export type Database = {
         Args: { customer_email: string }
         Returns: string
       }
+      is_staff: { Args: never; Returns: boolean }
       place_order: {
         Args: {
           customer_email?: string
@@ -320,6 +381,7 @@ export type Database = {
         }
         Returns: string
       }
+      request_client_ip: { Args: never; Returns: string }
       submit_contact_message: {
         Args: {
           email: string

@@ -1,4 +1,6 @@
-import { Component, type ReactNode } from "react";
+import { Component, type ErrorInfo, type ReactNode } from "react";
+
+import { reportClientError } from "@/lib/monitoring";
 
 // Last-resort catch for render-time errors, so visitors get a branded
 // "reload" message instead of a blank white page.
@@ -10,6 +12,10 @@ export class ErrorBoundary extends Component<
 
   static getDerivedStateFromError() {
     return { hasError: true };
+  }
+
+  componentDidCatch(error: Error, info: ErrorInfo) {
+    reportClientError(error, { source: "react-error-boundary", componentStack: info.componentStack?.slice(0, 1200) });
   }
 
   render() {

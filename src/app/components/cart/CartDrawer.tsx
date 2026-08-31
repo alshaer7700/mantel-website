@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { ArrowUpRight, Minus, Plus, X } from "lucide-react";
 import { formatBhd, type CartLine } from "@/app/content/retail";
 import { orderReference, type PlaceOrderResult } from "@/lib/api/orders";
 import { messageFor } from "@/lib/api/errors";
+import { useDialogFocus } from "@/app/hooks/useDialogFocus";
 
 export type CheckoutDetails = {
   customerName: string;
@@ -68,6 +69,9 @@ export function CartDrawer({
     onClose();
   };
 
+  const drawerRef = useRef<HTMLElement>(null);
+  useDialogFocus(open, drawerRef, resetAfterClose);
+
   return (
     <>
       <div
@@ -77,15 +81,17 @@ export function CartDrawer({
       />
       <aside
         id={id}
+        ref={drawerRef}
         className={`editorial-cart-drawer ${open ? "is-open" : ""}`}
         aria-hidden={!open}
         aria-modal="true"
-        aria-label="Shopping cart"
+        aria-labelledby="cart-title"
+        tabIndex={-1}
       >
         <header className="editorial-cart-header">
           <div>
             <p className="editorial-overline">Your selection</p>
-            <h2>Cart{itemCount > 0 ? ` · ${itemCount}` : ""}</h2>
+            <h2 id="cart-title">Cart{itemCount > 0 ? ` · ${itemCount}` : ""}</h2>
           </div>
           <button type="button" onClick={resetAfterClose} aria-label="Close cart">
             <X size={20} strokeWidth={1.4} />
@@ -107,7 +113,7 @@ export function CartDrawer({
             </button>
           </div>
         ) : lines.length > 0 ? (
-          <div className="editorial-cart-lines">
+          <div className="editorial-cart-lines" aria-live="polite">
             {lines.map((line) => (
               <article className="editorial-cart-line" key={line.product.id}>
                 <div className={`editorial-cart-line-image editorial-object-card-${line.product.tone}`}>

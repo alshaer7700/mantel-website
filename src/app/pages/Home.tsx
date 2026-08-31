@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import type { MenuCategory, Page } from "@/app/types";
 import heroImage from "@/imports/mantel-landing.webp";
 import heartImage from "@/imports/mantel-heart.png";
-import fridayImage from "@/imports/mood-late-checkout.jpg";
+import fridayImage from "@/imports/mood-friday-cafe-table.jpeg";
 import { formErrorMessage, subscribeNewsletter } from "@/lib/api/forms";
 
 type Props = {

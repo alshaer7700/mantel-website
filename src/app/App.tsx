@@ -16,6 +16,7 @@ import { EditorialFooter } from "@/app/components/EditorialFooter";
 import { Cafe } from "@/app/pages/Cafe";
 import { Story } from "@/app/pages/Story";
 import { ContactUs, type ContactForm } from "@/app/pages/ContactUs";
+import { AdminDashboard } from "@/app/pages/AdminDashboard";
 import { useScrolled } from "@/app/hooks/useScrolled";
 import { SearchOverlay } from "@/app/components/SearchOverlay";
 import { AccountPanel } from "@/app/components/account/AccountPanel";
@@ -27,6 +28,30 @@ import { ORDERING_OPEN } from "@/lib/constants";
 import { formErrorMessage, submitContactMessage } from "@/lib/api/forms";
 
 const CART_STORAGE_KEY = "mantel-cart-v1";
+const SITE_ORIGIN = "https://bymantel.com";
+
+const SEO_BY_PAGE: Record<Page, { title: string; description: string }> = {
+  home: { title: "Mantel — Hidd, Kingdom of Bahrain", description: "Mantel is a café and small house of objects in Hidd, Bahrain. Coffee poured at the counter, candles and small things chosen to be used and kept." },
+  menu: { title: "Menu — Mantel Bahrain", description: "Coffee, food, aqua, sandwiches, and desserts served at Mantel in Hidd, Bahrain." },
+  objects: { title: "Retail — Mantel Bahrain", description: "Small objects for the ritual around coffee: matcha powder, candles, candle sticks, lighters, matches, and more from Mantel." },
+  story: { title: "About Us — Mantel Bahrain", description: "The story of Mantel, a café and small house of objects in Hidd, Kingdom of Bahrain." },
+  contact: { title: "Contact Us — Mantel Bahrain", description: "Contact Mantel in Bahrain for café, retail, wholesale, press, and customer-care enquiries." },
+  faq: { title: "FAQ — Mantel Bahrain", description: "Answers to common questions about Mantel café, pickup, retail objects, and customer care." },
+  privacy: { title: "Privacy — Mantel Bahrain", description: "Mantel’s privacy information and customer data practices." },
+  terms: { title: "Terms — Mantel Bahrain", description: "Mantel’s terms of service for café and retail interactions." },
+  refund: { title: "Refund Policy — Mantel Bahrain", description: "Mantel’s refund and cancellation information." },
+  admin: { title: "Staff Dashboard — Mantel", description: "Protected Mantel staff operations dashboard." },
+};
+
+function updateMeta(attribute: "name" | "property", key: string, content: string) {
+  let element = document.head.querySelector<HTMLMetaElement>(`meta[${attribute}="${key}"]`);
+  if (!element) {
+    element = document.createElement("meta");
+    element.setAttribute(attribute, key);
+    document.head.appendChild(element);
+  }
+  element.content = content;
+}
 
 export default function App() {
   // Boot from the URL, not from a hardcoded "home", so a deep link or a
@@ -248,6 +273,30 @@ export default function App() {
     }
   }, []);
 
+  useEffect(() => {
+    const seo = SEO_BY_PAGE[page];
+    const canonicalPath = pathFor(page, page === "menu" ? menuCategory : null);
+    const canonicalUrl = `${SITE_ORIGIN}${canonicalPath === "/" ? "/" : canonicalPath}`;
+    document.title = seo.title;
+    updateMeta("name", "description", seo.description);
+    updateMeta("name", "robots", page === "admin" ? "noindex,nofollow" : "index,follow");
+    updateMeta("property", "og:title", seo.title);
+    updateMeta("property", "og:description", seo.description);
+    updateMeta("property", "og:url", canonicalUrl);
+    updateMeta("property", "og:site_name", "Mantel");
+    const canonical = document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]');
+    if (canonical) canonical.href = canonicalUrl;
+  }, [page, menuCategory]);
+
+  useEffect(() => {
+    const overlayOpen = sidebarOpen || searchOpen || accountOpen || cartOpen;
+    const previousOverflow = document.body.style.overflow;
+    if (overlayOpen) document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [sidebarOpen, searchOpen, accountOpen, cartOpen]);
+
   /*
    * Props for anything that navigates. These are real anchors with real hrefs,
    * so they can be copied, bookmarked, opened in a new tab and read by
@@ -374,7 +423,7 @@ export default function App() {
               aria-controls="mantel-mobile-drawer"
               >
 
-              <span className="sr-only">Open navigation</span>
+              <span className="sr-only">{sidebarOpen ? "Close navigation" : "Open navigation"}</span>
               <span aria-hidden="true">☰</span>
             </button>
             <nav className="editorial-nav-primary" aria-label="Primary">
@@ -612,6 +661,15 @@ export default function App() {
           </div>
           <EditorialFooter linkTo={linkTo} />
         </main>
+      )}
+
+      {page === "admin" && (
+        <div className="flex flex-col min-h-screen" style={{ paddingTop: navHeight }}>
+          <div className="flex-1">
+            <AdminDashboard session={session} onRequireSignIn={() => setAccountOpen(true)} />
+          </div>
+          <EditorialFooter linkTo={linkTo} />
+        </div>
       )}
 
       {/* ══ FAQ PAGE ══ */}

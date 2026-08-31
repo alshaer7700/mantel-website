@@ -2128,3 +2128,289 @@
 .editorial-menu-retail-link:focus-visible {
   opacity: 0.55;
 }
+
+@layer components {
+  .mantel-admin-shell {
+    width: min(100%, 1440px);
+    margin: 0 auto;
+    padding: clamp(46px, 7vw, 96px) clamp(22px, 5vw, 72px) 96px;
+    color: var(--editorial-ink);
+  }
+
+  .mantel-admin-header {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 32px;
+    padding-bottom: 34px;
+    border-bottom: 1px solid var(--editorial-line);
+  }
+
+  .mantel-admin-header h1,
+  .mantel-admin-gate h1 {
+    margin: 12px 0 8px;
+    font-family: var(--font-serif);
+    font-size: clamp(48px, 7vw, 92px);
+    font-weight: 500;
+    letter-spacing: -0.055em;
+    line-height: 0.86;
+  }
+
+  .mantel-admin-email,
+  .mantel-admin-header-actions,
+  .mantel-admin-panel-heading > span,
+  .mantel-admin-panel-heading button,
+  .mantel-admin-summary-card p,
+  .mantel-admin-summary-card small,
+  .mantel-admin-table,
+  .mantel-admin-catalog-row small,
+  .mantel-admin-message a,
+  .mantel-admin-message time,
+  .mantel-admin-subscriber small,
+  .mantel-admin-secondary,
+  .mantel-admin-primary,
+  .mantel-admin-tabs button,
+  .mantel-admin-alert,
+  .mantel-admin-empty,
+  .mantel-admin-toggle {
+    font-family: var(--font-mono);
+  }
+
+  .mantel-admin-email {
+    margin: 0;
+    color: var(--editorial-muted);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+  }
+
+  .mantel-admin-header-actions,
+  .mantel-admin-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .mantel-admin-icon-action,
+  .mantel-admin-primary,
+  .mantel-admin-secondary,
+  .mantel-admin-tabs button,
+  .mantel-admin-panel-heading button,
+  .mantel-admin-toggle {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+  }
+
+  .mantel-admin-icon-action {
+    display: inline-grid;
+    width: 38px;
+    height: 38px;
+    place-items: center;
+    border: 1px solid var(--editorial-line);
+  }
+
+  .mantel-admin-primary,
+  .mantel-admin-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 42px;
+    padding: 0 14px;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+
+  .mantel-admin-primary {
+    background: var(--editorial-ink);
+    color: var(--editorial-paper);
+  }
+
+  .mantel-admin-secondary {
+    border: 1px solid var(--editorial-line);
+  }
+
+  .mantel-admin-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    margin: 24px 0 34px;
+    border-bottom: 1px solid var(--editorial-line);
+  }
+
+  .mantel-admin-tabs button {
+    padding: 12px 14px 13px;
+    border-bottom: 1px solid transparent;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: opacity 180ms ease, border-color 180ms ease;
+  }
+
+  .mantel-admin-tabs button:hover,
+  .mantel-admin-tabs button.is-active {
+    border-color: var(--editorial-ink);
+  }
+
+  .mantel-admin-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1px;
+    background: var(--editorial-line);
+  }
+
+  .mantel-admin-summary-card {
+    display: grid;
+    gap: 9px;
+    min-height: 170px;
+    padding: 18px;
+    background: var(--editorial-paper);
+  }
+
+  .mantel-admin-summary-card svg { color: var(--editorial-muted); }
+  .mantel-admin-summary-card p,
+  .mantel-admin-summary-card small { margin: 0; }
+  .mantel-admin-summary-card p { font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; }
+  .mantel-admin-summary-card strong { font-family: var(--font-serif); font-size: 50px; font-weight: 500; line-height: 0.9; }
+  .mantel-admin-summary-card small { color: var(--editorial-muted); font-size: 9px; }
+
+  .mantel-admin-overview-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1px;
+    margin-top: 1px;
+    background: var(--editorial-line);
+  }
+
+  .mantel-admin-panel,
+  .mantel-admin-catalog-group {
+    min-width: 0;
+    padding: 24px;
+    background: var(--editorial-paper);
+  }
+
+  .mantel-admin-panel-heading {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 22px;
+  }
+
+  .mantel-admin-panel-heading h2 {
+    margin: 0;
+    font-family: var(--font-serif);
+    font-size: clamp(28px, 4vw, 48px);
+    font-weight: 500;
+    letter-spacing: -0.04em;
+    line-height: 0.9;
+  }
+
+  .mantel-admin-panel-heading .editorial-overline { margin: 0 0 10px; }
+  .mantel-admin-panel-heading > span,
+  .mantel-admin-panel-heading button { color: var(--editorial-muted); font-size: 9px; letter-spacing: 0.06em; text-transform: uppercase; }
+  .mantel-admin-panel-heading button { display: inline-flex; align-items: center; gap: 5px; padding: 4px 0; }
+
+  .mantel-admin-table-wrap { width: 100%; overflow-x: auto; }
+  .mantel-admin-table { width: 100%; border-collapse: collapse; font-size: 10px; }
+  .mantel-admin-table th { padding: 0 10px 12px; color: var(--editorial-muted); font-size: 8px; font-weight: 500; letter-spacing: 0.08em; text-align: left; text-transform: uppercase; }
+  .mantel-admin-table td { padding: 14px 10px; border-top: 1px solid var(--editorial-line); vertical-align: top; }
+  .mantel-admin-table td:first-child,
+  .mantel-admin-table th:first-child { padding-left: 0; }
+  .mantel-admin-table td:last-child,
+  .mantel-admin-table th:last-child { padding-right: 0; }
+  .mantel-admin-table td strong,
+  .mantel-admin-table td small { display: block; }
+  .mantel-admin-table td strong { font-family: var(--font-serif); font-size: 18px; font-weight: 500; line-height: 1; }
+  .mantel-admin-table td small { margin-top: 5px; color: var(--editorial-muted); font-size: 8px; line-height: 1.35; }
+  .mantel-admin-table select,
+  .mantel-admin-message select,
+  .mantel-admin-subscriber select { min-height: 32px; border: 1px solid var(--editorial-line); padding: 0 28px 0 8px; background: var(--editorial-paper); color: var(--editorial-ink); font-family: var(--font-mono); font-size: 9px; }
+
+  .mantel-admin-status { display: inline-flex; padding: 5px 7px; border: 1px solid currentColor; font-family: var(--font-mono); font-size: 8px; letter-spacing: 0.05em; text-transform: uppercase; }
+  .mantel-admin-status.status-ready,
+  .mantel-admin-status.status-completed,
+  .mantel-admin-status.status-resolved { color: #3e6a4b; }
+  .mantel-admin-status.status-cancelled,
+  .mantel-admin-status.status-new { color: var(--editorial-red); }
+
+  .mantel-admin-catalog { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; background: var(--editorial-line); }
+  .mantel-admin-catalog > .mantel-admin-panel-heading { grid-column: 1 / -1; margin: 0; padding: 24px; background: var(--editorial-paper); }
+  .mantel-admin-catalog-group { padding: 22px; }
+  .mantel-admin-catalog-group .mantel-admin-panel-heading { margin-bottom: 14px; }
+  .mantel-admin-catalog-list { border-top: 1px solid var(--editorial-line); }
+  .mantel-admin-catalog-row,
+  .mantel-admin-subscriber { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 14px 0; border-bottom: 1px solid var(--editorial-line); }
+  .mantel-admin-catalog-row strong,
+  .mantel-admin-subscriber strong { display: block; font-family: var(--font-serif); font-size: 19px; font-weight: 500; line-height: 1; }
+  .mantel-admin-catalog-row small,
+  .mantel-admin-subscriber small { display: block; max-width: 38ch; margin-top: 5px; color: var(--editorial-muted); font-size: 8px; line-height: 1.35; }
+  .mantel-admin-catalog-row.is-off { opacity: 0.46; }
+  .mantel-admin-toggle { display: inline-flex; align-items: center; gap: 8px; min-width: 86px; padding: 7px 0; color: var(--editorial-muted); font-size: 8px; letter-spacing: 0.04em; text-transform: uppercase; }
+  .mantel-admin-toggle span { width: 26px; height: 14px; border: 1px solid currentColor; border-radius: 20px; position: relative; }
+  .mantel-admin-toggle span::after { position: absolute; top: 2px; left: 2px; width: 8px; height: 8px; border-radius: 50%; background: currentColor; content: ""; transition: transform 180ms ease; }
+  .mantel-admin-toggle[aria-pressed="true"] { color: #3e6a4b; }
+  .mantel-admin-toggle[aria-pressed="true"] span::after { transform: translateX(12px); }
+
+  .mantel-admin-message-list { display: grid; gap: 1px; background: var(--editorial-line); }
+  .mantel-admin-message { padding: 22px; background: var(--editorial-paper); }
+  .mantel-admin-message-head { display: flex; align-items: start; justify-content: space-between; gap: 20px; }
+  .mantel-admin-message h3 { margin: 0; font-family: var(--font-serif); font-size: 25px; font-weight: 500; line-height: 0.95; }
+  .mantel-admin-message a { display: inline-block; margin: 8px 12px 0 0; color: var(--editorial-muted); font-size: 9px; text-decoration: underline; text-underline-offset: 3px; }
+  .mantel-admin-message p { max-width: 68ch; margin: 22px 0 16px; font-family: var(--font-serif); font-size: 18px; line-height: 1.3; }
+  .mantel-admin-message time { color: var(--editorial-muted); font-size: 8px; }
+
+  .mantel-admin-subscriber-list { border-top: 1px solid var(--editorial-line); }
+  .mantel-admin-subscriber strong { font-size: 17px; }
+  .mantel-admin-loading,
+  .mantel-admin-empty { display: flex; align-items: center; gap: 10px; padding: 48px 0; color: var(--editorial-muted); font-size: 10px; letter-spacing: 0.04em; }
+  .mantel-admin-spin { animation: mantel-admin-spin 900ms linear infinite; }
+  @keyframes mantel-admin-spin { to { transform: rotate(360deg); } }
+  .mantel-admin-gate { max-width: 620px; padding: clamp(42px, 10vw, 120px) 0; }
+  .mantel-admin-gate > p:not(.editorial-overline) { max-width: 48ch; margin: 0 0 28px; color: var(--editorial-muted); font-family: var(--font-serif); font-size: 20px; line-height: 1.25; }
+  .mantel-admin-alert { margin: 0 0 18px; padding: 12px 14px; border: 1px solid var(--editorial-red); color: var(--editorial-red); font-size: 9px; letter-spacing: 0.04em; }
+  .mantel-admin-actions { align-items: stretch; }
+
+  :where(button, a, input, select, textarea):focus-visible {
+    outline: 2px solid var(--editorial-red);
+    outline-offset: 3px;
+  }
+
+  @media (max-width: 900px) {
+    .mantel-admin-header { align-items: start; flex-direction: column; }
+    .mantel-admin-header-actions { width: 100%; justify-content: space-between; }
+    .mantel-admin-summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .mantel-admin-overview-grid,
+    .mantel-admin-catalog { grid-template-columns: 1fr; }
+    .mantel-admin-catalog > .mantel-admin-panel-heading { grid-column: auto; }
+  }
+
+  @media (max-width: 560px) {
+    .mantel-admin-shell { padding: 34px 16px 64px; }
+    .mantel-admin-header h1,
+    .mantel-admin-gate h1 { font-size: clamp(46px, 15vw, 68px); }
+    .mantel-admin-tabs { margin-left: -16px; margin-right: -16px; padding: 0 16px; overflow-x: auto; flex-wrap: nowrap; }
+    .mantel-admin-tabs button { flex: 0 0 auto; padding-left: 10px; padding-right: 10px; }
+    .mantel-admin-panel,
+    .mantel-admin-catalog-group,
+    .mantel-admin-catalog > .mantel-admin-panel-heading { padding: 18px; }
+    .mantel-admin-summary-card { min-height: 134px; padding: 14px; }
+    .mantel-admin-summary-card strong { font-size: 38px; }
+    .mantel-admin-panel-heading { align-items: start; flex-direction: column; gap: 10px; }
+    .mantel-admin-table { min-width: 620px; }
+    .mantel-admin-catalog-row,
+    .mantel-admin-subscriber { align-items: start; flex-direction: column; }
+    .mantel-admin-toggle { align-self: flex-start; }
+    .mantel-admin-message-head { align-items: start; flex-direction: column; }
+    .mantel-admin-actions { align-items: stretch; flex-direction: column; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mantel-admin-spin { animation: none; }
+    .mantel-admin-toggle span::after { transition: none; }
+  }
+}

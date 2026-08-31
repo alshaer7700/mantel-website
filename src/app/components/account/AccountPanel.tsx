@@ -13,6 +13,7 @@ import {
 import { messageFor, type AppError } from "@/lib/api/errors";
 import { LABEL, LABEL_INK } from "@/app/components/type";
 import { ORDERING_OPEN } from "@/lib/constants";
+import { useDialogFocus } from "@/app/hooks/useDialogFocus";
 
 /*
  * The account, as one panel with five states rather than five pages.
@@ -50,6 +51,7 @@ export function AccountPanel({ session, recovering, onClose, navHeight, id }: Pr
   const [error, setError] = useState<string>("");
   const [notice, setNotice] = useState<string>("");
   const firstFieldRef = useRef<HTMLInputElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -67,6 +69,8 @@ export function AccountPanel({ session, recovering, onClose, navHeight, id }: Pr
   useEffect(() => {
     firstFieldRef.current?.focus();
   }, [mode]);
+
+  useDialogFocus(true, dialogRef, onClose);
 
   /* Load the profile once signed in, so the fields show what is stored rather
      than blank boxes that look unsaved. */
@@ -142,14 +146,17 @@ export function AccountPanel({ session, recovering, onClose, navHeight, id }: Pr
   return (
     <div
       id={id}
+      ref={dialogRef}
       className="fixed inset-x-0 z-50 bg-[color:var(--bg)] border-b border-[color:var(--line)]"
       style={{ top: navHeight }}
       role="dialog"
-      aria-label="Account"
+      aria-modal="true"
+      aria-labelledby="mantel-account-title"
+      tabIndex={-1}
     >
       <div className="px-[var(--pad)] py-[var(--s-3)] max-h-[70vh] overflow-y-auto">
         <div className="flex items-start justify-between gap-[var(--s-2)] mb-[var(--s-3)]">
-          <p className={LABEL}>{TITLES[mode]}</p>
+          <p className={LABEL} id="mantel-account-title">{TITLES[mode]}</p>
           <button
             onClick={onClose}
             aria-label="Close account"

@@ -1,9 +1,11 @@
 import { X, Search } from "lucide-react";
+import { useRef } from "react";
 import type { RefObject } from "react";
 import type { MenuItem, MenuCategoryKey } from "@/app/types";
 import { MENU_CATEGORIES } from "@/app/types";
 import { CATEGORY_LABELS, formatPrice } from "@/lib/format";
 import { LABEL } from "@/app/components/type";
+import { useDialogFocus } from "@/app/hooks/useDialogFocus";
 
 /*
  * Search, as a full-width panel across the top of the page rather than a
@@ -46,6 +48,8 @@ export function SearchOverlay({
   id,
 }: Props) {
   const typing = query.trim() !== "";
+  const dialogRef = useRef<HTMLDivElement>(null);
+  useDialogFocus(true, dialogRef, onClose);
 
   /* Only headings that actually have something under them. Aqua and Desserts
      are empty today (every item hidden pending a price), and a chip leading to
@@ -55,18 +59,23 @@ export function SearchOverlay({
   return (
     <div
       id={id}
+      ref={dialogRef}
       className="fixed inset-x-0 z-50 bg-[color:var(--bg)] border-b border-[color:var(--line)]"
       style={{ top: navHeight }}
       role="dialog"
-      aria-label="Search"
+      aria-modal="true"
+      aria-labelledby="mantel-search-title"
+      tabIndex={-1}
     >
       {/* The field, rule to rule. */}
       <div className="flex items-center gap-[var(--s-2)] px-[var(--pad)] py-[var(--s-2)] border-y border-[color:var(--line)]">
-        <Search size={16} strokeWidth={1.5} className="text-[color:var(--ink-muted)] shrink-0" />
+        <Search size={16} strokeWidth={1.5} className="text-[color:var(--ink-muted)] shrink-0" aria-hidden="true" />
+        <span id="mantel-search-title" className="sr-only">Search Mantel</span>
         <input
           ref={inputRef}
           type="text"
           placeholder="Search"
+          aria-label="Search Mantel menu"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           className="flex-1 min-w-0 bg-transparent border-0 outline-none font-mono text-[14px] text-[color:var(--ink)] placeholder:text-[color:var(--ink-muted)]"
