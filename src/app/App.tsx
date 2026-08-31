@@ -26,6 +26,7 @@ import type { Page, MenuCategory, MenuItem } from "@/app/types";
 import { pathFor, routeFor } from "@/lib/routes";
 import { ORDERING_OPEN } from "@/lib/constants";
 import { formErrorMessage, submitContactMessage } from "@/lib/api/forms";
+import { useDialogFocus } from "@/app/hooks/useDialogFocus";
 
 const CART_STORAGE_KEY = "mantel-cart-v1";
 const SITE_ORIGIN = "https://bymantel.com";
@@ -58,6 +59,8 @@ export default function App() {
   // refresh lands where it says it does.
   const [page, setPage] = useState<Page>(() => routeFor(window.location.pathname).page);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const sidebarRef = useRef<HTMLDivElement>(null);
+  useDialogFocus(sidebarOpen, sidebarRef, () => setSidebarOpen(false));
   const [cartOpen, setCartOpen] = useState(false);
   const [cartLines, setCartLines] = useState<CartLine[]>([]);
   const [retailProducts, setRetailProducts] = useState<RetailProduct[]>(RETAIL_PRODUCTS);
@@ -485,22 +488,25 @@ export default function App() {
       {/* Drawer */}
       <div
         id="mantel-mobile-drawer"
+        ref={sidebarRef}
         className={`fixed inset-0 z-[70] bg-background flex flex-col transition-transform duration-300 ease-in-out ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
         role="dialog"
         aria-modal="true"
-        aria-label="Mantel navigation"
+        aria-labelledby="mantel-mobile-drawer-title"
+        tabIndex={-1}
       >
         <div className="editorial-sidebar-header">
           <button
             type="button"
             className="editorial-sidebar-close"
             onClick={() => setSidebarOpen(false)}
+            aria-label="Close navigation"
           >
             Close
           </button>
-          <a {...linkTo("home")} className="editorial-sidebar-wordmark" aria-label="Mantel home">
+          <a {...linkTo("home")} className="editorial-sidebar-wordmark" aria-label="Mantel home" id="mantel-mobile-drawer-title">
             Mantel.
             <small>Bahrain</small>
           </a>
