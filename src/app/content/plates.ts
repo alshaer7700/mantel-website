@@ -43,8 +43,11 @@ export const PLATES = {
   pour: {
     src: "",
     ref: "PL-03",
-    cap: "Milk, 62°C",
-    brief: "Close. The pour mid-motion, cup on a plain surface. Nothing else in frame.",
+    cap: "Mantel., first pour",
+    brief:
+      "Close. Espresso mid-pour into a branded to-go cup ('Mantel.', 'Est. 2026') seated on the " +
+      "machine's drip tray. Machine fills the frame behind it — portafilter, steam wand, gauge. " +
+      "This is the Menu page's full-bleed banner, so wide enough to run edge to edge.",
   },
   room: {
     src: "",

@@ -1,19 +1,15 @@
 import type { MenuItem, MenuCategoryKey, MenuCategory, Page } from "@/app/types";
-import { Shelf } from "@/app/components/Shelf";
 import { BleedPlate } from "@/app/components/Plate";
-import { SectionHead } from "@/app/components/SectionHead";
 import { MenuList } from "@/app/components/menu/MenuList";
 import { PLATES } from "@/app/content/plates";
-import { LABEL } from "@/app/components/type";
-import { CATEGORY_LABELS } from "@/lib/format";
+import { LABEL, LABEL_INK } from "@/app/components/type";
 import { ORDERING_OPEN } from "@/lib/constants";
 
 /*
- * The full menu, on the shelf.
- *
- * The right-hand note under the rule says "Prices in BD" — the prototype's
- * line, and the reason MenuList prints bare numbers. Repeating "BD" on every
- * one of twelve rows is noise once it has been said at the top.
+ * The permanent-collection cover: a centered "Menu" in place of the old
+ * shelf-rule heading. Category filtering (/menu/coffee etc.) still narrows
+ * `sections` — see routes.ts — it just no longer changes this title, since
+ * the design has one fixed cover regardless of which slice is showing.
  */
 
 type Props = {
@@ -22,10 +18,6 @@ type Props = {
     onClick: (event: React.MouseEvent) => void;
   };
   sections: ReadonlyArray<readonly [MenuCategoryKey, MenuItem[]]>;
-  /* /menu/coffee narrows to one heading; bare /menu is everything. The
-     prototype has no per-category URL, but this site already ships them and
-     they are linkable and bookmarked — dropping the filter would leave the
-     routes resolving to a page that ignores them. */
   category: MenuCategory;
   loading: boolean;
   error: boolean;
@@ -36,40 +28,42 @@ export function Cafe({ linkTo, sections, category, loading, error }: Props) {
   const hasItems = shown.some(([, items]) => items.length > 0);
 
   return (
-    <div className="pt-[clamp(3rem,9vh,6rem)]">
-      <Shelf tag="Menu" note="Prices in BD">
-        <SectionHead
-          as="h1"
-          title={category ? CATEGORY_LABELS[category] + "." : "The café."}
-          aside={
-            ORDERING_OPEN ? (
-              <a {...linkTo("pickup")} className={`${LABEL} editorial-menu-retail-link`}>
-                Add to bag · collect in 15 min <span aria-hidden="true">↗</span>
+    <div>
+      <header className="text-center pt-[clamp(2.5rem,7vh,4rem)] pb-[clamp(2rem,6vh,3.5rem)]">
+        <h1 className="font-serif font-bold uppercase text-[clamp(2.6rem,8.5vw,5rem)] tracking-[-0.01em] leading-none m-0 text-[color:var(--ink)]">
+          Menu
+        </h1>
+        <div aria-hidden="true" className="mx-auto mt-[26px] mb-[16px] w-px h-[34px] bg-[color:var(--line)]" />
+        <p className={LABEL}>
+          Permanent collection · Prices in BD
+          {ORDERING_OPEN && (
+            <>
+              {" · "}
+              <a {...linkTo("pickup")} className={LABEL_INK}>
+                Order before reach <span aria-hidden="true">↗</span>
               </a>
-            ) : (
-              <span className={LABEL}>Ordering opens soon</span>
-            )
-          }
-        />
+            </>
+          )}
+        </p>
+      </header>
 
-        <BleedPlate spec={PLATES.pour} className="mb-[clamp(3rem,8vh,5rem)]" />
+      <BleedPlate spec={PLATES.pour} className="mb-[clamp(3rem,8vh,5rem)]" />
 
-        {loading ? (
-          <p className="font-mono text-[14px] text-[color:var(--ink-muted)] py-[var(--s-5)]">
-            Loading…
-          </p>
-        ) : error ? (
-          <p className="font-mono text-[14px] text-[color:var(--ink-muted)] py-[var(--s-5)]">
-            Couldn't load the menu right now — please try again shortly.
-          </p>
-        ) : !hasItems ? (
-          <p className="font-mono text-[14px] text-[color:var(--ink-muted)] py-[var(--s-5)]">
-            The menu is being set.
-          </p>
-        ) : (
-          <MenuList sections={shown} />
-        )}
-      </Shelf>
+      {loading ? (
+        <p className="font-mono text-[14px] text-[color:var(--ink-muted)] py-[var(--s-5)]">
+          Loading…
+        </p>
+      ) : error ? (
+        <p className="font-mono text-[14px] text-[color:var(--ink-muted)] py-[var(--s-5)]">
+          Couldn't load the menu right now — please try again shortly.
+        </p>
+      ) : !hasItems ? (
+        <p className="font-mono text-[14px] text-[color:var(--ink-muted)] py-[var(--s-5)]">
+          The menu is being set.
+        </p>
+      ) : (
+        <MenuList sections={shown} />
+      )}
     </div>
   );
 }
