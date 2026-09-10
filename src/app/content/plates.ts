@@ -1,3 +1,5 @@
+import espressoPourImage from "@/imports/mood-espresso-pour.jpeg";
+
 /*
  * Every photograph the site has a place for, and the brief for shooting it.
  *
@@ -41,7 +43,7 @@ export const PLATES = {
     brief: "Close. Hands only, no faces. Coffee grounds, brass, matte black. Shot at f/2.8.",
   },
   pour: {
-    src: "",
+    src: espressoPourImage,
     ref: "PL-03",
     cap: "Mantel., first pour",
     brief:
