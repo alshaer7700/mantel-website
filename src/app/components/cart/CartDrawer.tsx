@@ -116,9 +116,11 @@ export function CartDrawer({
           <div className="editorial-cart-lines" aria-live="polite">
             {lines.map((line) => (
               <article className="editorial-cart-line" key={line.product.id}>
-                <div className={`editorial-cart-line-image editorial-object-card-${line.product.tone}`}>
-                  <img src={line.product.image} alt="" />
-                </div>
+                {line.product.image && (
+                  <div className={`editorial-cart-line-image ${line.product.tone ? `editorial-object-card-${line.product.tone}` : ""}`}>
+                    <img src={line.product.image} alt="" />
+                  </div>
+                )}
                 <div className="editorial-cart-line-info">
                   <div className="editorial-cart-line-heading">
                     <div>
@@ -148,7 +150,7 @@ export function CartDrawer({
         ) : (
           <div className="editorial-cart-empty">
             <p className="editorial-cart-empty-title">Your bag is empty.</p>
-            <p>Add an object from Retail to begin your selection.</p>
+            <p>Add something from Order Before Reach or Retail to begin your selection.</p>
           </div>
         )}
 

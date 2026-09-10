@@ -1,4 +1,4 @@
-import type { MenuItem, MenuCategoryKey, MenuCategory } from "@/app/types";
+import type { MenuItem, MenuCategoryKey, MenuCategory, Page } from "@/app/types";
 import { Shelf } from "@/app/components/Shelf";
 import { BleedPlate } from "@/app/components/Plate";
 import { SectionHead } from "@/app/components/SectionHead";
@@ -17,6 +17,10 @@ import { ORDERING_OPEN } from "@/lib/constants";
  */
 
 type Props = {
+  linkTo: (page: Page, category?: MenuCategory) => {
+    href: string;
+    onClick: (event: React.MouseEvent) => void;
+  };
   sections: ReadonlyArray<readonly [MenuCategoryKey, MenuItem[]]>;
   /* /menu/coffee narrows to one heading; bare /menu is everything. The
      prototype has no per-category URL, but this site already ships them and
@@ -27,7 +31,7 @@ type Props = {
   error: boolean;
 };
 
-export function Cafe({ sections, category, loading, error }: Props) {
+export function Cafe({ linkTo, sections, category, loading, error }: Props) {
   const shown = category ? sections.filter(([key]) => key === category) : sections;
   const hasItems = shown.some(([, items]) => items.length > 0);
 
@@ -39,7 +43,7 @@ export function Cafe({ sections, category, loading, error }: Props) {
           title={category ? CATEGORY_LABELS[category] + "." : "The café."}
           aside={
             ORDERING_OPEN ? (
-              <a href="/objects" className={`${LABEL} editorial-menu-retail-link`}>
+              <a {...linkTo("pickup")} className={`${LABEL} editorial-menu-retail-link`}>
                 Add to bag · collect in 15 min <span aria-hidden="true">↗</span>
               </a>
             ) : (
