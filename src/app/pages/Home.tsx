@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import type { MenuCategory, Page } from "@/app/types";
 import heroImage from "@/imports/mantel-landing.webp";
-import fridayImage from "@/imports/mood-friday-cafe-table.jpeg";
+import fridayImage from "@/imports/mood-friday-espresso-table.jpeg";
 import { formErrorMessage, subscribeNewsletter } from "@/lib/api/forms";
 
 type Props = {
@@ -111,7 +111,7 @@ export function Home({ linkTo }: Props) {
           </div>
         </div>
         <div className="editorial-intro-media">
-          <img src={fridayImage} alt="A blurred evening moment that evokes a Friday at Mantel" />
+          <img src={fridayImage} alt="A small sidewalk table set for two outside a café" />
         </div>
       </section>
 
