@@ -101,7 +101,7 @@ export function Home({ linkTo }: Props) {
         <div className="editorial-intro-copy">
           <p className="editorial-overline">01 — A Mantel ritual</p>
           <h2>Friday Espresso.</h2>
-          <div className="editorial-inline-links"><br />
+          <div className="editorial-inline-links">
             <a {...linkTo("menu")} className="editorial-link">View the details</a>
             <a {...linkTo("contact")} className="editorial-link">Find us</a>
           </div>
