@@ -100,7 +100,7 @@ export function Home({ linkTo }: Props) {
       <section className="editorial-intro" id="menu">
         <div className="editorial-intro-copy">
           <p className="editorial-overline">01 — A Mantel ritual</p>
-          <h2>Our Friday nights, or our espresso Friday.</h2>
+          <h2>Friday Espresso.</h2>
           <p>
             A small room, a good espresso, and the feeling that the week has finally made it to
             the other side. Come as you are. Stay for another cup.
