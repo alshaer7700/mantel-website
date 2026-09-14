@@ -15,6 +15,7 @@ import type { Page, MenuCategory } from "@/app/types";
 export const ROUTES: Record<Page, string> = {
   home: "/",
   menu: "/menu",
+  pickup: "/pickup",
   objects: "/objects",
   story: "/story",
   contact: "/contact",

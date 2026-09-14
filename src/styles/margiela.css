@@ -216,6 +216,16 @@
     justify-content: flex-end;
   }
 
+  /*
+   * Margin-top rather than relying on the preceding paragraph's own
+   * margin-bottom: the intro copy's <p> is optional (Home.tsx renders the
+   * heading straight into these links when there's no body copy), and this
+   * row still needs air above it either way.
+   */
+  .editorial-inline-links {
+    margin-top: 30px;
+  }
+
   .editorial-link {
     display: inline-flex;
     align-items: center;

@@ -10,10 +10,11 @@ import { Objects } from "@/app/pages/Objects";
 import { RETAIL_PRODUCTS } from "@/app/content/retail";
 import { fetchObjects } from "@/lib/api/objects";
 import { CartDrawer, type CheckoutDetails } from "@/app/components/cart/CartDrawer";
-import type { CartLine, RetailProduct } from "@/app/content/retail";
+import type { CartLine, CartProduct, RetailProduct } from "@/app/content/retail";
 import { placeOrder, type PlaceOrderResult } from "@/lib/api/orders";
 import { EditorialFooter } from "@/app/components/EditorialFooter";
 import { Cafe } from "@/app/pages/Cafe";
+import { PickUp } from "@/app/pages/PickUp";
 import { Story } from "@/app/pages/Story";
 import { ContactUs, type ContactForm } from "@/app/pages/ContactUs";
 import { AdminDashboard } from "@/app/pages/AdminDashboard";
@@ -34,6 +35,7 @@ const SITE_ORIGIN = "https://bymantel.com";
 const SEO_BY_PAGE: Record<Page, { title: string; description: string }> = {
   home: { title: "Mantel — Hidd, Kingdom of Bahrain", description: "Mantel is a café and small house of objects in Hidd, Bahrain. Coffee poured at the counter, candles and small things chosen to be used and kept." },
   menu: { title: "Menu — Mantel Bahrain", description: "Coffee, food, aqua, sandwiches, and desserts served at Mantel in Hidd, Bahrain." },
+  pickup: { title: "Order Before Reach — Mantel Bahrain", description: "Order ahead for pick-up at Mantel in Hidd, Bahrain — add what you want and collect it at the counter." },
   objects: { title: "Retail — Mantel Bahrain", description: "Small objects for the ritual around coffee: matcha powder, candles, candle sticks, lighters, matches, and more from Mantel." },
   story: { title: "About Us — Mantel Bahrain", description: "The story of Mantel, a café and small house of objects in Hidd, Kingdom of Bahrain." },
   contact: { title: "Contact Us — Mantel Bahrain", description: "Contact Mantel in Bahrain for café, retail, wholesale, press, and customer-care enquiries." },
@@ -43,6 +45,22 @@ const SEO_BY_PAGE: Record<Page, { title: string; description: string }> = {
   refund: { title: "Refund Policy — Mantel Bahrain", description: "Mantel’s refund and cancellation information." },
   admin: { title: "Staff Dashboard — Mantel", description: "Protected Mantel staff operations dashboard." },
 };
+
+/*
+ * A menu_items row and an objects row already meet server-side, in the
+ * `sellables` view place_order reads from (supabase/009) — a menu item's own
+ * id IS the id that view and the RPC expect, unlike a retail product, which
+ * only gets a usable backendId once matched against the fetched objects list.
+ */
+function menuItemToCartProduct(item: MenuItem): CartProduct {
+  return {
+    id: item.id,
+    backendId: item.id,
+    name: item.name,
+    price: item.price,
+    image: item.image_url,
+  };
+}
 
 function updateMeta(attribute: "name" | "property", key: string, content: string) {
   let element = document.head.querySelector<HTMLMetaElement>(`meta[${attribute}="${key}"]`);
@@ -119,11 +137,15 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (retailLoading) return;
+    // Waits on both catalogs: a cart saved with a café line would otherwise
+    // rehydrate before menuItems arrives and silently drop that line.
+    if (retailLoading || menuLoading) return;
     try {
       const saved = JSON.parse(window.localStorage.getItem(CART_STORAGE_KEY) ?? "null");
       if (Array.isArray(saved)) {
-        const productsById = new Map(retailProducts.map((product) => [product.id, product]));
+        const productsById = new Map<string, CartProduct>();
+        for (const product of retailProducts) productsById.set(product.id, product);
+        for (const item of menuItems) productsById.set(item.id, menuItemToCartProduct(item));
         const restored = saved.flatMap((entry) => {
           if (!entry || typeof entry.productId !== "string") return [];
           const product = productsById.get(entry.productId);
@@ -137,7 +159,7 @@ export default function App() {
       // A blocked or malformed localStorage value should never stop the store.
     }
     setCartHydrated(true);
-  }, [retailLoading, retailProducts]);
+  }, [retailLoading, retailProducts, menuLoading, menuItems]);
 
   useEffect(() => {
     if (!cartHydrated) return;
@@ -306,7 +328,7 @@ export default function App() {
    * crawlers. The click handler only takes over the plain left-click —
    * modified clicks fall through to the browser so ⌘-click still opens a tab.
    */
-  const addToCart = (product: RetailProduct) => {
+  const addToCart = (product: CartProduct) => {
     setCartLines((current) => {
       const existing = current.find((line) => line.product.id === product.id);
       if (existing) {
@@ -431,6 +453,7 @@ export default function App() {
             </button>
             <nav className="editorial-nav-primary" aria-label="Primary">
               <a {...linkTo("menu")} className="editorial-nav-link">Menu</a>
+              <a {...linkTo("pickup")} className="editorial-nav-link">Pick Up</a>
               <a {...linkTo("objects")} className="editorial-nav-link">Retail</a>
               <a {...linkTo("story")} className="editorial-nav-link">About Us</a>
             </nav>
@@ -545,6 +568,12 @@ export default function App() {
           </a>
           <a
             className="text-left font-serif font-normal text-2xl text-foreground hover:opacity-50 transition-opacity"
+            {...linkTo("pickup")}
+          >
+            Pick Up
+          </a>
+          <a
+            className="text-left font-serif font-normal text-2xl text-foreground hover:opacity-50 transition-opacity"
             {...linkTo("objects")}
           >
             Retail
@@ -624,12 +653,30 @@ export default function App() {
       {page === "menu" && (
         <main id="main-content" className="flex flex-col min-h-screen" style={{ paddingTop: navHeight }}>
           <div className="flex-1 px-[var(--pad)]">
-            <Cafe sections={sections} category={menuCategory} loading={menuLoading} error={menuError} />
+            <Cafe linkTo={linkTo} sections={sections} category={menuCategory} loading={menuLoading} error={menuError} />
           </div>
           <EditorialFooter linkTo={linkTo} />
         </main>
       )}
 
+      {/* ══ PICK UP / ORDER BEFORE REACH PAGE ══ */}
+      {page === "pickup" && (
+        <main id="main-content" className="flex flex-col min-h-screen" style={{ paddingTop: navHeight }}>
+          <div className="flex-1 px-[var(--pad)]">
+            <PickUp
+              linkTo={linkTo}
+              sections={sections}
+              loading={menuLoading}
+              error={menuError}
+              cartLines={cartLines}
+              onAdd={(item) => addToCart(menuItemToCartProduct(item))}
+              onIncrement={incrementCart}
+              onDecrement={decrementCart}
+            />
+          </div>
+          <EditorialFooter linkTo={linkTo} />
+        </main>
+      )}
 
       {/* ══ OBJECTS PAGE ══ */}
       {page === "objects" && (

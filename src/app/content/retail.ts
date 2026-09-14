@@ -5,19 +5,31 @@ import retailCandleImage from "@/imports/retail-candle.png";
 import retailMatchaImage from "@/imports/retail-matcha.png";
 import retailMatchSticksImage from "@/imports/retail-match-sticks.png";
 
-export type RetailProduct = {
+/*
+ * The shape a cart line needs, regardless of whether it came from the Retail
+ * shelf or the Pick Up page: an id the sellables view recognises, a name and
+ * a price. Image and tone are retail's color-blocked product photography —
+ * café items on Pick Up have neither, so the cart and its line items render
+ * without them rather than requiring a fake value.
+ */
+export type CartProduct = {
   id: string;
-  /** Supabase objects.id used by the secure place_order RPC. */
+  /** Supabase sellables.id (a menu_items or objects row) used by place_order. */
   backendId?: string;
   name: string;
-  description: string;
   price: number;
+  image?: string | null;
+  tone?: string;
+};
+
+export type RetailProduct = CartProduct & {
+  description: string;
   image: string;
   tone: string;
 };
 
 export type CartLine = {
-  product: RetailProduct;
+  product: CartProduct;
   quantity: number;
 };
 

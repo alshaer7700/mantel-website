@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import type { MenuCategory, Page } from "@/app/types";
 import heroImage from "@/imports/mantel-landing.webp";
-import fridayImage from "@/imports/mood-friday-cafe-table.jpeg";
+import fridayImage from "@/imports/mood-friday-espresso-table.jpeg";
 import { formErrorMessage, subscribeNewsletter } from "@/lib/api/forms";
 
 type Props = {
@@ -100,18 +100,14 @@ export function Home({ linkTo }: Props) {
       <section className="editorial-intro" id="menu">
         <div className="editorial-intro-copy">
           <p className="editorial-overline">01 — A Mantel ritual</p>
-          <h2>Our Friday nights, or our espresso Friday.</h2>
-          <p>
-            A small room, a good espresso, and the feeling that the week has finally made it to
-            the other side. Come as you are. Stay for another cup.
-          </p>
+          <h2>Friday Espresso.</h2>
           <div className="editorial-inline-links">
-            <a {...linkTo("menu")} className="editorial-link">View the menu</a>
+            <a {...linkTo("menu")} className="editorial-link">View the details</a>
             <a {...linkTo("contact")} className="editorial-link">Find us</a>
           </div>
         </div>
         <div className="editorial-intro-media">
-          <img src={fridayImage} alt="A blurred evening moment that evokes a Friday at Mantel" />
+          <img src={fridayImage} alt="A small sidewalk table set for two outside a café" />
         </div>
       </section>
 
