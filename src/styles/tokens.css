@@ -117,7 +117,7 @@
    * rather than four on a 320px phone. The photographic hero keeps its own
    * oversized type — it is an image treatment, not a section title.
    */
-  --fs-section-title: clamp(34px, 4.6vw, 58px);
+  --fs-section-title: clamp(27px, 3.4vw, 44px);
   --fs-item:         17px;
   --fs-desc:         14px;
   --fs-price:        14px;
