@@ -36,7 +36,7 @@ export function PickUpList({
     <div>
       {filled.map(([key, items]) => (
         <section key={key} className="mb-[52px]">
-          <h3 className="font-serif font-normal text-[clamp(1.4rem,3.4vw,2rem)] tracking-[-0.01em] m-0 mb-[var(--s-2)] text-[color:var(--ink)]">
+          <h3 className="font-serif font-normal text-[length:var(--fs-subsection-title)] tracking-[-0.01em] m-0 mb-[var(--s-2)] text-[color:var(--ink)]">
             {CATEGORY_LABELS[key]}
           </h3>
           {items.map((item) => (

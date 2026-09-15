@@ -29,7 +29,7 @@ export function MenuList({
           <p className={LABEL}>{String(index + 1).padStart(2, "0")} —</p>
           <h3
             style={{ fontFamily: GROTESK }}
-            className="font-medium uppercase text-[clamp(1.6rem,4.4vw,2.4rem)] tracking-[0.005em] leading-[1.05] m-0 mt-[10px] mb-[28px] text-[color:var(--ink)]"
+            className="font-medium uppercase text-[length:var(--fs-subsection-title)] tracking-[0.005em] leading-[1.05] m-0 mt-[10px] mb-[28px] text-[color:var(--ink)]"
           >
             {CATEGORY_LABELS[key]}
           </h3>

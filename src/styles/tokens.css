@@ -102,6 +102,30 @@
   --fs-logo:         22px;
   --fs-nav:          13px;
   --fs-heading:      32px;
+
+  /*
+   * The one display size every section and page title uses.
+   *
+   * Before this token each heading carried its own clamp() — the home page's
+   * two sections alone ran clamp(40px, 6vw, 82px) and clamp(52px, 7vw, 92px),
+   * so they never sat at the same level, and Retail, About and Contact each
+   * picked a third, fourth and fifth size. One value means a visitor moving
+   * between pages reads the same voice at the same volume.
+   *
+   * Fluid because these headings sit in fluid containers; the floor is sized
+   * so the longest title ("Order Before Reach.") still breaks to two lines
+   * rather than four on a 320px phone. The photographic hero keeps its own
+   * oversized type — it is an image treatment, not a section title.
+   */
+  --fs-section-title: clamp(22px, 2.6vw, 34px);
+
+  /*
+   * The rank below a title: a menu category, a Pick Up section. Derived rather
+   * than stated, so shrinking the title above cannot leave a sub-heading
+   * shouting over it — which is exactly what happened when both carried their
+   * own clamp() and only one of them was tuned.
+   */
+  --fs-subsection-title: calc(var(--fs-section-title) * 0.72);
   --fs-item:         17px;
   --fs-desc:         14px;
   --fs-price:        14px;

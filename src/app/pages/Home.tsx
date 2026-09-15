@@ -3,6 +3,7 @@ import type { MenuCategory, Page } from "@/app/types";
 import heroImage from "@/imports/mantel-landing.webp";
 import fridayImage from "@/imports/mood-friday-espresso-table.jpeg";
 import { formErrorMessage, subscribeNewsletter } from "@/lib/api/forms";
+import { MAPS_URL } from "@/lib/constants";
 
 type Props = {
   linkTo: (p: Page, c?: MenuCategory) => {
@@ -102,8 +103,22 @@ export function Home({ linkTo }: Props) {
           <p className="editorial-overline">01 — A Mantel ritual</p>
           <h2>Friday Espresso.</h2>
           <div className="editorial-inline-links">
-            <a {...linkTo("menu")} className="editorial-link">View the details</a>
-            <a {...linkTo("contact")} className="editorial-link">Find us</a>
+            <a {...linkTo("ritual")} className="editorial-link">View the details</a>
+            {/*
+             * The one outbound link in this section, and the only reason it is a
+             * plain <a> rather than a linkTo(): "Find us" means the pin on
+             * Google Maps, not the contact form it used to open. Opened in a new
+             * tab with rel="noopener" so the map never replaces the site, and
+             * the URL lives in lib/constants so there is one place to change it.
+             */}
+            <a
+              className="editorial-link"
+              href={MAPS_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Find us
+            </a>
           </div>
         </div>
         <div className="editorial-intro-media">

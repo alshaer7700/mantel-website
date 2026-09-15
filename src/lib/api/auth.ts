@@ -44,8 +44,17 @@ function fromAuthError(error: AuthError): AppError {
   }
   if (raw.includes("signups not allowed") || raw.includes("signup is disabled")) {
     /*
-     * The expected result until public signup is enabled on the project
-     * (audit M-6, disabled deliberately and verified 2026-07-10).
+     * The expected result until public signup is enabled on the project.
+     *
+     * Not a guess: GET /auth/v1/settings on the live project returns
+     * "disable_signup": true (re-checked 2026-09-15), and POST /auth/v1/signup
+     * answers 422 signup_disabled / "Signups not allowed for this instance" —
+     * which is the string the branch above matches. Flipping it is a dashboard
+     * change (Authentication → Sign In / Providers → "Allow new users to sign
+     * up"), not a code one; nothing in this file can lift it. The same call
+     * reports "mailer_autoconfirm": false, so when signup IS enabled, register()
+     * will come back with no session and AccountPanel's `sent` state — the
+     * check-your-inbox screen — is the one that runs.
      *
      * NOT `forbidden`. That kind already means "ordering is locked", and
      * messageFor renders it as "Ordering opens soon — the menu is here to
@@ -55,8 +64,65 @@ function fromAuthError(error: AuthError): AppError {
      */
     return { kind: "notice", message: "Accounts aren't open yet — ordering and sign-up arrive together." };
   }
-  if (raw.includes("password") && raw.includes("6")) {
-    return { kind: "notice", message: "Use at least 6 characters for the password." };
+  /*
+   * The password rules, as the project actually enforces them — checked
+   * against the live endpoint rather than assumed.
+   *
+   * ORDER MATTERS, and the previous version of this branch is why. It read
+   *
+   *     raw.includes("password") && raw.includes("6")
+   *
+   * and answered "Use at least 6 characters for the password." That is right
+   * for "Password should be at least 6 characters." It is badly wrong for the
+   * other rejection this project issues:
+   *
+   *     "Password should contain at least one character of each:
+   *      abcdefghijklmnopqrstuvwxyz, ABCDEFGHIJKLMNOPQRSTUVWXYZ, 0123456789."
+   *
+   * which contains "password", and contains "6" — inside "0123456789". So
+   * someone whose password was long enough but had no capital was told to make
+   * it longer, did, and was rejected again with the same advice. The character
+   * rule is therefore tested FIRST, and the length rule reads the number out of
+   * the message instead of searching the whole string for a digit.
+   */
+  if (raw.includes("should contain at least one character")) {
+    return {
+      kind: "notice",
+      message: "Use a mix of capitals, small letters and at least one number.",
+    };
+  }
+  const tooShort = raw.match(/at least (\d+) characters/);
+  if (tooShort) {
+    return { kind: "notice", message: `Use at least ${tooShort[1]} characters for the password.` };
+  }
+  /*
+   * Supabase rejects addresses at reserved demo domains (example.com and
+   * friends) outright. Without this the visitor gets the generic apology and no
+   * idea which of the two fields is the problem.
+   */
+  if (raw.includes("is invalid") && raw.includes("email")) {
+    return { kind: "notice", message: "That email address isn't one we can send to." };
+  }
+  /*
+   * Two different limits wearing the same word, and telling them apart matters
+   * because only one of them is the visitor's doing.
+   *
+   * "email rate limit exceeded" is the PROJECT's mail quota, not their
+   * attempts — the built-in SMTP sends only a handful an hour, so the third
+   * person to sign up in an hour gets it having done nothing wrong. Telling
+   * them "too many attempts" blames them for someone else's sign-up and
+   * invites them to keep retrying, which cannot work. It is worth saying
+   * plainly that the mail is the problem and the counter still exists.
+   *
+   * This goes away on its own the moment a real SMTP provider is configured
+   * on the project; nothing here needs changing then.
+   */
+  if (raw.includes("email rate limit") || raw.includes("over_email_send_rate_limit")) {
+    return {
+      kind: "rate-limited",
+      message:
+        "We couldn't send the email just now — too many have gone out in the last hour. Try again shortly, or just come to the counter.",
+    };
   }
   if (raw.includes("rate limit") || raw.includes("too many")) {
     return { kind: "rate-limited", message: "Too many attempts — try again in a few minutes." };
@@ -142,6 +208,30 @@ export async function requestPasswordReset(email: string): Promise<AuthResult> {
     redirectTo: `${window.location.origin}/`,
   });
   if (error && !error.message.toLowerCase().includes("not found")) {
+    return { ok: false, error: fromAuthError(error) };
+  }
+  return { ok: true, value: undefined };
+}
+
+/**
+ * Re-send the confirmation email.
+ *
+ * The step a sign-up flow is usually missing and always needs: the first mail
+ * lands in spam, or the tab is closed before it arrives, and without this the
+ * address is stuck — signing up again answers "there's already an account with
+ * that email", which is true and useless.
+ *
+ * Reports success for an address with no account, or one already confirmed, for
+ * the same reason requestPasswordReset does: this must not become a way to ask
+ * the site which addresses are registered.
+ */
+export async function resendConfirmation(email: string): Promise<AuthResult> {
+  const { error } = await supabase.auth.resend({
+    type: "signup",
+    email: email.trim(),
+    options: { emailRedirectTo: `${window.location.origin}/` },
+  });
+  if (error && !/not found|already confirmed|already been confirmed/i.test(error.message)) {
     return { ok: false, error: fromAuthError(error) };
   }
   return { ok: true, value: undefined };

@@ -6,6 +6,7 @@ import { PRIVACY_POLICY, TERMS_OF_SERVICE, REFUND_POLICY, FAQ_ITEMS } from "@/ap
 import { Instagram, Search, ShoppingBag, User } from "lucide-react";
 import { fetchMenu, groupByCategory } from "@/lib/api/menu";
 import { Home } from "@/app/pages/Home";
+import { FridayEspresso } from "@/app/pages/FridayEspresso";
 import { Objects } from "@/app/pages/Objects";
 import { RETAIL_PRODUCTS } from "@/app/content/retail";
 import { fetchObjects } from "@/lib/api/objects";
@@ -58,6 +59,22 @@ function menuItemToCartProduct(item: MenuItem): CartProduct {
   };
 }
 
+/*
+ * The name the counter calls out, now that the checkout asks only for an email.
+ *
+ * In order of how much it is worth: the name on the account, then the local
+ * part of the address the order was placed with — "nayef" reads as a person at
+ * a counter in a way "nayef@gmail.com" does not — and finally the RPC's own
+ * 'Guest' default. place_order re-derives nothing, so this is the only place
+ * that decides it.
+ */
+function orderNameFrom(profileName: string, email: string): string {
+  const stored = profileName.trim();
+  if (stored) return stored;
+  const local = email.split("@")[0]?.trim() ?? "";
+  return local || "Guest";
+}
+
 function updateMeta(attribute: "name" | "property", key: string, content: string) {
   let element = document.head.querySelector<HTMLMetaElement>(`meta[${attribute}="${key}"]`);
   if (!element) {
@@ -85,6 +102,14 @@ export default function App() {
     () => routeFor(window.location.pathname).menuCategory,
   );
   const [form, setForm] = useState<ContactForm>({ name: "", lastName: "", email: "", phone: "", comment: "" });
+  /* The name and mobile ON THE ACCOUNT, kept apart from the contact form's own
+     fields so the checkout can use them without reading whatever was last typed
+     there. Keeping only the name here was a bug: the checkout then reached for
+     form.phone, which is the Contact page's field and is never filled from the
+     profile — so an order carried a number typed for an enquiry, and a
+     signed-in customer who had never used that form sent no number at all. */
+  const [profileName, setProfileName] = useState("");
+  const [profilePhone, setProfilePhone] = useState("");
   const [sent, setSent] = useState(false);
   const [sending, setSending] = useState(false);
   const [sendError, setSendError] = useState("");
@@ -224,6 +249,8 @@ export default function App() {
     let live = true;
     fetchProfile(session.user.id).then((p) => {
       if (!live || !p) return;
+      setProfileName(p.full_name);
+      setProfilePhone(p.phone ?? "");
       setForm((f) => ({
         ...f,
         name: f.name || p.full_name,
@@ -363,9 +390,13 @@ export default function App() {
     }
     const result = await placeOrder({
       lines: cartLines.map((line) => ({ menuItemId: line.product.backendId as string, qty: line.quantity })),
-      customerName: details.customerName,
+      customerName: orderNameFrom(profileName, details.customerEmail),
       customerEmail: details.customerEmail || null,
-      customerPhone: details.customerPhone || null,
+      /* The checkout stopped asking for a mobile. A signed-in customer's SAVED
+         one still rides along — a counter with a ready order and no way to
+         reach anyone is the problem the field existed for — and a guest simply
+         sends none, which the RPC accepts. */
+      customerPhone: profilePhone || null,
       paymentMethod: "cash",
     });
     if (result.ok) setCartLines([]);
@@ -634,12 +665,23 @@ export default function App() {
         onDecrement={decrementCart}
         onRemove={removeFromCart}
         onCheckout={submitCartOrder}
+        defaultEmail={session?.user.email ?? ""}
       />
 
       {page === "home" && (
         <main id="main-content" className="flex flex-col min-h-screen" style={{ paddingTop: navHeight }}>
           <div className="flex-1">
             <Home linkTo={linkTo} />
+          </div>
+          <EditorialFooter linkTo={linkTo} />
+        </main>
+      )}
+
+      {/* ══ FRIDAY ESPRESSO ══ */}
+      {page === "ritual" && (
+        <main id="main-content" className="flex flex-col min-h-screen" style={{ paddingTop: navHeight }}>
+          <div className="flex-1">
+            <FridayEspresso linkTo={linkTo} menuItems={menuItems} />
           </div>
           <EditorialFooter linkTo={linkTo} />
         </main>
@@ -725,7 +767,7 @@ export default function App() {
       {page === "faq" && (
         <main id="main-content" className="min-h-screen flex flex-col" style={{ paddingTop: navHeight }}>
           <div className="flex-1 max-w-2xl w-full mx-auto px-6 py-14">
-            <h1 className="font-serif font-semibold text-5xl mb-12">FAQ</h1>
+            <h1 className="font-serif font-semibold text-[length:var(--fs-section-title)] leading-[0.96] mb-12">FAQ</h1>
             <FaqAccordion items={FAQ_ITEMS} />
           </div>
           <NewsletterSignup />
