@@ -28,23 +28,19 @@ import { pathFor, routeFor } from "@/lib/routes";
 import { ORDERING_OPEN } from "@/lib/constants";
 import { formErrorMessage, submitContactMessage } from "@/lib/api/forms";
 import { useDialogFocus } from "@/app/hooks/useDialogFocus";
+import SEO_DATA from "@/content/seo.json";
 
 const CART_STORAGE_KEY = "mantel-cart-v1";
 const SITE_ORIGIN = "https://bymantel.com";
 
-const SEO_BY_PAGE: Record<Page, { title: string; description: string }> = {
-  home: { title: "Mantel — Hidd, Kingdom of Bahrain", description: "Mantel is a café and small house of objects in Hidd, Bahrain. Coffee poured at the counter, candles and small things chosen to be used and kept." },
-  menu: { title: "Menu — Mantel Bahrain", description: "Coffee, food, aqua, sandwiches, and desserts served at Mantel in Hidd, Bahrain." },
-  pickup: { title: "Order Before Reach — Mantel Bahrain", description: "Order ahead for pick-up at Mantel in Hidd, Bahrain — add what you want and collect it at the counter." },
-  objects: { title: "Retail — Mantel Bahrain", description: "Small objects for the ritual around coffee: matcha powder, candles, candle sticks, lighters, matches, and more from Mantel." },
-  story: { title: "About Us — Mantel Bahrain", description: "The story of Mantel, a café and small house of objects in Hidd, Kingdom of Bahrain." },
-  contact: { title: "Contact Us — Mantel Bahrain", description: "Contact Mantel in Bahrain for café, retail, wholesale, press, and customer-care enquiries." },
-  faq: { title: "FAQ — Mantel Bahrain", description: "Answers to common questions about Mantel café, pickup, retail objects, and customer care." },
-  privacy: { title: "Privacy — Mantel Bahrain", description: "Mantel’s privacy information and customer data practices." },
-  terms: { title: "Terms — Mantel Bahrain", description: "Mantel’s terms of service for café and retail interactions." },
-  refund: { title: "Refund Policy — Mantel Bahrain", description: "Mantel’s refund and cancellation information." },
-  admin: { title: "Staff Dashboard — Mantel", description: "Protected Mantel staff operations dashboard." },
-};
+/*
+ * Page copy for <title>, the meta description and the link-preview tags.
+ * It lives in JSON rather than in this file because scripts/prerender.mjs
+ * reads the same data at build time: WhatsApp and Instagram never run the
+ * JavaScript below, so each route also needs a static HTML file carrying
+ * these strings. One source, two consumers.
+ */
+const SEO_BY_PAGE: Record<Page, { title: string; description: string }> = SEO_DATA;
 
 /*
  * A menu_items row and an objects row already meet server-side, in the
