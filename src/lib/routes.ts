@@ -5,9 +5,9 @@ import type { Page, MenuCategory } from "@/app/types";
  * The single source of truth for page ↔ URL. `page` used to be pure component
  * state, so the address bar never moved: nothing was linkable, Back left the
  * site, and a direct hit on /menu was a 404 because the server had no rule for
- * it. Every navigation now goes through here, and the host configs
- * (netlify.toml, vercel.json) rewrite unknown paths to index.html so a refresh
- * on a deep link still boots the app.
+ * it. Every navigation now goes through here, and the host config
+ * (netlify.toml) rewrites unknown paths to index.html so a refresh on a deep
+ * link still boots the app.
  *
  * The menu carries a category in the path — /menu/coffee, /menu/sandwiches —
  * so a section can be linked, bookmarked and shared. Bare /menu is everything.

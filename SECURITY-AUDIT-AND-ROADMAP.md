@@ -218,7 +218,7 @@ Deliberately **cut from the original 10-phase brief** as not applicable to a 14-
 - [x] Deps pruned to 5 runtime packages; unused `ui/` folder deleted; build passes (done 2026-07-10 — click-test pages before deploy)
 - [x] Git repo initialized, initial commit `556eeb2` (2026-07-10) — private remote still to add
 - [ ] Host env vars set; `.env.local` never committed (verified untracked in git)
-- [ ] Security headers live; securityheaders.com grade A (M-3) — configs ready: `public/_headers` (Netlify/Cloudflare, ships in dist) + `vercel.json`
+- [ ] Security headers live; securityheaders.com grade A (M-3) — config: `public/_headers` (Netlify, ships in dist)
 - [ ] HTTPS + HSTS on custom domain
 - [ ] Real Instagram URL
 - [ ] Privacy policy re-read against final feature set
