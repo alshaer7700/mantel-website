@@ -2,13 +2,16 @@ import type { MenuCategory, MenuItem, Page } from "@/app/types";
 import { formatBhd } from "@/app/content/retail";
 import { MAPS_URL, ORDERING_OPEN } from "@/lib/constants";
 import {
-  COFFEE_SPECS,
+  EXTRACTION_SPECS,
+  SERVICE_SPECS,
   TRAY_ANNOTATIONS,
   TRAY_ASPECT,
   TRAY_PHOTO,
   TRAY_PHOTO_ALT,
+  type CoffeeSpec,
   type TrayAnnotation,
 } from "@/app/content/ritual";
+import { TrayArt } from "@/app/components/ritual/TrayArt";
 
 /*
  * Friday Espresso — the page behind "View the details" in the home page's
@@ -36,19 +39,25 @@ import {
  * other has to follow, which is why the number lives here and is handed to CSS
  * rather than written out twice.
  */
-const PHOTO_WIDTH_PCT = 40;
+const PHOTO_WIDTH_PCT = 46;
 const PHOTO_LEFT_PCT = (100 - PHOTO_WIDTH_PCT) / 2;
 /*
  * Where each leader line turns its corner, and how wide the rails are — both
  * in stage percentages, and both constrained by the other. The corner has to
- * fall in the gap between a rail's inner edge (22%) and the photo's outer edge
- * (30%): too close to the photo and the line fouls the frame's corner tick,
+ * fall in the gap between a rail's inner edge (20%) and the picture's outer
+ * edge (27%): too close to the photo and the line fouls the frame's corner tick,
  * too close to the rail and the run out of the note collapses to nothing and
  * the leader reads as a stray vertical stroke. RAIL_WIDTH_PCT must match
  * .editorial-ritual-note's width in the stylesheet.
  */
-const ELBOW_GAP_PCT = 4;
-const RAIL_WIDTH_PCT = 22;
+const ELBOW_GAP_PCT = 3;
+const RAIL_WIDTH_PCT = 20;
+/*
+ * A gap between the note and the start of its leader. Without it the line
+ * begins exactly where the text ends, at the text's own vertical centre, and
+ * the last line of the note reads as struck through.
+ */
+const LEADER_GAP_PCT = 1.5;
 
 /** A dot's horizontal position in stage space, from its position on the photo. */
 function dotStageX(annotation: TrayAnnotation): number {
@@ -65,7 +74,9 @@ function dotStageX(annotation: TrayAnnotation): number {
 function leaderPath(annotation: TrayAnnotation): string {
   const dotX = dotStageX(annotation);
   const left = annotation.side === "left";
-  const start = left ? RAIL_WIDTH_PCT : 100 - RAIL_WIDTH_PCT;
+  const start = left
+    ? RAIL_WIDTH_PCT + LEADER_GAP_PCT
+    : 100 - RAIL_WIDTH_PCT - LEADER_GAP_PCT;
   const elbow = left
     ? PHOTO_LEFT_PCT - ELBOW_GAP_PCT
     : PHOTO_LEFT_PCT + PHOTO_WIDTH_PCT + ELBOW_GAP_PCT;
@@ -96,6 +107,7 @@ function priceOf(menuItems: MenuItem[], name: string): number | null {
 export function FridayEspresso({ linkTo, menuItems }: Props) {
   const espresso = priceOf(menuItems, "Espresso");
   const sparkling = priceOf(menuItems, "Sparkling Water");
+  const publishedExtraction = EXTRACTION_SPECS.filter((spec) => spec.value !== null);
 
   return (
     <article className="editorial-ritual-page">
@@ -128,8 +140,11 @@ export function FridayEspresso({ linkTo, menuItems }: Props) {
           className="editorial-ritual-stage"
           style={{ "--ritual-photo-w": `${PHOTO_WIDTH_PCT}%` } as React.CSSProperties}
         >
-          <figure className="editorial-ritual-frame" style={{ aspectRatio: TRAY_ASPECT }}>
-            <img src={TRAY_PHOTO} alt={TRAY_PHOTO_ALT} />
+          <figure
+            className={`editorial-ritual-frame ${TRAY_PHOTO ? "" : "is-drawn"}`}
+            style={{ aspectRatio: TRAY_ASPECT }}
+          >
+            {TRAY_PHOTO ? <img src={TRAY_PHOTO} alt={TRAY_PHOTO_ALT} /> : <TrayArt />}
             {TRAY_ANNOTATIONS.map((annotation) => (
               <span
                 key={annotation.n}
@@ -190,37 +205,59 @@ export function FridayEspresso({ linkTo, menuItems }: Props) {
 
       <section className="editorial-ritual-specs" aria-labelledby="ritual-specs-title">
         <div className="editorial-ritual-specs-intro">
-          <p className="editorial-overline">02 — The coffee</p>
-          <h2 id="ritual-specs-title">How it is made.</h2>
+          <p className="editorial-overline">02 — How it is served</p>
+          <h2 id="ritual-specs-title">The same, every Friday.</h2>
           <p>
-            The same recipe every Friday, weighed rather than judged by eye. Anything not listed
-            below has not been set down yet.
+            Two drinks, one tray, and no variation worth mentioning. That is the whole of it.
           </p>
         </div>
 
         <dl className="editorial-ritual-spec-list">
-          {COFFEE_SPECS.map((spec) => (
-            <div className="editorial-ritual-spec-row" key={spec.label}>
-              <dt>{spec.label}</dt>
-              {/* An em dash, never a zero: no figure published is not a figure of nought. */}
-              <dd>{spec.value ?? "—"}</dd>
-            </div>
+          {SERVICE_SPECS.map((spec) => (
+            <SpecRow key={spec.label} label={spec.label} value={spec.value} />
           ))}
-          <div className="editorial-ritual-spec-row">
-            <dt>Espresso</dt>
-            <dd>{espresso === null ? "—" : formatBhd(espresso)}</dd>
-          </div>
-          <div className="editorial-ritual-spec-row">
-            <dt>Sparkling water</dt>
-            <dd>{sparkling === null ? "—" : formatBhd(sparkling)}</dd>
-          </div>
+          {/* Prices are the menu's to state, so a row appears only for a drink
+              the menu currently carries a price for. */}
+          {espresso !== null && <SpecRow label="Espresso" value={formatBhd(espresso)} />}
+          {sparkling !== null && <SpecRow label="Sparkling water" value={formatBhd(sparkling)} />}
         </dl>
       </section>
+
+      {/*
+        * The recipe, once there is one. EXTRACTION_SPECS ships empty and this
+        * whole section stays out of the document until a value is filled in —
+        * a heading over seven em dashes reads as a page that broke, and a
+        * plausible dose nobody weighed would be worse than either.
+        */}
+      {publishedExtraction.length > 0 && (
+        <section className="editorial-ritual-specs" aria-labelledby="ritual-recipe-title">
+          <div className="editorial-ritual-specs-intro">
+            <p className="editorial-overline">03 — The coffee</p>
+            <h2 id="ritual-recipe-title">How it is made.</h2>
+            <p>The house recipe, weighed rather than judged by eye.</p>
+          </div>
+
+          <dl className="editorial-ritual-spec-list">
+            {publishedExtraction.map((spec) => (
+              <SpecRow key={spec.label} label={spec.label} value={spec.value} />
+            ))}
+          </dl>
+        </section>
+      )}
 
       <footer className="editorial-ritual-foot">
         <a {...linkTo("menu")} className="editorial-link">View the full menu</a>
         <a {...linkTo("home")} className="editorial-link">Back to Mantel</a>
       </footer>
     </article>
+  );
+}
+
+function SpecRow({ label, value }: { label: string; value: CoffeeSpec["value"] }) {
+  return (
+    <div className="editorial-ritual-spec-row">
+      <dt>{label}</dt>
+      <dd>{value}</dd>
+    </div>
   );
 }
