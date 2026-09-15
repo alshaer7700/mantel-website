@@ -102,9 +102,14 @@ export default function App() {
     () => routeFor(window.location.pathname).menuCategory,
   );
   const [form, setForm] = useState<ContactForm>({ name: "", lastName: "", email: "", phone: "", comment: "" });
-  /* The name on the account, kept apart from the contact form's own name field
-     so the checkout can use it without reading whatever was last typed there. */
+  /* The name and mobile ON THE ACCOUNT, kept apart from the contact form's own
+     fields so the checkout can use them without reading whatever was last typed
+     there. Keeping only the name here was a bug: the checkout then reached for
+     form.phone, which is the Contact page's field and is never filled from the
+     profile — so an order carried a number typed for an enquiry, and a
+     signed-in customer who had never used that form sent no number at all. */
   const [profileName, setProfileName] = useState("");
+  const [profilePhone, setProfilePhone] = useState("");
   const [sent, setSent] = useState(false);
   const [sending, setSending] = useState(false);
   const [sendError, setSendError] = useState("");
@@ -245,6 +250,7 @@ export default function App() {
     fetchProfile(session.user.id).then((p) => {
       if (!live || !p) return;
       setProfileName(p.full_name);
+      setProfilePhone(p.phone ?? "");
       setForm((f) => ({
         ...f,
         name: f.name || p.full_name,
@@ -386,10 +392,11 @@ export default function App() {
       lines: cartLines.map((line) => ({ menuItemId: line.product.backendId as string, qty: line.quantity })),
       customerName: orderNameFrom(profileName, details.customerEmail),
       customerEmail: details.customerEmail || null,
-      /* The checkout stopped asking for a mobile; a signed-in customer's stored
-         one still rides along, because a counter with a ready order and no way
-         to reach anyone is the problem the field existed for. */
-      customerPhone: form.phone || null,
+      /* The checkout stopped asking for a mobile. A signed-in customer's SAVED
+         one still rides along — a counter with a ready order and no way to
+         reach anyone is the problem the field existed for — and a guest simply
+         sends none, which the RPC accepts. */
+      customerPhone: profilePhone || null,
       paymentMethod: "cash",
     });
     if (result.ok) setCartLines([]);

@@ -103,8 +103,27 @@ function fromAuthError(error: AuthError): AppError {
   if (raw.includes("is invalid") && raw.includes("email")) {
     return { kind: "notice", message: "That email address isn't one we can send to." };
   }
-  /* Covers both the sign-in attempt limiter and "email rate limit exceeded",
-     which the built-in SMTP returns well before a busy Friday would. */
+  /*
+   * Two different limits wearing the same word, and telling them apart matters
+   * because only one of them is the visitor's doing.
+   *
+   * "email rate limit exceeded" is the PROJECT's mail quota, not their
+   * attempts — the built-in SMTP sends only a handful an hour, so the third
+   * person to sign up in an hour gets it having done nothing wrong. Telling
+   * them "too many attempts" blames them for someone else's sign-up and
+   * invites them to keep retrying, which cannot work. It is worth saying
+   * plainly that the mail is the problem and the counter still exists.
+   *
+   * This goes away on its own the moment a real SMTP provider is configured
+   * on the project; nothing here needs changing then.
+   */
+  if (raw.includes("email rate limit") || raw.includes("over_email_send_rate_limit")) {
+    return {
+      kind: "rate-limited",
+      message:
+        "We couldn't send the email just now — too many have gone out in the last hour. Try again shortly, or just come to the counter.",
+    };
+  }
   if (raw.includes("rate limit") || raw.includes("too many")) {
     return { kind: "rate-limited", message: "Too many attempts — try again in a few minutes." };
   }
