@@ -1,6 +1,9 @@
 export type Page =
   | "home"
   | "menu"
+  /* The Friday Espresso tray, annotated — reached from the home page's
+     section 01 rather than from the nav. */
+  | "ritual"
   | "pickup"
   | "objects"
   | "story"

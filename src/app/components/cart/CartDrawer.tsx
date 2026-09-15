@@ -1,14 +1,23 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowUpRight, Minus, Plus, X } from "lucide-react";
 import { formatBhd, type CartLine } from "@/app/content/retail";
 import { orderReference, type PlaceOrderResult } from "@/lib/api/orders";
 import { messageFor } from "@/lib/api/errors";
 import { useDialogFocus } from "@/app/hooks/useDialogFocus";
 
+/*
+ * One field, on purpose.
+ *
+ * The checkout used to ask for a name, an email and a mobile — three ruled
+ * boxes for a coffee that is paid for at the counter, two of them marked
+ * "(optional)", which is a form asking a question it has already admitted it
+ * does not need the answer to. An email address is the one thing the order
+ * genuinely needs: it is where the reference goes, and it is enough to find
+ * the order again. The name the kitchen calls out is derived from it upstream
+ * (see App.tsx), so nothing is lost at the counter.
+ */
 export type CheckoutDetails = {
-  customerName: string;
   customerEmail: string;
-  customerPhone: string;
 };
 
 type Props = {
@@ -20,6 +29,8 @@ type Props = {
   onDecrement: (productId: string) => void;
   onRemove: (productId: string) => void;
   onCheckout: (details: CheckoutDetails) => Promise<PlaceOrderResult>;
+  /** A signed-in customer's address, so the one field arrives already filled. */
+  defaultEmail?: string;
   id?: string;
 };
 
@@ -32,27 +43,28 @@ export function CartDrawer({
   onDecrement,
   onRemove,
   onCheckout,
+  defaultEmail,
   id,
 }: Props) {
   const itemCount = lines.reduce((total, line) => total + line.quantity, 0);
   const subtotal = lines.reduce((total, line) => total + line.product.price * line.quantity, 0);
   const [checkoutOpen, setCheckoutOpen] = useState(false);
-  const [customerName, setCustomerName] = useState("");
-  const [customerEmail, setCustomerEmail] = useState("");
-  const [customerPhone, setCustomerPhone] = useState("");
+  const [customerEmail, setCustomerEmail] = useState(defaultEmail ?? "");
   const [checkoutError, setCheckoutError] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(null);
+
+  /* The session usually resolves after this mounts, so the address is filled in
+     when it arrives — but never over something already typed. */
+  useEffect(() => {
+    if (defaultEmail) setCustomerEmail((current) => current || defaultEmail);
+  }, [defaultEmail]);
 
   const handleCheckout = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setCheckoutError("");
     setSubmitting(true);
-    const result = await onCheckout({
-      customerName,
-      customerEmail,
-      customerPhone,
-    });
+    const result = await onCheckout({ customerEmail });
     setSubmitting(false);
     if (!result.ok) {
       setCheckoutError(messageFor(result.error));
@@ -164,21 +176,37 @@ export function CartDrawer({
             {checkoutError && <p className="editorial-cart-error" role="alert">{checkoutError}</p>}
             {checkoutOpen ? (
               <form className="editorial-cart-checkout" onSubmit={handleCheckout}>
-                <label>
-                  Name
-                  <input value={customerName} onChange={(event) => setCustomerName(event.target.value)} required maxLength={120} autoComplete="name" />
+                <label className="editorial-cart-field" htmlFor="cart-email">
+                  <span className="editorial-cart-field-label">Email</span>
+                  <input
+                    id="cart-email"
+                    type="email"
+                    inputMode="email"
+                    value={customerEmail}
+                    onChange={(event) => setCustomerEmail(event.target.value)}
+                    placeholder="you@example.com"
+                    maxLength={254}
+                    autoComplete="email"
+                    required
+                  />
                 </label>
-                <label>
-                  Email <span aria-hidden="true">(optional)</span>
-                  <input type="email" value={customerEmail} onChange={(event) => setCustomerEmail(event.target.value)} maxLength={254} autoComplete="email" />
-                </label>
-                <label>
-                  Mobile <span aria-hidden="true">(optional)</span>
-                  <input type="tel" value={customerPhone} onChange={(event) => setCustomerPhone(event.target.value)} maxLength={24} autoComplete="tel" />
-                </label>
+                <p className="editorial-cart-field-note">
+                  Your order reference goes here. Nothing else — no account needed.
+                </p>
                 <div className="editorial-cart-checkout-actions">
-                  <button type="button" onClick={() => setCheckoutOpen(false)} disabled={submitting}>Back</button>
-                  <button type="submit" disabled={submitting || lines.length === 0 || !orderingOpen}>
+                  <button
+                    type="button"
+                    className="editorial-cart-secondary"
+                    onClick={() => setCheckoutOpen(false)}
+                    disabled={submitting}
+                  >
+                    Back
+                  </button>
+                  <button
+                    type="submit"
+                    className="editorial-cart-primary"
+                    disabled={submitting || lines.length === 0 || !orderingOpen}
+                  >
                     {submitting ? "Sending…" : "Place order"}
                     <ArrowUpRight size={15} strokeWidth={1.4} aria-hidden="true" />
                   </button>
@@ -187,6 +215,7 @@ export function CartDrawer({
             ) : (
               <button
                 type="button"
+                className="editorial-cart-primary"
                 disabled={lines.length === 0 || !orderingOpen}
                 onClick={() => { setCheckoutError(""); setCheckoutOpen(true); }}
               >

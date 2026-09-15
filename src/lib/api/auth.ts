@@ -148,6 +148,30 @@ export async function requestPasswordReset(email: string): Promise<AuthResult> {
 }
 
 /**
+ * Re-send the confirmation email.
+ *
+ * The step a sign-up flow is usually missing and always needs: the first mail
+ * lands in spam, or the tab is closed before it arrives, and without this the
+ * address is stuck — signing up again answers "there's already an account with
+ * that email", which is true and useless.
+ *
+ * Reports success for an address with no account, or one already confirmed, for
+ * the same reason requestPasswordReset does: this must not become a way to ask
+ * the site which addresses are registered.
+ */
+export async function resendConfirmation(email: string): Promise<AuthResult> {
+  const { error } = await supabase.auth.resend({
+    type: "signup",
+    email: email.trim(),
+    options: { emailRedirectTo: `${window.location.origin}/` },
+  });
+  if (error && !/not found|already confirmed|already been confirmed/i.test(error.message)) {
+    return { ok: false, error: fromAuthError(error) };
+  }
+  return { ok: true, value: undefined };
+}
+
+/**
  * Step two: set the new password.
  *
  * Only works while the recovery session from the emailed link is active —

@@ -286,9 +286,9 @@
   }
 
   .editorial-intro h2 {
-    max-width: 14ch;
-    font-size: clamp(40px, 6vw, 82px);
-    line-height: 0.9;
+    max-width: 18ch;
+    font-size: var(--fs-section-title);
+    line-height: 0.96;
   }
 
   .editorial-intro-copy > p:not(.editorial-overline) {
@@ -371,10 +371,10 @@
   .editorial-banner-copy h2 {
     margin: 12px 0 20px;
     font-family: var(--font-serif);
-    font-size: clamp(54px, 8.5vw, 112px);
+    font-size: var(--fs-section-title);
     font-weight: 500;
-    letter-spacing: -0.05em;
-    line-height: 0.82;
+    letter-spacing: -0.035em;
+    line-height: 0.96;
   }
 
   .editorial-products {
@@ -392,10 +392,10 @@
   .editorial-section-heading h2 {
     margin: 0;
     font-family: var(--font-serif);
-    font-size: clamp(42px, 6vw, 78px);
+    font-size: var(--fs-section-title);
     font-weight: 500;
-    letter-spacing: -0.05em;
-    line-height: 0.84;
+    letter-spacing: -0.035em;
+    line-height: 0.96;
   }
 
   .editorial-section-heading p {
@@ -507,8 +507,8 @@
 
   .editorial-manifesto h2 {
     margin: 18px 0 30px;
-    font-size: clamp(46px, 7vw, 92px);
-    line-height: 0.86;
+    font-size: var(--fs-section-title);
+    line-height: 0.96;
   }
 
   .editorial-manifesto-copy p:not(.editorial-overline) {
@@ -534,13 +534,13 @@
   }
 
   .editorial-cafe-copy h2 {
-    max-width: 10ch;
+    max-width: 18ch;
     margin: 18px 0 24px;
     font-family: var(--font-serif);
-    font-size: clamp(46px, 6.5vw, 84px);
+    font-size: var(--fs-section-title);
     font-weight: 500;
-    letter-spacing: -0.05em;
-    line-height: 0.86;
+    letter-spacing: -0.035em;
+    line-height: 0.96;
   }
 
   .editorial-cafe-copy > p:not(.editorial-overline) {
@@ -577,10 +577,10 @@
   }
 
   .editorial-newsletter h2 {
-    max-width: 10ch;
+    max-width: 18ch;
     margin-top: 18px;
-    font-size: clamp(52px, 7vw, 92px);
-    line-height: 0.82;
+    font-size: var(--fs-section-title);
+    line-height: 0.96;
   }
 
   .editorial-newsletter-copy {
@@ -938,7 +938,7 @@
 
     .editorial-intro h2,
     .editorial-newsletter h2 {
-      max-width: 12ch;
+      max-width: 16ch;
     }
 
     .editorial-intro-media,
@@ -1058,10 +1058,10 @@
     margin: 12px 0 0;
     color: var(--editorial-ink);
     font-family: var(--font-serif);
-    font-size: clamp(54px, 9vw, 132px);
+    font-size: var(--fs-section-title);
     font-weight: 500;
-    letter-spacing: -0.06em;
-    line-height: 0.72;
+    letter-spacing: -0.035em;
+    line-height: 0.96;
   }
 
   .editorial-objects-intro-copy {
@@ -1231,10 +1231,6 @@
       padding-bottom: 42px;
     }
 
-    .editorial-objects-intro h1 {
-      font-size: clamp(60px, 19vw, 96px);
-    }
-
     .editorial-objects-intro-copy {
       justify-self: start;
     }
@@ -1285,10 +1281,10 @@
     margin: 0 0 28px;
     color: var(--editorial-ink);
     font-family: var(--font-serif);
-    font-size: clamp(72px, 13vw, 170px);
+    font-size: var(--fs-section-title);
     font-weight: 500;
-    letter-spacing: -0.07em;
-    line-height: 0.76;
+    letter-spacing: -0.035em;
+    line-height: 0.96;
   }
 
   .editorial-about-placeholder {
@@ -1685,8 +1681,20 @@
     font-weight: 500;
   }
 
-  .editorial-cart-footer button {
+  /*
+   * The two buttons in the cart, named rather than selected by position.
+   * This rule used to be `.editorial-cart-footer button`, which painted every
+   * button in the footer as the one black primary action — so "Back" arrived
+   * as a second full-width filled button under "Place order", and the pair
+   * read as two equal choices instead of an action and a way out.
+   */
+  .editorial-cart-primary,
+  .editorial-cart-continue {
+    display: inline-flex;
     width: 100%;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
     margin-top: 18px;
     padding: 14px 18px;
     border: 1px solid var(--editorial-ink);
@@ -1696,14 +1704,192 @@
     font-family: var(--font-mono);
     font-size: 10px;
     letter-spacing: 0.08em;
+    line-height: 1;
+    text-transform: uppercase;
+    transition: opacity 160ms ease;
+  }
+
+  .editorial-cart-primary:hover:not(:disabled),
+  .editorial-cart-continue:hover {
+    opacity: 0.82;
+  }
+
+  .editorial-cart-secondary {
+    padding: 14px 16px;
+    border: 1px solid var(--editorial-line);
+    background: transparent;
+    color: var(--editorial-muted);
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    line-height: 1;
+    text-transform: uppercase;
+    transition: border-color 160ms ease, color 160ms ease;
+  }
+
+  .editorial-cart-secondary:hover:not(:disabled) {
+    border-color: var(--editorial-ink);
+    color: var(--editorial-ink);
+  }
+
+  .editorial-cart-primary:disabled,
+  .editorial-cart-secondary:disabled {
+    border-color: var(--editorial-line);
+    color: var(--editorial-muted);
+    cursor: not-allowed;
+  }
+
+  .editorial-cart-primary:disabled {
+    background: var(--editorial-line);
+  }
+
+  /*
+   * The checkout itself. None of these classes had a single rule before, so the
+   * form rendered at the browser's defaults inside a drawer built at 10-11px
+   * mono: a 16px bold label, a beveled grey input and no alignment with
+   * anything around it. That is the "untidy" the redesign is about — one field
+   * now, ruled rather than boxed, matching the newsletter input on the home
+   * page and the underlined fields in the account panel.
+   */
+  .editorial-cart-checkout {
+    display: grid;
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  .editorial-cart-field {
+    display: grid;
+    gap: 6px;
+    font-size: inherit;
+    font-weight: 400;
+    line-height: inherit;
+  }
+
+  .editorial-cart-field-label {
+    color: var(--editorial-muted);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    line-height: 1.25;
     text-transform: uppercase;
   }
 
-  .editorial-cart-footer button:disabled {
-    border-color: var(--editorial-line);
-    background: var(--editorial-line);
+  .editorial-cart-field input {
+    width: 100%;
+    /* 16px, not the drawer's 11px: anything smaller makes iOS Safari zoom the
+       whole page in on focus, which throws the drawer off-screen. */
+    padding: 10px 0;
+    border: 0;
+    border-bottom: 1px solid var(--editorial-ink);
+    border-radius: 0;
+    background: transparent;
+    color: var(--editorial-ink);
+    font-family: var(--font-mono);
+    font-size: 16px;
+    letter-spacing: 0.01em;
+    outline: 0;
+  }
+
+  .editorial-cart-field input::placeholder {
     color: var(--editorial-muted);
-    cursor: not-allowed;
+  }
+
+  .editorial-cart-field input:focus-visible {
+    outline: 2px solid var(--editorial-red);
+    outline-offset: 4px;
+  }
+
+  .editorial-cart-field-note {
+    margin: 0;
+    color: var(--editorial-muted);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.02em;
+    line-height: 1.5;
+  }
+
+  .editorial-cart-checkout-actions {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: stretch;
+    gap: 10px;
+    margin-top: 6px;
+  }
+
+  /* The margin-top on .editorial-cart-primary is for the button standing alone
+     under the subtotal; inside the action row the grid's gap does that job. */
+  .editorial-cart-checkout-actions .editorial-cart-primary {
+    margin-top: 0;
+  }
+
+  .editorial-cart-error {
+    margin: 12px 0 0;
+    color: var(--editorial-red);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.02em;
+    line-height: 1.5;
+  }
+
+  /* The order-received state, which had no rules either. */
+  .editorial-cart-confirmation {
+    flex: 1 1 auto;
+    align-content: start;
+    display: grid;
+    gap: 12px;
+    overflow-y: auto;
+    padding: 30px 28px;
+  }
+
+  .editorial-cart-confirmation h3 {
+    max-width: 16ch;
+    margin: 0;
+    color: var(--editorial-ink);
+    font-family: var(--font-serif);
+    font-size: 28px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 1.04;
+  }
+
+  .editorial-cart-confirmation p {
+    margin: 0;
+    color: var(--editorial-muted);
+    font-family: var(--font-serif);
+    font-size: 16px;
+    line-height: 1.38;
+  }
+
+  .editorial-cart-confirmation .editorial-overline {
+    margin: 0;
+  }
+
+  .editorial-cart-reference {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 8px;
+    padding: 14px 16px;
+    border: 1px solid var(--editorial-line);
+    background: var(--card-surface);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .editorial-cart-reference span {
+    color: var(--editorial-muted);
+  }
+
+  .editorial-cart-reference strong {
+    color: var(--editorial-ink);
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
   }
 
   .editorial-cart-badge {
@@ -1737,6 +1923,10 @@
 
     .editorial-cart-empty {
       padding-inline: 22px;
+    }
+
+    .editorial-cart-confirmation {
+      padding: 24px 22px;
     }
   }
 }
@@ -1813,13 +2003,13 @@
   }
 
   .editorial-contact-rail h1 {
-    max-width: 8ch;
+    max-width: 14ch;
     margin: 12px 0 0;
     font-family: var(--font-serif);
-    font-size: clamp(42px, 5vw, 74px);
+    font-size: var(--fs-section-title);
     font-weight: 500;
-    letter-spacing: -0.055em;
-    line-height: 0.86;
+    letter-spacing: -0.035em;
+    line-height: 0.96;
   }
 
   .editorial-contact-rail-actions {
@@ -1905,10 +2095,10 @@
   .editorial-contact-heading h2 {
     margin: 12px 0 0;
     font-family: var(--font-serif);
-    font-size: clamp(56px, 8vw, 118px);
+    font-size: var(--fs-section-title);
     font-weight: 500;
-    letter-spacing: -0.065em;
-    line-height: 0.82;
+    letter-spacing: -0.035em;
+    line-height: 0.96;
   }
 
   .editorial-contact-copy {
@@ -2043,7 +2233,7 @@
     max-width: 12ch;
     margin: 0;
     font-family: var(--font-serif);
-    font-size: clamp(38px, 5vw, 64px);
+    font-size: var(--fs-section-title);
     font-weight: 500;
     letter-spacing: -0.05em;
     line-height: 0.9;
@@ -2078,7 +2268,6 @@
 
     .editorial-contact-rail h1 {
       max-width: none;
-      font-size: clamp(44px, 15vw, 72px);
     }
 
     .editorial-contact-rail-actions {
@@ -2092,10 +2281,6 @@
 
     .editorial-contact-main {
       padding: 52px 22px 78px;
-    }
-
-    .editorial-contact-heading h2 {
-      font-size: clamp(56px, 17vw, 92px);
     }
 
     .editorial-contact-copy {
@@ -2160,10 +2345,10 @@
   .mantel-admin-gate h1 {
     margin: 12px 0 8px;
     font-family: var(--font-serif);
-    font-size: clamp(48px, 7vw, 92px);
+    font-size: var(--fs-section-title);
     font-weight: 500;
-    letter-spacing: -0.055em;
-    line-height: 0.86;
+    letter-spacing: -0.035em;
+    line-height: 0.96;
   }
 
   .mantel-admin-email,
@@ -2401,8 +2586,6 @@
 
   @media (max-width: 560px) {
     .mantel-admin-shell { padding: 34px 16px 64px; }
-    .mantel-admin-header h1,
-    .mantel-admin-gate h1 { font-size: clamp(46px, 15vw, 68px); }
     .mantel-admin-tabs { margin-left: -16px; margin-right: -16px; padding: 0 16px; overflow-x: auto; flex-wrap: nowrap; }
     .mantel-admin-tabs button { flex: 0 0 auto; padding-left: 10px; padding-right: 10px; }
     .mantel-admin-panel,
@@ -2422,5 +2605,641 @@
   @media (prefers-reduced-motion: reduce) {
     .mantel-admin-spin { animation: none; }
     .mantel-admin-toggle span::after { transition: none; }
+  }
+
+  /* ══ FRIDAY ESPRESSO ══════════════════════════════════════════════════════
+     The annotated tray. One photograph in the middle of the page with the copy
+     hanging off it on drawn leader lines, and the same copy as a plain numbered
+     list once the screen is too narrow for rails. FridayEspresso.tsx draws the
+     lines; the two files share --ritual-photo-w, which is why the frame's width
+     is a variable here rather than a literal. */
+
+  .editorial-ritual-page {
+    padding: clamp(46px, 7vw, 96px) clamp(22px, 8vw, 120px) clamp(72px, 9vw, 130px);
+    background: var(--editorial-paper);
+    color: var(--editorial-ink);
+  }
+
+  .editorial-ritual-head {
+    max-width: 660px;
+    padding-bottom: clamp(44px, 7vw, 84px);
+    border-bottom: 1px solid var(--editorial-line);
+  }
+
+  .editorial-ritual-head h1 {
+    margin: 12px 0 0;
+    color: var(--editorial-ink);
+    font-family: var(--font-serif);
+    font-size: var(--fs-section-title);
+    font-weight: 500;
+    letter-spacing: -0.035em;
+    line-height: 0.96;
+  }
+
+  .editorial-ritual-standfirst {
+    max-width: 46ch;
+    margin: 22px 0 0;
+    color: var(--editorial-muted);
+    font-family: var(--font-serif);
+    font-size: 18px;
+    line-height: 1.38;
+  }
+
+  .editorial-ritual-stage-wrap {
+    padding: clamp(54px, 9vw, 112px) 0;
+  }
+
+  /* The rails are the two empty 1fr columns; the notes and the leader lines are
+     laid over the whole stage, so its height is the photograph's height. */
+  .editorial-ritual-stage {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr minmax(0, var(--ritual-photo-w, 40%)) 1fr;
+    align-items: start;
+  }
+
+  .editorial-ritual-frame {
+    position: relative;
+    grid-column: 2;
+    margin: 0;
+    background: #dbd4c7;
+  }
+
+  .editorial-ritual-frame img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: saturate(0.82) sepia(0.1);
+  }
+
+  /* The same corner tick the home page's section 01 draws on its photograph. */
+  .editorial-ritual-frame::before {
+    position: absolute;
+    top: -14px;
+    left: -14px;
+    z-index: 2;
+    width: 72px;
+    height: 72px;
+    border-top: 1px solid var(--editorial-ink);
+    border-left: 1px solid var(--editorial-ink);
+    content: "";
+  }
+
+  /* Centred on its coordinate by the negative margin, so `left`/`top` can stay
+     the honest position of the thing on the tray. */
+  .editorial-ritual-dot {
+    position: absolute;
+    z-index: 3;
+    display: grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    margin: -11px 0 0 -11px;
+    border-radius: 999px;
+    background: var(--editorial-paper);
+    box-shadow: 0 0 0 1px var(--editorial-ink);
+    color: var(--editorial-ink);
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+  }
+
+  .editorial-ritual-wires {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    color: var(--editorial-ink);
+    opacity: 0.4;
+    pointer-events: none;
+  }
+
+  .editorial-ritual-notes {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .editorial-ritual-note {
+    position: absolute;
+    top: var(--ritual-note-y, 0);
+    /* Matches RAIL_WIDTH_PCT in FridayEspresso.tsx, which draws the leader
+       lines out of this edge. */
+    width: 22%;
+    transform: translateY(-50%);
+  }
+
+  .editorial-ritual-note-left {
+    left: 0;
+    text-align: right;
+  }
+
+  .editorial-ritual-note-right {
+    right: 0;
+  }
+
+  .editorial-ritual-note-index {
+    margin: 0 0 8px;
+    color: var(--editorial-muted);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    line-height: 1.25;
+    text-transform: uppercase;
+  }
+
+  .editorial-ritual-note h3 {
+    margin: 0 0 8px;
+    color: var(--editorial-ink);
+    font-family: var(--font-serif);
+    font-size: 21px;
+    font-weight: 500;
+    letter-spacing: -0.012em;
+    line-height: 1.08;
+  }
+
+  .editorial-ritual-note p:not(.editorial-ritual-note-index) {
+    margin: 0;
+    color: var(--editorial-muted);
+    font-family: var(--font-serif);
+    font-size: 15px;
+    line-height: 1.42;
+  }
+
+  .editorial-ritual-specs {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: clamp(30px, 7vw, 110px);
+    padding-top: clamp(46px, 7vw, 92px);
+    border-top: 1px solid var(--editorial-line);
+  }
+
+  .editorial-ritual-specs-intro h2 {
+    margin: 12px 0 0;
+    color: var(--editorial-ink);
+    font-family: var(--font-serif);
+    font-size: var(--fs-section-title);
+    font-weight: 500;
+    letter-spacing: -0.035em;
+    line-height: 0.96;
+  }
+
+  .editorial-ritual-specs-intro p {
+    max-width: 38ch;
+    margin: 20px 0 0;
+    color: var(--editorial-muted);
+    font-family: var(--font-serif);
+    font-size: 17px;
+    line-height: 1.38;
+  }
+
+  .editorial-ritual-spec-list {
+    margin: 0;
+  }
+
+  .editorial-ritual-spec-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 20px;
+    padding: 13px 0;
+    border-bottom: 1px solid var(--editorial-line);
+  }
+
+  .editorial-ritual-spec-row:first-child {
+    border-top: 1px solid var(--editorial-line);
+  }
+
+  .editorial-ritual-spec-row dt {
+    color: var(--editorial-muted);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    line-height: 1.25;
+    text-transform: uppercase;
+  }
+
+  .editorial-ritual-spec-row dd {
+    margin: 0;
+    color: var(--editorial-ink);
+    font-family: var(--font-serif);
+    font-size: 17px;
+    line-height: 1.3;
+    text-align: right;
+  }
+
+  .editorial-ritual-foot {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px 28px;
+    margin-top: clamp(46px, 7vw, 92px);
+    padding-top: 26px;
+    border-top: 1px solid var(--editorial-line);
+  }
+
+  /* Rails off. The notes become the numbered list they already are in the DOM,
+     the leader lines go away rather than crossing the copy, and the dots stay
+     on the photograph so each number still has something to point at. */
+  @media (max-width: 900px) {
+    .editorial-ritual-stage {
+      display: block;
+    }
+
+    .editorial-ritual-frame {
+      width: min(100%, 420px);
+      margin: 0 auto;
+    }
+
+    .editorial-ritual-wires {
+      display: none;
+    }
+
+    .editorial-ritual-notes {
+      position: static;
+      display: grid;
+      gap: 30px;
+      margin-top: clamp(38px, 8vw, 56px);
+    }
+
+    .editorial-ritual-note {
+      position: static;
+      width: auto;
+      padding-left: 18px;
+      border-left: 1px solid var(--editorial-line);
+      text-align: left;
+      transform: none;
+    }
+
+    .editorial-ritual-specs {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .editorial-ritual-stage-wrap {
+      padding: 46px 0 8px;
+    }
+
+    .editorial-ritual-frame::before {
+      top: -10px;
+      left: -10px;
+      width: 52px;
+      height: 52px;
+    }
+
+    .editorial-ritual-spec-row {
+      align-items: start;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .editorial-ritual-spec-row dd {
+      text-align: left;
+    }
+  }
+
+  /* ══ ACCOUNT PANEL ════════════════════════════════════════════════════════
+     Drops from the nav across the full width, with the form itself held to a
+     single readable column. It was a bare Tailwind stack before, which is why
+     the way in ("Create an account") was set in the same 11px grey capitals as
+     the panel's own captions and read as a label rather than a control. */
+
+  .editorial-account-panel {
+    position: fixed;
+    right: 0;
+    left: 0;
+    z-index: 80;
+    max-height: min(78vh, 680px);
+    overflow-y: auto;
+    padding: clamp(26px, 4vw, 40px) clamp(22px, 8vw, 120px) clamp(32px, 5vw, 48px);
+    border-bottom: 1px solid var(--editorial-line);
+    background: var(--editorial-paper);
+    color: var(--editorial-ink);
+    box-shadow: 0 24px 45px rgba(23, 20, 17, 0.09);
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .editorial-account-inner {
+    max-width: 440px;
+  }
+
+  .editorial-account-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+  }
+
+  /* Pinned to the panel, not to the 440px column: a close control that sits a
+     third of the way across a full-width bar reads as part of the heading. */
+  .editorial-account-close {
+    position: absolute;
+    top: clamp(26px, 4vw, 40px);
+    right: clamp(22px, 8vw, 120px);
+  }
+
+  .editorial-account-head h2 {
+    margin: 10px 0 0;
+    color: var(--editorial-ink);
+    font-family: var(--font-serif);
+    font-size: 30px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 1.02;
+  }
+
+  .editorial-account-head .editorial-overline {
+    margin: 0;
+  }
+
+  .editorial-account-close {
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    border: 1px solid var(--editorial-line);
+    background: transparent;
+    color: var(--editorial-muted);
+    cursor: pointer;
+    transition: border-color 160ms ease, color 160ms ease;
+  }
+
+  .editorial-account-close:hover {
+    border-color: var(--editorial-ink);
+    color: var(--editorial-ink);
+  }
+
+  .editorial-account-blurb {
+    max-width: 46ch;
+    margin: 16px 0 0;
+    color: var(--editorial-muted);
+    font-family: var(--font-serif);
+    font-size: 16px;
+    line-height: 1.4;
+  }
+
+  .editorial-account-form {
+    display: grid;
+    gap: 18px;
+    margin-top: 26px;
+  }
+
+  .editorial-account-field {
+    display: grid;
+    gap: 6px;
+  }
+
+  .editorial-account-field-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 14px;
+  }
+
+  .editorial-account-field-label {
+    color: var(--editorial-muted);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    line-height: 1.25;
+    text-transform: uppercase;
+  }
+
+  .editorial-account-field-action {
+    border: 0;
+    background: transparent;
+    color: var(--editorial-ink);
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    line-height: 1.25;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-transform: uppercase;
+  }
+
+  .editorial-account-field input {
+    width: 100%;
+    /* 16px so iOS Safari does not zoom the page in when the field takes
+       focus — the same reason the cart's one field is 16px. */
+    padding: 10px 0;
+    border: 0;
+    border-bottom: 1px solid var(--editorial-line);
+    border-radius: 0;
+    background: transparent;
+    color: var(--editorial-ink);
+    font-family: var(--font-mono);
+    font-size: 16px;
+    font-weight: 400;
+    letter-spacing: 0.01em;
+    line-height: 1.3;
+    outline: 0;
+    transition: border-color 160ms ease;
+  }
+
+  .editorial-account-field input:focus {
+    border-bottom-color: var(--editorial-ink);
+  }
+
+  .editorial-account-field input:focus-visible,
+  .editorial-account-field-action:focus-visible,
+  .editorial-account-switch:focus-visible,
+  .editorial-account-primary:focus-visible,
+  .editorial-account-secondary:focus-visible,
+  .editorial-account-close:focus-visible {
+    outline: 2px solid var(--editorial-red);
+    outline-offset: 4px;
+  }
+
+  .editorial-account-field input::placeholder {
+    color: var(--editorial-muted);
+  }
+
+  .editorial-account-field-hint,
+  .editorial-account-hint {
+    margin: 0;
+    color: var(--editorial-muted);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.02em;
+    line-height: 1.5;
+  }
+
+  .editorial-account-signed-in {
+    margin: 0;
+    color: var(--editorial-muted);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.02em;
+    line-height: 1.5;
+  }
+
+  .editorial-account-signed-in strong {
+    color: var(--editorial-ink);
+    font-weight: 500;
+  }
+
+  .editorial-account-primary {
+    justify-self: start;
+    margin-top: 4px;
+    padding: 13px 26px;
+    border: 1px solid var(--editorial-ink);
+    background: var(--editorial-ink);
+    color: var(--editorial-paper);
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    line-height: 1;
+    text-transform: uppercase;
+    transition: opacity 160ms ease;
+  }
+
+  .editorial-account-primary:hover:not(:disabled) {
+    opacity: 0.82;
+  }
+
+  .editorial-account-primary:disabled {
+    border-color: var(--editorial-line);
+    background: var(--editorial-line);
+    color: var(--editorial-muted);
+    cursor: not-allowed;
+  }
+
+  .editorial-account-secondary {
+    justify-self: start;
+    padding: 12px 22px;
+    border: 1px solid var(--editorial-line);
+    background: transparent;
+    color: var(--editorial-ink);
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    line-height: 1;
+    text-transform: uppercase;
+    transition: border-color 160ms ease;
+  }
+
+  .editorial-account-secondary:hover:not(:disabled) {
+    border-color: var(--editorial-ink);
+  }
+
+  .editorial-account-sent {
+    display: grid;
+    justify-items: start;
+    gap: 14px;
+    margin-top: 22px;
+    padding: 20px;
+    border: 1px solid var(--editorial-line);
+    background: var(--card-surface);
+  }
+
+  .editorial-account-sent p {
+    margin: 0;
+    color: var(--editorial-muted);
+    font-family: var(--font-serif);
+    font-size: 16px;
+    line-height: 1.4;
+  }
+
+  .editorial-account-sent-address {
+    color: var(--editorial-ink) !important;
+    font-family: var(--font-mono) !important;
+    font-size: 13px !important;
+    letter-spacing: 0.02em;
+    word-break: break-all;
+  }
+
+  .editorial-account-error,
+  .editorial-account-notice {
+    max-width: 46ch;
+    margin: 18px 0 0;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.02em;
+    line-height: 1.5;
+  }
+
+  .editorial-account-error {
+    color: var(--editorial-red);
+  }
+
+  .editorial-account-notice {
+    color: var(--editorial-ink);
+  }
+
+  /* Underlined, at full ink, on their own ruled row: the ways out of a state
+     have to look like things to press. */
+  .editorial-account-switches {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 26px;
+    margin-top: 26px;
+    padding-top: 20px;
+    border-top: 1px solid var(--editorial-line);
+  }
+
+  .editorial-account-switch {
+    border: 0;
+    background: transparent;
+    color: var(--editorial-ink);
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    line-height: 1.3;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    text-transform: uppercase;
+    transition: opacity 160ms ease;
+  }
+
+  .editorial-account-switch:hover {
+    opacity: 0.58;
+  }
+
+  @media (max-width: 640px) {
+    .editorial-account-panel {
+      /* Bottom-anchored on a phone: the panel is the task, and leaving a strip
+         of page under it only invites a mis-tap. The nav stays visible above. */
+      bottom: 0;
+      max-height: none;
+      padding: 24px 22px calc(28px + env(safe-area-inset-bottom));
+    }
+
+    .editorial-account-inner {
+      max-width: none;
+    }
+
+    .editorial-account-close {
+      top: 22px;
+      right: 20px;
+    }
+
+    .editorial-account-head h2 {
+      font-size: 26px;
+    }
+
+    .editorial-account-primary,
+    .editorial-account-secondary {
+      justify-self: stretch;
+      width: 100%;
+      text-align: center;
+    }
   }
 }

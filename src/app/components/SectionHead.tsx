@@ -21,7 +21,8 @@ export function SectionHead({ title, aside, as: Tag = "h2" }: Props) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto] items-baseline gap-[var(--s-2)] pt-[var(--s-2)] pb-[var(--s-4)]">
       <Tag
-        className={`${DISPLAY} text-[clamp(1.9rem,5vw,3.4rem)] m-0 text-[color:var(--ink)]`}
+        /* One size for every title on the site — see --fs-section-title. */
+        className={`${DISPLAY} text-[length:var(--fs-section-title)] m-0 text-[color:var(--ink)]`}
       >
         {title}
       </Tag>

@@ -6,6 +6,7 @@ import { PRIVACY_POLICY, TERMS_OF_SERVICE, REFUND_POLICY, FAQ_ITEMS } from "@/ap
 import { Instagram, Search, ShoppingBag, User } from "lucide-react";
 import { fetchMenu, groupByCategory } from "@/lib/api/menu";
 import { Home } from "@/app/pages/Home";
+import { FridayEspresso } from "@/app/pages/FridayEspresso";
 import { Objects } from "@/app/pages/Objects";
 import { RETAIL_PRODUCTS } from "@/app/content/retail";
 import { fetchObjects } from "@/lib/api/objects";
@@ -58,6 +59,22 @@ function menuItemToCartProduct(item: MenuItem): CartProduct {
   };
 }
 
+/*
+ * The name the counter calls out, now that the checkout asks only for an email.
+ *
+ * In order of how much it is worth: the name on the account, then the local
+ * part of the address the order was placed with — "nayef" reads as a person at
+ * a counter in a way "nayef@gmail.com" does not — and finally the RPC's own
+ * 'Guest' default. place_order re-derives nothing, so this is the only place
+ * that decides it.
+ */
+function orderNameFrom(profileName: string, email: string): string {
+  const stored = profileName.trim();
+  if (stored) return stored;
+  const local = email.split("@")[0]?.trim() ?? "";
+  return local || "Guest";
+}
+
 function updateMeta(attribute: "name" | "property", key: string, content: string) {
   let element = document.head.querySelector<HTMLMetaElement>(`meta[${attribute}="${key}"]`);
   if (!element) {
@@ -85,6 +102,9 @@ export default function App() {
     () => routeFor(window.location.pathname).menuCategory,
   );
   const [form, setForm] = useState<ContactForm>({ name: "", lastName: "", email: "", phone: "", comment: "" });
+  /* The name on the account, kept apart from the contact form's own name field
+     so the checkout can use it without reading whatever was last typed there. */
+  const [profileName, setProfileName] = useState("");
   const [sent, setSent] = useState(false);
   const [sending, setSending] = useState(false);
   const [sendError, setSendError] = useState("");
@@ -224,6 +244,7 @@ export default function App() {
     let live = true;
     fetchProfile(session.user.id).then((p) => {
       if (!live || !p) return;
+      setProfileName(p.full_name);
       setForm((f) => ({
         ...f,
         name: f.name || p.full_name,
@@ -363,9 +384,12 @@ export default function App() {
     }
     const result = await placeOrder({
       lines: cartLines.map((line) => ({ menuItemId: line.product.backendId as string, qty: line.quantity })),
-      customerName: details.customerName,
+      customerName: orderNameFrom(profileName, details.customerEmail),
       customerEmail: details.customerEmail || null,
-      customerPhone: details.customerPhone || null,
+      /* The checkout stopped asking for a mobile; a signed-in customer's stored
+         one still rides along, because a counter with a ready order and no way
+         to reach anyone is the problem the field existed for. */
+      customerPhone: form.phone || null,
       paymentMethod: "cash",
     });
     if (result.ok) setCartLines([]);
@@ -634,12 +658,23 @@ export default function App() {
         onDecrement={decrementCart}
         onRemove={removeFromCart}
         onCheckout={submitCartOrder}
+        defaultEmail={session?.user.email ?? ""}
       />
 
       {page === "home" && (
         <main id="main-content" className="flex flex-col min-h-screen" style={{ paddingTop: navHeight }}>
           <div className="flex-1">
             <Home linkTo={linkTo} />
+          </div>
+          <EditorialFooter linkTo={linkTo} />
+        </main>
+      )}
+
+      {/* ══ FRIDAY ESPRESSO ══ */}
+      {page === "ritual" && (
+        <main id="main-content" className="flex flex-col min-h-screen" style={{ paddingTop: navHeight }}>
+          <div className="flex-1">
+            <FridayEspresso linkTo={linkTo} menuItems={menuItems} />
           </div>
           <EditorialFooter linkTo={linkTo} />
         </main>

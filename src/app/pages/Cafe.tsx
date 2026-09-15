@@ -30,7 +30,7 @@ export function Cafe({ linkTo, sections, category, loading, error }: Props) {
   return (
     <div>
       <header className="text-center pt-[clamp(2.5rem,7vh,4rem)] pb-[clamp(2rem,6vh,3.5rem)]">
-        <h1 className="font-serif font-bold uppercase text-[clamp(2.6rem,8.5vw,5rem)] tracking-[-0.01em] leading-none m-0 text-[color:var(--ink)]">
+        <h1 className="font-serif font-bold uppercase text-[length:var(--fs-section-title)] tracking-[-0.01em] leading-[0.96] m-0 text-[color:var(--ink)]">
           Menu
         </h1>
         <div aria-hidden="true" className="mx-auto mt-[26px] mb-[16px] w-px h-[34px] bg-[color:var(--line)]" />
