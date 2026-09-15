@@ -760,7 +760,7 @@ export default function App() {
       {page === "faq" && (
         <main id="main-content" className="min-h-screen flex flex-col" style={{ paddingTop: navHeight }}>
           <div className="flex-1 max-w-2xl w-full mx-auto px-6 py-14">
-            <h1 className="font-serif font-semibold text-5xl mb-12">FAQ</h1>
+            <h1 className="font-serif font-semibold text-[length:var(--fs-section-title)] leading-[0.96] mb-12">FAQ</h1>
             <FaqAccordion items={FAQ_ITEMS} />
           </div>
           <NewsletterSignup />

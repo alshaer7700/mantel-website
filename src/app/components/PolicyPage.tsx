@@ -5,7 +5,7 @@ import type { LegalDoc } from "@/app/content/legal";
 export function PolicyPage({ doc }: { doc: LegalDoc }) {
   return (
     <div className="flex-1 max-w-2xl w-full mx-auto px-6 py-14">
-      <h1 className="font-serif font-semibold text-4xl md:text-5xl mb-2">{doc.title}</h1>
+      <h1 className="font-serif font-semibold text-[length:var(--fs-section-title)] leading-[0.96] mb-2">{doc.title}</h1>
       <p className="font-mono font-normal text-[11px] tracking-[0.14em] uppercase text-muted-foreground mb-12">
         Last updated {doc.updated}
       </p>

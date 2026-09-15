@@ -35,7 +35,7 @@ export function NewsletterSignup() {
 
   return (
     <section className="max-w-2xl w-full mx-auto px-6 py-16 text-center" aria-labelledby="newsletter-title">
-      <h2 id="newsletter-title" className="font-serif font-semibold text-4xl md:text-5xl mb-4">
+      <h2 id="newsletter-title" className="font-serif font-semibold text-[length:var(--fs-section-title)] leading-[0.96] mb-4">
         New Sips, First Look.
       </h2>
       <p className="font-mono font-normal text-sm text-muted-foreground mb-8">

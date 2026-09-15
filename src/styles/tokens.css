@@ -117,7 +117,15 @@
    * rather than four on a 320px phone. The photographic hero keeps its own
    * oversized type — it is an image treatment, not a section title.
    */
-  --fs-section-title: clamp(27px, 3.4vw, 44px);
+  --fs-section-title: clamp(22px, 2.6vw, 34px);
+
+  /*
+   * The rank below a title: a menu category, a Pick Up section. Derived rather
+   * than stated, so shrinking the title above cannot leave a sub-heading
+   * shouting over it — which is exactly what happened when both carried their
+   * own clamp() and only one of them was tuned.
+   */
+  --fs-subsection-title: calc(var(--fs-section-title) * 0.72);
   --fs-item:         17px;
   --fs-desc:         14px;
   --fs-price:        14px;

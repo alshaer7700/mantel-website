@@ -1531,10 +1531,10 @@
   .editorial-cart-header h2 {
     margin: 12px 0 0;
     font-family: var(--font-serif);
-    font-size: 34px;
+    font-size: var(--fs-section-title);
     font-weight: 500;
-    letter-spacing: -0.04em;
-    line-height: 0.9;
+    letter-spacing: -0.035em;
+    line-height: 0.96;
   }
 
   .editorial-cart-header > button,
@@ -1848,7 +1848,7 @@
     margin: 0;
     color: var(--editorial-ink);
     font-family: var(--font-serif);
-    font-size: 28px;
+    font-size: var(--fs-section-title);
     font-weight: 500;
     letter-spacing: -0.02em;
     line-height: 1.04;
@@ -2994,10 +2994,10 @@
     margin: 10px 0 0;
     color: var(--editorial-ink);
     font-family: var(--font-serif);
-    font-size: 30px;
+    font-size: var(--fs-section-title);
     font-weight: 500;
-    letter-spacing: -0.02em;
-    line-height: 1.02;
+    letter-spacing: -0.035em;
+    line-height: 0.96;
   }
 
   .editorial-account-head .editorial-overline {
@@ -3273,10 +3273,6 @@
     .editorial-account-close {
       top: 22px;
       right: 20px;
-    }
-
-    .editorial-account-head h2 {
-      font-size: 26px;
     }
 
     .editorial-account-primary,
