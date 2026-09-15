@@ -101,11 +101,10 @@ back to whatever the browser picks.
 
 ### CSP
 
-`public/_headers` and `vercel.json` both carry a CSP. Self-hosted fonts need
-`font-src 'self'`, which is already present. The
-`https://fonts.googleapis.com` / `https://fonts.gstatic.com` entries are
-leftovers from the old Google Fonts setup — harmless, but removable if you
-want to tighten it.
+`public/_headers` carries the CSP that Netlify serves. Self-hosted fonts need
+`font-src 'self'`, which is already present. There are no Google Fonts entries
+left to remove; the copy that still had them lived in `vercel.json`, deleted
+when the site consolidated onto Netlify.
 
 ## Verifying a font change
 

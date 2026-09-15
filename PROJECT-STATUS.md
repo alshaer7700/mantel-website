@@ -48,7 +48,7 @@ npm run build      # production bundle → dist/ (deploy this folder to go live)
 ## Ideas / not yet done
 - Real "Our Story" page (the home OUR STORY button currently goes to Contact — likely a leftover to fix).
 - Move project out of `~/Downloads` into `~/Documents/PROJECTS/`.
-- Deploy `dist/` (Netlify/Vercel) when ready to go live.
+- (done) `dist/` deploys to Netlify at https://bymantel.com.
 - Menu item photos, opening hours, location/map section.
 
 ## Environment notes
