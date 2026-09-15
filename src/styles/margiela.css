@@ -1161,11 +1161,14 @@
     padding: 18px 14px 14px;
   }
 
+  /* A product name is a rank below the page title above it, so it follows the
+     title rather than carrying its own clamp() — which is how it ended up at
+     30px under a 34px "Objects." and all but level with it. */
   .editorial-object-info h2 {
     margin: 0 0 8px;
     color: var(--editorial-ink);
     font-family: var(--font-serif);
-    font-size: clamp(22px, 2.1vw, 30px);
+    font-size: var(--fs-subsection-title);
     font-weight: 500;
     letter-spacing: -0.025em;
     line-height: 0.95;
@@ -1246,10 +1249,6 @@
     .editorial-object-info {
       min-height: 150px;
       padding-inline: 10px;
-    }
-
-    .editorial-object-info h2 {
-      font-size: 22px;
     }
 
     .editorial-object-purchase {

@@ -44,8 +44,17 @@ function fromAuthError(error: AuthError): AppError {
   }
   if (raw.includes("signups not allowed") || raw.includes("signup is disabled")) {
     /*
-     * The expected result until public signup is enabled on the project
-     * (audit M-6, disabled deliberately and verified 2026-07-10).
+     * The expected result until public signup is enabled on the project.
+     *
+     * Not a guess: GET /auth/v1/settings on the live project returns
+     * "disable_signup": true (re-checked 2026-09-15), and POST /auth/v1/signup
+     * answers 422 signup_disabled / "Signups not allowed for this instance" —
+     * which is the string the branch above matches. Flipping it is a dashboard
+     * change (Authentication → Sign In / Providers → "Allow new users to sign
+     * up"), not a code one; nothing in this file can lift it. The same call
+     * reports "mailer_autoconfirm": false, so when signup IS enabled, register()
+     * will come back with no session and AccountPanel's `sent` state — the
+     * check-your-inbox screen — is the one that runs.
      *
      * NOT `forbidden`. That kind already means "ordering is locked", and
      * messageFor renders it as "Ordering opens soon — the menu is here to

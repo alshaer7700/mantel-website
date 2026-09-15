@@ -17,27 +17,31 @@ import { TrayArt } from "@/app/components/ritual/TrayArt";
  * Friday Espresso — the page behind "View the details" in the home page's
  * section 01.
  *
- * The photograph is the page: it sits in the middle, and the copy hangs off it
- * on thin drawn lines, the way a parts diagram labels a drawing. Everything
- * shown here comes from content/ritual.ts, so the words and the photo can
- * change without touching this file.
+ * The picture is the page: it sits in the middle, and the copy hangs off it on
+ * thin drawn lines, the way a parts diagram labels a drawing. What sits in the
+ * middle is the line drawing in components/ritual/TrayArt.tsx, or a photograph
+ * once content/ritual.ts names one — this file renders whichever it is handed
+ * and is otherwise indifferent. Everything else shown here comes from that same
+ * content file, so the words and the picture can change without touching layout.
  *
- * TWO LAYOUTS, ONE DOM. On a wide screen the notes are absolutely positioned
- * on rails either side of the photo and an SVG draws an elbow from each note
- * to its dot. Below 900px the rails collapse: the same notes become an ordinary
- * numbered list under the photo and the drawn lines are hidden, because a
- * 360px-wide screen has no room for a rail and a leader line that crosses it
- * is noise rather than information. The dots stay on the photo either way, so
+ * TWO LAYOUTS, ONE DOM. On a wide screen the notes are absolutely positioned on
+ * rails either side of the picture and an SVG draws an elbow from each note to
+ * its dot. Below 1180px the rails collapse: the same notes become an ordinary
+ * numbered list under the picture and the drawn lines are hidden, because a
+ * narrow rail has no room for the copy and a leader line that crosses it is
+ * noise rather than information. The stylesheet's own comment carries the
+ * arithmetic behind that number. The dots stay on the picture either way, so
  * the numbers in the list still have something to point at.
  */
 
 /*
- * The photo's width as a percentage of the stage, on wide screens only. Shared
- * with the CSS (--ritual-photo-w) because the leader lines are drawn in stage
- * coordinates and have to know where the photo's edges are: a dot at x=50 in
- * *photo* space is at 30 + 50% of 40 = 50 in stage space. Change one and the
- * other has to follow, which is why the number lives here and is handed to CSS
- * rather than written out twice.
+ * The picture's width as a percentage of the stage, on wide screens only.
+ * Shared with the CSS (--ritual-photo-w) because the leader lines are drawn in
+ * stage coordinates and have to know where the picture's edges are: the frame
+ * runs from 27% to 73%, so a dot at x=50 in *picture* space is at
+ * 27 + 50% of 46 = 50 in stage space. Change one and the other has to follow,
+ * which is why the number lives here and is handed to CSS rather than written
+ * out twice.
  */
 const PHOTO_WIDTH_PCT = 46;
 const PHOTO_LEFT_PCT = (100 - PHOTO_WIDTH_PCT) / 2;
@@ -45,9 +49,9 @@ const PHOTO_LEFT_PCT = (100 - PHOTO_WIDTH_PCT) / 2;
  * Where each leader line turns its corner, and how wide the rails are — both
  * in stage percentages, and both constrained by the other. The corner has to
  * fall in the gap between a rail's inner edge (20%) and the picture's outer
- * edge (27%): too close to the photo and the line fouls the frame's corner tick,
- * too close to the rail and the run out of the note collapses to nothing and
- * the leader reads as a stray vertical stroke. RAIL_WIDTH_PCT must match
+ * edge (27%): too close to the picture and the line fouls the frame's corner
+ * tick, too close to the rail and the run out of the note collapses to nothing
+ * and the leader reads as a stray vertical stroke. RAIL_WIDTH_PCT must match
  * .editorial-ritual-note's width in the stylesheet.
  */
 const ELBOW_GAP_PCT = 3;
