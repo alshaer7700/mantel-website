@@ -266,7 +266,15 @@ export function AccountPanel({ session, recovering, onClose, navHeight, id }: Pr
                 autoComplete={mode === "signin" ? "current-password" : "new-password"}
                 minLength={6}
                 required
-                hint={mode === "signin" ? undefined : "At least 6 characters."}
+                /* The project's real rule, verified against its own endpoint:
+                   6 characters minimum AND at least one capital, one small
+                   letter and one number. Saying so here costs a line; leaving
+                   it to the server costs the visitor a rejected attempt. */
+                hint={
+                  mode === "signin"
+                    ? undefined
+                    : "At least 6 characters, with a capital, a small letter and a number."
+                }
                 action={{
                   label: showPassword ? "Hide" : "Show",
                   onClick: () => setShowPassword((v) => !v),

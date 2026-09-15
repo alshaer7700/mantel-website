@@ -64,9 +64,47 @@ function fromAuthError(error: AuthError): AppError {
      */
     return { kind: "notice", message: "Accounts aren't open yet — ordering and sign-up arrive together." };
   }
-  if (raw.includes("password") && raw.includes("6")) {
-    return { kind: "notice", message: "Use at least 6 characters for the password." };
+  /*
+   * The password rules, as the project actually enforces them — checked
+   * against the live endpoint rather than assumed.
+   *
+   * ORDER MATTERS, and the previous version of this branch is why. It read
+   *
+   *     raw.includes("password") && raw.includes("6")
+   *
+   * and answered "Use at least 6 characters for the password." That is right
+   * for "Password should be at least 6 characters." It is badly wrong for the
+   * other rejection this project issues:
+   *
+   *     "Password should contain at least one character of each:
+   *      abcdefghijklmnopqrstuvwxyz, ABCDEFGHIJKLMNOPQRSTUVWXYZ, 0123456789."
+   *
+   * which contains "password", and contains "6" — inside "0123456789". So
+   * someone whose password was long enough but had no capital was told to make
+   * it longer, did, and was rejected again with the same advice. The character
+   * rule is therefore tested FIRST, and the length rule reads the number out of
+   * the message instead of searching the whole string for a digit.
+   */
+  if (raw.includes("should contain at least one character")) {
+    return {
+      kind: "notice",
+      message: "Use a mix of capitals, small letters and at least one number.",
+    };
   }
+  const tooShort = raw.match(/at least (\d+) characters/);
+  if (tooShort) {
+    return { kind: "notice", message: `Use at least ${tooShort[1]} characters for the password.` };
+  }
+  /*
+   * Supabase rejects addresses at reserved demo domains (example.com and
+   * friends) outright. Without this the visitor gets the generic apology and no
+   * idea which of the two fields is the problem.
+   */
+  if (raw.includes("is invalid") && raw.includes("email")) {
+    return { kind: "notice", message: "That email address isn't one we can send to." };
+  }
+  /* Covers both the sign-in attempt limiter and "email rate limit exceeded",
+     which the built-in SMTP returns well before a busy Friday would. */
   if (raw.includes("rate limit") || raw.includes("too many")) {
     return { kind: "rate-limited", message: "Too many attempts — try again in a few minutes." };
   }
