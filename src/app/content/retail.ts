@@ -33,6 +33,33 @@ export type CartLine = {
   quantity: number;
 };
 
+/*
+ * ── THE REAL PRODUCT PHOTOGRAPHS ────────────────────────────────────────────
+ *
+ * The six images below are still the pre-launch mockups. Nayef has shot the
+ * real objects (2026-09-15) — candle tins, two lighter colourways, the taper
+ * candles with the heart band, the matches label, and two totes — but the files
+ * have not reached the repository yet, so nothing here points at them.
+ *
+ * WHAT EACH ONE IS FOR, once the files are in src/imports/:
+ *
+ *   candles        the four stacked MANTEL tins
+ *   lighters       the leopard-print lighter (the checkerboard one is a second
+ *                  colourway — a nice second shot if the card ever takes two)
+ *   candle-sticks  the pair of cream tapers in the corrugated heart band
+ *   match-sticks   the MANTEL safety-matches label
+ *   custom-bags    the "Mantel." tote (the red-heart tote is the other face)
+ *   matcha-powder  STILL NEEDED — no photograph of it yet
+ *
+ * They must be cut out, on transparent PNG, and shot to a consistent object
+ * size: every card frames its image identically now (see --object-pad in
+ * margiela.css), so a product photographed larger in its own file will simply
+ * read larger on the shelf. The originals are on brushed steel, so the
+ * background has to come out or the tone block behind it is lost.
+ *
+ * Swapping one is two lines: add the import at the top of this file, and point
+ * that product's `image` at it. Nothing else in the app needs to change.
+ */
 export const RETAIL_PRODUCTS: RetailProduct[] = [
   {
     id: "matcha-powder",
