@@ -3,7 +3,7 @@ import { BleedPlate } from "@/app/components/Plate";
 import { MenuList } from "@/app/components/menu/MenuList";
 import { PLATES } from "@/app/content/plates";
 import { LABEL, LABEL_INK } from "@/app/components/type";
-import { ORDERING_OPEN } from "@/lib/constants";
+import { ORDERING_OPEN, PICKUP_OPEN } from "@/lib/constants";
 
 /*
  * The permanent-collection cover: a centered "Menu" in place of the old
@@ -36,7 +36,7 @@ export function Cafe({ linkTo, sections, category, loading, error }: Props) {
         <div aria-hidden="true" className="mx-auto mt-[26px] mb-[16px] w-px h-[34px] bg-[color:var(--line)]" />
         <p className={LABEL}>
           Permanent collection · Prices in BD
-          {ORDERING_OPEN && (
+          {ORDERING_OPEN && PICKUP_OPEN && (
             <>
               {" · "}
               <a {...linkTo("pickup")} className={LABEL_INK}>

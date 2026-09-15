@@ -6,6 +6,17 @@
 export const ORDERING_OPEN = true;
 
 /**
+ * Whether Order Before Reach takes orders yet.
+ *
+ * Separate from ORDERING_OPEN on purpose: the cart, the checkout and the
+ * place_order RPC all stay live, because Retail still sells through them. This
+ * flag governs one page — the café menu with add-to-cart — and the one link on
+ * the Menu page that points at it. Set it true and the page comes back exactly
+ * as it was; nothing else needs touching.
+ */
+export const PICKUP_OPEN = false;
+
+/**
  * Where "Find us" goes: the shop on Google Maps, in a new tab.
  *
  * A `?api=1&query=` search URL rather than a coordinate or a /maps/place/…

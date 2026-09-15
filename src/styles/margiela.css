@@ -1105,7 +1105,6 @@
     width: 100%;
     aspect-ratio: 4 / 5;
     overflow: hidden;
-    padding: 28px;
     background: #ded8cc;
   }
 
@@ -1117,12 +1116,29 @@
     pointer-events: none;
   }
 
+  /*
+   * One frame, one scale, every product.
+   *
+   * The 28px padding this replaces was on the CONTAINER while the image was
+   * absolutely positioned with inset: 0 — which ignores padding entirely. So
+   * every cut-out ran edge to edge of the tone block and each product landed at
+   * whatever size its own file happened to crop to: a tall pair of candles and
+   * a small lighter read as wildly different objects rather than a shelf.
+   *
+   * The inset is on the image now, as a percentage and inside its box, so
+   * object-fit: contain fits every product into an identical frame. --object-pad
+   * is the one dial: raise it to sit a product further inside its block, and
+   * override it per tone below for anything that still reads too large or small
+   * once the real cut-outs land.
+   */
   .editorial-object-image img {
     position: absolute;
     inset: 0;
     display: block;
+    box-sizing: border-box;
     width: 100%;
     height: 100%;
+    padding: var(--object-pad, 15%);
     object-fit: contain;
     object-position: center;
     filter: none;
@@ -3280,5 +3296,46 @@
       width: 100%;
       text-align: center;
     }
+  }
+
+  /* ══ COMING SOON ══════════════════════════════════════════════════════════
+     One page state, for a section that exists in the nav before it exists at
+     the counter. Deliberately plain: a visitor who followed a link deserves a
+     sentence about why there is nothing here and somewhere else to go, not a
+     decorated apology. */
+
+  .editorial-soon {
+    display: grid;
+    align-content: center;
+    justify-items: start;
+    min-height: min(56vh, 520px);
+    padding: clamp(56px, 10vw, 120px) 0 clamp(64px, 10vw, 130px);
+  }
+
+  .editorial-soon .editorial-overline {
+    margin: 0 0 14px;
+  }
+
+  .editorial-soon h1 {
+    margin: 0;
+    color: var(--editorial-ink);
+    font-family: var(--font-serif);
+    font-size: var(--fs-section-title);
+    font-weight: 500;
+    letter-spacing: -0.035em;
+    line-height: 0.96;
+  }
+
+  .editorial-soon-copy {
+    max-width: 44ch;
+    margin: 20px 0 0;
+    color: var(--editorial-muted);
+    font-family: var(--font-serif);
+    font-size: 18px;
+    line-height: 1.38;
+  }
+
+  .editorial-soon .editorial-inline-links {
+    margin-top: 28px;
   }
 }

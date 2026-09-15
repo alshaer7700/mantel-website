@@ -4,6 +4,7 @@ import { Shelf } from "@/app/components/Shelf";
 import { SectionHead } from "@/app/components/SectionHead";
 import { PickUpList } from "@/app/components/pickup/PickUpList";
 import { LABEL } from "@/app/components/type";
+import { PICKUP_OPEN } from "@/lib/constants";
 
 /*
  * Order Before Reach: the only place on the site where a café item can be
@@ -30,6 +31,29 @@ type Props = {
 export function PickUp({ linkTo, sections, loading, error, cartLines, onAdd, onIncrement, onDecrement }: Props) {
   const hasItems = sections.some(([, items]) => items.length > 0);
   const itemCount = cartLines.reduce((total, line) => total + line.quantity, 0);
+
+  /*
+   * Not open yet. The page still exists and still says what it is — the nav
+   * links here, and a link that lands on nothing is worse than one that lands
+   * on an explanation. What it does not do is show a menu with buttons that
+   * would take an order nobody is ready to fill.
+   */
+  if (!PICKUP_OPEN) {
+    return (
+      <div className="editorial-soon">
+        <p className="editorial-overline">Order before reach</p>
+        <h1>Coming soon.</h1>
+        <p className="editorial-soon-copy">
+          Ordering ahead isn't open yet. The menu is here to browse in the meantime, and the
+          counter is open as usual.
+        </p>
+        <div className="editorial-inline-links">
+          <a {...linkTo("menu")} className="editorial-link">View the menu</a>
+          <a {...linkTo("contact")} className="editorial-link">Contact us</a>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="pt-[clamp(3rem,9vh,6rem)]">
