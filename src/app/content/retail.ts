@@ -2,8 +2,8 @@ import retailCandleSticksImage from "@/imports/retail-candle-sticks.webp";
 import retailToteImage from "@/imports/retail-tote.webp";
 import retailToteHeartImage from "@/imports/retail-tote-heart.webp";
 import retailLighterImage from "@/imports/retail-lighter.webp";
+import retailLighterCheckImage from "@/imports/retail-lighter-check.webp";
 import retailCandleImage from "@/imports/retail-candle.webp";
-import retailMatchaImage from "@/imports/retail-matcha.webp";
 import retailMatchSticksImage from "@/imports/retail-match-sticks.webp";
 
 /*
@@ -46,19 +46,19 @@ export type CartLine = {
 /*
  * ── THE PRODUCT PHOTOGRAPHS ─────────────────────────────────────────────────
  *
- * Five of the six are the real objects, shot 2026-09-15 and in the tree since
+ * All five are the real objects, shot 2026-09-15 and in the tree since
  * 2026-09-16:
  *
  *   candles        the four stacked MANTEL tins
- *   lighters       the leopard-print lighter (the checkerboard colourway is a
- *                  different product, not a second face, so it is not here)
+ *   lighters       both colourways, leopard then checkerboard — one card,
+ *                  stepped through by ObjectSlides
  *   candle-sticks  the pair of cream tapers in the corrugated heart band
  *   match-sticks   the MANTEL safety-matches label
- *   custom-bags    the "Mantel." tote AND its red-heart face — the one card
- *                  with two, stepped through by ObjectSlides
+ *   custom-bags    the "Mantel." tote and its red-heart face, also two
  *
- * matcha-powder is the exception and still a pre-launch mockup: no photograph
- * of it has been taken.
+ * matcha-powder used to be a sixth, and was the only one still on a pre-launch
+ * mockup. It is gone rather than waiting for a photograph: a shelf of five real
+ * objects reads better than six with one drawing.
  *
  * EVERY FILE HERE IS A CUT-OUT ON TRANSPARENT PNG, trimmed to the object and
  * re-centred on one square canvas at a fixed margin. Both halves of that matter
@@ -77,14 +77,6 @@ export type CartLine = {
  * that product's `image` at it. Nothing else in the app needs to change.
  */
 export const RETAIL_PRODUCTS: RetailProduct[] = [
-  {
-    id: "matcha-powder",
-    name: "Matcha Powder",
-    description: "Bright, clean, and quietly grassy.",
-    price: 4.5,
-    image: retailMatchaImage,
-    tone: "matcha",
-  },
   {
     id: "candles",
     name: "Candles",
@@ -107,6 +99,7 @@ export const RETAIL_PRODUCTS: RetailProduct[] = [
     description: "A small object with a little ceremony.",
     price: 3,
     image: retailLighterImage,
+    images: [retailLighterImage, retailLighterCheckImage],
     tone: "lighter",
   },
   {

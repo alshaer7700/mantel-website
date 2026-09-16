@@ -126,7 +126,6 @@ export default function App() {
       if (result.ok) {
         const byName = new Map(result.objects.map((object) => [object.name.toLowerCase(), object]));
         const byAlias = new Map([
-          ["matcha powder", "matcha refill"],
           ["candles", "scented candle"],
           ["match sticks", "safety matches"],
           ["lighters", "cold brew"],

@@ -1039,9 +1039,30 @@
 
 
 @layer components {
+  /*
+   * The shelf, in Maison Margiela's layout language.
+   *
+   * Their listing is the reference and the numbers here are theirs, read off
+   * the live stylesheet rather than guessed: tiles at 25% (desktop) and 50%
+   * (mobile) of a container with NO gap, a hero frame at padding-top:150%,
+   * caption padding of 0.875rem, price at 0.8125rem, and a ground of #f7f7f2
+   * rather than white. What makes it read the way it does is not any one of
+   * those — it is that the grid is full-bleed, gutterless and borderless, so
+   * the page reads as one continuous shelf instead of a page with boxes on it.
+   *
+   * Three adaptations, because six objects are not four hundred garments:
+   *   - 3-up, not 4-up. At this size the tiles stay generous (480px at 1440)
+   *     and the objects are small enough to need the room.
+   *   - 3:4 frames, not 2:3. Their ratio is sized for a 360px tile; at 3-up
+   *     it would stand 720px tall.
+   *   - EB Garamond and Mantel's own paper. This borrows their layout, not
+   *     their voice.
+   */
   .editorial-objects-page {
+    --shelf-gutter: clamp(22px, 8vw, 120px);
+
     min-height: 70vh;
-    padding: clamp(70px, 10vw, 132px) clamp(22px, 8vw, 120px) clamp(90px, 12vw, 160px);
+    padding: clamp(70px, 10vw, 132px) 0 clamp(90px, 12vw, 160px);
     background: var(--editorial-paper);
   }
 
@@ -1050,8 +1071,7 @@
     grid-template-columns: minmax(0, 1fr) minmax(260px, 0.7fr);
     align-items: end;
     gap: 40px;
-    padding-bottom: 52px;
-    border-bottom: 1px solid var(--editorial-line);
+    padding: 0 var(--shelf-gutter) 52px;
   }
 
   .editorial-objects-intro h1 {
@@ -1077,8 +1097,17 @@
     line-height: 1.2;
   }
 
-  .editorial-objects-status {
-    padding: 18px 0;
+  /* The status used to sit on its own band above the shelf. It is a caption,
+     so it rides the hairline that opens the shelf instead — count on the left,
+     state on the right, one line of mono holding the whole grid down. */
+  .editorial-objects-ledger {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 4px 16px;
+    padding: 0 var(--shelf-gutter) 14px;
+    border-bottom: 1px solid var(--editorial-line);
     color: var(--editorial-muted);
     font-family: var(--font-mono);
     font-size: 10px;
@@ -1086,18 +1115,27 @@
     text-transform: uppercase;
   }
 
+  /*
+   * Full bleed, gutterless, borderless.
+   *
+   * The grid used to paint --editorial-line behind 1px gaps, which drew six
+   * rectangles on the page. Margiela lets tiles touch and carries a single
+   * hairline above and below the whole run — so the eye reads a shelf, and the
+   * objects on it are the only things with edges.
+   */
   .editorial-objects-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 1px;
-    background: var(--editorial-line);
-    border-top: 1px solid var(--editorial-line);
+    gap: 0;
+    background: var(--editorial-paper);
     border-bottom: 1px solid var(--editorial-line);
   }
 
   .editorial-object-card {
+    position: relative;
     min-width: 0;
     background: var(--editorial-paper);
+    padding-bottom: 14px;
   }
 
   /*
@@ -1108,12 +1146,12 @@
    * carried their own backgrounds and needed something to sit against. Now that
    * every file is a cut-out on transparent PNG, a block behind it just puts six
    * coloured rectangles back on a shelf that reads better as one continuous
-   * ground. The gradient went with them: over paper it washed the objects grey.
+   * ground.
    */
   .editorial-object-image {
     position: relative;
     width: 100%;
-    aspect-ratio: 4 / 5;
+    aspect-ratio: 3 / 4;
     overflow: hidden;
     background: var(--editorial-paper);
   }
@@ -1121,17 +1159,13 @@
   /*
    * One frame, one scale, every product.
    *
-   * The 28px padding this replaces was on the CONTAINER while the image was
-   * absolutely positioned with inset: 0 — which ignores padding entirely. So
-   * every cut-out ran edge to edge of the tone block and each product landed at
-   * whatever size its own file happened to crop to: a tall pair of candles and
-   * a small lighter read as wildly different objects rather than a shelf.
-   *
-   * The inset is on the image now, as a percentage and inside its box, so
-   * object-fit: contain fits every product into an identical frame. --object-pad
-   * is the one dial: raise it to sit a product further inside its block, and
-   * override it per tone below for anything that still reads too large or small
-   * once the real cut-outs land.
+   * The inset is on the image, as a percentage and inside its box, so
+   * object-fit: contain fits every product into an identical frame.
+   * --object-pad is the one dial: raise it to sit a product further inside its
+   * block. Percentage padding resolves against WIDTH on all four sides, so in a
+   * 3:4 frame the pad also sets how much of the extra height the object leaves
+   * as air — 9% of a 480px tile is 43px of pad and a 394px object in a 640px
+   * frame, which is airy on purpose rather than by accident.
    */
   .editorial-object-image img {
     position: absolute;
@@ -1140,15 +1174,29 @@
     box-sizing: border-box;
     width: 100%;
     height: 100%;
-    padding: var(--object-pad, 15%);
+    padding: var(--object-pad, 9%);
     object-fit: contain;
     object-position: center;
     filter: none;
     transition: transform 280ms cubic-bezier(0.23, 1, 0.32, 1), filter 280ms ease;
   }
 
+  /* Margiela numbers everything. Six objects, 01 through 06, set in the frame
+     rather than in the caption — it is the shelf's spine, not a label. */
+  .editorial-object-index {
+    position: absolute;
+    top: 14px;
+    left: 16px;
+    z-index: 1;
+    color: var(--editorial-muted);
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.14em;
+  }
+
   /*
-   * A product with more than one face (the tote, printed both sides).
+   * A product with more than one face (the tote, printed both sides; the
+   * lighter, in two colourways).
    *
    * Every face is mounted and stacked — the frame already positions each img at
    * inset 0 — so switching is a crossfade and the second face is decoded before
@@ -1203,43 +1251,22 @@
     opacity: 1;
   }
 
-  /* The crossfade is decoration; the switch itself must still happen. */
-  @media (prefers-reduced-motion: reduce) {
-    .editorial-object-image:has(.editorial-object-slide) .editorial-object-slide {
-      transition: none;
-    }
-  }
-
   .editorial-object-card:hover .editorial-object-image img {
     transform: scale(1.04);
     filter: none;
   }
 
-  .editorial-object-placeholder {
-    position: absolute;
-    top: 14px;
-    left: 14px;
-    z-index: 1;
-    color: rgba(255, 255, 255, 0.85);
-    font-family: var(--font-mono);
-    font-size: 8px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-  }
-
   .editorial-object-info {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    min-height: 158px;
-    padding: 18px 14px 14px;
+    gap: 14px;
+    padding: 14px var(--caption-pad, 16px) 0;
   }
 
   /* A product name is a rank below the page title above it, so it follows the
-     title rather than carrying its own clamp() — which is how it ended up at
-     30px under a 34px "Objects." and all but level with it. */
+     title rather than carrying its own clamp(). */
   .editorial-object-info h2 {
-    margin: 0 0 8px;
+    margin: 0 0 6px;
     color: var(--editorial-ink);
     font-family: var(--font-serif);
     font-size: var(--fs-subsection-title);
@@ -1249,7 +1276,7 @@
   }
 
   .editorial-object-info p {
-    max-width: 20ch;
+    max-width: 22ch;
     margin: 0;
     color: var(--editorial-muted);
     font-family: var(--font-serif);
@@ -1257,17 +1284,26 @@
     line-height: 1.15;
   }
 
+  /*
+   * Price at rest, action on approach.
+   *
+   * Margiela's tile carries two caption layers: the default, and a second one
+   * absolutely positioned over it that only appears on hover. Six cards each
+   * shouting "Add to bag +" is the opposite of that. The price stays — it is
+   * information — and the button is what waits.
+   *
+   * It keeps its space while hidden, so nothing reflows, and it is revealed by
+   * focus-within as well as hover so the keyboard is never locked out. Below,
+   * any pointer that cannot hover gets it unconditionally.
+   */
   .editorial-object-purchase {
     display: flex;
     align-items: end;
     justify-content: space-between;
     gap: 8px;
-    margin-top: 26px;
-    padding-top: 12px;
-    border-top: 1px solid var(--editorial-line);
     color: var(--editorial-ink);
     font-family: var(--font-mono);
-    font-size: 10px;
+    font-size: 13px;
     letter-spacing: 0.04em;
   }
 
@@ -1278,51 +1314,82 @@
     color: inherit;
     cursor: pointer;
     font-family: inherit;
-    font-size: inherit;
-    letter-spacing: inherit;
+    font-size: 10px;
+    letter-spacing: 0.08em;
     padding: 0;
+    text-transform: uppercase;
     text-decoration: underline;
     text-underline-offset: 3px;
     white-space: nowrap;
+    opacity: 0;
+    transition: opacity 220ms ease, color 160ms ease;
+  }
+
+  .editorial-object-card:hover .editorial-object-purchase button,
+  .editorial-object-card:focus-within .editorial-object-purchase button {
+    opacity: 1;
   }
 
   .editorial-object-purchase button:hover {
     color: var(--editorial-red);
   }
 
+  /* A pointer that cannot hover can never reveal it, so it is never hidden. */
+  @media (hover: none) {
+    .editorial-object-purchase button {
+      opacity: 1;
+    }
+  }
+
+  /* The crossfade and the reveal are decoration; the switch and the button
+     must still happen. */
+  @media (prefers-reduced-motion: reduce) {
+    .editorial-object-image:has(.editorial-object-slide) .editorial-object-slide,
+    .editorial-object-purchase button {
+      transition: none;
+    }
+  }
+
   @media (max-width: 1100px) {
     .editorial-objects-grid {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
 
   @media (max-width: 640px) {
     .editorial-objects-page {
-      padding-inline: 0;
+      --shelf-gutter: 22px;
+      --caption-pad: 12px;
+
+      padding-top: 44px;
     }
 
+    /*
+     * On a phone the masthead was the whole first screen.
+     *
+     * The overline, a 20px serif title, three lines of prose and a link ran
+     * about 300px deep before a single object appeared — so the page opened on
+     * a description of a shelf rather than on the shelf. The prose is the part
+     * that goes: it is copy, not navigation, and the same sentence already sits
+     * in the page description and in the link preview. Desktop keeps it, where
+     * it rides the right-hand column and costs no height at all.
+     */
     .editorial-objects-intro {
       grid-template-columns: 1fr;
-      gap: 38px;
-      padding-inline: 22px;
-      padding-bottom: 42px;
+      gap: 20px;
+      padding-bottom: 26px;
     }
 
     .editorial-objects-intro-copy {
       justify-self: start;
     }
 
-    .editorial-objects-status {
-      padding-inline: 22px;
+    .editorial-objects-intro-copy p {
+      display: none;
     }
 
-    .editorial-objects-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .editorial-object-info {
-      min-height: 150px;
-      padding-inline: 10px;
+    .editorial-object-info p {
+      max-width: none;
     }
 
     .editorial-object-purchase {
