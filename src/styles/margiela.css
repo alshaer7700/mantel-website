@@ -1100,20 +1100,22 @@
     background: var(--editorial-paper);
   }
 
+  /*
+   * The frame is the page, not a colour block.
+   *
+   * Each product used to sit on its own tone — sage, terracotta, brown — with a
+   * darkening gradient over it. That treatment only worked while the shots
+   * carried their own backgrounds and needed something to sit against. Now that
+   * every file is a cut-out on transparent PNG, a block behind it just puts six
+   * coloured rectangles back on a shelf that reads better as one continuous
+   * ground. The gradient went with them: over paper it washed the objects grey.
+   */
   .editorial-object-image {
     position: relative;
     width: 100%;
     aspect-ratio: 4 / 5;
     overflow: hidden;
-    background: #ded8cc;
-  }
-
-  .editorial-object-image::after {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(145deg, rgba(245, 243, 238, 0.1), rgba(18, 16, 13, 0.28));
-    content: "";
-    pointer-events: none;
+    background: var(--editorial-paper);
   }
 
   /*
@@ -1144,13 +1146,6 @@
     filter: none;
     transition: transform 280ms cubic-bezier(0.23, 1, 0.32, 1), filter 280ms ease;
   }
-
-  .editorial-object-card-matcha .editorial-object-image { background: #89907b; }
-  .editorial-object-card-candle .editorial-object-image { background: #b7a58d; }
-  .editorial-object-card-sticks .editorial-object-image { background: #a69a88; }
-  .editorial-object-card-lighter .editorial-object-image { background: #9d4033; }
-  .editorial-object-card-bag .editorial-object-image { background: #76604c; }
-  .editorial-object-card-matches .editorial-object-image { background: #b8b4aa; }
 
   .editorial-object-card:hover .editorial-object-image img {
     transform: scale(1.04);
@@ -1586,10 +1581,12 @@
     border-bottom: 1px solid var(--editorial-line);
   }
 
+  /* Paper here too: the cart shows the same cut-outs as the shelf, and a tone
+     block behind them would put the rectangle back in the drawer. */
   .editorial-cart-line-image {
     aspect-ratio: 4 / 5;
     overflow: hidden;
-    background: #ded8cc;
+    background: var(--editorial-paper);
   }
 
   .editorial-cart-line-image img {

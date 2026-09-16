@@ -1,5 +1,5 @@
-import retailCandleSticksImage from "@/imports/retail-candle-sticks.jpeg";
-import coffeeCollageImage from "@/imports/mood-coffee-collage.jpg";
+import retailCandleSticksImage from "@/imports/retail-candle-sticks.png";
+import retailToteImage from "@/imports/retail-tote.png";
 import retailLighterImage from "@/imports/retail-lighter.png";
 import retailCandleImage from "@/imports/retail-candle.png";
 import retailMatchaImage from "@/imports/retail-matcha.png";
@@ -46,16 +46,22 @@ export type CartLine = {
  *   candles        the four stacked MANTEL tins
  *   lighters       the leopard-print lighter (the checkerboard one is a second
  *                  colourway — a nice second shot if the card ever takes two)
- *   candle-sticks  the pair of cream tapers in the corrugated heart band
+ *   candle-sticks  DONE (2026-09-16) — the real tapers, cut off the steel
  *   match-sticks   the MANTEL safety-matches label
- *   custom-bags    the "Mantel." tote (the red-heart tote is the other face)
+ *   custom-bags    DONE (2026-09-16) — the "Mantel." tote, cut off the steel
+                  (the red-heart tote is the other face, not used yet)
  *   matcha-powder  STILL NEEDED — no photograph of it yet
  *
- * They must be cut out, on transparent PNG, and shot to a consistent object
- * size: every card frames its image identically now (see --object-pad in
- * margiela.css), so a product photographed larger in its own file will simply
- * read larger on the shelf. The originals are on brushed steel, so the
- * background has to come out or the tone block behind it is lost.
+ * THE MOCKUPS ARE NOW CUT OUT (2026-09-16). They arrived on three different
+ * grounds — white, two flat greys, and one painted wall — so the shelf read as
+ * six unrelated photographs sitting in six coloured rectangles. Each file is
+ * now a transparent PNG, trimmed to the object and re-centred on one square
+ * canvas at a fixed margin, so --object-pad decides how large a product reads
+ * rather than how loosely it happened to be framed.
+ *
+ * A replacement photograph has to meet the same two conditions, or it will
+ * stand out from the rest: cut out on transparent PNG, and padded so the
+ * object spans about the same fraction of its canvas as these do.
  *
  * Swapping one is two lines: add the import at the top of this file, and point
  * that product's `image` at it. Nothing else in the app needs to change.
@@ -106,7 +112,7 @@ export const RETAIL_PRODUCTS: RetailProduct[] = [
     name: "Custom Bags",
     description: "Made for the things you take with you.",
     price: 6.5,
-    image: coffeeCollageImage,
+    image: retailToteImage,
     tone: "bag",
   },
 ];
