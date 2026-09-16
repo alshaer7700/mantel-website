@@ -2,6 +2,7 @@ import retailCandleSticksImage from "@/imports/retail-candle-sticks.webp";
 import retailToteImage from "@/imports/retail-tote.webp";
 import retailToteHeartImage from "@/imports/retail-tote-heart.webp";
 import retailLighterImage from "@/imports/retail-lighter.webp";
+import retailLighterCheckImage from "@/imports/retail-lighter-check.webp";
 import retailCandleImage from "@/imports/retail-candle.webp";
 import retailMatchaImage from "@/imports/retail-matcha.webp";
 import retailMatchSticksImage from "@/imports/retail-match-sticks.webp";
@@ -50,12 +51,11 @@ export type CartLine = {
  * 2026-09-16:
  *
  *   candles        the four stacked MANTEL tins
- *   lighters       the leopard-print lighter (the checkerboard colourway is a
- *                  different product, not a second face, so it is not here)
+ *   lighters       both colourways, leopard then checkerboard — one card,
+ *                  stepped through by ObjectSlides
  *   candle-sticks  the pair of cream tapers in the corrugated heart band
  *   match-sticks   the MANTEL safety-matches label
- *   custom-bags    the "Mantel." tote AND its red-heart face — the one card
- *                  with two, stepped through by ObjectSlides
+ *   custom-bags    the "Mantel." tote and its red-heart face, also two
  *
  * matcha-powder is the exception and still a pre-launch mockup: no photograph
  * of it has been taken.
@@ -107,6 +107,7 @@ export const RETAIL_PRODUCTS: RetailProduct[] = [
     description: "A small object with a little ceremony.",
     price: 3,
     image: retailLighterImage,
+    images: [retailLighterImage, retailLighterCheckImage],
     tone: "lighter",
   },
   {
