@@ -57,6 +57,26 @@
     gap: clamp(14px, 2.2vw, 30px);
   }
 
+  /*
+   * The primary links carry their own box, at Margiela's metrics: 2.5rem tall,
+   * 16px of side padding, 2px apart (`.mm-menu__primary__item > a`). Ours were
+   * spaced by a flex gap alone, which means the tap target was the text —
+   * about 10px tall. The row is the same width on screen either way; the
+   * difference is that there is now something to hit.
+   */
+  .editorial-nav-primary {
+    gap: 2px;
+    margin-inline: -16px;
+  }
+
+  .editorial-nav-primary .editorial-nav-link {
+    display: inline-flex;
+    align-items: center;
+    height: 40px;
+    padding: 0 16px;
+    font-size: 11px;
+  }
+
   .editorial-nav-tools {
     justify-content: flex-end;
   }
@@ -1439,59 +1459,127 @@
 
 
 @layer components {
+  /*
+   * The drawer, as a navigation list rather than four headlines.
+   *
+   * Margiela's mobile menu is a tall, quiet list: rows of 4rem, type at 1rem /
+   * weight 500 / line-height 1, 0.125rem between rows, NO rules between items,
+   * the list filling the panel with a hidden scrollbar, and a second tier of
+   * 0.875rem links beneath it. (`.mm-menu-mobile__list ul li button`,
+   * `.mm-menu-mobile__secondary__list .mm-menu-item`.)
+   *
+   * Ours was the opposite of every one of those: 25-34px serif, a full-width
+   * hairline under each item, padded 30px down from the top, and four items
+   * floating in the middle of an otherwise empty phone screen.
+   *
+   * The rows are mono uppercase rather than Margiela's grotesque because that
+   * is already this site's navigation voice in the top bar — the drawer was
+   * the only surface that disagreed with it.
+   */
+  /*
+   * Top-aligned, and the two tiers stay together.
+   *
+   * With flex: 1 the primary list ate the free space and pushed the secondary
+   * tier to the floor, which put the hole in the MIDDLE of the panel — worse
+   * than having it at the bottom, because a gap between two blocks reads as
+   * broken where a gap under them reads as air. Four items cannot fill a phone
+   * screen; the question is only where the space goes.
+   */
   .editorial-sidebar-links {
     display: flex;
-    flex: 1;
+    flex: 0 1 auto;
     flex-direction: column;
-    gap: 0;
+    gap: 2px;
     overflow-y: auto;
-    padding: clamp(44px, 8vw, 88px) clamp(22px, 4vw, 42px) 32px;
+    padding: 8px clamp(22px, 4vw, 42px) 0;
+    scrollbar-width: none;
+  }
+
+  .editorial-sidebar-links::-webkit-scrollbar {
+    display: none;
   }
 
   .editorial-sidebar-links a {
-    display: block;
-    padding: 21px 0;
-    border-bottom: 1px solid var(--editorial-line);
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    height: 64px;
     color: var(--editorial-ink);
-    font-family: var(--font-serif);
-    font-size: clamp(28px, 4vw, 42px);
-    font-weight: 400;
-    letter-spacing: -0.035em;
-    line-height: 0.96;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    line-height: 1;
     text-decoration: none;
-  }
-
-  .editorial-sidebar-links a:first-child {
-    border-top: 1px solid var(--editorial-line);
+    text-transform: uppercase;
+    transition: opacity 160ms ease;
   }
 
   .editorial-sidebar-links a:hover {
     opacity: 0.52;
   }
 
+  /*
+   * The second tier is what keeps their panel from reading as empty. These are
+   * the footer's own client-care links, mirrored rather than invented, so the
+   * drawer adds no navigation the site does not already have.
+   */
+  .editorial-sidebar-secondary {
+    display: flex;
+    flex: 0 0 auto;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    padding: 26px clamp(22px, 4vw, 42px) 0;
+  }
+
+  .editorial-sidebar-secondary a {
+    padding: 4px 0;
+    color: var(--editorial-muted);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    line-height: 1.6;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: color 160ms ease;
+  }
+
+  .editorial-sidebar-secondary a:hover {
+    color: var(--editorial-ink);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  /* margin-top:auto keeps Instagram on the floor without stretching the list
+     above it. */
   .editorial-sidebar-footer {
     flex: 0 0 auto;
-    padding: 22px clamp(22px, 4vw, 42px) 28px;
-    border-top: 1px solid var(--editorial-line);
+    margin-top: auto;
+    padding: 18px clamp(22px, 4vw, 42px) 28px;
   }
 
   .editorial-sidebar-footer a {
     display: inline-flex;
+    color: var(--editorial-muted);
+    transition: color 160ms ease;
+  }
+
+  .editorial-sidebar-footer a:hover {
     color: var(--editorial-ink);
   }
 
   @media (max-width: 640px) {
     .editorial-sidebar-links {
-      padding: 30px 22px 22px;
+      padding: 8px 22px 0;
     }
 
-    .editorial-sidebar-links a {
-      padding: 18px 0;
-      font-size: clamp(25px, 8vw, 34px);
+    .editorial-sidebar-secondary {
+      padding: 26px 22px 0;
     }
 
     .editorial-sidebar-footer {
-      padding: 18px 22px 24px;
+      padding: 16px 22px 24px;
     }
   }
 }
@@ -1567,30 +1655,18 @@
     gap: 18px;
   }
 
-  .editorial-sidebar-links {
-    align-items: center;
-    justify-content: center;
-    padding: clamp(40px, 10vh, 108px) 24px 34px;
-  }
-
-  .editorial-sidebar-links a,
-  .editorial-sidebar-links a:first-child {
-    width: min(100%, 290px);
-    padding: 22px 0;
-    border-top: 0;
-    border-bottom: 1px solid var(--editorial-line);
-    text-align: center;
-  }
-
-  .editorial-sidebar-links a:first-child {
-    border-top: 1px solid var(--editorial-line);
-  }
-
+  /*
+   * This block used to centre the list, cap it at 290px and rule every row
+   * top and bottom — and, at 640px, set the rows to 30px. It sat after the
+   * block that styles the drawer, so it won every one of those properties and
+   * was what actually produced the four centred headlines on a phone.
+   *
+   * The row itself is now defined once, above. All that is left here is the
+   * footer's own geometry.
+   */
   .editorial-sidebar-footer {
     display: flex;
     justify-content: flex-start;
-    padding: 22px 24px 30px;
-    border-top: 1px solid var(--editorial-line);
   }
 
   @media (max-width: 640px) {
@@ -1601,17 +1677,6 @@
 
     .editorial-sidebar-tools {
       gap: 12px;
-    }
-
-    .editorial-sidebar-links {
-      padding: 44px 22px 28px;
-    }
-
-    .editorial-sidebar-links a,
-    .editorial-sidebar-links a:first-child {
-      width: min(100%, 286px);
-      padding: 20px 0;
-      font-size: 30px;
     }
 
     .editorial-sidebar-footer {

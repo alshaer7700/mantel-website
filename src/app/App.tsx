@@ -584,33 +584,23 @@ export default function App() {
           </div>
         </div>
 
-        {/* Drawer links */}
-        <nav className="editorial-sidebar-links">
-          <a
-            className="text-left font-serif font-normal text-2xl text-foreground hover:opacity-50 transition-opacity"
-            {...linkTo("menu")}
-          >
-            Menu
-          </a>
-          <a
-            className="text-left font-serif font-normal text-2xl text-foreground hover:opacity-50 transition-opacity"
-            {...linkTo("pickup")}
-          >
-            Pick Up
-          </a>
-          <a
-            className="text-left font-serif font-normal text-2xl text-foreground hover:opacity-50 transition-opacity"
-            {...linkTo("objects")}
-          >
-            Retail
-          </a>
-          <a
-            className="text-left font-serif font-normal text-2xl text-foreground hover:opacity-50 transition-opacity"
-            {...linkTo("story")}
-          >
-            About Us
-          </a>
+        {/* Drawer links — the same four as the top bar, in the same voice.
+            The styling lives entirely in .editorial-sidebar-links; the utility
+            classes that used to set a serif here were the reason this list
+            read as four headlines instead of a menu. */}
+        <nav className="editorial-sidebar-links" aria-label="Primary">
+          <a {...linkTo("menu")}>Menu</a>
+          <a {...linkTo("pickup")}>Pick Up</a>
+          <a {...linkTo("objects")}>Retail</a>
+          <a {...linkTo("story")}>About Us</a>
         </nav>
+
+        {/* The second tier, which is what stops the panel reading as empty.
+            Both links already exist in the footer — mirrored, not invented. */}
+        <div className="editorial-sidebar-secondary">
+          <a {...linkTo("contact")}>Contact us</a>
+          <a {...linkTo("faq")}>FAQs</a>
+        </div>
 
         {/* Drawer footer */}
         <div className="editorial-sidebar-footer">
@@ -618,10 +608,9 @@ export default function App() {
             href="https://www.instagram.com/bymantel?igsi=MTk3NDhxZGVuNWFucA=="
             target="_blank"
             rel="noopener noreferrer"
-            className="text-foreground/60 hover:text-foreground transition-colors"
+            aria-label="Mantel on Instagram"
           >
-                          <Instagram size={18} strokeWidth={1.4} />
-
+            <Instagram size={18} strokeWidth={1.4} />
           </a>
         </div>
       </div>
