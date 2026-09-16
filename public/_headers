@@ -7,3 +7,45 @@
   Permissions-Policy: camera=(), microphone=(), geolocation=()
   Cross-Origin-Opener-Policy: same-origin
   Cross-Origin-Resource-Policy: same-origin
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Caching.
+#
+# Netlify's default for every file is `public,max-age=0,must-revalidate`, which
+# is right for HTML and wrong for everything else. It meant a reload re-asked
+# the network for the whole bundle — ~460 KB of JS, ~87 KB of CSS, four woff2
+# faces and a 180 KB favicon — and paid a round trip per file before the 304s
+# came back. That is the reload lag: not the server being slow, the browser
+# being told it may not keep anything.
+#
+# Nothing below sets Cache-Control on HTML. That is deliberate: the `/*` block
+# above sets no Cache-Control at all, so HTML keeps Netlify's default and a
+# deploy is visible on the next reload. If a rule here ever matched an .html
+# file, a customer could be pinned to a stale build with no way out.
+
+# Vite writes the content hash into the filename (index-CgV9e2lv.js), so a
+# changed file is a different URL and this can never serve a stale one.
+# `immutable` additionally tells the browser not to revalidate on reload —
+# without it, a hard reload still costs a round trip per asset. Fonts land here
+# too: src/styles/fonts.css imports them from src/assets/fonts, so the build
+# emits them hashed under /assets.
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Unhashed, so this cannot be immutable — replacing the file keeps the URL.
+# A day of local reuse with a week of stale-while-revalidate behind it: the
+# favicon and link-preview image stop being re-fetched on every reload, and a
+# replacement still reaches everyone within a day of their next visit.
+/heart.webp
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+
+/site.webmanifest
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+
+# Crawler files. Long enough to stop them being re-fetched constantly, short
+# enough that a new route in the sitemap is picked up the same day.
+/robots.txt
+  Cache-Control: public, max-age=3600
+
+/sitemap.xml
+  Cache-Control: public, max-age=3600

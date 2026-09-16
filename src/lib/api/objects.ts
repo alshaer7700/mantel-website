@@ -1,6 +1,7 @@
 import { supabase } from "@/lib/supabaseClient";
 import { toAppError, type AppError } from "@/lib/api/errors";
 import { settle } from "@/lib/api/settle";
+import { CATALOG_TTL_MS, readThrough } from "@/lib/api/cache";
 
 /*
  * The retail shelf: candles, matches, lighters, whole beans.
@@ -32,7 +33,12 @@ export type ObjectsResult =
   | { ok: true; objects: ShopObject[] }
   | { ok: false; error: AppError };
 
-export async function fetchObjects(): Promise<ObjectsResult> {
+/* Cached on the same terms as the menu — see fetchMenu and lib/api/cache.ts. */
+export function fetchObjects(): Promise<ObjectsResult> {
+  return readThrough("objects", CATALOG_TTL_MS, loadObjects, (result) => result.ok);
+}
+
+async function loadObjects(): Promise<ObjectsResult> {
   const { data, error } = await settle(supabase
     .from("objects")
     .select(OBJECT_COLUMNS)
