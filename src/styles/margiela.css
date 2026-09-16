@@ -1147,6 +1147,69 @@
     transition: transform 280ms cubic-bezier(0.23, 1, 0.32, 1), filter 280ms ease;
   }
 
+  /*
+   * A product with more than one face (the tote, printed both sides).
+   *
+   * Every face is mounted and stacked — the frame already positions each img at
+   * inset 0 — so switching is a crossfade and the second face is decoded before
+   * anyone asks for it. The object itself is the control: clicking it steps to
+   * the next face, which is what a thumb reaches for. The dots are for aim and
+   * for the keyboard.
+   */
+  .editorial-object-image:has(.editorial-object-slide) .editorial-object-slide {
+    opacity: 0;
+    transition: opacity 320ms ease, transform 280ms cubic-bezier(0.23, 1, 0.32, 1);
+    cursor: pointer;
+  }
+
+  .editorial-object-image .editorial-object-slide[data-shown] {
+    opacity: 1;
+  }
+
+  .editorial-object-dots {
+    position: absolute;
+    right: 0;
+    bottom: 14px;
+    left: 0;
+    display: flex;
+    gap: 7px;
+    justify-content: center;
+  }
+
+  .editorial-object-dots button {
+    width: 6px;
+    height: 6px;
+    padding: 0;
+    border: 1px solid var(--editorial-ink, #12100d);
+    border-radius: 50%;
+    background: transparent;
+    opacity: 0.35;
+    cursor: pointer;
+    transition: opacity 200ms ease, background-color 200ms ease;
+  }
+
+  .editorial-object-dots button[data-shown] {
+    background: var(--editorial-ink, #12100d);
+    opacity: 1;
+  }
+
+  .editorial-object-dots button:hover {
+    opacity: 0.7;
+  }
+
+  .editorial-object-dots button:focus-visible {
+    outline: 2px solid var(--editorial-ink, #12100d);
+    outline-offset: 3px;
+    opacity: 1;
+  }
+
+  /* The crossfade is decoration; the switch itself must still happen. */
+  @media (prefers-reduced-motion: reduce) {
+    .editorial-object-image:has(.editorial-object-slide) .editorial-object-slide {
+      transition: none;
+    }
+  }
+
   .editorial-object-card:hover .editorial-object-image img {
     transform: scale(1.04);
     filter: none;

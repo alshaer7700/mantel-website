@@ -1,5 +1,6 @@
 import retailCandleSticksImage from "@/imports/retail-candle-sticks.webp";
 import retailToteImage from "@/imports/retail-tote.webp";
+import retailToteHeartImage from "@/imports/retail-tote-heart.webp";
 import retailLighterImage from "@/imports/retail-lighter.webp";
 import retailCandleImage from "@/imports/retail-candle.webp";
 import retailMatchaImage from "@/imports/retail-matcha.webp";
@@ -24,7 +25,16 @@ export type CartProduct = {
 
 export type RetailProduct = CartProduct & {
   description: string;
+  /** The face the cart and every other surface shows. */
   image: string;
+  /*
+   * Every face of the product, in the order the card steps through them, when
+   * there is more than one. The tote is printed on both sides and a shelf that
+   * shows one of them is selling half the bag. `image` stays the first entry:
+   * the cart line, and anything else that wants a single picture, reads that
+   * and never has to know a product has more than one.
+   */
+  images?: readonly string[];
   tone: string;
 };
 
@@ -40,11 +50,12 @@ export type CartLine = {
  * 2026-09-16:
  *
  *   candles        the four stacked MANTEL tins
- *   lighters       the leopard-print lighter (the checkerboard one is a second
- *                  colourway, cut out and ready, but a card takes one image)
+ *   lighters       the leopard-print lighter (the checkerboard colourway is a
+ *                  different product, not a second face, so it is not here)
  *   candle-sticks  the pair of cream tapers in the corrugated heart band
  *   match-sticks   the MANTEL safety-matches label
- *   custom-bags    the "Mantel." tote (the red-heart tote is its other face)
+ *   custom-bags    the "Mantel." tote AND its red-heart face — the one card
+ *                  with two, stepped through by ObjectSlides
  *
  * matcha-powder is the exception and still a pre-launch mockup: no photograph
  * of it has been taken.
@@ -112,6 +123,7 @@ export const RETAIL_PRODUCTS: RetailProduct[] = [
     description: "Made for the things you take with you.",
     price: 6.5,
     image: retailToteImage,
+    images: [retailToteImage, retailToteHeartImage],
     tone: "bag",
   },
 ];

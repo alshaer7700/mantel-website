@@ -1,5 +1,6 @@
 import type { MenuCategory, Page } from "@/app/types";
 import { formatBhd, type CartLine, type RetailProduct } from "@/app/content/retail";
+import { ObjectSlides } from "@/app/components/objects/ObjectSlides";
 
 type Props = {
   linkTo: (page: Page, category?: MenuCategory) => {
@@ -49,7 +50,7 @@ export function Objects({ linkTo, products, loading, error, cartLines, onAdd }: 
           return (
             <article key={product.id} className={`editorial-object-card editorial-object-card-${product.tone}`}>
               <div className="editorial-object-image">
-                <img src={product.image} alt={product.name} loading="lazy" />
+                <ObjectSlides images={product.images ?? [product.image]} alt={product.name} />
               </div>
               <div className="editorial-object-info">
                 <div>
