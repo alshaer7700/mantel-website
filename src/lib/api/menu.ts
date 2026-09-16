@@ -1,6 +1,7 @@
 import { supabase } from "@/lib/supabaseClient";
 import { toAppError, type AppError } from "@/lib/api/errors";
 import { settle } from "@/lib/api/settle";
+import { CATALOG_TTL_MS, readThrough } from "@/lib/api/cache";
 import { MENU_CATEGORIES } from "@/app/types";
 import type { MenuItem, MenuCategoryKey } from "@/app/types";
 
@@ -19,7 +20,16 @@ export type MenuResult =
   | { ok: true; items: MenuItem[] }
   | { ok: false; error: AppError };
 
-export async function fetchMenu(): Promise<MenuResult> {
+/*
+ * Read-through cached, so a reload — or five — costs one query per five
+ * minutes instead of one per page load. Only a successful read is cached; see
+ * src/lib/api/cache.ts for why that matters and what staleness it can produce.
+ */
+export function fetchMenu(): Promise<MenuResult> {
+  return readThrough("menu", CATALOG_TTL_MS, loadMenu, (result) => result.ok);
+}
+
+async function loadMenu(): Promise<MenuResult> {
   const { data, error } = await settle(supabase
     .from("menu_items")
     .select(MENU_COLUMNS)

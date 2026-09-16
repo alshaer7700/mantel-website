@@ -1,6 +1,7 @@
 import { supabase } from "@/lib/supabaseClient";
 import { toAppError, type AppError } from "@/lib/api/errors";
 import { settle } from "@/lib/api/settle";
+import { retryMessage, takeSlot } from "@/lib/limiter";
 
 /*
  * Client wrapper for the secure place_order RPC. The RPC resolves product
@@ -55,6 +56,18 @@ export type PlaceOrderResult =
 export async function placeOrder(input: PlaceOrderInput): Promise<PlaceOrderResult> {
   const invalid = validate(input);
   if (invalid) return { ok: false, error: { kind: "unknown", message: invalid } };
+
+  /*
+   * After validation, before the request: a bag that failed the checks above
+   * never reached Supabase, so it must not spend a slot. See src/lib/limiter.ts
+   * for why this sits outside the server's window rather than inside it — the
+   * per-email and per-IP limits in supabase/009 are the authority, and this
+   * only catches a client that has stopped behaving like a customer.
+   */
+  const slot = takeSlot("order");
+  if (!slot.allowed) {
+    return { ok: false, error: { kind: "rate-limited", message: retryMessage(slot.retryAfterMs) } };
+  }
 
   const { data, error } = await settle(supabase.rpc("place_order", {
     items: input.lines.map((l) => ({ menu_item_id: l.menuItemId, qty: l.qty })),

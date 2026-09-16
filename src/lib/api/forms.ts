@@ -1,6 +1,7 @@
 import { messageFor, toAppError, type AppError } from "@/lib/api/errors";
 import { settle } from "@/lib/api/settle";
 import { supabase } from "@/lib/supabaseClient";
+import { retryMessage, takeSlot } from "@/lib/limiter";
 
 export type ContactMessageInput = {
   firstName: string;
@@ -27,6 +28,14 @@ export async function submitContactMessage(input: ContactMessageInput): Promise<
     return { ok: false, error: { kind: "notice", message: "Please check your email and message before sending." } };
   }
 
+  /* Counted only once the message is known to be well-formed — see
+     src/lib/limiter.ts. The binding limits are per-email and per-IP in
+     supabase/019. */
+  const slot = takeSlot("contact");
+  if (!slot.allowed) {
+    return { ok: false, error: { kind: "rate-limited", message: retryMessage(slot.retryAfterMs) } };
+  }
+
   const { data, error } = await settle(
     supabase.rpc("submit_contact_message", {
       first_name: firstName,
@@ -47,6 +56,11 @@ export async function subscribeNewsletter(emailInput: string): Promise<FormResul
   const email = emailInput.trim().slice(0, 254);
   if (!EMAIL_RE.test(email)) {
     return { ok: false, error: { kind: "notice", message: "Please enter a valid email address." } };
+  }
+
+  const slot = takeSlot("newsletter");
+  if (!slot.allowed) {
+    return { ok: false, error: { kind: "rate-limited", message: retryMessage(slot.retryAfterMs) } };
   }
 
   const { data, error } = await settle(

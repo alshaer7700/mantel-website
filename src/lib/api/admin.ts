@@ -1,6 +1,7 @@
 import { supabase } from "@/lib/supabaseClient";
 import { toAppError, type AppError } from "@/lib/api/errors";
 import { settle } from "@/lib/api/settle";
+import { clearCatalogCache } from "@/lib/api/cache";
 
 export type AdminSummary = {
   orders: number;
@@ -205,16 +206,37 @@ export function updateAdminOrderStatus(orderId: string, status: string): Promise
   return callAdminAction(supabase.rpc("admin_update_order_status", { p_order_id: orderId, p_status: status }));
 }
 
-export function updateAdminObjectAvailability(objectId: string, isAvailable: boolean): Promise<AdminResult<boolean>> {
-  return callAdminAction(
+/*
+ * The two actions that change what the public catalog says, so both drop the
+ * cached copy of it. Without this, a barista who marks the last croissant sold
+ * out and then opens the menu to check sees it still listed for up to five
+ * minutes, and reasonably concludes the button did nothing.
+ *
+ * This clears THIS browser only. A customer mid-visit still sees the item
+ * until their own entry expires — that is the TTL trade-off written down in
+ * src/lib/api/cache.ts, and it is safe because place_order re-checks
+ * availability server-side and rejects a sold-out line.
+ */
+export async function updateAdminObjectAvailability(
+  objectId: string,
+  isAvailable: boolean,
+): Promise<AdminResult<boolean>> {
+  const result = await callAdminAction(
     supabase.rpc("admin_update_object_availability", { p_object_id: objectId, p_is_available: isAvailable }),
   );
+  if (result.ok) clearCatalogCache();
+  return result;
 }
 
-export function updateAdminMenuAvailability(menuItemId: string, isAvailable: boolean): Promise<AdminResult<boolean>> {
-  return callAdminAction(
+export async function updateAdminMenuAvailability(
+  menuItemId: string,
+  isAvailable: boolean,
+): Promise<AdminResult<boolean>> {
+  const result = await callAdminAction(
     supabase.rpc("admin_update_menu_availability", { p_menu_item_id: menuItemId, p_is_available: isAvailable }),
   );
+  if (result.ok) clearCatalogCache();
+  return result;
 }
 
 export function updateAdminContactStatus(messageId: string, status: string): Promise<AdminResult<boolean>> {
