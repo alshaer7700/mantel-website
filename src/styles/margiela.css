@@ -1051,8 +1051,8 @@
    * the page reads as one continuous shelf instead of a page with boxes on it.
    *
    * Three adaptations, because six objects are not four hundred garments:
-   *   - 3-up, not 4-up. Six products divide into two clean rows at 3; at 4
-   *     they leave a ragged 4 + 2.
+   *   - 3-up, not 4-up. At this size the tiles stay generous (480px at 1440)
+   *     and the objects are small enough to need the room.
    *   - 3:4 frames, not 2:3. Their ratio is sized for a 360px tile; at 3-up
    *     it would stand 720px tall.
    *   - EB Garamond and Mantel's own paper. This borrows their layout, not

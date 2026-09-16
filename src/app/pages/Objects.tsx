@@ -26,7 +26,7 @@ export function Objects({ linkTo, products, loading, error, cartLines, onAdd }: 
         </div>
         <div className="editorial-objects-intro-copy">
           <p>
-            A considered shelf of things for the ritual around the coffee. Six small objects,
+            A considered shelf of things for the ritual around the coffee. Five small objects,
             chosen to be used and kept.
           </p>
           <a {...linkTo("home")} className="editorial-link">Back to Mantel</a>
