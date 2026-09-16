@@ -1,9 +1,9 @@
-import retailCandleSticksImage from "@/imports/retail-candle-sticks.png";
-import retailToteImage from "@/imports/retail-tote.png";
-import retailLighterImage from "@/imports/retail-lighter.png";
-import retailCandleImage from "@/imports/retail-candle.png";
-import retailMatchaImage from "@/imports/retail-matcha.png";
-import retailMatchSticksImage from "@/imports/retail-match-sticks.png";
+import retailCandleSticksImage from "@/imports/retail-candle-sticks.webp";
+import retailToteImage from "@/imports/retail-tote.webp";
+import retailLighterImage from "@/imports/retail-lighter.webp";
+import retailCandleImage from "@/imports/retail-candle.webp";
+import retailMatchaImage from "@/imports/retail-matcha.webp";
+import retailMatchSticksImage from "@/imports/retail-match-sticks.webp";
 
 /*
  * The shape a cart line needs, regardless of whether it came from the Retail
@@ -34,34 +34,33 @@ export type CartLine = {
 };
 
 /*
- * ── THE REAL PRODUCT PHOTOGRAPHS ────────────────────────────────────────────
+ * ── THE PRODUCT PHOTOGRAPHS ─────────────────────────────────────────────────
  *
- * The six images below are still the pre-launch mockups. Nayef has shot the
- * real objects (2026-09-15) — candle tins, two lighter colourways, the taper
- * candles with the heart band, the matches label, and two totes — but the files
- * have not reached the repository yet, so nothing here points at them.
- *
- * WHAT EACH ONE IS FOR, once the files are in src/imports/:
+ * Five of the six are the real objects, shot 2026-09-15 and in the tree since
+ * 2026-09-16:
  *
  *   candles        the four stacked MANTEL tins
  *   lighters       the leopard-print lighter (the checkerboard one is a second
- *                  colourway — a nice second shot if the card ever takes two)
- *   candle-sticks  DONE (2026-09-16) — the real tapers, cut off the steel
+ *                  colourway, cut out and ready, but a card takes one image)
+ *   candle-sticks  the pair of cream tapers in the corrugated heart band
  *   match-sticks   the MANTEL safety-matches label
- *   custom-bags    DONE (2026-09-16) — the "Mantel." tote, cut off the steel
-                  (the red-heart tote is the other face, not used yet)
- *   matcha-powder  STILL NEEDED — no photograph of it yet
+ *   custom-bags    the "Mantel." tote (the red-heart tote is its other face)
  *
- * THE MOCKUPS ARE NOW CUT OUT (2026-09-16). They arrived on three different
- * grounds — white, two flat greys, and one painted wall — so the shelf read as
- * six unrelated photographs sitting in six coloured rectangles. Each file is
- * now a transparent PNG, trimmed to the object and re-centred on one square
- * canvas at a fixed margin, so --object-pad decides how large a product reads
- * rather than how loosely it happened to be framed.
+ * matcha-powder is the exception and still a pre-launch mockup: no photograph
+ * of it has been taken.
  *
- * A replacement photograph has to meet the same two conditions, or it will
- * stand out from the rest: cut out on transparent PNG, and padded so the
- * object spans about the same fraction of its canvas as these do.
+ * EVERY FILE HERE IS A CUT-OUT ON TRANSPARENT PNG, trimmed to the object and
+ * re-centred on one square canvas at a fixed margin. Both halves of that matter
+ * and both are easy to get wrong:
+ *
+ *   transparent   the cards carry no tone block any more (see margiela.css).
+ *                 An image with its own background paints a rectangle onto the
+ *                 page, which is what the shelf looked like before.
+ *   same margin   --object-pad frames every card identically, so a product
+ *                 padded tighter in its own file simply reads larger on the
+ *                 shelf. The object spans ~86% of its canvas in all of these.
+ *
+ * A replacement has to meet both, or it will stand out from the rest.
  *
  * Swapping one is two lines: add the import at the top of this file, and point
  * that product's `image` at it. Nothing else in the app needs to change.
