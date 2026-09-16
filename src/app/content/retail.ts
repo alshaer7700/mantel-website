@@ -46,7 +46,7 @@ export type CartLine = {
  *   candles        the four stacked MANTEL tins
  *   lighters       the leopard-print lighter (the checkerboard one is a second
  *                  colourway — a nice second shot if the card ever takes two)
- *   candle-sticks  the pair of cream tapers in the corrugated heart band
+ *   candle-sticks  DONE (2026-09-16) — the real tapers, cut off the steel
  *   match-sticks   the MANTEL safety-matches label
  *   custom-bags    the "Mantel." tote (the red-heart tote is the other face)
  *   matcha-powder  STILL NEEDED — no photograph of it yet
