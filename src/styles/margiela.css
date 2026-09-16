@@ -1360,16 +1360,32 @@
     .editorial-objects-page {
       --shelf-gutter: 22px;
       --caption-pad: 12px;
+
+      padding-top: 44px;
     }
 
+    /*
+     * On a phone the masthead was the whole first screen.
+     *
+     * The overline, a 20px serif title, three lines of prose and a link ran
+     * about 300px deep before a single object appeared — so the page opened on
+     * a description of a shelf rather than on the shelf. The prose is the part
+     * that goes: it is copy, not navigation, and the same sentence already sits
+     * in the page description and in the link preview. Desktop keeps it, where
+     * it rides the right-hand column and costs no height at all.
+     */
     .editorial-objects-intro {
       grid-template-columns: 1fr;
-      gap: 38px;
-      padding-bottom: 42px;
+      gap: 20px;
+      padding-bottom: 26px;
     }
 
     .editorial-objects-intro-copy {
       justify-self: start;
+    }
+
+    .editorial-objects-intro-copy p {
+      display: none;
     }
 
     .editorial-object-info p {

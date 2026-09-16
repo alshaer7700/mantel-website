@@ -36,8 +36,11 @@ export function Objects({ linkTo, products, loading, error, cartLines, onAdd }: 
       {/* The ledger rides the hairline that opens the shelf: what is on it on
           the left, what the shelf is doing on the right. */}
       <div className="editorial-objects-ledger">
+        {/* Just the count. "Small editions" is already the overline directly
+            above it, and saying it twice is half of what makes a masthead
+            noisy. */}
         <span>
-          {products.length} object{products.length === 1 ? "" : "s"} — small editions
+          {products.length} object{products.length === 1 ? "" : "s"}
         </span>
         <span aria-live="polite">
           {loading
