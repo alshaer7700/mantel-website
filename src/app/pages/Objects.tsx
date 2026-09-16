@@ -33,23 +33,35 @@ export function Objects({ linkTo, products, loading, error, cartLines, onAdd }: 
         </div>
       </header>
 
-      <div className="editorial-objects-status" aria-live="polite">
-        {loading
-          ? "Refreshing the shelf…"
-          : error
-            ? "Showing the last known shelf · Bahrain"
-            : itemCount > 0
-              ? `${itemCount} item${itemCount === 1 ? "" : "s"} in your bag`
-              : "Collect in store · Bahrain"}
+      {/* The ledger rides the hairline that opens the shelf: what is on it on
+          the left, what the shelf is doing on the right. */}
+      <div className="editorial-objects-ledger">
+        <span>
+          {products.length} object{products.length === 1 ? "" : "s"} — small editions
+        </span>
+        <span aria-live="polite">
+          {loading
+            ? "Refreshing the shelf…"
+            : error
+              ? "Showing the last known shelf · Bahrain"
+              : itemCount > 0
+                ? `${itemCount} item${itemCount === 1 ? "" : "s"} in your bag`
+                : "Collect in store · Bahrain"}
+        </span>
       </div>
 
       <section className="editorial-objects-grid" aria-label="Mantel objects" aria-busy={loading}>
-        {products.map((product) => {
+        {products.map((product, index) => {
           const line = cartLines.find((entry) => entry.product.id === product.id);
           const quantity = line?.quantity ?? 0;
           return (
             <article key={product.id} className={`editorial-object-card editorial-object-card-${product.tone}`}>
               <div className="editorial-object-image">
+                {/* Margiela numbers everything. Decoration, not content, so it
+                    is hidden from the reading order. */}
+                <span className="editorial-object-index" aria-hidden="true">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
                 <ObjectSlides images={product.images ?? [product.image]} alt={product.name} />
               </div>
               <div className="editorial-object-info">
