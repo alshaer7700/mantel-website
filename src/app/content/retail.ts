@@ -1,5 +1,5 @@
 import retailCandleSticksImage from "@/imports/retail-candle-sticks.png";
-import coffeeCollageImage from "@/imports/mood-coffee-collage.jpg";
+import retailToteImage from "@/imports/retail-tote.png";
 import retailLighterImage from "@/imports/retail-lighter.png";
 import retailCandleImage from "@/imports/retail-candle.png";
 import retailMatchaImage from "@/imports/retail-matcha.png";
@@ -48,7 +48,8 @@ export type CartLine = {
  *                  colourway — a nice second shot if the card ever takes two)
  *   candle-sticks  DONE (2026-09-16) — the real tapers, cut off the steel
  *   match-sticks   the MANTEL safety-matches label
- *   custom-bags    the "Mantel." tote (the red-heart tote is the other face)
+ *   custom-bags    DONE (2026-09-16) — the "Mantel." tote, cut off the steel
+                  (the red-heart tote is the other face, not used yet)
  *   matcha-powder  STILL NEEDED — no photograph of it yet
  *
  * THE MOCKUPS ARE NOW CUT OUT (2026-09-16). They arrived on three different
@@ -111,7 +112,7 @@ export const RETAIL_PRODUCTS: RetailProduct[] = [
     name: "Custom Bags",
     description: "Made for the things you take with you.",
     price: 6.5,
-    image: coffeeCollageImage,
+    image: retailToteImage,
     tone: "bag",
   },
 ];
