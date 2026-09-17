@@ -251,6 +251,39 @@ export async function updatePassword(password: string): Promise<AuthResult> {
 
 // ── profile ────────────────────────────────────────────────────────────────
 
+/**
+ * The profile for a session, created from the sign-up metadata if it is missing.
+ *
+ * WHY THIS EXISTS. register() only calls ensureProfile when signUp hands back a
+ * session, and with email confirmation switched on it never does — the account
+ * is not usable until the link is clicked, so there is nobody to write the row
+ * as. The name the visitor typed at sign-up therefore lived only in
+ * raw_user_meta_data.full_name, and profiles stayed empty until they happened
+ * to open the account panel and press Save.
+ *
+ * Everything downstream read that emptiness as "no name": the panel showed a
+ * blank Name field to someone who had definitely given one, and the checkout
+ * fell through to the local part of their email address when it could have
+ * called them by name at the counter.
+ *
+ * So the first session after confirming backfills the row from the metadata
+ * signUp already stored. Idempotent — once the row exists this is a single
+ * read — and it never overwrites a name the customer has since edited.
+ */
+export async function loadProfile(user: User): Promise<Profile | null> {
+  const existing = await fetchProfile(user.id);
+  if (existing) return existing;
+
+  const signUpName = typeof user.user_metadata?.full_name === "string"
+    ? user.user_metadata.full_name
+    : "";
+  if (!signUpName.trim()) return null;
+
+  const written = await saveProfile(user.id, { full_name: signUpName, phone: null });
+  if (!written.ok) return null;
+  return { id: user.id, full_name: signUpName, phone: null };
+}
+
 export async function fetchProfile(userId: string): Promise<Profile | null> {
   const { data, error } = await settle(
     supabase.from("profiles").select("id, full_name, phone").eq("id", userId).maybeSingle(),
