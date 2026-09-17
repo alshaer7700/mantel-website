@@ -228,6 +228,7 @@ Deliberately **cut from the original 10-phase brief** as not applicable to a 14-
 **Pre-ordering-launch additions:**
 - [ ] Turnstile proven against a bot script (H-1) — in-function rate limit done (005), Turnstile still outstanding
 - [x] Server-side order email (M-1) — 024 + order-notify Edge Function; client email code was already gone
+- [x] Server-side newsletter-signup email — 025 + newsletter-notify Edge Function; completes the trio with 022 and 024
 - [ ] Email regex in RPC (M-2)
 - [ ] Staff can see orders (Phase 3, at least v0)
 - [ ] Order flood test: 20 rapid orders → rate limit trips (passes on a local PG16 run of the full migration chain — 3 accepted, 17 rejected; re-run against the live project once 005 is applied there)
