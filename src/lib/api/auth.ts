@@ -127,6 +127,30 @@ function fromAuthError(error: AuthError): AppError {
   if (raw.includes("rate limit") || raw.includes("too many")) {
     return { kind: "rate-limited", message: "Too many attempts — try again in a few minutes." };
   }
+  /*
+   * The mail server itself refused the message — GoTrue answers 500 with
+   * "Error sending recovery email" / "Error sending confirmation email" and
+   * puts the SMTP reply in the project's auth log (a 535 on bad credentials,
+   * for instance). Seen live on 2026-09-17, when custom SMTP was saved with
+   * the wrong username and every /recover returned 500.
+   *
+   * This used to reach the last line of this function and come out as
+   * "Something went wrong. Please try again." — the one thing that is
+   * guaranteed not to help, because a misconfigured mailer fails identically
+   * every time, and the visitor retries until they give up. It is also
+   * indistinguishable from a transient blip, so nobody reports it.
+   *
+   * There is nothing the visitor can do, so the message says so and points at
+   * a route that does not involve email at all. The fix is always ours: read
+   * the SMTP reply in the auth log and correct the setting.
+   */
+  if (raw.includes("error sending")) {
+    return {
+      kind: "notice",
+      message:
+        "We can't send email at the moment — this is our problem, not yours. Please come by the counter or use the contact page, and we'll sort it out.",
+    };
+  }
   if (raw.includes("fetch") || raw.includes("network")) {
     return { kind: "network" };
   }
