@@ -60,6 +60,8 @@ Security posture is already better than typical for this stage: migration `003_s
 - After `place_order` succeeds, the browser POSTs the order summary to FormSubmit. A malicious client can send fabricated "order" emails without any DB row, or place real orders while suppressing the email. The DB is correctly treated as the source of truth, but the café will operate off the email.
 - **Fix:** move notification server-side — a Supabase Database Webhook or trigger → Edge Function that emails on `orders` insert. Delete the client-side email block in `placeOrder()`.
 - **Priority:** Important (blocker for ordering launch) · **Effort:** Medium.
+- **Done — `supabase/024_order_notifications.sql` + `supabase/functions/order-notify`.** Trigger on `orders` → pg_net → `order-notify` → Resend → hello@bymantel.com, the same shape as 022. The client-side FormSubmit block was already gone by the time this landed, so there was nothing left to delete; what was missing was any replacement, which is what 024 is.
+- One thing to know before changing it: the trigger is a **deferred constraint trigger**, not a plain `after insert`. `place_order` writes the `orders` row and *then* the `order_items` rows, so a plain trigger fires between the two and emails an order with an empty item list. Deferring to commit time is what makes the lines readable — verified on PG16, where the naive version sent 0 items and the deferred one sent the real count.
 
 **M-2 · `customer_email` is unvalidated and unverified.**
 - The RPC checks length only — any string ≤254 chars is accepted; nothing proves the email belongs to the customer. When order-confirmation emails exist, this becomes a vector for sending mail to arbitrary addresses.
@@ -225,7 +227,7 @@ Deliberately **cut from the original 10-phase brief** as not applicable to a 14-
 
 **Pre-ordering-launch additions:**
 - [ ] Turnstile proven against a bot script (H-1) — in-function rate limit done (005), Turnstile still outstanding
-- [ ] Server-side order email; client email code deleted (M-1)
+- [x] Server-side order email (M-1) — 024 + order-notify Edge Function; client email code was already gone
 - [ ] Email regex in RPC (M-2)
 - [ ] Staff can see orders (Phase 3, at least v0)
 - [ ] Order flood test: 20 rapid orders → rate limit trips (passes on a local PG16 run of the full migration chain — 3 accepted, 17 rejected; re-run against the live project once 005 is applied there)
