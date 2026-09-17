@@ -22,7 +22,7 @@ import { AdminDashboard } from "@/app/pages/AdminDashboard";
 import { useScrolled } from "@/app/hooks/useScrolled";
 import { SearchOverlay } from "@/app/components/SearchOverlay";
 import { AccountPanel } from "@/app/components/account/AccountPanel";
-import { getSession, onAuthChange, fetchProfile } from "@/lib/api/auth";
+import { getSession, onAuthChange, loadProfile } from "@/lib/api/auth";
 import type { Session } from "@supabase/supabase-js";
 import type { Page, MenuCategory, MenuItem } from "@/app/types";
 import { pathFor, routeFor } from "@/lib/routes";
@@ -246,7 +246,7 @@ export default function App() {
   useEffect(() => {
     if (!session?.user) return;
     let live = true;
-    fetchProfile(session.user.id).then((p) => {
+    loadProfile(session.user).then((p) => {
       if (!live || !p) return;
       setProfileName(p.full_name);
       setProfilePhone(p.phone ?? "");

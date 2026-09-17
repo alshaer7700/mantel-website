@@ -8,7 +8,7 @@ import {
   signOut,
   requestPasswordReset,
   updatePassword,
-  fetchProfile,
+  loadProfile,
   saveProfile,
 } from "@/lib/api/auth";
 import { messageFor, type AppError } from "@/lib/api/errors";
@@ -96,7 +96,7 @@ export function AccountPanel({ session, recovering, onClose, navHeight, id }: Pr
   useEffect(() => {
     if (!session?.user || mode !== "account") return;
     let live = true;
-    fetchProfile(session.user.id).then((p) => {
+    loadProfile(session.user).then((p) => {
       if (!live || !p) return;
       setFullName(p.full_name);
       setPhone(p.phone ?? "");
