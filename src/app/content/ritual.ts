@@ -23,8 +23,8 @@ import trayPhoto from "@/imports/ritual-friday-espresso-tray.webp";
 export const TRAY_PHOTO: string | null = trayPhoto;
 export const TRAY_PHOTO_ALT =
   "The Friday Espresso tray: an espresso and a glass of sparkling water, served together";
-/** The photograph is 2000 x 1465 — very slightly wider than square. */
-export const TRAY_ASPECT = 2000 / 1831;
+/** The cropped photograph is 1476 x 1037. */
+export const TRAY_ASPECT = 1476 / 1037;
 
 export type TrayAnnotation = {
   /** The printed index, shown on the dot and in front of the label. */
@@ -48,13 +48,18 @@ export type TrayAnnotation = {
  * Two notes, one per rail: the espresso and the water beside it. That is the
  * whole of the ritual, and it is the whole of the annotation.
  *
- * WHERE THE DOTS ARE. Measured off the photograph rather than guessed. The
- * crema is the only strongly orange region in the frame, so it isolates
- * cleanly: it spans x 50.4–62.2%, y 43.1–55.8%, centre (56.3, 49.4). The glass
- * is the bright blob inside the dark tray on the left, bbox x 28.0–34.8%,
- * y 41.8–52.1%. The espresso's dot sits on the crema itself rather than above
- * it — a white numeral needs the dark coffee behind it to read — and the
- * water's sits on the glass rim, where there is nothing to obscure.
+ * WHERE THE DOTS ARE. Measured off the photograph rather than guessed, then
+ * re-measured when it was cropped. In the original 2000 x 1831 frame the crema
+ * — the only strongly orange region, so it isolates as one connected blob —
+ * spanned x 50.4–62.2%, y 43.1–55.8%; the glass, the bright blob inside the
+ * dark tray, x 28.0–34.8%, y 41.8–52.1%. The file shipped here is cropped to
+ * (218, 394)–(1694, 1431) of that original, an equal 210px of breathing space
+ * on all four sides of the tray, which puts the tray at x 14.2–85.8%,
+ * y 20.3–79.8% instead of the 21–74 / 33–67 it filled before. The percentages
+ * below are in the cropped frame. The espresso's dot sits on the crema itself
+ * rather than above it — a white numeral needs the dark coffee behind it to
+ * read — and the water's sits on the glass rim, where there is nothing to
+ * obscure.
  *
  * WHICH RAIL EACH NOTE HANGS ON is forced by the photograph, not chosen. The
  * cup is on the right of the frame and the glass on the left; a leader runs
@@ -67,6 +72,13 @@ export type TrayAnnotation = {
  * rather than sitting level with each other as they did over the drawing. Level
  * labels with the sides swapped would have printed 02 before 01 to anyone
  * reading across, which looks like a mistake rather than a choice.
+ *
+ * labelY is a percentage of the STAGE's height, and the stage is only as tall
+ * as the picture — so cropping the photograph from 1.09 to 1.42 shortened it by
+ * a quarter and pushed the two labels toward each other. 30/64 cleared by a
+ * hair at the old proportion and collided at the new one; 20/78 restores the
+ * gap. Change the crop again and this pair has to be re-checked, not carried
+ * over.
  */
 export const TRAY_ANNOTATIONS: readonly TrayAnnotation[] = [
   {
@@ -74,20 +86,20 @@ export const TRAY_ANNOTATIONS: readonly TrayAnnotation[] = [
     title: "The espresso",
     body:
       "A double, pulled to order and served in a warmed cup. It is meant to be drunk at the counter, in the four or five minutes before it flattens out.",
-    x: 56.3,
-    y: 49,
+    x: 61.5,
+    y: 48.5,
     side: "right",
-    labelY: 30,
+    labelY: 20,
   },
   {
     n: "02",
     title: "Sparkling water",
     body:
       "Poured cold and served alongside, never after. A mouthful before the first sip clears the palate; a mouthful after it carries the finish a little longer.",
-    x: 31,
-    y: 45.5,
+    x: 27.6,
+    y: 44.5,
     side: "left",
-    labelY: 64,
+    labelY: 78,
   },
 ];
 
