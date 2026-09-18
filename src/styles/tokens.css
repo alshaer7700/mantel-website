@@ -151,4 +151,42 @@
    * sets 500. Add the real SemiBold cut and this becomes 600.
    */
   --fw-foot-title: 500;
+
+/* ── Menu category colour ──────────────────────────────────────────────────
+   The menu board's expanding panels each flood with a colour when they open,
+   and the page washes to a light tint of the same hue behind an open category.
+   This is the one place a large coloured surface is allowed, and it needs
+   saying why, because the palette note above forbids exactly that for --brand.
+
+   The rule it does not break: the heart red is still an accent and still
+   never fills a surface. These are a separate, quieter family — a category
+   signature, not the brand mark — kept in the warm, desaturated range the
+   paper already sits in, so an open panel reads as a printed colour plate
+   rather than as a web accent. The red continues to appear only where it
+   already does, at the same budget.
+
+   Two values per category, and both are needed: --deep fills the panel and
+   carries paper-coloured text; --tint washes the page behind it and carries
+   ink and --deep. Measured against the text that sits on them:
+
+     paper on coffee-deep       12.57:1    deep on coffee-tint       11.19:1
+     paper on not-coffee-deep    6.25:1    deep on not-coffee-tint    5.73:1
+     paper on aqua-deep          6.35:1    deep on aqua-tint          5.78:1
+     paper on sandwiches-deep    5.38:1    deep on sandwiches-tint    4.81:1
+     paper on desserts-deep      6.81:1    deep on desserts-tint      5.99:1
+
+   Every pair clears 4.5:1, so body-size text is legible on either. Sandwiches
+   is the tightest: it was #A8703A in the first pass, which measured 3.62:1 on
+   paper and failed. Darken any of these further at your own risk to the hue;
+   lighten one and re-measure before shipping it. */
+  --cat-coffee-deep:     #3A2A20;
+  --cat-coffee-tint:     #EEE7E0;
+  --cat-not-coffee-deep: #4F6042;
+  --cat-not-coffee-tint: #E9EDE3;
+  --cat-aqua-deep:       #405E6B;
+  --cat-aqua-tint:       #E4ECEE;
+  --cat-sandwiches-deep: #8A5A2B;
+  --cat-sandwiches-tint: #F2E7D9;
+  --cat-desserts-deep:   #7E4450;
+  --cat-desserts-tint:   #F1E4E4;
 }

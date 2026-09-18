@@ -458,7 +458,12 @@ export default function App() {
   /* Footer rendering lives in EditorialFooter so all routes share the same editorial shell. */
 
   return (
-    <div className="bg-background text-foreground font-mono font-normal min-h-screen">
+    <div
+      className="
+        bg-background text-foreground font-mono font-normal min-h-screen
+        transition-colors duration-[700ms] ease-[cubic-bezier(.2,.8,.2,1)]
+      "
+    >
 
       <a className="editorial-skip-link" href="#main-content">Skip to content</a>
 
