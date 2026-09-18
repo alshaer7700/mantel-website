@@ -316,10 +316,20 @@
     color: #f5f3ee;
   }
 
+  /*
+   * The frame is landscape because the photograph is: 2000 x 1435, or 1.394.
+   * Matching the file's own ratio means object-fit: cover crops nothing, which
+   * is the point — the empty chair and the wall either side of the table are
+   * the composition, and a portrait crop (this was 0.84 while the picture here
+   * was a stock one) would throw both away to centre on the table.
+   *
+   * To crop deliberately later, narrow this ratio and steer what survives with
+   * object-position on the img below; don't change the file.
+   */
   .editorial-intro-media {
     position: relative;
-    width: min(100%, 530px);
-    aspect-ratio: 0.84;
+    width: min(100%, 700px);
+    aspect-ratio: 1.394;
     justify-self: start;
     background: #dbd4c7;
   }
