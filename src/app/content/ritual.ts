@@ -48,8 +48,21 @@ export type TrayAnnotation = {
 };
 
 /*
- * Ordered as the eye reads the tray, not as the objects sit on it: the cup
- * first, because that is what the page is about.
+ * Two notes, one per rail: the espresso and the water beside it. That is the
+ * whole of the ritual, and it is the whole of the annotation.
+ *
+ * There were four. The other two named the tray itself and a second, still
+ * water on the side — neither of which the owner wanted called out, and the
+ * still water was never something the counter actually serves. The tray is
+ * still described, in SERVICE_SPECS below, where a fact belongs when it is not
+ * worth a line drawn across a picture.
+ *
+ * WHY THE LABELS SIT WHERE THEY DO. labelY is the note's vertical centre, and
+ * the leader runs out of the note at that height, turns beside the picture and
+ * comes back in at the dot's height. With one note per rail there is no
+ * crowding to design around, so each label sits within a couple of percent of
+ * its own dot: the leader reads as a short, level pointer rather than a line
+ * hunting across the page for something to attach to.
  */
 export const TRAY_ANNOTATIONS: readonly TrayAnnotation[] = [
   {
@@ -62,7 +75,7 @@ export const TRAY_ANNOTATIONS: readonly TrayAnnotation[] = [
     x: 34,
     y: 31,
     side: "left",
-    labelY: 14,
+    labelY: 30,
   },
   {
     n: "02",
@@ -72,27 +85,7 @@ export const TRAY_ANNOTATIONS: readonly TrayAnnotation[] = [
     x: 65,
     y: 32.5,
     side: "right",
-    labelY: 16,
-  },
-  {
-    n: "03",
-    title: "The tray",
-    body:
-      "Everything arrives on one tray so it arrives at once. The arrangement is the ritual: cup, glass and spoon set down together, in the same order every Friday.",
-    x: 37.5,
-    y: 80,
-    side: "left",
-    labelY: 72,
-  },
-  {
-    n: "04",
-    title: "Still water, on the side",
-    body:
-      "A smaller glass of still water for afterwards. Free, always, and refilled without being asked.",
-    x: 84.5,
-    y: 56,
-    side: "right",
-    labelY: 70,
+    labelY: 33,
   },
 ];
 
