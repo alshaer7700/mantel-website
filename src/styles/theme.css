@@ -13,18 +13,7 @@
      --card here is the shadcn *surface* name and now resolves to the paper
      card in tokens.css; --muted stays a distinct light fill and is not the
      same thing as --ink-muted (see the note in tokens.css). */
-  /* Paper, unless a page has asked for a wash. The Menu spread sets
-     --page-wash on <html> for as long as a heading is open (see
-     CategorySpread) and clears it on the way out, which is the whole of that
-     mechanism: one token, one writer, and the fallback is the ground everything
-     else stands on.
-
-     It is a token rather than a coloured layer behind the page because there is
-     nowhere to put such a layer. App wraps the site in a bg-background div, and
-     a fixed element at a negative z-index paints BELOW the background of a
-     non-positioned ancestor — so the obvious version of this is invisible, and
-     the version that is visible covers the footer. */
-  --background: var(--page-wash, var(--paper));
+  --background: var(--paper);
   --foreground: var(--ink);
   --card: var(--card-surface);
   --card-foreground: var(--ink);

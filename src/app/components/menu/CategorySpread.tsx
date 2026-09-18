@@ -42,29 +42,33 @@ export function CategorySpread({ linkTo, category, items }: Props) {
   const [selected, setSelected] = useState(0);
   useEffect(() => setSelected(0), [category]);
 
-  /* The wash: the whole page takes the heading's tint for as long as the
-     spread is open, nav and footer included, and goes back to paper on the way
-     out. --page-wash is read by --background in theme.css, which is what every
-     bg-background in the tree resolves to, so one property repaints the page.
-
-     The cleanup is the important half. Without it, leaving the spread by any
-     route that does not unmount through this effect — Back, a nav link, the
-     logo — would leave the site washed green on every other page. */
-  useEffect(() => {
-    const root = document.documentElement;
-    root.style.setProperty("--page-wash", theme.tint);
-    return () => {
-      root.style.removeProperty("--page-wash");
-    };
-  }, [theme.tint]);
-
   const item = items[Math.min(selected, items.length - 1)];
   if (!item) return null;
 
   const macros = formatMacros(item);
 
   return (
-    <div className="pb-[clamp(3rem,8vh,5rem)]">
+    /* The wash.
+     *
+     * It is a band this component paints, cancelling the page gutter with a
+     * negative margin so it runs to both edges of the viewport, rather than a
+     * colour applied to the page itself. That was the first version: the spread
+     * set a --page-wash token that --background read, which tinted the nav and
+     * the footer too, closer to the reference. It also meant the Menu could
+     * repaint the rest of the site, so a token in theme.css and a transition on
+     * App's wrapper had to change with it — three files outside this page for
+     * one page's background. This keeps every line of the redesign inside the
+     * menu: the tint stops where the menu does, and the nav and footer stay on
+     * paper.
+     */
+    <div
+      style={{ background: theme.tint }}
+      className="
+        -mx-[var(--pad)] px-[var(--pad)]
+        pb-[clamp(3rem,8vh,5rem)]
+        transition-colors duration-[700ms] ease-[cubic-bezier(.2,.8,.2,1)]
+      "
+    >
       <header className="flex items-baseline justify-between gap-[var(--s-3)] py-[clamp(1.5rem,4vh,2.5rem)]">
         <a
           {...linkTo("menu")}
