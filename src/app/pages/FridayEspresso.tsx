@@ -30,8 +30,10 @@ import { TrayArt } from "@/app/components/ritual/TrayArt";
  * numbered list under the picture and the drawn lines are hidden, because a
  * narrow rail has no room for the copy and a leader line that crosses it is
  * noise rather than information. The stylesheet's own comment carries the
- * arithmetic behind that number. The dots stay on the picture either way, so
- * the numbers in the list still have something to point at.
+ * arithmetic behind that number. Nothing is drawn on the picture itself — the
+ * leaders are the only marks — so below the breakpoint the notes stand on their
+ * own titles, which with two of them ("The espresso", "Sparkling water") is
+ * enough to tell them apart without anything to point at.
  */
 
 /*
@@ -149,19 +151,26 @@ export function FridayEspresso({ linkTo, menuItems }: Props) {
             style={{ aspectRatio: TRAY_ASPECT }}
           >
             {TRAY_PHOTO ? <img src={TRAY_PHOTO} alt={TRAY_PHOTO_ALT} /> : <TrayArt />}
-            {TRAY_ANNOTATIONS.map((annotation) => (
-              <span
-                key={annotation.n}
-                className="editorial-ritual-dot"
-                style={{ left: `${annotation.x}%`, top: `${annotation.y}%` }}
-                aria-hidden="true"
-              >
-                {annotation.n}
-              </span>
-            ))}
           </figure>
 
-          {/* Decoration: the same relationships the numbered list states in text. */}
+          {/*
+            * Decoration: the same relationships the notes state in text.
+            *
+            * Lines and nothing else. There used to be a numbered badge on each
+            * object and a filled terminator where each leader met it; both are
+            * gone, so the line runs to the thing it names and stops there.
+            *
+            * The terminator could not simply be left behind once the badge went.
+            * It was an r="1" <circle> in a 0–100 viewBox drawn with
+            * preserveAspectRatio="none", which is not a circle at all — the
+            * viewBox stretches to the stage, so it rendered as an ellipse as
+            * many times wider than tall as the stage is. A 22px badge sat on top
+            * of it, which is the only reason that never showed. Anything drawn
+            * in here that is meant to be round has to be a DOM element
+            * positioned in percentages, the way the badges were, not SVG
+            * geometry — only the strokes survive this viewBox, and only because
+            * vector-effect keeps them hairlines.
+            */}
           <svg
             className="editorial-ritual-wires"
             viewBox="0 0 100 100"
@@ -176,16 +185,6 @@ export function FridayEspresso({ linkTo, menuItems }: Props) {
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="1"
-                vectorEffect="non-scaling-stroke"
-              />
-            ))}
-            {TRAY_ANNOTATIONS.map((annotation) => (
-              <circle
-                key={`${annotation.n}-end`}
-                cx={dotStageX(annotation)}
-                cy={annotation.y}
-                r="1"
-                fill="currentColor"
                 vectorEffect="non-scaling-stroke"
               />
             ))}

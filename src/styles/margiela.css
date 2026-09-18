@@ -316,10 +316,20 @@
     color: #f5f3ee;
   }
 
+  /*
+   * The frame is landscape because the photograph is: 2000 x 1435, or 1.394.
+   * Matching the file's own ratio means object-fit: cover crops nothing, which
+   * is the point — the empty chair and the wall either side of the table are
+   * the composition, and a portrait crop (this was 0.84 while the picture here
+   * was a stock one) would throw both away to centre on the table.
+   *
+   * To crop deliberately later, narrow this ratio and steer what survives with
+   * object-position on the img below; don't change the file.
+   */
   .editorial-intro-media {
     position: relative;
-    width: min(100%, 530px);
-    aspect-ratio: 0.84;
+    width: min(100%, 700px);
+    aspect-ratio: 1.394;
     justify-self: start;
     background: #dbd4c7;
   }
@@ -2823,12 +2833,20 @@
     height: 100%;
   }
 
+  /*
+   * No warming filter here, unlike section 01's photograph and the hero.
+   * Those are mood pictures and the house treatment suits them; this one is a
+   * specimen, shot from above so the page can point at what is on the tray.
+   * saturate(0.82) sepia(0.1) turned the crema brown against a grey tray —
+   * which is the wrong thing to lose, because the crema plays exactly the part
+   * the red heart played in the drawing this replaced: the single piece of
+   * colour on an otherwise black, white and paper page.
+   */
   .editorial-ritual-frame img {
     display: block;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    filter: saturate(0.82) sepia(0.1);
   }
 
   /* The same corner tick the home page's section 01 draws on its photograph. */
@@ -2842,26 +2860,6 @@
     border-top: 1px solid var(--editorial-ink);
     border-left: 1px solid var(--editorial-ink);
     content: "";
-  }
-
-  /* Centred on its coordinate by the negative margin, so `left`/`top` can stay
-     the honest position of the thing on the tray. */
-  .editorial-ritual-dot {
-    position: absolute;
-    z-index: 3;
-    display: grid;
-    place-items: center;
-    width: 22px;
-    height: 22px;
-    margin: -11px 0 0 -11px;
-    border-radius: 999px;
-    background: var(--editorial-paper);
-    box-shadow: 0 0 0 1px var(--editorial-ink);
-    color: var(--editorial-ink);
-    font-family: var(--font-mono);
-    font-size: 9px;
-    font-weight: 500;
-    letter-spacing: 0.04em;
   }
 
   .editorial-ritual-wires {
