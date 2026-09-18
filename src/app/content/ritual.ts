@@ -1,4 +1,4 @@
-import { TRAY_ART_VIEWBOX } from "@/app/components/ritual/TrayArt";
+import trayPhoto from "@/imports/ritual-friday-espresso-tray.webp";
 
 /*
  * The Friday Espresso page: one image of the tray, annotated.
@@ -8,26 +8,23 @@ import { TRAY_ART_VIEWBOX } from "@/app/components/ritual/TrayArt";
  * it — neither of which should mean touching layout code.
  *
  * ── THE PICTURE ─────────────────────────────────────────────────────────────
- * TRAY_PHOTO is null, so the page renders the line drawing in
- * components/ritual/TrayArt.tsx. That is the intended treatment rather than a
- * gap: the brand direction on file is "drawn, not photographed", which is also
- * why the retail objects are drawings. To put a photograph there instead:
+ * The shop's own photograph of the tray, shot from above: the espresso, the
+ * glass of sparkling water, the spoon and the tray they arrive on. It replaced
+ * the line drawing in components/ritual/TrayArt.tsx, which is still in the tree
+ * and is still what the page renders if TRAY_PHOTO is ever set back to null.
  *
- *   1. drop the file in src/imports/
- *   2. import it here and set TRAY_PHOTO to it
- *   3. set TRAY_ASPECT to the file's width ÷ height, so the reserved space
- *      matches the image and nothing shifts as it loads
- *   4. check each annotation's x / y against the new frame — they are
- *      percentages of the picture, so a different crop needs them nudged
- *
- * Nothing else changes: the dots, the leader lines and the notes all read from
- * this file either way.
+ * To change the picture again: drop the file in src/imports/, import it here,
+ * point TRAY_PHOTO at it, set TRAY_ASPECT to its width / height so the reserved
+ * space matches and nothing shifts as it loads, and re-check each annotation's
+ * x / y — they are percentages of the picture, so a different crop needs them
+ * moved. Nothing else changes: the dots, the leader lines and the notes all
+ * read from this file either way.
  */
-export const TRAY_PHOTO: string | null = null;
+export const TRAY_PHOTO: string | null = trayPhoto;
 export const TRAY_PHOTO_ALT =
   "The Friday Espresso tray: an espresso and a glass of sparkling water, served together";
-/** Matches the drawing's viewBox while TRAY_PHOTO is null. */
-export const TRAY_ASPECT = TRAY_ART_VIEWBOX.width / TRAY_ART_VIEWBOX.height;
+/** The photograph is 2000 x 1465 — very slightly wider than square. */
+export const TRAY_ASPECT = 2000 / 1831;
 
 export type TrayAnnotation = {
   /** The printed index, shown on the dot and in front of the label. */
@@ -51,18 +48,25 @@ export type TrayAnnotation = {
  * Two notes, one per rail: the espresso and the water beside it. That is the
  * whole of the ritual, and it is the whole of the annotation.
  *
- * There were four. The other two named the tray itself and a second, still
- * water on the side — neither of which the owner wanted called out, and the
- * still water was never something the counter actually serves. The tray is
- * still described, in SERVICE_SPECS below, where a fact belongs when it is not
- * worth a line drawn across a picture.
+ * WHERE THE DOTS ARE. Measured off the photograph rather than guessed. The
+ * crema is the only strongly orange region in the frame, so it isolates
+ * cleanly: it spans x 50.4–62.2%, y 43.1–55.8%, centre (56.3, 49.4). The glass
+ * is the bright blob inside the dark tray on the left, bbox x 28.0–34.8%,
+ * y 41.8–52.1%. The espresso's dot sits on the crema itself rather than above
+ * it — a white numeral needs the dark coffee behind it to read — and the
+ * water's sits on the glass rim, where there is nothing to obscure.
  *
- * WHY THE LABELS SIT WHERE THEY DO. labelY is the note's vertical centre, and
- * the leader runs out of the note at that height, turns beside the picture and
- * comes back in at the dot's height. With one note per rail there is no
- * crowding to design around, so each label sits within a couple of percent of
- * its own dot: the leader reads as a short, level pointer rather than a line
- * hunting across the page for something to attach to.
+ * WHICH RAIL EACH NOTE HANGS ON is forced by the photograph, not chosen. The
+ * cup is on the right of the frame and the glass on the left; a leader runs
+ * from its rail, round the picture and straight in to its dot, so putting the
+ * espresso on the left rail would drag its line across the whole picture and
+ * over the water glass on the way. Hence espresso right, water left.
+ *
+ * THE NUMBERS THEN READ TOP TO BOTTOM instead of left to right, which is why
+ * the labels are staggered — 01 high on the right rail, 02 low on the left —
+ * rather than sitting level with each other as they did over the drawing. Level
+ * labels with the sides swapped would have printed 02 before 01 to anyone
+ * reading across, which looks like a mistake rather than a choice.
  */
 export const TRAY_ANNOTATIONS: readonly TrayAnnotation[] = [
   {
@@ -70,11 +74,9 @@ export const TRAY_ANNOTATIONS: readonly TrayAnnotation[] = [
     title: "The espresso",
     body:
       "A double, pulled to order and served in a warmed cup. It is meant to be drunk at the counter, in the four or five minutes before it flattens out.",
-    /* On the crema, just under the rim — not mid-cup, where it would cover the
-       heart, which is the one piece of colour on the page. */
-    x: 34,
-    y: 31,
-    side: "left",
+    x: 56.3,
+    y: 49,
+    side: "right",
     labelY: 30,
   },
   {
@@ -82,10 +84,10 @@ export const TRAY_ANNOTATIONS: readonly TrayAnnotation[] = [
     title: "Sparkling water",
     body:
       "Poured cold and served alongside, never after. A mouthful before the first sip clears the palate; a mouthful after it carries the finish a little longer.",
-    x: 65,
-    y: 32.5,
-    side: "right",
-    labelY: 33,
+    x: 31,
+    y: 45.5,
+    side: "left",
+    labelY: 64,
   },
 ];
 
