@@ -15,12 +15,15 @@
 //   CONTACT_NOTIFY_SECRET   same value stored in Vault as contact_notify_secret
 // Optional:
 //   CONTACT_NOTIFY_TO       default hello@bymantel.com
-//   CONTACT_NOTIFY_FROM     default Mantel <notifications@send.bymantel.com>
+//   CONTACT_NOTIFY_FROM     default Mantel <notifications@bymantel.com>
 
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 
 const TO = Deno.env.get("CONTACT_NOTIFY_TO") ?? "hello@bymantel.com";
-const FROM = Deno.env.get("CONTACT_NOTIFY_FROM") ?? "Mantel <notifications@send.bymantel.com>";
+// The From address has to sit on the domain verified in Resend — the apex
+// bymantel.com, not a subdomain of it. Resend matches it exactly and answers a
+// mismatch with a 403. See guidelines/EMAIL.md.
+const FROM = Deno.env.get("CONTACT_NOTIFY_FROM") ?? "Mantel <notifications@bymantel.com>";
 
 type ContactRecord = {
   id?: string;

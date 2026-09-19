@@ -28,6 +28,14 @@ how the italic-as-default setup works, and how to verify a change locally.
 
 Current face: EB Garamond Italic, self-hosted from `src/assets/fonts/`.
 
+## Email
+
+Contact messages, orders and newsletter sign-ups are emailed to the café by
+three Supabase Edge Functions through Resend. **Read `guidelines/EMAIL.md`
+before changing a From address, a DNS record or a notification secret** — it
+documents the verified sending domain, the records the `bymantel.com` zone needs
+(Netlify DNS is authoritative, not the registrar), and how to check them.
+
 ## Sandbox notes
 
 Outbound requests to `netlify.app` and `supabase.co` are blocked by the proxy
