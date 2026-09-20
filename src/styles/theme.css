@@ -92,15 +92,19 @@
 }
 
 @theme inline {
-  /* Two real families, two utilities. `font-serif` = EB Garamond (400/600),
-     `font-mono` = Fira Mono (400/500). Every call site names one of them
-     explicitly; the old `font-display` / `font-body` aliases are gone.
-     `font-sans` is pointed at the mono stack so that any third-party or
-     preflight rule reaching for it lands on the primary face rather than
-     the system UI font. */
+  /* Three families, three utilities. `font-grotesk` = Space Grotesk, the
+     everyday face; `font-serif` = EB Garamond, the wordmark only;
+     `font-mono` = Fira Mono, which now only the staff dashboard reads.
+     Every call site names one of them explicitly.
+
+     `font-sans` points at the grotesk so that any third-party or preflight
+     rule reaching for it — and every unstyled element, since Tailwind feeds
+     --font-sans into --default-font-family — lands on the primary face
+     rather than on the system UI font. */
+  --font-grotesk: var(--font-grotesk);
   --font-serif: var(--font-serif);
   --font-mono: var(--font-mono);
-  --font-sans: var(--font-mono);
+  --font-sans: var(--font-grotesk);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -148,11 +152,11 @@
     @apply border-border outline-ring/50;
   }
 
-  /* Root default. Fira Mono is the primary face in this direction, so an
-     element that somehow escapes an explicit family still lands on it
-     rather than on the browser's default serif. */
+  /* Root default. Space Grotesk is the primary face, so an element that
+     somehow escapes an explicit family still lands on it rather than on the
+     browser's default serif. */
   body {
-    @apply bg-background text-foreground font-mono font-normal;
+    @apply bg-background text-foreground font-grotesk font-normal;
   }
 
   /**

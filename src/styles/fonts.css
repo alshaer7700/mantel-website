@@ -1,9 +1,16 @@
 /*
- * Mantel type system — two families, self-hosted, latin subsets from Google Fonts.
+ * Mantel type system — self-hosted, latin subsets from Google Fonts.
  *
- *   EB Garamond  — variable roman AND variable italic, wght 400–800. Two
- *                  files, ~92 KB together.
- *   Fira Mono    — static Regular (400) and Medium (500).
+ *   Space Grotesk — variable, wght 300–700. One 22 KB file. The everyday
+ *                   face: every label, heading, control and price.
+ *   EB Garamond   — variable roman AND variable italic, wght 400–800. Two
+ *                   files, ~92 KB together. Now the WORDMARK ONLY — "Mantel."
+ *                   in the nav, the drawer and the hero. It is the logo, not
+ *                   the voice.
+ *   Fira Mono     — static Regular (400) and Medium (500). No longer used by
+ *                   anything customer-facing; the staff dashboard still reads
+ *                   it. Space Grotesk ships `tnum`, so prices and order
+ *                   references get tabular figures without a second family.
  *
  * The italic came back for the redesign. It had been dropped when the site
  * stopped using italics anywhere, but the design direction sets the hero's
@@ -20,6 +27,27 @@
  * through to the system emoji font on their own — which is why these rules
  * carry no unicode-range. See guidelines/FONTS.md for why that mattered.
  */
+
+/*
+ * One file, the whole weight range.
+ *
+ * Google's css2 response lists 400, 500 and 700 as separate @font-face rules
+ * but points all three at the SAME url: Space Grotesk is variable, so one file
+ * answers 300–700. Registering it once as a range is what that response
+ * actually means.
+ *
+ * Checked before shipping, per the emoji trap in guidelines/FONTS.md: this
+ * face carries NO regional-indicator glyphs (U+1F1E6–1F1FF), so flag emoji
+ * fall through to the system emoji font on their own and no unicode-range is
+ * needed here.
+ */
+@font-face {
+  font-family: "Space Grotesk";
+  src: url("../assets/fonts/SpaceGrotesk-Variable.woff2") format("woff2-variations");
+  font-weight: 300 700;
+  font-style: normal;
+  font-display: swap;
+}
 
 @font-face {
   font-family: "EB Garamond";

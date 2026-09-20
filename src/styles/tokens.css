@@ -21,7 +21,23 @@
      both because neither subset contains emoji — without it, a flag or symbol
      glyph would drop to a random system face mid-sentence. */
   --font-emoji: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji";
+
+  /*
+   * The everyday face. Every label, heading, control, price and line of body
+   * copy on a customer-facing page is this.
+   *
+   * It carries `tnum`, so a price or an order reference gets tabular figures
+   * from `font-variant-numeric: tabular-nums` rather than from a second,
+   * monospaced family — which is why --font-mono below no longer appears on
+   * any customer-facing surface.
+   */
+  --font-grotesk: "Space Grotesk", ui-sans-serif, system-ui, "Helvetica Neue", Arial, sans-serif, var(--font-emoji);
+
+  /* The wordmark, and nothing else. "Mantel." in the nav, the drawer and the
+     hero. It is the logo now, not the voice. */
   --font-serif: "EB Garamond", Georgia, "Times New Roman", serif, var(--font-emoji);
+
+  /* Staff dashboard only — see fonts.css. */
   --font-mono:  "Fira Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace, var(--font-emoji);
 
   /* ── Colour ─────────────────────────────────────────────────────────────
@@ -36,21 +52,28 @@
      --muted-foreground / --heart-red onto these, so the Figma-export classes
      still in the tree (bg-background, text-muted-foreground, border-border)
      follow the same five values instead of drifting from them. */
-  --paper:     #F6F5F2;  /* the ground, everywhere */
+  --paper:     #FFFFFF;  /* the ground, everywhere */
   --bg:        var(--paper);
   /* Named --card-surface, not --card, for exactly the reason --ink-muted is
      not --muted: theme.css defines a shadcn --card and is imported later, so a
      token by that name here would silently lose to it. */
-  --card-surface: #FCFBF9;  /* raised surfaces — the checkout summary panel */
-  --ink:       #171310;  /* all primary text */
-  --ink-muted: #8C867D;  /* descriptions, secondary, every .label */
+  --card-surface: #FAFAFA;  /* raised surfaces — the checkout summary panel */
+  --ink:       #0D0D0D;  /* all primary text */
+  --ink-muted: #6E6E6E;  /* descriptions, secondary, every .label */
   --brand:     #9A1C1F;  /* heart red — accents only */
+
+  /* The chrome. The nav and the ticker are the one part of the site that
+     stays dark while the pages under them are white, so they are stated here
+     rather than derived from the ground. */
+  --chrome:      #0D0D0D;
+  --chrome-ink:  #FFFFFF;
+  --chrome-muted:#F2F2F2;
 
   /* Two rules, not one. The shelf hairline has to read as a drawn line; the
      divider between two menu rows must not. Collapsing them makes either the
      shelf invisible or the menu striped. */
-  --line:      #D9D4CB;  /* the shelf rule, section hairlines */
-  --line-soft: #E8E4DC;  /* row dividers inside a list */
+  --line:      #D8D8D8;  /* the shelf rule, section hairlines */
+  --line-soft: #EAEAEA;  /* row dividers inside a list */
 
   /* Page gutter. The one fluid value in the file: the prototype's layout is
      built on it, and pinning it to a step would break the bleed plates that
@@ -71,19 +94,18 @@
   /*
    * Accessibility note, measured rather than assumed.
    *
-   *   #171310 on #F6F5F2   16.94:1   passes AA for body text
-   *   #9A1C1F on #F6F5F2    7.52:1   passes AA for body text
-   *   #8C867D on #F6F5F2    3.31:1   large text only — FAILS AA at 14px
+   *   #0D0D0D on #FFFFFF   19.56:1   passes AA and AAA
+   *   #9A1C1F on #FFFFFF    9.21:1   passes AA and AAA
+   *   #6E6E6E on #FFFFFF    5.06:1   passes AA at every size
+   *   #FFFFFF on #0D0D0D   19.56:1   the chrome, inverted
    *
-   * --ink-muted is the same problem the previous palette had (#8A8A8A on
-   * white measured 3.45:1), very slightly worse. It carries the 14px menu
-   * descriptions and every .label, which is exactly the size that needs
-   * 4.5:1. #767066 measures 4.50:1 on this paper and is visually
-   * indistinguishable at that size.
-   *
-   * The prototype specifies #8C867D, so that is what ships: changing a brand
-   * value is the owner's call, not a build-time one. If it is approved, this
-   * is the only line that changes.
+   * --ink-muted was #8C867D on warm paper, which measured 3.31:1 and FAILED
+   * AA at 14px — and it carries every description, caption and label on the
+   * site. The note that used to sit here said as much and left it alone,
+   * because changing a brand value is the owner's call rather than a
+   * build-time one. Moving the whole palette to a white ground was that call,
+   * so the muted grey was re-picked to pass rather than carried across.
+   * Anything under 4.5:1 here is a bug, not a style.
    */
 
   /* ── Spacing ────────────────────────────────────────────────────────────
