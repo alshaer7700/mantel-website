@@ -16,7 +16,7 @@ export function FaqAccordion({ items }: { items: FaqItem[] }) {
             aria-expanded={open === i}
             className="w-full flex items-center justify-between gap-4 py-5 text-left hover:opacity-60 transition-opacity"
           >
-            <span className="font-serif font-medium text-[14px] tracking-[0.08em] uppercase">
+            <span className="font-grotesk font-bold text-[13px] tracking-[0.06em] uppercase">
               {item.question}
             </span>
             <ChevronDown

@@ -68,7 +68,7 @@ export function PickUp({ linkTo, sections, loading, error, cartLines, onAdd, onI
           }
         />
 
-        <p className="font-serif text-[1rem] text-[color:var(--ink-muted)] max-w-[46ch] mb-[clamp(2rem,6vh,3.5rem)]">
+        <p className="font-grotesk text-[13px] leading-[1.5] text-[color:var(--ink-muted)] max-w-[52ch] mb-[clamp(2rem,6vh,3.5rem)]">
           Browse, add what you want, and place your order before you leave. It'll be ready when
           you reach.{" "}
           {itemCount > 0 && (

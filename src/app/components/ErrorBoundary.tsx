@@ -22,13 +22,13 @@ export class ErrorBoundary extends Component<
     if (this.state.hasError) {
       return (
         <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-background font-mono font-normal text-center px-6">
-          <p className="font-serif font-semibold text-3xl">Something went wrong.</p>
+          <p className="font-grotesk font-bold uppercase tracking-[-0.02em] text-3xl">Something went wrong.</p>
           <p className="font-mono font-normal text-sm text-muted-foreground">
             Please refresh the page — if it keeps happening, reach us on Instagram.
           </p>
           <button
             onClick={() => window.location.reload()}
-            className="rounded-full border-2 border-black px-6 py-2 font-serif font-medium text-base tracking-[0.16em] uppercase hover:bg-black/5 transition-colors"
+            className="border border-black bg-black text-white px-6 py-3 font-grotesk font-bold text-[10px] tracking-[0.14em] uppercase hover:opacity-80 transition-opacity"
           >
             Reload
           </button>

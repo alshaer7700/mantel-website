@@ -35,7 +35,7 @@ export function NewsletterSignup() {
 
   return (
     <section className="max-w-2xl w-full mx-auto px-6 py-16 text-center" aria-labelledby="newsletter-title">
-      <h2 id="newsletter-title" className="font-serif font-semibold text-[length:var(--fs-section-title)] leading-[0.96] mb-4">
+      <h2 id="newsletter-title" className="font-grotesk font-bold uppercase text-[length:var(--fs-section-title)] tracking-[-0.02em] leading-[0.96] mb-4">
         New Sips, First Look.
       </h2>
       <p className="font-mono font-normal text-sm text-muted-foreground mb-8">
@@ -67,7 +67,7 @@ export function NewsletterSignup() {
             placeholder="Email address"
             value={email}
             onChange={(event) => setEmail(event.target.value)}
-            className="flex-1 min-w-0 bg-transparent px-6 py-3.5 font-serif font-normal text-base placeholder:text-muted-foreground outline-none rounded-full"
+            className="flex-1 min-w-0 bg-transparent px-5 py-3.5 font-grotesk font-normal text-[13px] placeholder:text-muted-foreground outline-none"
           />
           <button
             type="submit"

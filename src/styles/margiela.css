@@ -247,12 +247,12 @@
 
   .editorial-hero-content {
     position: absolute;
-    right: clamp(24px, 9vw, 132px);
-    bottom: clamp(34px, 8vw, 94px);
+    right: clamp(22px, 5vw, 64px);
+    bottom: clamp(26px, 5vw, 60px);
+    left: clamp(22px, 5vw, 64px);
     z-index: 1;
-    max-width: 390px;
-    color: #f6f3ed;
-    text-align: right;
+    color: #ffffff;
+    text-align: left;
   }
 
   .editorial-kicker,
@@ -267,21 +267,32 @@
     text-transform: uppercase;
   }
 
+  /*
+   * Sized in vw rather than clamped to a ceiling: the point of this treatment
+   * is that the word spans the frame, so it has to keep spanning it at 1440
+   * and at 2560. 13vw is what makes "Mantel." touch both gutters.
+   */
   .editorial-hero-content h1 {
-    margin: 10px 0 12px;
-    font-family: var(--font-serif);
-    font-size: clamp(64px, 12vw, 148px);
-    font-weight: 500;
-    letter-spacing: -0.055em;
-    line-height: 0.78;
+    margin: 8px 0 22px;
+    font-family: var(--font-grotesk);
+    font-size: 13vw;
+    font-weight: 700;
+    letter-spacing: -0.045em;
+    line-height: 0.82;
+    text-transform: uppercase;
   }
 
   .editorial-hero-content p {
     margin: 0 0 24px;
-    font-family: var(--font-serif);
+    font-family: var(--font-grotesk);
     font-size: clamp(20px, 2.7vw, 30px);
     font-style: italic;
     line-height: 1;
+  }
+
+  .editorial-hero-content .editorial-kicker {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.78);
   }
 
   .editorial-hero-links,
@@ -331,9 +342,29 @@
     opacity: 0.56;
   }
 
+  .editorial-hero-links {
+    justify-content: flex-start;
+  }
+
   .editorial-hero-links .editorial-link {
-    border-bottom: 1px solid currentColor;
-    padding-bottom: 5px;
+    border-bottom: 0;
+    padding: 13px 26px;
+    background: #ffffff;
+    color: var(--ink);
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    transition: opacity 160ms ease;
+  }
+
+  /* The second one is the quieter of the pair — outlined, not filled. */
+  .editorial-hero-links .editorial-link + .editorial-link {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.55);
+    color: #ffffff;
+  }
+
+  .editorial-hero-links .editorial-link::after {
+    content: none;
   }
 
   .editorial-intro {
@@ -359,7 +390,7 @@
   .editorial-manifesto h2,
   .editorial-newsletter h2 {
     margin: 0;
-    font-family: var(--font-serif);
+    font-family: var(--font-grotesk);
     font-weight: 500;
     letter-spacing: -0.035em;
   }
@@ -374,7 +405,7 @@
     max-width: 40ch;
     margin: 30px 0 30px;
     color: var(--editorial-muted);
-    font-family: var(--font-serif);
+    font-family: var(--font-grotesk);
     font-size: 18px;
     line-height: 1.38;
   }
@@ -459,7 +490,7 @@
 
   .editorial-banner-copy h2 {
     margin: 12px 0 20px;
-    font-family: var(--font-serif);
+    font-family: var(--font-grotesk);
     font-size: var(--fs-section-title);
     font-weight: 500;
     letter-spacing: -0.035em;
@@ -480,7 +511,7 @@
 
   .editorial-section-heading h2 {
     margin: 0;
-    font-family: var(--font-serif);
+    font-family: var(--font-grotesk);
     font-size: var(--fs-section-title);
     font-weight: 500;
     letter-spacing: -0.035em;
@@ -491,7 +522,7 @@
     max-width: 26ch;
     margin: 0;
     color: var(--editorial-muted);
-    font-family: var(--font-serif);
+    font-family: var(--font-grotesk);
     font-size: 17px;
     line-height: 1.25;
     text-align: right;
@@ -546,7 +577,7 @@
   }
 
   .editorial-product-name {
-    font-family: var(--font-serif);
+    font-family: var(--font-grotesk);
     font-size: 21px;
     line-height: 1;
   }
@@ -562,7 +593,7 @@
     max-width: 500px;
     margin: 28px 0 0;
     color: var(--editorial-muted);
-    font-family: var(--font-serif);
+    font-family: var(--font-grotesk);
     font-size: 17px;
     line-height: 1.3;
   }
@@ -604,7 +635,7 @@
     max-width: 50ch;
     margin: 0 0 30px;
     color: #554e47;
-    font-family: var(--font-serif);
+    font-family: var(--font-grotesk);
     font-size: clamp(19px, 2.2vw, 27px);
     line-height: 1.2;
   }
@@ -625,7 +656,7 @@
   .editorial-cafe-copy h2 {
     max-width: 18ch;
     margin: 18px 0 24px;
-    font-family: var(--font-serif);
+    font-family: var(--font-grotesk);
     font-size: var(--fs-section-title);
     font-weight: 500;
     letter-spacing: -0.035em;
@@ -636,7 +667,7 @@
     max-width: 30ch;
     margin: 0 0 28px;
     color: var(--editorial-muted);
-    font-family: var(--font-serif);
+    font-family: var(--font-grotesk);
     font-size: 19px;
     line-height: 1.25;
   }
@@ -653,7 +684,7 @@
   .editorial-cafe-empty {
     margin: 0;
     color: var(--editorial-muted);
-    font-family: var(--font-serif);
+    font-family: var(--font-grotesk);
     font-size: 21px;
   }
 
@@ -680,7 +711,7 @@
   .editorial-newsletter-copy p {
     margin: 0 0 24px;
     color: var(--editorial-muted);
-    font-family: var(--font-serif);
+    font-family: var(--font-grotesk);
     font-size: 18px;
     line-height: 1.25;
   }
@@ -726,7 +757,7 @@
   .editorial-newsletter-success,
   .editorial-newsletter-error {
     color: var(--editorial-ink);
-    font-family: var(--font-serif);
+    font-family: var(--font-grotesk);
     font-size: 20px;
     line-height: 1.2;
   }
@@ -849,97 +880,119 @@
   }
 
   .editorial-footer {
-    padding: 0 clamp(24px, 8vw, 120px) 42px;
+    padding: 0 clamp(22px, 8vw, 120px) 28px;
     background: var(--editorial-paper);
+    border-top: 1px solid var(--editorial-line);
+  }
+
+  /*
+   * The name as a full stop.
+   *
+   * Set to the width of the page and clipped to its cap height, so it reads as
+   * a rule the page ends on rather than as a heading nobody asked for. It is
+   * decoration — the markup hides it from the reading order, since the
+   * copyright line below already says whose site this is.
+   */
+  .editorial-footer-mark {
+    padding: clamp(34px, 6vw, 70px) 0 clamp(20px, 3vw, 34px);
+    color: var(--editorial-ink);
+    font-family: var(--font-grotesk);
+    font-size: clamp(56px, 15.5vw, 240px);
+    font-weight: 700;
+    letter-spacing: -0.055em;
+    line-height: 0.78;
+    text-transform: uppercase;
+    user-select: none;
   }
 
   .editorial-footer-grid {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 42px;
-    padding: 44px 0 68px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 40px 24px;
+    padding: clamp(26px, 4vw, 44px) 0 clamp(30px, 5vw, 56px);
     border-top: 1px solid var(--editorial-line);
+  }
+
+  .editorial-footer-col {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .editorial-footer-title {
     margin: 0 0 16px;
     color: var(--editorial-muted);
+    font-family: var(--font-grotesk);
     font-size: 9px;
+    font-weight: 700;
     letter-spacing: 0.16em;
+    line-height: 1.25;
+    text-transform: uppercase;
   }
 
+  /*
+   * Links are a readable size rather than caption-sized, because this is where
+   * someone looking for the refund policy or the pin actually goes. The
+   * underline waits for a hover so four columns of them do not read as a
+   * ruled page.
+   */
   .editorial-footer-link {
-    display: block;
-    width: fit-content;
+    display: inline-block;
     margin-bottom: 9px;
     color: var(--editorial-ink);
-    font-family: var(--font-serif);
-    font-size: 17px;
-    line-height: 1.2;
+    font-family: var(--font-grotesk);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    line-height: 1.35;
     text-decoration: none;
+    transition: opacity 140ms ease;
   }
 
   .editorial-footer-link:hover {
     text-decoration: underline;
-    text-underline-offset: 3px;
+    text-underline-offset: 4px;
+    text-decoration-thickness: 1px;
   }
 
-  .editorial-footer-aside {
-    display: flex;
-    align-items: start;
-    justify-content: space-between;
-    gap: 24px;
+  .editorial-footer-link:focus-visible,
+  .editorial-footer-ig:focus-visible {
+    outline: 2px solid var(--editorial-red);
+    outline-offset: 4px;
   }
 
-  .editorial-footer-instagram {
-    display: flex;
-    justify-content: flex-end;
-  }
-
-  .editorial-footer-aside p {
-    max-width: 24ch;
-    margin: 0;
-    color: var(--editorial-muted);
-    font-family: var(--font-serif);
-    font-size: 17px;
-    line-height: 1.15;
-  }
-
-  .editorial-footer-socials {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-  }
-
-  .editorial-footer-social {
+  .editorial-footer-ig {
     display: grid;
-    width: 30px;
-    height: 30px;
+    width: 34px;
+    height: 34px;
+    margin-top: 10px;
     place-items: center;
     border: 1px solid var(--editorial-line);
     color: var(--editorial-ink);
-    font-family: var(--font-grotesk);
-    font-size: 8px;
-    text-decoration: none;
-    text-transform: uppercase;
+    transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease;
+  }
+
+  .editorial-footer-ig:hover {
+    background: var(--editorial-ink);
+    border-color: var(--editorial-ink);
+    color: var(--paper);
   }
 
   .editorial-footer-bottom {
     display: flex;
-    justify-content: center;
-    gap: 20px;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 6px 20px;
     padding-top: 18px;
     border-top: 1px solid var(--editorial-line);
     color: var(--editorial-muted);
     font-family: var(--font-grotesk);
     font-size: 9px;
-    letter-spacing: 0.04em;
+    font-weight: 500;
+    letter-spacing: 0.14em;
     line-height: 1.5;
     text-transform: uppercase;
-  }
-
-  .editorial-footer-bottom span:last-child {
-    text-align: right;
   }
 
   @media (max-width: 900px) {
@@ -1010,12 +1063,13 @@
 
     .editorial-hero-content {
       right: 20px;
-      bottom: calc(30px + env(safe-area-inset-bottom));
-      max-width: 82vw;
+      left: 20px;
+      bottom: calc(26px + env(safe-area-inset-bottom));
     }
 
     .editorial-hero-content h1 {
-      font-size: clamp(64px, 22vw, 116px);
+      font-size: 19vw;
+      margin-bottom: 18px;
     }
 
     .editorial-intro,
@@ -1089,38 +1143,35 @@
       padding-inline: 22px;
     }
 
+    /* Four columns will not sit on a phone; two will, and the pairs stay
+       related — care with legal, what to browse with where to go. */
     .editorial-footer-grid {
       grid-template-columns: 1fr 1fr;
-      gap: 30px 18px;
-      padding: 34px 0 44px;
+      gap: 28px 18px;
+      padding: 28px 0 34px;
     }
 
     .editorial-footer-title {
-      margin-bottom: 13px;
+      margin-bottom: 12px;
     }
 
     .editorial-footer-link {
-      font-size: 15px;
+      font-size: 13px;
       margin-bottom: 8px;
     }
 
-    .editorial-footer-aside {
-      grid-column: 1 / -1;
-      display: block;
-    }
-
-    .editorial-footer-socials {
-      margin-top: 18px;
-    }
-
+    /* Stacked, so the three states read as a list rather than as one line
+       broken in an arbitrary place. */
     .editorial-footer-bottom {
       display: block;
     }
 
-    .editorial-footer-bottom span:last-child {
+    .editorial-footer-bottom span {
       display: block;
-      margin-top: 10px;
-      text-align: left;
+    }
+
+    .editorial-footer-bottom span + span {
+      margin-top: 5px;
     }
 
     .editorial-cookie-dialog {
@@ -1178,7 +1229,7 @@
   .editorial-objects-intro h1 {
     margin: 12px 0 0;
     color: var(--editorial-ink);
-    font-family: var(--font-serif);
+    font-family: var(--font-grotesk);
     font-size: var(--fs-page-title);
     font-weight: 500;
     letter-spacing: -0.042em;
@@ -1193,7 +1244,7 @@
   .editorial-objects-intro-copy p {
     margin: 0 0 26px;
     color: var(--editorial-muted);
-    font-family: var(--font-serif);
+    font-family: var(--font-grotesk);
     font-size: 20px;
     line-height: 1.2;
   }
@@ -1390,7 +1441,7 @@
   .editorial-object-info h2 {
     margin: 0 0 8px;
     color: var(--editorial-ink);
-    font-family: var(--font-serif);
+    font-family: var(--font-grotesk);
     font-size: clamp(21px, 2.2vw, 29px);
     font-weight: 500;
     letter-spacing: -0.028em;
@@ -1401,7 +1452,7 @@
     max-width: 24ch;
     margin: 0;
     color: var(--editorial-muted);
-    font-family: var(--font-serif);
+    font-family: var(--font-grotesk);
     font-size: 13px;
     line-height: 1.25;
   }
@@ -1552,7 +1603,7 @@
   .editorial-about-content h1 {
     margin: 0 0 26px;
     color: var(--editorial-ink);
-    font-family: var(--font-serif);
+    font-family: var(--font-grotesk);
     font-size: var(--fs-page-title);
     font-weight: 500;
     letter-spacing: -0.042em;
@@ -1563,7 +1614,7 @@
     max-width: 46ch;
     margin: 0 0 34px;
     color: var(--editorial-muted);
-    font-family: var(--font-serif);
+    font-family: var(--font-grotesk);
     font-size: clamp(17px, 1.6vw, 21px);
     line-height: 1.38;
   }
@@ -1591,7 +1642,7 @@
     padding: 21px 0;
     border-bottom: 1px solid var(--editorial-line);
     color: var(--editorial-ink);
-    font-family: var(--font-serif);
+    font-family: var(--font-grotesk);
     font-size: clamp(23px, 2.6vw, 30px);
     font-weight: 400;
     letter-spacing: -0.03em;
@@ -1808,7 +1859,7 @@
 
   .editorial-cart-header h2 {
     margin: 12px 0 0;
-    font-family: var(--font-serif);
+    font-family: var(--font-grotesk);
     font-size: var(--fs-section-title);
     font-weight: 500;
     letter-spacing: -0.035em;
@@ -1878,7 +1929,7 @@
 
   .editorial-cart-line-heading h3 {
     margin: 0 0 5px;
-    font-family: var(--font-serif);
+    font-family: var(--font-grotesk);
     font-size: 21px;
     font-weight: 500;
     letter-spacing: -0.02em;
@@ -1934,7 +1985,7 @@
   .editorial-cart-empty-title {
     margin-bottom: 10px !important;
     color: var(--editorial-ink) !important;
-    font-family: var(--font-serif) !important;
+    font-family: var(--font-grotesk) !important;
     font-size: 28px !important;
     letter-spacing: -0.03em !important;
   }
@@ -2127,7 +2178,7 @@
     max-width: 16ch;
     margin: 0;
     color: var(--editorial-ink);
-    font-family: var(--font-serif);
+    font-family: var(--font-grotesk);
     font-size: var(--fs-section-title);
     font-weight: 500;
     letter-spacing: -0.02em;
@@ -2137,7 +2188,7 @@
   .editorial-cart-confirmation p {
     margin: 0;
     color: var(--editorial-muted);
-    font-family: var(--font-serif);
+    font-family: var(--font-grotesk);
     font-size: 16px;
     line-height: 1.38;
   }
@@ -2285,7 +2336,7 @@
   .editorial-contact-rail h1 {
     max-width: 14ch;
     margin: 12px 0 0;
-    font-family: var(--font-serif);
+    font-family: var(--font-grotesk);
     font-size: var(--fs-section-title);
     font-weight: 500;
     letter-spacing: -0.035em;
@@ -2356,7 +2407,7 @@
   .editorial-contact-rail-group a {
     width: fit-content;
     color: var(--editorial-ink);
-    font-family: var(--font-serif);
+    font-family: var(--font-grotesk);
     font-size: 19px;
     line-height: 1;
     text-decoration: none;
@@ -2374,7 +2425,7 @@
 
   .editorial-contact-heading h2 {
     margin: 12px 0 0;
-    font-family: var(--font-serif);
+    font-family: var(--font-grotesk);
     font-size: var(--fs-section-title);
     font-weight: 500;
     letter-spacing: -0.035em;
@@ -2390,7 +2441,7 @@
     max-width: 65ch;
     margin: 0 0 21px;
     color: var(--editorial-muted);
-    font-family: var(--font-serif);
+    font-family: var(--font-grotesk);
     font-size: clamp(17px, 1.5vw, 21px);
     line-height: 1.32;
   }
@@ -2439,7 +2490,7 @@
     padding: 13px 14px;
     background: transparent;
     color: var(--editorial-ink);
-    font-family: var(--font-serif);
+    font-family: var(--font-grotesk);
     font-size: 18px;
     letter-spacing: 0;
     text-transform: none;
@@ -2512,7 +2563,7 @@
   .editorial-contact-success h3 {
     max-width: 12ch;
     margin: 0;
-    font-family: var(--font-serif);
+    font-family: var(--font-grotesk);
     font-size: var(--fs-section-title);
     font-weight: 500;
     letter-spacing: -0.05em;
@@ -2522,7 +2573,7 @@
   .editorial-contact-success > p:last-child {
     margin: 0;
     color: var(--editorial-muted);
-    font-family: var(--font-serif);
+    font-family: var(--font-grotesk);
     font-size: 18px;
   }
 
@@ -2909,7 +2960,7 @@
   .editorial-ritual-head h1 {
     margin: 12px 0 0;
     color: var(--editorial-ink);
-    font-family: var(--font-serif);
+    font-family: var(--font-grotesk);
     font-size: var(--fs-section-title);
     font-weight: 500;
     letter-spacing: -0.035em;
@@ -2920,7 +2971,7 @@
     max-width: 46ch;
     margin: 22px 0 0;
     color: var(--editorial-muted);
-    font-family: var(--font-serif);
+    font-family: var(--font-grotesk);
     font-size: 18px;
     line-height: 1.38;
   }
@@ -3042,7 +3093,7 @@
   .editorial-ritual-note h3 {
     margin: 0 0 8px;
     color: var(--editorial-ink);
-    font-family: var(--font-serif);
+    font-family: var(--font-grotesk);
     font-size: 21px;
     font-weight: 500;
     letter-spacing: -0.012em;
@@ -3052,7 +3103,7 @@
   .editorial-ritual-note p:not(.editorial-ritual-note-index) {
     margin: 0;
     color: var(--editorial-muted);
-    font-family: var(--font-serif);
+    font-family: var(--font-grotesk);
     font-size: 15px;
     line-height: 1.42;
   }
@@ -3072,7 +3123,7 @@
   .editorial-ritual-specs-intro h2 {
     margin: 12px 0 0;
     color: var(--editorial-ink);
-    font-family: var(--font-serif);
+    font-family: var(--font-grotesk);
     font-size: var(--fs-section-title);
     font-weight: 500;
     letter-spacing: -0.035em;
@@ -3083,7 +3134,7 @@
     max-width: 38ch;
     margin: 20px 0 0;
     color: var(--editorial-muted);
-    font-family: var(--font-serif);
+    font-family: var(--font-grotesk);
     font-size: 17px;
     line-height: 1.38;
   }
@@ -3118,7 +3169,7 @@
   .editorial-ritual-spec-row dd {
     margin: 0;
     color: var(--editorial-ink);
-    font-family: var(--font-serif);
+    font-family: var(--font-grotesk);
     font-size: 17px;
     line-height: 1.3;
     text-align: right;
@@ -3261,7 +3312,7 @@
   .editorial-account-head h2 {
     margin: 10px 0 0;
     color: var(--editorial-ink);
-    font-family: var(--font-serif);
+    font-family: var(--font-grotesk);
     font-size: var(--fs-section-title);
     font-weight: 500;
     letter-spacing: -0.035em;
@@ -3293,7 +3344,7 @@
     max-width: 46ch;
     margin: 16px 0 0;
     color: var(--editorial-muted);
-    font-family: var(--font-serif);
+    font-family: var(--font-grotesk);
     font-size: 16px;
     line-height: 1.4;
   }
@@ -3463,7 +3514,7 @@
   .editorial-account-sent p {
     margin: 0;
     color: var(--editorial-muted);
-    font-family: var(--font-serif);
+    font-family: var(--font-grotesk);
     font-size: 16px;
     line-height: 1.4;
   }
@@ -3572,7 +3623,7 @@
   .editorial-soon h1 {
     margin: 0;
     color: var(--editorial-ink);
-    font-family: var(--font-serif);
+    font-family: var(--font-grotesk);
     font-size: var(--fs-section-title);
     font-weight: 500;
     letter-spacing: -0.035em;
@@ -3583,7 +3634,7 @@
     max-width: 44ch;
     margin: 20px 0 0;
     color: var(--editorial-muted);
-    font-family: var(--font-serif);
+    font-family: var(--font-grotesk);
     font-size: 18px;
     line-height: 1.38;
   }
@@ -3623,7 +3674,7 @@
   .editorial-object-page-empty h1 {
     margin: 0;
     color: var(--editorial-ink);
-    font-family: var(--font-serif);
+    font-family: var(--font-grotesk);
     font-size: var(--fs-page-title);
     font-weight: 500;
     letter-spacing: -0.042em;
@@ -3694,7 +3745,7 @@
   .editorial-object-panel h1 {
     margin: 0;
     color: var(--editorial-ink);
-    font-family: var(--font-serif);
+    font-family: var(--font-grotesk);
     font-size: clamp(30px, 3.4vw, 46px);
     font-weight: 500;
     letter-spacing: -0.035em;
@@ -3705,7 +3756,7 @@
     max-width: 34ch;
     margin: 14px 0 0;
     color: var(--editorial-muted);
-    font-family: var(--font-serif);
+    font-family: var(--font-grotesk);
     font-size: clamp(16px, 1.5vw, 19px);
     line-height: 1.32;
   }
@@ -3801,7 +3852,7 @@
     margin: 0;
     padding: 0 0 18px;
     color: var(--editorial-muted);
-    font-family: var(--font-serif);
+    font-family: var(--font-grotesk);
     font-size: 15px;
     line-height: 1.4;
   }

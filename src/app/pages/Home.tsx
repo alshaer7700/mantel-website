@@ -91,9 +91,17 @@ export function Home({ linkTo }: Props) {
     <div className="editorial-home">
       <section className="editorial-hero" aria-label="Mantel introduction">
         <img className="editorial-hero-photo" src={heroImage} alt="A Mantel shirt in the warm light of the café" />
+        {/* The reels' move: the name set across the width of the photograph,
+            with one line of state over it and one solid button under it.
+            Note the shirt in this frame is embroidered "Mantel." already, so
+            the name lands twice — built this way deliberately, to be judged
+            on the page rather than in the abstract. */}
         <div className="editorial-hero-content">
+          <p className="editorial-kicker">Hidd · Kingdom of Bahrain</p>
+          <h1>Mantel.</h1>
           <div className="editorial-hero-links">
-            <a {...linkTo("menu")} className="editorial-link">Menu</a>
+            <a {...linkTo("menu")} className="editorial-link">See the menu</a>
+            <a {...linkTo("objects")} className="editorial-link">Retail</a>
           </div>
         </div>
       </section>
