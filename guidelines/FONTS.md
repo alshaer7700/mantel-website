@@ -14,29 +14,41 @@ to rediscover any of this.
 - Styles entry is `src/styles/index.css`, which imports, in order:
   `fonts.css` → `tailwind.css` → `theme.css`.
 
-## The two files that matter
+## The three files that matter
 
-Everything font-related lives in exactly two places. Don't touch components.
+Everything font-related lives in exactly three places. Don't touch components.
 
-### 1. `src/styles/fonts.css` — the font itself
+> **This section was rewritten after the Space Grotesk migration.** It used to
+> describe a single `--font-app` variable defined in `fonts.css`. That variable
+> no longer exists: the stacks moved to `tokens.css` so every custom property
+> lives in one file, and the site now carries three faces with three distinct
+> jobs rather than one face for everything.
 
-Holds the `@font-face` rules and defines `--font-app` on `:root`.
+### 1. `src/styles/fonts.css` — the fonts themselves
 
-### 2. `src/styles/theme.css` — the wiring
+`@font-face` rules only, next to the files they load. Always
+`font-display: swap`.
 
-Inside `@theme inline`:
+### 2. `src/styles/tokens.css` — the stacks
+
+`--font-grotesk` (Space Grotesk — everything), `--font-serif` (EB Garamond —
+the wordmark only), `--font-mono` (Fira Mono — the staff dashboard only), and
+`--font-emoji`, which sits LAST in all three stacks so a flag or symbol glyph
+falls through to the system emoji font instead of a random face.
+
+### 3. `src/styles/theme.css` — the wiring
+
+Inside `@theme inline`, each stack is republished as a Tailwind utility
+(`font-grotesk`, `font-serif`, `font-mono`), and:
 
 ```css
---font-sans: var(--font-app);
---font-display: var(--font-app);
---font-body: var(--font-app);
+--font-sans: var(--font-grotesk);
 ```
 
 `--font-sans` is the important one: Tailwind v4 feeds it into
-`--default-font-family`, which is what unstyled body text, buttons, and inputs
-inherit. `--font-display` and `--font-body` back the `font-display` and
-`font-body` utility classes the components already use (22 and 2 usages
-respectively as of this writing) — repointing them means zero component edits.
+`--default-font-family`, which is what unstyled body text, buttons and inputs
+inherit. Point it at the wrong stack and every unstyled element on the site
+changes face.
 
 ## Procedure
 
@@ -78,6 +90,32 @@ from fontTools.ttLib import TTFont
 cmap = TTFont('path/to/font.ttf').getBestCmap()
 print(sum(1 for c in cmap if 0x1F1E6 <= c <= 0x1F1FF))  # >0 means you need the unicode-range
 ```
+
+### Checking a new face for the emoji problem — worked example
+
+Space Grotesk was checked this way before it shipped, and came back clean
+(0 regional-indicator glyphs), which is why its `@font-face` rule carries no
+`unicode-range`:
+
+```python
+from fontTools.ttLib import TTFont
+f = TTFont('src/assets/fonts/SpaceGrotesk-Variable.woff2')
+cmap = f.getBestCmap()
+print(sum(1 for c in cmap if 0x1F1E6 <= c <= 0x1F1FF))   # 0 → no range needed
+print('variable:', 'fvar' in f)                           # True
+feats = {r.FeatureTag for r in f['GSUB'].table.FeatureList.FeatureRecord}
+print('tnum:', 'tnum' in feats)                           # True → tabular figures
+```
+
+`tnum` is worth checking on any replacement: it is what lets prices and order
+references line up without a second, monospaced family.
+
+### Variable fonts from Google's css2 endpoint
+
+The css2 response lists each weight you asked for as its own `@font-face` rule.
+If the `src:` url is **the same** across those rules, the face is variable and
+the file answers the whole range — register it once with
+`font-weight: 300 700` rather than three times. Space Grotesk is like this.
 
 ### Making an italic font the default
 

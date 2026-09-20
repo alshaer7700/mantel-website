@@ -22,11 +22,24 @@ isn't. There is no App Router, no `app/layout.tsx`, and no `next/font`.
 ## Typography
 
 **Read `guidelines/FONTS.md` before changing any font.** It documents the
-one-place wiring (`--font-app` → `--font-sans` in `@theme inline`), the emoji
-`unicode-range` fix that keeps flag emoji from being swallowed by the webfont,
-how the italic-as-default setup works, and how to verify a change locally.
+one-place wiring, the emoji `unicode-range` trap that can swallow flag emoji,
+and how to verify a change locally.
 
-Current face: EB Garamond Italic, self-hosted from `src/assets/fonts/`.
+Three faces, all self-hosted from `src/assets/fonts/`:
+
+- **Space Grotesk** (`--font-grotesk`, Tailwind `font-grotesk`) — the everyday
+  face. Every label, heading, control, price and line of body copy. One 22 KB
+  variable file covering 300–700. It carries `tnum`, so prices and order
+  references get tabular figures from `font-variant-numeric` rather than from a
+  monospaced family.
+- **EB Garamond** (`--font-serif`) — the **wordmark only**: "Mantel." in the
+  nav and in the mobile drawer. It is the logo, not the voice. Two uses in the
+  whole stylesheet; a third is a bug.
+- **Fira Mono** (`--font-mono`) — the staff dashboard only. Nothing
+  customer-facing reads it.
+
+`--font-sans` points at the grotesk, which is what Tailwind feeds into
+`--default-font-family`, so anything unstyled lands there.
 
 ## Sandbox notes
 
