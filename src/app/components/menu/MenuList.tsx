@@ -27,9 +27,14 @@ export function MenuList({
       {filled.map(([key, items], index) => (
         <section key={key} className="mb-[clamp(3rem,8vh,5rem)]">
           <p className={LABEL}>{String(index + 1).padStart(2, "0")} —</p>
+          {/* A category is the only header on a long scroll of rows, so it
+              carries its own display size rather than --fs-subsection-title,
+              which on a phone resolved to about 16px — close enough to the
+              13px item rows under it that the page read as one undifferentiated
+              list. */}
           <h3
             style={{ fontFamily: GROTESK }}
-            className="font-medium uppercase text-[length:var(--fs-subsection-title)] tracking-[0.005em] leading-[1.05] m-0 mt-[10px] mb-[28px] text-[color:var(--ink)]"
+            className="font-medium uppercase text-[clamp(21px,2.4vw,29px)] tracking-[0.01em] leading-[1.02] m-0 mt-[12px] mb-[24px] text-[color:var(--ink)]"
           >
             {CATEGORY_LABELS[key]}
           </h3>
@@ -37,7 +42,7 @@ export function MenuList({
           {chunk(items, 2).map((pair, rowIndex) => (
             <div
               key={rowIndex}
-              className="grid grid-cols-1 sm:grid-cols-2 gap-x-[48px] border-b border-[color:var(--line-soft)]"
+              className="grid grid-cols-1 sm:grid-cols-2 gap-x-[48px]"
             >
               {pair[0] && <Cell item={pair[0]} />}
               {pair[1] && <Cell item={pair[1]} />}
@@ -51,16 +56,16 @@ export function MenuList({
 
 function Cell({ item }: { item: MenuItem }) {
   return (
-    <div className="py-[18px]">
+    <div className="py-[13px]">
       <p
         style={{ fontFamily: GROTESK }}
-        className="font-medium uppercase text-[13px] tracking-[0.01em] leading-[1.3] m-0 text-[color:var(--ink)]"
+        className="font-medium uppercase text-[13px] tracking-[0.04em] leading-[1.3] m-0 text-[color:var(--ink)]"
       >
         {item.name}
       </p>
       <p
         style={{ fontFamily: GROTESK }}
-        className="text-[12px] tracking-[0.01em] tabular-nums m-0 mt-[4px] text-[color:var(--ink-muted)]"
+        className="text-[11px] tracking-[0.02em] tabular-nums m-0 mt-[3px] text-[color:var(--ink-muted)]"
       >
         {formatPrice(item.price)}
       </p>

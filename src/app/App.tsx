@@ -539,7 +539,7 @@ export default function App() {
         id="mantel-mobile-drawer"
         ref={sidebarRef}
         className={`fixed inset-0 z-[70] bg-background flex flex-col transition-transform duration-300 ease-in-out ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
+          sidebarOpen ? "translate-y-0" : "-translate-y-full"
         }`}
         role="dialog"
         aria-modal="true"
@@ -587,25 +587,25 @@ export default function App() {
         {/* Drawer links */}
         <nav className="editorial-sidebar-links">
           <a
-            className="text-left font-serif font-normal text-2xl text-foreground hover:opacity-50 transition-opacity"
+            className="hover:opacity-50 transition-opacity"
             {...linkTo("menu")}
           >
             Menu
           </a>
           <a
-            className="text-left font-serif font-normal text-2xl text-foreground hover:opacity-50 transition-opacity"
+            className="hover:opacity-50 transition-opacity"
             {...linkTo("pickup")}
           >
             Pick Up
           </a>
           <a
-            className="text-left font-serif font-normal text-2xl text-foreground hover:opacity-50 transition-opacity"
+            className="hover:opacity-50 transition-opacity"
             {...linkTo("objects")}
           >
             Retail
           </a>
           <a
-            className="text-left font-serif font-normal text-2xl text-foreground hover:opacity-50 transition-opacity"
+            className="hover:opacity-50 transition-opacity"
             {...linkTo("story")}
           >
             About Us

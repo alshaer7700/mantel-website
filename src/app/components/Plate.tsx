@@ -55,8 +55,12 @@ export function Plate({ spec, ratio = "4 / 5", alt, className = "" }: Props) {
           <PlaceholderBrief spec={spec} />
         )}
       </div>
-      <figcaption className="flex justify-between gap-[var(--s-2)] pt-[var(--s-1)]">
-        <span className={CAPTION}>{spec.ref}</span>
+      {/* The plate ref (PL-01 … PL-06) is a production label — it says which
+          slot this is for whoever is shooting it, and means nothing to a
+          visitor reading a menu. It stays in content/plates.ts, where the
+          briefs live, and on the development placeholder below. The caption
+          keeps only the line that was written to be read. */}
+      <figcaption className="flex justify-end gap-[var(--s-2)] pt-[var(--s-1)]">
         <span className={CAPTION}>{spec.cap}</span>
       </figcaption>
     </figure>

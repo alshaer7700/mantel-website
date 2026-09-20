@@ -104,7 +104,8 @@
   --fs-heading:      32px;
 
   /*
-   * The one display size every section and page title uses.
+   * The one display size every section heading uses — a section inside a page,
+   * not the page's own title, which is --fs-page-title below.
    *
    * Before this token each heading carried its own clamp() — the home page's
    * two sections alone ran clamp(40px, 6vw, 82px) and clamp(52px, 7vw, 92px),
@@ -118,6 +119,18 @@
    * oversized type — it is an image treatment, not a section title.
    */
   --fs-section-title: clamp(22px, 2.6vw, 34px);
+
+  /*
+   * The rank ABOVE it: the one title a page is named by — Menu, Objects.,
+   * About Us. — as opposed to a section heading inside a page.
+   *
+   * These used to share --fs-section-title with the headings under them, and
+   * once a category header or a product name was sized to read as a header at
+   * all, the page title was the same size as, or smaller than, the things it
+   * was supposed to sit over. A page that opens on three ranks at 22px reads
+   * as one undifferentiated column, which is the complaint this answers.
+   */
+  --fs-page-title: clamp(40px, 6vw, 68px);
 
   /*
    * The rank below a title: a menu category, a Pick Up section. Derived rather
