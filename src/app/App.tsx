@@ -8,6 +8,8 @@ import { fetchMenu, groupByCategory } from "@/lib/api/menu";
 import { Home } from "@/app/pages/Home";
 import { FridayEspresso } from "@/app/pages/FridayEspresso";
 import { Objects } from "@/app/pages/Objects";
+import { ObjectDetail } from "@/app/pages/ObjectDetail";
+import { Ticker } from "@/app/components/Ticker";
 import { RETAIL_PRODUCTS } from "@/app/content/retail";
 import { fetchObjects } from "@/lib/api/objects";
 import { CartDrawer, type CheckoutDetails } from "@/app/components/cart/CartDrawer";
@@ -100,6 +102,10 @@ export default function App() {
   const [cartHydrated, setCartHydrated] = useState(false);
   const [menuCategory, setMenuCategory] = useState<MenuCategory>(
     () => routeFor(window.location.pathname).menuCategory,
+  );
+  /* Which product /objects/<id> is showing. Null on every other page. */
+  const [objectId, setObjectId] = useState<string | null>(
+    () => routeFor(window.location.pathname).objectId,
   );
   const [form, setForm] = useState<ContactForm>({ name: "", lastName: "", email: "", phone: "", comment: "" });
   /* The name and mobile ON THE ACCOUNT, kept apart from the contact form's own
@@ -279,9 +285,10 @@ export default function App() {
   }, []);
 
   /* Everything a navigation closes, regardless of what triggered it. */
-  const settle = (p: Page, category: MenuCategory = null) => {
+  const settle = (p: Page, category: MenuCategory = null, id: string | null = null) => {
     setPage(p);
     setMenuCategory(category);
+    setObjectId(id);
     setSidebarOpen(false);
     setSearchOpen(false);
     setAccountOpen(false);
@@ -289,19 +296,19 @@ export default function App() {
     window.scrollTo(0, 0);
   };
 
-  const goTo = (p: Page, category: MenuCategory = null) => {
-    const next = pathFor(p, category);
+  const goTo = (p: Page, category: MenuCategory = null, id: string | null = null) => {
+    const next = pathFor(p, category, id);
     if (window.location.pathname !== next) {
       window.history.pushState({}, "", next);
     }
-    settle(p, category);
+    settle(p, category, id);
   };
 
   /* Back and Forward move through the site instead of leaving it. */
   useEffect(() => {
     const onPop = () => {
       const r = routeFor(window.location.pathname);
-      settle(r.page, r.menuCategory);
+      settle(r.page, r.menuCategory, r.objectId);
     };
     window.addEventListener("popstate", onPop);
     return () => window.removeEventListener("popstate", onPop);
@@ -314,7 +321,7 @@ export default function App() {
      return to it. */
   useEffect(() => {
     const r = routeFor(window.location.pathname);
-    const canonical = pathFor(r.page, r.menuCategory);
+    const canonical = pathFor(r.page, r.menuCategory, r.objectId);
     if (window.location.pathname !== canonical) {
       window.history.replaceState({}, "", canonical);
     }
@@ -322,7 +329,11 @@ export default function App() {
 
   useEffect(() => {
     const seo = SEO_BY_PAGE[page];
-    const canonicalPath = pathFor(page, page === "menu" ? menuCategory : null);
+    const canonicalPath = pathFor(
+      page,
+      page === "menu" ? menuCategory : null,
+      page === "object" ? objectId : null,
+    );
     const canonicalUrl = `${SITE_ORIGIN}${canonicalPath === "/" ? "/" : canonicalPath}`;
     document.title = seo.title;
     updateMeta("name", "description", seo.description);
@@ -333,7 +344,7 @@ export default function App() {
     updateMeta("property", "og:site_name", "Mantel");
     const canonical = document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]');
     if (canonical) canonical.href = canonicalUrl;
-  }, [page, menuCategory]);
+  }, [page, menuCategory, objectId]);
 
   useEffect(() => {
     const overlayOpen = sidebarOpen || searchOpen || accountOpen || cartOpen;
@@ -402,15 +413,18 @@ export default function App() {
     return result;
   };
 
-  const linkTo = (p: Page, category: MenuCategory = null) => ({
-    href: pathFor(p, category),
+  const linkTo = (p: Page, category: MenuCategory = null, id: string | null = null) => ({
+    href: pathFor(p, category, id),
     onClick: (e: React.MouseEvent) => {
       if (e.defaultPrevented || e.button !== 0) return;
       if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
       e.preventDefault();
-      goTo(p, category);
+      goTo(p, category, id);
     },
   });
+
+  /* The shelf links to a product by id; the page itself needs the product. */
+  const shownObject = retailProducts.find((product) => product.id === objectId);
 
   // Anti-abuse for the public Contact RPC: the hidden honeypot drops obvious
   // automated submissions, while the RPC applies server-side validation and
@@ -450,10 +464,11 @@ export default function App() {
 
 
   // 22px wordmark + the 7px sub-line under it, centred in the 20px of vertical
-  // padding the header spec asks for. The hero reads this to size its stage.
-  const navHeight = "58px";
+  // padding the header spec asks for, plus the ticker band riding above it.
+  // The hero reads this to size its stage.
+  const navHeight = "calc(58px + var(--editorial-ticker-h))";
   /* Contracted: the wordmark alone, at 16px, with the locality line collapsed. */
-  const SCROLLED_NAV_HEIGHT = "54px";
+  const SCROLLED_NAV_HEIGHT = "calc(54px + var(--editorial-ticker-h))";
 
   /* Footer rendering lives in EditorialFooter so all routes share the same editorial shell. */
 
@@ -461,6 +476,8 @@ export default function App() {
     <div className="bg-background text-foreground font-mono font-normal min-h-screen">
 
       <a className="editorial-skip-link" href="#main-content">Skip to content</a>
+
+      <Ticker />
 
       {/* ══ NAV ══ */}
       <header className="editorial-nav">
@@ -529,7 +546,7 @@ export default function App() {
       {/* ══ SIDEBAR ══ */}
       {/* Overlay */}
       <div
-        className={`fixed left-0 right-0 bottom-0 top-[var(--editorial-nav-h)] z-40 bg-black/20 transition-opacity duration-300 ${
+        className={`fixed left-0 right-0 bottom-0 top-[calc(var(--editorial-nav-h)+var(--editorial-ticker-h))] z-40 bg-black/20 transition-opacity duration-300 ${
           sidebarOpen ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
         onClick={() => setSidebarOpen(false)}
@@ -720,6 +737,22 @@ export default function App() {
         <main id="main-content" className="flex flex-col min-h-screen" style={{ paddingTop: navHeight }}>
           <div className="flex-1">
             <Objects linkTo={linkTo} products={retailProducts} loading={retailLoading} error={retailError} cartLines={cartLines} onAdd={addToCart} />
+          </div>
+          <EditorialFooter linkTo={linkTo} />
+        </main>
+      )}
+
+      {/* ══ ONE OBJECT ══ */}
+      {page === "object" && (
+        <main id="main-content" className="flex flex-col min-h-screen" style={{ paddingTop: navHeight }}>
+          <div className="flex-1">
+            <ObjectDetail
+              product={shownObject}
+              linkTo={linkTo}
+              cartLines={cartLines}
+              onAdd={addToCart}
+              loading={retailLoading}
+            />
           </div>
           <EditorialFooter linkTo={linkTo} />
         </main>

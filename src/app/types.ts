@@ -6,6 +6,8 @@ export type Page =
   | "ritual"
   | "pickup"
   | "objects"
+  /* One object from the shelf, at /objects/<id>. */
+  | "object"
   | "story"
   | "contact"
   | "faq"

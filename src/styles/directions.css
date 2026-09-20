@@ -1,0 +1,296 @@
+/*
+ * ── DIRECTION B — PREVIEW ONLY ──────────────────────────────────────────────
+ *
+ * The second of two takes being compared before one is chosen. It changes no
+ * markup: everything here re-skins what margiela.css already lays out, under
+ * [data-dir="b"], which src/main.tsx sets from ?dir=b.
+ *
+ * DELETE THIS FILE, its @import in index.css, and the switch in main.tsx once
+ * a direction is picked. If B wins, its rules move into margiela.css
+ * unscoped; if A wins, the file simply goes.
+ *
+ * What it takes from the reference stores:
+ *   - chrome in ink rather than paper: the ticker and nav are a black band
+ *   - a grotesk, uppercase and tracked, for every label, name and control
+ *   - white ground under the products instead of warm paper
+ *   - one solid black bar as the action, priced, full width
+ *   - the hero wordmark set across the full width of the image
+ *
+ * ONE THING TO KNOW BEFORE PICKING IT: the grotesk below is the system UI
+ * stack, the same placeholder the Menu redesign uses (see components/type.ts).
+ * Mantel ships two faces — EB Garamond and Fira Mono — and neither is a
+ * grotesk. Choosing B means licensing and self-hosting a real one, per
+ * guidelines/FONTS.md. On this machine it will render as Helvetica; on a
+ * phone, as SF or Roboto.
+ */
+
+[data-dir="b"] {
+  --dir-b-grotesk: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --dir-b-ground: #ffffff;
+  --dir-b-ink: #0d0d0d;
+  --dir-b-line: #e4e4e4;
+  --dir-b-muted: #8a8a8a;
+}
+
+/* ── Chrome ─────────────────────────────────────────────────────────────── */
+
+[data-dir="b"] .editorial-ticker {
+  border-bottom: 0;
+  background: var(--dir-b-ink);
+  color: #f2f2f2;
+  font-family: var(--dir-b-grotesk);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+}
+
+[data-dir="b"] .editorial-nav {
+  background: var(--dir-b-ink);
+  border-bottom: 0;
+  color: #ffffff;
+}
+
+[data-dir="b"] .editorial-nav-link,
+[data-dir="b"] .editorial-nav-action {
+  font-family: var(--dir-b-grotesk);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+
+[data-dir="b"] .editorial-wordmark,
+[data-dir="b"] .editorial-wordmark small {
+  color: #ffffff;
+}
+
+[data-dir="b"] .editorial-mobile-trigger {
+  color: #ffffff;
+}
+
+/* ── The shelf ──────────────────────────────────────────────────────────── */
+
+[data-dir="b"] .editorial-objects-page,
+[data-dir="b"] .editorial-objects-grid,
+[data-dir="b"] .editorial-object-card,
+[data-dir="b"] .editorial-object-image,
+[data-dir="b"] .editorial-object-page,
+[data-dir="b"] .editorial-object-stage {
+  background: var(--dir-b-ground);
+}
+
+[data-dir="b"] .editorial-objects-intro h1 {
+  font-family: var(--dir-b-grotesk);
+  font-size: clamp(38px, 7vw, 92px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 0.9;
+  text-transform: uppercase;
+}
+
+[data-dir="b"] .editorial-objects-intro-copy p {
+  font-family: var(--dir-b-grotesk);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+[data-dir="b"] .editorial-overline,
+[data-dir="b"] .editorial-objects-ledger,
+[data-dir="b"] .editorial-object-index {
+  font-family: var(--dir-b-grotesk);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+}
+
+/* A name is a label here, not a line of prose: small, tracked, uppercase, and
+   sitting directly over its price the way the reference cards do. */
+[data-dir="b"] .editorial-object-info h2 {
+  font-family: var(--dir-b-grotesk);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+[data-dir="b"] .editorial-object-info p {
+  font-family: var(--dir-b-grotesk);
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--dir-b-muted);
+}
+
+[data-dir="b"] .editorial-object-purchase {
+  display: block;
+  font-family: var(--dir-b-grotesk);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+/* The action is a solid bar, always there, priced. No hover reveal: on the
+   reference stores the button is the loudest thing on the card. */
+[data-dir="b"] .editorial-object-purchase button {
+  display: block;
+  width: 100%;
+  margin-top: 10px;
+  padding: 11px 10px;
+  background: var(--dir-b-ink);
+  color: #ffffff;
+  font-family: var(--dir-b-grotesk);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  opacity: 1;
+  text-align: center;
+  text-decoration: none;
+}
+
+[data-dir="b"] .editorial-object-purchase button:hover:not(:disabled) {
+  background: #333333;
+  color: #ffffff;
+}
+
+[data-dir="b"] .editorial-objects-ledger,
+[data-dir="b"] .editorial-objects-grid {
+  border-color: var(--dir-b-line);
+}
+
+/* ── One object ─────────────────────────────────────────────────────────── */
+
+[data-dir="b"] .editorial-object-crumbs,
+[data-dir="b"] .editorial-object-inbag {
+  font-family: var(--dir-b-grotesk);
+  font-weight: 600;
+}
+
+[data-dir="b"] .editorial-object-panel h1 {
+  font-family: var(--dir-b-grotesk);
+  font-size: clamp(15px, 1.4vw, 18px);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  line-height: 1.25;
+  text-transform: uppercase;
+}
+
+[data-dir="b"] .editorial-object-standfirst {
+  font-family: var(--dir-b-grotesk);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--dir-b-muted);
+}
+
+[data-dir="b"] .editorial-object-price {
+  margin-top: 12px;
+  font-family: var(--dir-b-grotesk);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+[data-dir="b"] .editorial-object-add {
+  border: 0;
+  background: var(--dir-b-ink);
+  color: #ffffff;
+  font-family: var(--dir-b-grotesk);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  padding: 17px 18px;
+}
+
+[data-dir="b"] .editorial-object-add:hover:not(:disabled) {
+  background: #333333;
+  color: #ffffff;
+}
+
+[data-dir="b"] .editorial-object-fold button {
+  font-family: var(--dir-b-grotesk);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+[data-dir="b"] .editorial-object-fold p {
+  font-family: var(--dir-b-grotesk);
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--dir-b-muted);
+}
+
+[data-dir="b"] .editorial-object-folds,
+[data-dir="b"] .editorial-object-fold {
+  border-color: var(--dir-b-line);
+}
+
+/* ── The hero ───────────────────────────────────────────────────────────── */
+
+/*
+ * Reel 2's move: the name set across the full width of the photograph, big
+ * enough that the image reads as its backdrop. 13vw is what makes "Mantel."
+ * span a phone and a desktop alike.
+ */
+[data-dir="b"] .editorial-hero-content h1 {
+  font-family: var(--dir-b-grotesk);
+  font-size: 13vw;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 0.86;
+  text-transform: uppercase;
+}
+
+[data-dir="b"] .editorial-hero-content p,
+[data-dir="b"] .editorial-kicker {
+  font-family: var(--dir-b-grotesk);
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+[data-dir="b"] .editorial-hero-links .editorial-link {
+  border-bottom: 0;
+  background: #ffffff;
+  color: var(--dir-b-ink);
+  font-family: var(--dir-b-grotesk);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  padding: 13px 26px;
+}
+
+[data-dir="b"] .editorial-hero-links .editorial-link::after {
+  content: none;
+}
+
+/* ── The footer ─────────────────────────────────────────────────────────── */
+
+[data-dir="b"] .editorial-footer {
+  background: var(--dir-b-ground);
+}
+
+[data-dir="b"] .editorial-footer-title {
+  font-family: var(--dir-b-grotesk);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--dir-b-muted);
+}
+
+[data-dir="b"] .editorial-footer-link {
+  font-family: var(--dir-b-grotesk);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--dir-b-ink);
+}
+
+[data-dir="b"] .editorial-footer-bottom {
+  font-family: var(--dir-b-grotesk);
+  font-weight: 600;
+  color: var(--dir-b-muted);
+}
+
+[data-dir="b"] .editorial-footer-grid,
+[data-dir="b"] .editorial-footer-bottom,
+[data-dir="b"] .editorial-footer-social {
+  border-color: var(--dir-b-line);
+}

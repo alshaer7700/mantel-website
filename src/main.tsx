@@ -15,6 +15,22 @@ import { installMonitoring } from "./lib/monitoring";
  */
 installMonitoring();
 
+/*
+ * ── PREVIEW SWITCH, NOT A FEATURE ───────────────────────────────────────────
+ *
+ * Two design directions are being compared before one is chosen: the shipped
+ * one, and the harder-edged take in styles/directions.css. `?dir=b` puts the
+ * second on the page so the same build can be screenshotted both ways instead
+ * of being built twice from different branches.
+ *
+ * DELETE THIS, styles/directions.css AND ITS IMPORT once a direction is
+ * picked. It is scaffolding for a decision, and nothing in the app reads the
+ * attribute except that stylesheet.
+ */
+if (new URLSearchParams(window.location.search).get("dir") === "b") {
+  document.documentElement.dataset.dir = "b";
+}
+
 createRoot(document.getElementById("root")!).render(
   <ErrorBoundary>
     <App />

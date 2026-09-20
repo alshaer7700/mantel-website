@@ -3,7 +3,7 @@ import { formatBhd, type CartLine, type RetailProduct } from "@/app/content/reta
 import { ObjectSlides } from "@/app/components/objects/ObjectSlides";
 
 type Props = {
-  linkTo: (page: Page, category?: MenuCategory) => {
+  linkTo: (page: Page, category?: MenuCategory, objectId?: string | null) => {
     href: string;
     onClick: (event: React.MouseEvent) => void;
   };
@@ -66,10 +66,22 @@ export function Objects({ linkTo, products, loading, error, cartLines, onAdd }: 
                   {String(index + 1).padStart(2, "0")}
                 </span>
                 <ObjectSlides images={product.images ?? [product.image]} alt={product.name} />
+                {/* The photograph opens the object. It sits over the slides
+                    rather than wrapping them so the dots stay clickable, and
+                    it carries no visible text of its own — the name below is
+                    the accessible label. */}
+                <a
+                  {...linkTo("object", null, product.id)}
+                  className="editorial-object-open"
+                  aria-label={`${product.name} — see the object`}
+                  tabIndex={-1}
+                />
               </div>
               <div className="editorial-object-info">
                 <div>
-                  <h2>{product.name}</h2>
+                  <h2>
+                    <a {...linkTo("object", null, product.id)}>{product.name}</a>
+                  </h2>
                   <p>{product.description}</p>
                 </div>
                 <div className="editorial-object-purchase">

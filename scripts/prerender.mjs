@@ -26,8 +26,11 @@ const ORIGIN = "https://bymantel.com";
 
 /* The home page is index.html itself, already correct from the Vite build.
  * The staff dashboard is noindex and Disallow'd in robots.txt, so a preview
- * file for it would be pointless at best. */
-const SKIP = new Set(["home", "admin"]);
+ * file for it would be pointless at best. A single product has no path of its
+ * own to write — it is /objects/<id>, one file per product would have to be
+ * generated from the catalogue, and its tags are set at runtime from the
+ * product being shown. */
+const SKIP = new Set(["home", "admin", "object"]);
 
 const seo = JSON.parse(readFileSync("src/content/seo.json", "utf8"));
 const routesSource = readFileSync("src/lib/routes.ts", "utf8");

@@ -11,8 +11,16 @@ import type { Page, MenuCategory } from "@/app/types";
  *
  * The menu carries a category in the path — /menu/coffee, /menu/sandwiches —
  * so a section can be linked, bookmarked and shared. Bare /menu is everything.
+ * A single product does the same under the shelf: /objects/candles.
  */
-export const ROUTES: Record<Page, string> = {
+
+/*
+ * Every page that owns a path of its own. A single product does not — it is
+ * always /objects/<id> — so it is absent from this map and handled in both
+ * functions below. Keeping it out is what stops bare /objects resolving to a
+ * product page with no product.
+ */
+export const ROUTES: Record<Exclude<Page, "object">, string> = {
   home: "/",
   menu: "/menu",
   ritual: "/friday-espresso",
@@ -35,9 +43,21 @@ export const ROUTES: Record<Page, string> = {
  */
 const CATEGORIES: readonly string[] = MENU_CATEGORIES;
 
-export type Route = { page: Page; menuCategory: MenuCategory };
+export type Route = {
+  page: Page;
+  menuCategory: MenuCategory;
+  /** The product id, for /objects/<id>. Null on every other page. */
+  objectId: string | null;
+};
 
-export function pathFor(page: Page, menuCategory: MenuCategory = null): string {
+export function pathFor(
+  page: Page,
+  menuCategory: MenuCategory = null,
+  objectId: string | null = null,
+): string {
+  /* First, so the rest of the function sees a page that ROUTES has a key for.
+     A product page without a product is just the shelf. */
+  if (page === "object") return objectId ? `${ROUTES.objects}/${objectId}` : ROUTES.objects;
   if (page === "menu" && menuCategory) return `${ROUTES.menu}/${menuCategory}`;
   return ROUTES[page];
 }
@@ -63,13 +83,23 @@ export function routeFor(pathname: string): Route {
   const path = normalise(pathname);
 
   const exact = BY_PATH.get(path);
-  if (exact) return { page: exact, menuCategory: null };
+  if (exact) return { page: exact, menuCategory: null, objectId: null };
 
   if (path.startsWith(`${ROUTES.menu}/`)) {
     const slug = path.slice(ROUTES.menu.length + 1);
     const category = (CATEGORIES.find((c) => c === slug) ?? null) as MenuCategory;
-    return { page: "menu", menuCategory: category };
+    return { page: "menu", menuCategory: category, objectId: null };
   }
 
-  return { page: "home", menuCategory: null };
+  /* The id is not checked against the catalogue here — the shelf is loaded
+     from Supabase and this function is pure and synchronous. An id that
+     matches nothing renders the shelf instead; see ObjectDetail. */
+  if (path.startsWith(`${ROUTES.objects}/`)) {
+    const slug = path.slice(ROUTES.objects.length + 1);
+    return slug
+      ? { page: "object", menuCategory: null, objectId: slug }
+      : { page: "objects", menuCategory: null, objectId: null };
+  }
+
+  return { page: "home", menuCategory: null, objectId: null };
 }
