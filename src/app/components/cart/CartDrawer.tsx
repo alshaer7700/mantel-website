@@ -129,7 +129,7 @@ export function CartDrawer({
             {lines.map((line) => (
               <article className="editorial-cart-line" key={line.product.id}>
                 {line.product.image && (
-                  <div className={`editorial-cart-line-image ${line.product.tone ? `editorial-object-card-${line.product.tone}` : ""}`}>
+                  <div className="editorial-cart-line-image">
                     <img src={line.product.image} alt="" />
                   </div>
                 )}

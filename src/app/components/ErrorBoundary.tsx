@@ -21,9 +21,9 @@ export class ErrorBoundary extends Component<
   render() {
     if (this.state.hasError) {
       return (
-        <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-background font-mono font-normal text-center px-6">
+        <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-background font-grotesk font-normal text-center px-6">
           <p className="font-grotesk font-bold uppercase tracking-[-0.02em] text-3xl">Something went wrong.</p>
-          <p className="font-mono font-normal text-sm text-muted-foreground">
+          <p className="font-grotesk font-normal text-sm text-muted-foreground">
             Please refresh the page — if it keeps happening, reach us on Instagram.
           </p>
           <button

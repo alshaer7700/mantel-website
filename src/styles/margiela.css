@@ -1848,7 +1848,7 @@
     position: fixed;
     inset: 0;
     z-index: 80;
-    background: rgba(23, 20, 17, 0.28);
+    background: rgba(13, 13, 13, 0.34);
     opacity: 0;
     pointer-events: none;
     transition: opacity 220ms ease;
@@ -1870,7 +1870,7 @@
     flex-direction: column;
     background: var(--editorial-paper);
     color: var(--editorial-ink);
-    box-shadow: -18px 0 45px rgba(23, 20, 17, 0.1);
+    box-shadow: -18px 0 45px rgba(13, 13, 13, 0.1);
     transform: translateX(100%);
     transition: transform 260ms cubic-bezier(0.23, 1, 0.32, 1), visibility 260ms ease;
     visibility: hidden;
@@ -2192,7 +2192,7 @@
     margin: 12px 0 0;
     color: var(--editorial-red);
     font-family: var(--font-grotesk);
-    font-size: 10px;
+    font-size: 12px;
     letter-spacing: 0.02em;
     line-height: 1.5;
   }
@@ -2264,9 +2264,12 @@
     width: 15px;
     height: 15px;
     place-items: center;
+    /* The one round thing left on the site, and deliberately so: a count
+       badge is read as a dot, and squaring it makes it read as a label. Every
+       other radius is 0. */
     border-radius: 50%;
     background: var(--editorial-red);
-    color: #fff;
+    color: var(--chrome-ink);
     font-family: var(--font-grotesk);
     font-size: 8px;
     line-height: 1;
@@ -3319,7 +3322,7 @@
     border-bottom: 1px solid var(--editorial-line);
     background: var(--editorial-paper);
     color: var(--editorial-ink);
-    box-shadow: 0 24px 45px rgba(23, 20, 17, 0.09);
+    box-shadow: 0 24px 45px rgba(13, 13, 13, 0.09);
     -webkit-overflow-scrolling: touch;
   }
 
@@ -3378,7 +3381,7 @@
     margin: 16px 0 0;
     color: var(--editorial-muted);
     font-family: var(--font-grotesk);
-    font-size: 16px;
+    font-size: 13px;
     line-height: 1.4;
   }
 
@@ -3436,7 +3439,7 @@
     background: transparent;
     color: var(--editorial-ink);
     font-family: var(--font-grotesk);
-    font-size: 16px;
+    font-size: 13px;
     font-weight: 400;
     letter-spacing: 0.01em;
     line-height: 1.3;
@@ -3548,7 +3551,7 @@
     margin: 0;
     color: var(--editorial-muted);
     font-family: var(--font-grotesk);
-    font-size: 16px;
+    font-size: 13px;
     line-height: 1.4;
   }
 

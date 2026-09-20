@@ -1,4 +1,5 @@
 import type { PlateSpec } from "@/app/content/plates";
+import { LABEL } from "@/app/components/type";
 
 /*
  * A photo slot.
@@ -67,8 +68,9 @@ export function Plate({ spec, ratio = "4 / 5", alt, className = "" }: Props) {
   );
 }
 
-const CAPTION =
-  "font-mono text-[11px] tracking-[0.2em] uppercase text-[color:var(--ink-muted)] leading-[1.4]";
+/* The third copy of this exact string in the tree, and the second to be
+   folded back into the shared constant. */
+const CAPTION = LABEL;
 
 /** Development only — see the note at the top of this file. */
 function PlaceholderBrief({ spec }: { spec: PlateSpec }) {

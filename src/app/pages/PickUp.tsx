@@ -72,22 +72,22 @@ export function PickUp({ linkTo, sections, loading, error, cartLines, onAdd, onI
           Browse, add what you want, and place your order before you leave. It'll be ready when
           you reach.{" "}
           {itemCount > 0 && (
-            <span className="font-mono text-[13px] tracking-[0.02em] text-[color:var(--ink)]">
+            <span className="font-grotesk text-[13px] tracking-[0.02em] text-[color:var(--ink)]">
               {itemCount} item{itemCount === 1 ? "" : "s"} in your bag.
             </span>
           )}
         </p>
 
         {loading ? (
-          <p className="font-mono text-[14px] text-[color:var(--ink-muted)] py-[var(--s-5)]">
+          <p className="font-grotesk text-[14px] text-[color:var(--ink-muted)] py-[var(--s-5)]">
             Loading…
           </p>
         ) : error ? (
-          <p className="font-mono text-[14px] text-[color:var(--ink-muted)] py-[var(--s-5)]">
+          <p className="font-grotesk text-[14px] text-[color:var(--ink-muted)] py-[var(--s-5)]">
             Couldn't load the menu right now — please try again shortly.
           </p>
         ) : !hasItems ? (
-          <p className="font-mono text-[14px] text-[color:var(--ink-muted)] py-[var(--s-5)]">
+          <p className="font-grotesk text-[14px] text-[color:var(--ink-muted)] py-[var(--s-5)]">
             The menu is being set.
           </p>
         ) : (

@@ -26,7 +26,7 @@ export function FaqAccordion({ items }: { items: FaqItem[] }) {
             />
           </button>
           {open === i && (
-            <p className="pb-5 pr-8 font-mono font-normal text-sm leading-relaxed text-muted-foreground">
+            <p className="pb-5 pr-8 font-grotesk font-normal text-sm leading-relaxed text-muted-foreground">
               {item.answer}
             </p>
           )}

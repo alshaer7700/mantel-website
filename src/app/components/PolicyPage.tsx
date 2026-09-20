@@ -6,7 +6,7 @@ export function PolicyPage({ doc }: { doc: LegalDoc }) {
   return (
     <div className="flex-1 max-w-2xl w-full mx-auto px-6 py-14">
       <h1 className="font-grotesk font-bold uppercase text-[length:var(--fs-page-title)] tracking-[-0.03em] leading-[0.92] mb-2">{doc.title}</h1>
-      <p className="font-mono font-normal text-[11px] tracking-[0.14em] uppercase text-muted-foreground mb-12">
+      <p className="font-grotesk font-normal text-[11px] tracking-[0.14em] uppercase text-muted-foreground mb-12">
         Last updated {doc.updated}
       </p>
       <div className="flex flex-col gap-8">
@@ -19,7 +19,7 @@ export function PolicyPage({ doc }: { doc: LegalDoc }) {
             )}
             <div className="flex flex-col gap-3">
               {section.paragraphs.map((p, j) => (
-                <p key={j} className="font-mono font-normal text-sm leading-relaxed text-muted-foreground">
+                <p key={j} className="font-grotesk font-normal text-sm leading-relaxed text-muted-foreground">
                   {p}
                 </p>
               ))}

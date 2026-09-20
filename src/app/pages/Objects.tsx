@@ -58,7 +58,7 @@ export function Objects({ linkTo, products, loading, error, cartLines, onAdd }: 
           const line = cartLines.find((entry) => entry.product.id === product.id);
           const quantity = line?.quantity ?? 0;
           return (
-            <article key={product.id} className={`editorial-object-card editorial-object-card-${product.tone}`}>
+            <article key={product.id} className="editorial-object-card">
               <div className="editorial-object-image">
                 {/* Margiela numbers everything. Decoration, not content, so it
                     is hidden from the reading order. */}

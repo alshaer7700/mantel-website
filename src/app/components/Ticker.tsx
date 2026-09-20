@@ -12,8 +12,21 @@
  * announced.
  */
 
+/*
+ * Only things that are true.
+ *
+ * This list carried "Open daily · 7:00 — 23:00" for a while. Nobody supplied
+ * those hours — they were written to fill the band, and a shop's opening time
+ * is exactly the kind of claim a visitor acts on. It is out until the real
+ * hours arrive, at which point this is the one line to add:
+ *
+ *   "Open daily · 07:00 — 23:00",
+ *
+ * Everything below is checkable: the locality is the one in MAPS_URL, pickup
+ * at the counter is how every order is collected (see lib/constants), and the
+ * shelf is five objects sold in store.
+ */
 const LINE = [
-  "Open daily · 7:00 — 23:00",
   "Hidd, Kingdom of Bahrain",
   "Pickup at the counter",
   "Small editions, in store",

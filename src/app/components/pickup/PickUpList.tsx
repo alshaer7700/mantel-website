@@ -73,7 +73,7 @@ function Row({
 }) {
   return (
     <div className="w-full flex items-baseline gap-[0.85rem] py-[0.72rem] border-b border-[color:var(--line-soft)]">
-      <span className="font-mono text-[14px] tracking-[0.01em] text-[color:var(--ink)] shrink-0">
+      <span className="font-grotesk text-[14px] tracking-[0.01em] text-[color:var(--ink)] shrink-0">
         {item.name}
       </span>
       {item.desc && (
@@ -85,7 +85,7 @@ function Row({
         aria-hidden="true"
         className="flex-1 min-w-[1.5rem] border-b border-dotted border-[color:var(--line)] -translate-y-[0.28em]"
       />
-      <span className="font-mono text-[13px] tabular-nums whitespace-nowrap text-[color:var(--ink-muted)]">
+      <span className="font-grotesk text-[13px] tabular-nums whitespace-nowrap text-[color:var(--ink-muted)]">
         {formatPrice(item.price)}
       </span>
 
@@ -102,7 +102,7 @@ function Row({
           >
             <Minus size={13} strokeWidth={1.5} />
           </button>
-          <span className="font-mono text-[13px] tabular-nums w-[1.2em] text-center">{quantity}</span>
+          <span className="font-grotesk text-[13px] tabular-nums w-[1.2em] text-center">{quantity}</span>
           <button
             type="button"
             onClick={onIncrement}

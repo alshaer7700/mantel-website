@@ -1,5 +1,4 @@
 import { useRef, useState } from "react";
-import { ArrowRight } from "lucide-react";
 import { formErrorMessage, subscribeNewsletter } from "@/lib/api/forms";
 
 export function NewsletterSignup() {
@@ -38,15 +37,15 @@ export function NewsletterSignup() {
       <h2 id="newsletter-title" className="font-grotesk font-bold uppercase text-[length:var(--fs-section-title)] tracking-[-0.02em] leading-[0.96] mb-4">
         New Sips, First Look.
       </h2>
-      <p className="font-mono font-normal text-sm text-muted-foreground mb-8">
+      <p className="font-grotesk font-normal text-[13px] leading-[1.5] text-muted-foreground mb-8">
         Be the first to know when new drinks land at Mantel.
       </p>
       {status === "sent" ? (
-        <p className="font-mono font-normal text-sm text-muted-foreground py-4" role="status">
+        <p className="font-grotesk font-normal text-[13px] text-muted-foreground py-4" role="status">
           You&apos;re on the list.
         </p>
       ) : (
-        <form onSubmit={submit} className="flex items-center max-w-md mx-auto rounded-full border border-border bg-background focus-within:border-foreground/40 transition-colors">
+        <form onSubmit={submit} className="flex items-stretch max-w-md mx-auto border border-[color:var(--line)] bg-background focus-within:border-[color:var(--ink)] transition-colors">
           <input
             type="text"
             name="website"
@@ -72,15 +71,14 @@ export function NewsletterSignup() {
           <button
             type="submit"
             disabled={status === "sending"}
-            aria-label="Sign up"
-            className="px-5 text-foreground hover:opacity-60 transition-opacity disabled:opacity-40"
+            className="shrink-0 bg-[color:var(--ink)] text-[color:var(--paper)] px-6 font-grotesk font-bold text-[10px] tracking-[0.14em] uppercase hover:opacity-85 transition-opacity disabled:opacity-40"
           >
-            <ArrowRight size={20} strokeWidth={1.5} aria-hidden="true" />
+            {status === "sending" ? "Sending" : "Sign up"}
           </button>
         </form>
       )}
       {status === "error" && (
-        <p className="font-mono font-normal text-xs text-destructive mt-3" role="alert">
+        <p className="font-grotesk font-medium text-[12px] tracking-[0.02em] text-destructive mt-3" role="alert">
           {errorMessage || "Couldn&apos;t sign you up right now — please try again."}
         </p>
       )}

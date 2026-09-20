@@ -50,15 +50,15 @@ export function Cafe({ linkTo, sections, category, loading, error }: Props) {
       <BleedPlate spec={PLATES.pour} className="mb-[clamp(3rem,8vh,5rem)]" />
 
       {loading ? (
-        <p className="font-mono text-[14px] text-[color:var(--ink-muted)] py-[var(--s-5)]">
+        <p className="font-grotesk text-[14px] text-[color:var(--ink-muted)] py-[var(--s-5)]">
           Loading…
         </p>
       ) : error ? (
-        <p className="font-mono text-[14px] text-[color:var(--ink-muted)] py-[var(--s-5)]">
+        <p className="font-grotesk text-[14px] text-[color:var(--ink-muted)] py-[var(--s-5)]">
           Couldn't load the menu right now — please try again shortly.
         </p>
       ) : !hasItems ? (
-        <p className="font-mono text-[14px] text-[color:var(--ink-muted)] py-[var(--s-5)]">
+        <p className="font-grotesk text-[14px] text-[color:var(--ink-muted)] py-[var(--s-5)]">
           The menu is being set.
         </p>
       ) : (

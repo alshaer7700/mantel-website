@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { LABEL } from "@/app/components/type";
 
 /*
  * The site's signature device, from the design direction: every section hangs
@@ -46,5 +47,6 @@ export function Shelf({ tag, note, children, className = "" }: Props) {
   );
 }
 
-const TAG =
-  "font-mono text-[11px] tracking-[0.2em] uppercase text-[color:var(--ink-muted)] leading-[1.4]";
+/* Was a verbatim copy of LABEL, kept in step by hand and drifting the moment
+   either changed. It is the same treatment, so it is the same constant. */
+const TAG = LABEL;

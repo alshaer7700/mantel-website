@@ -78,7 +78,7 @@ export function SearchOverlay({
           aria-label="Search Mantel menu"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          className="flex-1 min-w-0 bg-transparent border-0 outline-none font-mono text-[14px] text-[color:var(--ink)] placeholder:text-[color:var(--ink-muted)]"
+          className="flex-1 min-w-0 bg-transparent border-0 outline-none font-grotesk text-[14px] text-[color:var(--ink)] placeholder:text-[color:var(--ink-muted)]"
         />
         <button
           onClick={onClose}
@@ -101,7 +101,7 @@ export function SearchOverlay({
                   <button
                     key={c}
                     onClick={() => onPickCategory(c)}
-                    className="font-mono text-[12px] tracking-[0.08em] uppercase text-[color:var(--ink)] border border-[color:var(--line)] px-[var(--s-2)] py-[6px] hover:border-[color:var(--ink)] transition-colors"
+                    className="font-grotesk text-[12px] tracking-[0.08em] uppercase text-[color:var(--ink)] border border-[color:var(--line)] px-[var(--s-2)] py-[6px] hover:border-[color:var(--ink)] transition-colors"
                   >
                     {CATEGORY_LABELS[c]}
                   </button>
@@ -133,7 +133,7 @@ function Results({
 }) {
   if (results.length === 0) {
     return (
-      <p className="font-mono text-[14px] text-[color:var(--ink-muted)] py-[var(--s-2)]">
+      <p className="font-grotesk text-[14px] text-[color:var(--ink-muted)] py-[var(--s-2)]">
         Nothing under that name.
       </p>
     );
@@ -161,13 +161,13 @@ function ItemRow({
       onClick={() => onPickCategory(item.category)}
       className="w-full flex items-baseline gap-[0.85rem] py-[0.6rem] text-left border-b border-[color:var(--line-soft)] transition-[padding-left] duration-300 ease-[cubic-bezier(.16,.84,.44,1)] hover:pl-[0.5rem] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[color:var(--brand)]"
     >
-      <span className="font-mono text-[14px] text-[color:var(--ink)] shrink-0">{item.name}</span>
+      <span className="font-grotesk text-[14px] text-[color:var(--ink)] shrink-0">{item.name}</span>
       <span className={`${LABEL} shrink-0`}>{CATEGORY_LABELS[item.category]}</span>
       <span
         aria-hidden="true"
         className="flex-1 min-w-[1.5rem] border-b border-dotted border-[color:var(--line)] -translate-y-[0.28em]"
       />
-      <span className="font-mono text-[13px] tabular-nums text-[color:var(--ink-muted)] shrink-0">
+      <span className="font-grotesk text-[13px] tabular-nums text-[color:var(--ink-muted)] shrink-0">
         {formatPrice(item.price)}
       </span>
     </button>
