@@ -245,14 +245,51 @@
     content: "";
   }
 
+  /*
+   * The masthead sits at the TOP of the frame, not the bottom.
+   *
+   * The name is set across the full width, and the shirt in this photograph
+   * is embroidered "Mantel." across its middle — so a bottom-anchored
+   * masthead put the word on top of itself in two different faces. The upper
+   * third of the frame is wall and ceiling with nothing in it, so the type
+   * goes there and the photograph keeps its subject. Both wordmarks are
+   * visible; neither is sitting on the other.
+   *
+   * The buttons stay at the bottom, which also gives the eye the whole image
+   * to cross between the two.
+   */
   .editorial-hero-content {
     position: absolute;
+    top: calc(var(--editorial-nav-h) + var(--editorial-ticker-h) + clamp(18px, 3vw, 44px));
     right: clamp(22px, 5vw, 64px);
-    bottom: clamp(26px, 5vw, 60px);
     left: clamp(22px, 5vw, 64px);
     z-index: 1;
     color: #ffffff;
     text-align: left;
+  }
+
+  /*
+   * A scrim under the type, not over the picture.
+   *
+   * Top-anchored white type on a photograph is legible until the day someone
+   * swaps in a lighter frame. This keeps a soft darkening across the top
+   * third only, so the type is readable whatever the image, and the subject
+   * below it is untouched.
+   */
+  .editorial-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    z-index: 1;
+    height: 62%;
+    background: linear-gradient(to bottom, rgba(12, 11, 10, 0.55), rgba(12, 11, 10, 0));
+    pointer-events: none;
+  }
+
+  /* Under the name, left with it. The base rule pushes these to the right,
+     which was for the old corner treatment. */
+  .editorial-hero .editorial-hero-links {
+    justify-content: flex-start;
   }
 
   .editorial-kicker,
@@ -342,9 +379,6 @@
     opacity: 0.56;
   }
 
-  .editorial-hero-links {
-    justify-content: flex-start;
-  }
 
   .editorial-hero-links .editorial-link {
     border-bottom: 0;
@@ -1064,7 +1098,6 @@
     .editorial-hero-content {
       right: 20px;
       left: 20px;
-      bottom: calc(26px + env(safe-area-inset-bottom));
     }
 
     .editorial-hero-content h1 {
