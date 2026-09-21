@@ -120,10 +120,6 @@ export function FridayEspresso({ linkTo, menuItems }: Props) {
       <header className="editorial-ritual-head">
         <p className="editorial-overline">01 — A Mantel ritual</p>
         <h1>Friday Espresso.</h1>
-        <p className="editorial-ritual-standfirst">
-          One tray, set down the same way every Friday. An espresso, a glass of sparkling water,
-          and the few minutes it takes to drink them at the counter.
-        </p>
         <div className="editorial-inline-links">
           {ORDERING_OPEN && (
             <a {...linkTo("pickup")} className="editorial-link">Order before reach</a>
@@ -199,7 +195,6 @@ export function FridayEspresso({ linkTo, menuItems }: Props) {
               >
                 <p className="editorial-ritual-note-index">{annotation.n}</p>
                 <h3>{annotation.title}</h3>
-                <p>{annotation.body}</p>
               </li>
             ))}
           </ol>
