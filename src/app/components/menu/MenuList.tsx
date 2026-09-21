@@ -29,7 +29,7 @@ export function MenuList({
           <p className={LABEL}>{String(index + 1).padStart(2, "0")} —</p>
           <h3
             style={{ fontFamily: GROTESK }}
-            className="font-medium uppercase text-[length:var(--fs-subsection-title)] tracking-[0.005em] leading-[1.05] m-0 mt-[10px] mb-[28px] text-[color:var(--ink)]"
+            className="font-medium uppercase text-[length:clamp(28px,4.5vw,44px)] tracking-[0.005em] leading-[1.02] m-0 mt-[10px] mb-[28px] text-[color:var(--ink)]"
           >
             {CATEGORY_LABELS[key]}
           </h3>
@@ -37,7 +37,7 @@ export function MenuList({
           {chunk(items, 2).map((pair, rowIndex) => (
             <div
               key={rowIndex}
-              className="grid grid-cols-1 sm:grid-cols-2 gap-x-[48px] border-b border-[color:var(--line-soft)]"
+              className="grid grid-cols-1 sm:grid-cols-2 gap-x-[48px]"
             >
               {pair[0] && <Cell item={pair[0]} />}
               {pair[1] && <Cell item={pair[1]} />}

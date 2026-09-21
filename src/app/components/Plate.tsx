@@ -55,8 +55,10 @@ export function Plate({ spec, ratio = "4 / 5", alt, className = "" }: Props) {
           <PlaceholderBrief spec={spec} />
         )}
       </div>
-      <figcaption className="flex justify-between gap-[var(--s-2)] pt-[var(--s-1)]">
-        <span className={CAPTION}>{spec.ref}</span>
+      {/* spec.ref (e.g. "PL-03") is the shoot's own reference code — useful
+          while briefing a photographer, meaningless to a customer reading the
+          page, so only the caption itself is printed here. */}
+      <figcaption className="flex justify-end gap-[var(--s-2)] pt-[var(--s-1)]">
         <span className={CAPTION}>{spec.cap}</span>
       </figcaption>
     </figure>

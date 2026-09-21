@@ -1013,13 +1013,16 @@
       gap: 34px 20px;
     }
 
-    .editorial-footer-aside {
+    /*
+     * Was .editorial-footer-aside, a class this footer's markup has never
+     * had — EditorialFooter.tsx uses .editorial-footer-instagram, so this
+     * rule silently matched nothing and the Instagram icon sat as a bare
+     * third grid cell instead of spanning the row and settling under the
+     * two link columns, which is the "fitment" the mobile footer was off by.
+     */
+    .editorial-footer-instagram {
       grid-column: 1 / -1;
-      display: block;
-    }
-
-    .editorial-footer-socials {
-      margin-top: 18px;
+      margin-top: 4px;
     }
 
     .editorial-footer-bottom {
@@ -1165,6 +1168,7 @@
     aspect-ratio: 3 / 4;
     overflow: hidden;
     background: var(--editorial-paper);
+    perspective: 1200px;
   }
 
   /*
@@ -1207,22 +1211,33 @@
 
   /*
    * A product with more than one face (the tote, printed both sides; the
-   * lighter, in two colourways).
-   *
-   * Every face is mounted and stacked — the frame already positions each img at
-   * inset 0 — so switching is a crossfade and the second face is decoded before
-   * anyone asks for it. The object itself is the control: clicking it steps to
-   * the next face, which is what a thumb reaches for. The dots are for aim and
+   * lighter, in two colourways) — a real card flip, not a crossfade. The
+   * wrapper carries the rotation; each face is pinned to its own side with
+   * backface-visibility so the one not facing the viewer is invisible rather
+   * than mirrored. The object itself is the control: clicking it flips to the
+   * other face, which is what a thumb reaches for. The dots are for aim and
    * for the keyboard.
    */
-  .editorial-object-image:has(.editorial-object-slide) .editorial-object-slide {
-    opacity: 0;
-    transition: opacity 320ms ease, transform 280ms cubic-bezier(0.23, 1, 0.32, 1);
+  .editorial-object-flip {
+    position: absolute;
+    inset: 0;
     cursor: pointer;
+    transform-style: preserve-3d;
+    transform: rotateY(var(--flip-angle, 0deg));
+    transition: transform 560ms cubic-bezier(0.23, 1, 0.32, 1);
   }
 
-  .editorial-object-image .editorial-object-slide[data-shown] {
-    opacity: 1;
+  .editorial-object-flip[data-flipped] {
+    --flip-angle: 180deg;
+  }
+
+  .editorial-object-slide-front,
+  .editorial-object-slide-back {
+    backface-visibility: hidden;
+  }
+
+  .editorial-object-slide-back {
+    transform: rotateY(180deg);
   }
 
   /*
@@ -1266,9 +1281,16 @@
     opacity: 1;
   }
 
-  .editorial-object-card:hover .editorial-object-image img {
+  .editorial-object-card:hover .editorial-object-image img:not(.editorial-object-slide-front, .editorial-object-slide-back) {
     transform: scale(1.04);
     filter: none;
+  }
+
+  /* The flip card's own hover zoom — on the wrapper, not the faces, since a
+     face's transform is its rotateY seat (front 0deg, back 180deg) and a
+     hover scale would silently replace it instead of adding to it. */
+  .editorial-object-card:hover .editorial-object-flip {
+    transform: scale(1.04) rotateY(var(--flip-angle, 0deg));
   }
 
   .editorial-object-info {
@@ -1366,10 +1388,10 @@
     }
   }
 
-  /* The crossfade and the reveal are decoration; the switch and the button
+  /* The flip and the reveal are decoration; the switch and the button
      must still happen. */
   @media (prefers-reduced-motion: reduce) {
-    .editorial-object-image:has(.editorial-object-slide) .editorial-object-slide,
+    .editorial-object-flip,
     .editorial-object-purchase button {
       transition: none;
     }
@@ -1484,6 +1506,7 @@
     aspect-ratio: 3 / 4;
     overflow: hidden;
     background: var(--editorial-paper);
+    perspective: 1200px;
   }
 
   .editorial-retail-detail-image img {
@@ -1498,16 +1521,6 @@
     object-position: center;
   }
 
-  .editorial-retail-detail-image .editorial-object-slide {
-    opacity: 0;
-    transition: opacity 320ms ease;
-    cursor: pointer;
-  }
-
-  .editorial-retail-detail-image .editorial-object-slide[data-shown] {
-    opacity: 1;
-  }
-
   .editorial-retail-detail-image .editorial-object-dots {
     left: 20px;
     bottom: 16px;
@@ -1518,29 +1531,31 @@
   }
 
   .editorial-retail-detail-info h1 {
-    margin: 0 0 10px;
+    margin: 0 0 12px;
     color: var(--editorial-ink);
     font-family: var(--font-serif);
-    font-size: clamp(34px, 5vw, 48px);
+    font-size: clamp(42px, 6vw, 60px);
     font-weight: 500;
     letter-spacing: -0.03em;
-    line-height: 0.98;
+    line-height: 0.96;
   }
 
+  /* A couple of pixels under the name, not level with it — the name and this
+     line read as one group, the price and the button below as another. */
   .editorial-retail-detail-description {
     max-width: 42ch;
-    margin: 0 0 18px;
+    margin: 0 0 28px;
     color: var(--editorial-muted);
     font-family: var(--font-serif);
-    font-size: 17px;
-    line-height: 1.35;
+    font-size: 14px;
+    line-height: 1.4;
   }
 
   .editorial-retail-detail-price {
-    margin: 0 0 22px;
+    margin: 0 0 10px;
     color: var(--editorial-ink);
     font-family: var(--font-mono);
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 500;
     letter-spacing: 0.02em;
   }
@@ -1657,14 +1672,18 @@
     margin: clamp(88px, 14vw, 190px) auto 0;
   }
 
+  /* Bigger than --fs-section-title on purpose: everywhere else that token sets
+     a page's running head, but this page has no shelf rule and no other
+     heading to sit below — "About Us." is the whole masthead, so it earns a
+     size the rest of the site's titles don't need. */
   .editorial-about-content h1 {
     margin: 0 0 28px;
     color: var(--editorial-ink);
     font-family: var(--font-serif);
-    font-size: var(--fs-section-title);
+    font-size: clamp(48px, 8vw, 92px);
     font-weight: 500;
     letter-spacing: -0.035em;
-    line-height: 0.96;
+    line-height: 0.94;
   }
 
   .editorial-about-placeholder {
@@ -1672,8 +1691,8 @@
     margin: 0 0 34px;
     color: var(--editorial-muted);
     font-family: var(--font-serif);
-    font-size: clamp(22px, 3vw, 34px);
-    line-height: 1.12;
+    font-size: clamp(16px, 1.6vw, 19px);
+    line-height: 1.5;
   }
 }
 

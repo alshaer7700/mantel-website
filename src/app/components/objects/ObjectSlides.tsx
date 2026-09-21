@@ -6,18 +6,18 @@ import { useState } from "react";
  * The tote is the reason this exists: one side carries "Mantel.", the other a
  * red heart, and a shelf that shows only one of them is selling half the bag.
  *
- * It is a slot, not a carousel — no autoplay, no arrows, no library. Products
- * here have two faces at most, so the whole control is a row of dots under the
- * object, and the object itself advances on click. Everything stays mounted and
- * crossfades, which also means the second face is already decoded by the time
- * anyone asks for it.
+ * A real flip, not a crossfade: the two faces sit back to back in 3D and the
+ * whole card turns, the way the object itself would in a hand. Products here
+ * have two faces at most (see retail.ts), so the flip only ever needs a front
+ * and a back — a third face would need a different control, not a third side
+ * of the same card.
  *
  * A product with one image renders exactly the <img> the card rendered before,
  * with no dots and nothing to click.
  *
  * The image sits inside a link to the product's own page (Objects.tsx), so
- * stepping between faces has to stop the click there rather than let it bubble
- * into the anchor and navigate away mid-browse.
+ * flipping has to stop the click there rather than let it bubble into the
+ * anchor and navigate away mid-browse.
  */
 
 type Props = {
@@ -26,50 +26,55 @@ type Props = {
 };
 
 export function ObjectSlides({ images, alt }: Props) {
-  const [shown, setShown] = useState(0);
+  const [flipped, setFlipped] = useState(false);
 
   if (images.length < 2) {
     return <img src={images[0]} alt={alt} loading="lazy" />;
   }
 
-  const advance = (e: React.MouseEvent) => {
+  const toggle = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    setShown((i) => (i + 1) % images.length);
+    setFlipped((f) => !f);
   };
 
   return (
     <>
-      {images.map((src, i) => (
+      <div className="editorial-object-flip" data-flipped={flipped ? "" : undefined} onClick={toggle}>
         <img
-          key={src}
-          src={src}
+          src={images[0]}
           alt={alt}
           loading="lazy"
-          /* Only the visible face is announced; the others are decoration
-             until they are the one on top. */
-          aria-hidden={i !== shown}
-          className="editorial-object-slide"
-          data-shown={i === shown ? "" : undefined}
-          onClick={advance}
+          aria-hidden={flipped}
+          className="editorial-object-slide editorial-object-slide-front"
         />
-      ))}
+        <img
+          src={images[1]}
+          alt={alt}
+          loading="lazy"
+          aria-hidden={!flipped}
+          className="editorial-object-slide editorial-object-slide-back"
+        />
+      </div>
 
       <div className="editorial-object-dots">
-        {images.map((src, i) => (
-          <button
-            key={src}
-            type="button"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              setShown(i);
-            }}
-            aria-label={`${alt}, view ${i + 1} of ${images.length}`}
-            aria-current={i === shown}
-            data-shown={i === shown ? "" : undefined}
-          />
-        ))}
+        {images.slice(0, 2).map((src, i) => {
+          const isBack = i === 1;
+          return (
+            <button
+              key={src}
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setFlipped(isBack);
+              }}
+              aria-label={`${alt}, view ${i + 1} of ${images.length}`}
+              aria-current={isBack === flipped}
+              data-shown={isBack === flipped ? "" : undefined}
+            />
+          );
+        })}
       </div>
     </>
   );
