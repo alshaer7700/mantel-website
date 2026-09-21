@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import type { MenuCategory, Page } from "@/app/types";
 import heroImage from "@/imports/mantel-landing.webp";
-import fridayImage from "@/imports/mood-friday-espresso-mantel.webp";
+import fridayImage from "@/imports/mood-friday-espresso-table.webp";
 import { formErrorMessage, subscribeNewsletter } from "@/lib/api/forms";
 import { MAPS_URL } from "@/lib/constants";
 
@@ -124,7 +124,7 @@ export function Home({ linkTo }: Props) {
         <div className="editorial-intro-media">
           <img
             src={fridayImage}
-            alt="A guest at a small white-clothed table with an espresso tray, against the concrete wall of the shop"
+            alt="A small white-clothed table set for two between black chairs, against the shop's concrete wall"
           />
         </div>
       </section>

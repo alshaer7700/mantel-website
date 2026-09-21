@@ -4,7 +4,10 @@ import retailToteHeartImage from "@/imports/retail-tote-heart.webp";
 import retailLighterImage from "@/imports/retail-lighter.webp";
 import retailLighterCheckImage from "@/imports/retail-lighter-check.webp";
 import retailCandleImage from "@/imports/retail-candle.webp";
-import retailMatchSticksImage from "@/imports/retail-match-sticks.webp";
+import retailCandleTinMacroImage from "@/imports/retail-candle-tin-macro.webp";
+import retailMatchSticksWallImage from "@/imports/retail-match-sticks-wall.webp";
+import retailMatchSticksOpenAImage from "@/imports/retail-match-sticks-open-a.webp";
+import retailMatchSticksOpenBImage from "@/imports/retail-match-sticks-open-b.webp";
 
 /*
  * The shape a cart line needs, regardless of whether it came from the Retail
@@ -95,6 +98,7 @@ export const RETAIL_PRODUCTS: RetailProduct[] = [
     description: "A soft light for the end of the day.",
     price: 7,
     image: retailCandleImage,
+    images: [retailCandleImage, retailCandleTinMacroImage],
     tone: "candle",
     story: "Soy wax in a stamped tin, poured in small batches. Warm wood and dry smoke — the room after the counter closes.",
     care:
@@ -130,7 +134,8 @@ export const RETAIL_PRODUCTS: RetailProduct[] = [
     name: "Match Sticks",
     description: "A little fire for the everyday ritual.",
     price: 2.5,
-    image: retailMatchSticksImage,
+    image: retailMatchSticksWallImage,
+    images: [retailMatchSticksWallImage, retailMatchSticksOpenAImage, retailMatchSticksOpenBImage],
     tone: "matches",
     story: "A box of safety matches under the Mantel label, for the candles and everything else that needs a light.",
     care: "Store somewhere dry, away from the stove.",
