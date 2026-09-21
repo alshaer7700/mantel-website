@@ -36,6 +36,18 @@ export type RetailProduct = CartProduct & {
    */
   images?: readonly string[];
   tone: string;
+  /*
+   * The product page's own accordion (ProductDetail.tsx). Static editorial
+   * copy, the same pattern as ritual.ts — not a Supabase column, because
+   * `objects` carries no field for it and adding one is a migration this
+   * change does not need to make. Placeholder wording: check it against the
+   * real care instructions before this page goes live.
+   */
+  /** The longer sensory line under "The Object" — `description` stays the
+      short one the shelf card and cart use. */
+  story: string;
+  care: string;
+  collection: string;
 };
 
 export type CartLine = {
@@ -84,6 +96,11 @@ export const RETAIL_PRODUCTS: RetailProduct[] = [
     price: 7,
     image: retailCandleImage,
     tone: "candle",
+    story: "Soy wax in a stamped tin, poured in small batches. Warm wood and dry smoke — the room after the counter closes.",
+    care:
+      "Trim the wick to 5mm before each light. Burn for no more than four hours at a time, and keep it away from draughts so the wax burns evenly to the edge of the tin.",
+    collection:
+      "Soy wax, poured in small batches and finished in the same stamped tin as the rest of the counter shelf.",
   },
   {
     id: "candle-sticks",
@@ -92,6 +109,9 @@ export const RETAIL_PRODUCTS: RetailProduct[] = [
     price: 5.5,
     image: retailCandleSticksImage,
     tone: "sticks",
+    story: "A pair of cream tapers, cut long enough to burn through an evening at the table.",
+    care: "Wipe with a dry cloth. Keep upright, and away from direct heat.",
+    collection: "Sits alongside the candles — the pair the shelf was built around.",
   },
   {
     id: "lighters",
@@ -101,6 +121,9 @@ export const RETAIL_PRODUCTS: RetailProduct[] = [
     image: retailLighterImage,
     images: [retailLighterImage, retailLighterCheckImage],
     tone: "lighter",
+    story: "A refillable flame in a pocket-sized case, printed leopard on one side and checkerboard on the other.",
+    care: "Refillable. Keep it out of reach of children and away from heat.",
+    collection: "Two colourways, leopard and checkerboard — the small object with a little ceremony.",
   },
   {
     id: "match-sticks",
@@ -109,6 +132,9 @@ export const RETAIL_PRODUCTS: RetailProduct[] = [
     price: 2.5,
     image: retailMatchSticksImage,
     tone: "matches",
+    story: "A box of safety matches under the Mantel label, for the candles and everything else that needs a light.",
+    care: "Store somewhere dry, away from the stove.",
+    collection: "The everyday companion to the candles on the shelf.",
   },
   {
     id: "custom-bags",
@@ -118,6 +144,9 @@ export const RETAIL_PRODUCTS: RetailProduct[] = [
     image: retailToteImage,
     images: [retailToteImage, retailToteHeartImage],
     tone: "bag",
+    story: "Heavy canvas, built for the walk home — the wordmark on one face, a red heart stitched on the other.",
+    care: "Machine wash cold, and hang to dry.",
+    collection: "Printed both sides — Mantel on one face, a red heart on the other.",
   },
 ];
 

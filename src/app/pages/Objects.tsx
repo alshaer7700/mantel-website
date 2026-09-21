@@ -3,7 +3,7 @@ import { formatBhd, type CartLine, type RetailProduct } from "@/app/content/reta
 import { ObjectSlides } from "@/app/components/objects/ObjectSlides";
 
 type Props = {
-  linkTo: (page: Page, category?: MenuCategory) => {
+  linkTo: (page: Page, category?: MenuCategory, objectSlug?: string | null) => {
     href: string;
     onClick: (event: React.MouseEvent) => void;
   };
@@ -59,17 +59,17 @@ export function Objects({ linkTo, products, loading, error, cartLines, onAdd }: 
           const quantity = line?.quantity ?? 0;
           return (
             <article key={product.id} className={`editorial-object-card editorial-object-card-${product.tone}`}>
-              <div className="editorial-object-image">
+              <a {...linkTo("objects", null, product.id)} className="editorial-object-image" aria-label={product.name}>
                 {/* Margiela numbers everything. Decoration, not content, so it
                     is hidden from the reading order. */}
                 <span className="editorial-object-index" aria-hidden="true">
                   {String(index + 1).padStart(2, "0")}
                 </span>
                 <ObjectSlides images={product.images ?? [product.image]} alt={product.name} />
-              </div>
+              </a>
               <div className="editorial-object-info">
                 <div>
-                  <h2>{product.name}</h2>
+                  <h2><a {...linkTo("objects", null, product.id)}>{product.name}</a></h2>
                   <p>{product.description}</p>
                 </div>
                 <div className="editorial-object-purchase">

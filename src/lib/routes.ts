@@ -35,10 +35,20 @@ export const ROUTES: Record<Page, string> = {
  */
 const CATEGORIES: readonly string[] = MENU_CATEGORIES;
 
-export type Route = { page: Page; menuCategory: MenuCategory };
+export type Route = { page: Page; menuCategory: MenuCategory; objectSlug: string | null };
 
-export function pathFor(page: Page, menuCategory: MenuCategory = null): string {
+/**
+ * `objectSlug` follows the same shape as `menuCategory` — a bare /objects is
+ * the whole shelf, /objects/candles is one product's own page — but it is not
+ * a closed taxonomy pulled from the DB category check constraint, so it is
+ * not validated against a list here. RETAIL_PRODUCTS is the source of truth
+ * for which slugs are real; an unrecognised one is the caller's job to
+ * degrade (Objects.tsx falls back to the shelf), the same way an unrecognised
+ * menu category already does.
+ */
+export function pathFor(page: Page, menuCategory: MenuCategory = null, objectSlug: string | null = null): string {
   if (page === "menu" && menuCategory) return `${ROUTES.menu}/${menuCategory}`;
+  if (page === "objects" && objectSlug) return `${ROUTES.objects}/${objectSlug}`;
   return ROUTES[page];
 }
 
@@ -63,13 +73,18 @@ export function routeFor(pathname: string): Route {
   const path = normalise(pathname);
 
   const exact = BY_PATH.get(path);
-  if (exact) return { page: exact, menuCategory: null };
+  if (exact) return { page: exact, menuCategory: null, objectSlug: null };
 
   if (path.startsWith(`${ROUTES.menu}/`)) {
     const slug = path.slice(ROUTES.menu.length + 1);
     const category = (CATEGORIES.find((c) => c === slug) ?? null) as MenuCategory;
-    return { page: "menu", menuCategory: category };
+    return { page: "menu", menuCategory: category, objectSlug: null };
   }
 
-  return { page: "home", menuCategory: null };
+  if (path.startsWith(`${ROUTES.objects}/`)) {
+    const slug = path.slice(ROUTES.objects.length + 1);
+    return { page: "objects", menuCategory: null, objectSlug: slug || null };
+  }
+
+  return { page: "home", menuCategory: null, objectSlug: null };
 }

@@ -120,3 +120,42 @@ function validate(input: PlaceOrderInput): string | null {
 export function orderReference(orderId: string): string {
   return `MTL-${orderId.replace(/-/g, "").slice(0, 6).toUpperCase()}`;
 }
+
+export type MyOrderLine = { name: string; price: number; quantity: number };
+
+export type MyOrder = {
+  id: string;
+  status: string;
+  subtotal: number;
+  createdAt: string;
+  lines: MyOrderLine[];
+};
+
+/*
+ * The account's own order history. orders carries user_id (010) and
+ * orders_select_own / order_items_select_own already scope both tables to
+ * the signed-in customer, so this is a plain read — no RPC, nothing to
+ * validate, RLS is the whole guarantee.
+ */
+export async function listMyOrders(userId: string): Promise<MyOrder[] | null> {
+  const { data, error } = await settle(
+    supabase
+      .from("orders")
+      .select("id, status, subtotal, created_at, order_items(item_name, item_price, quantity)")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false }),
+  );
+  if (error || !data) return null;
+
+  return data.map((order) => ({
+    id: order.id,
+    status: order.status,
+    subtotal: Number(order.subtotal),
+    createdAt: order.created_at,
+    lines: (order.order_items ?? []).map((line) => ({
+      name: line.item_name,
+      price: Number(line.item_price),
+      quantity: line.quantity,
+    })),
+  }));
+}

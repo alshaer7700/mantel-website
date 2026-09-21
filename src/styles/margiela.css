@@ -1159,6 +1159,7 @@
    * ground.
    */
   .editorial-object-image {
+    display: block;
     position: relative;
     width: 100%;
     aspect-ratio: 3 / 4;
@@ -1224,35 +1225,39 @@
     opacity: 1;
   }
 
+  /*
+   * Left-aligned dashes sitting on the image's bottom edge — the Maison
+   * Margiela reference, not the centred circular pager this replaced. A short
+   * bar per face; the shown one is solid, the rest are faint.
+   */
   .editorial-object-dots {
     position: absolute;
-    right: 0;
-    bottom: 14px;
-    left: 0;
+    left: var(--caption-pad, 16px);
+    right: auto;
+    bottom: 10px;
     display: flex;
-    gap: 7px;
-    justify-content: center;
+    gap: 5px;
+    justify-content: flex-start;
   }
 
   .editorial-object-dots button {
-    width: 6px;
-    height: 6px;
+    width: 11px;
+    height: 2px;
     padding: 0;
-    border: 1px solid var(--editorial-ink, #12100d);
-    border-radius: 50%;
-    background: transparent;
-    opacity: 0.35;
+    border: none;
+    border-radius: 1px;
+    background: var(--editorial-ink, #12100d);
+    opacity: 0.3;
     cursor: pointer;
-    transition: opacity 200ms ease, background-color 200ms ease;
+    transition: opacity 200ms ease;
   }
 
   .editorial-object-dots button[data-shown] {
-    background: var(--editorial-ink, #12100d);
     opacity: 1;
   }
 
   .editorial-object-dots button:hover {
-    opacity: 0.7;
+    opacity: 0.6;
   }
 
   .editorial-object-dots button:focus-visible {
@@ -1283,6 +1288,16 @@
     font-weight: 500;
     letter-spacing: -0.025em;
     line-height: 0.95;
+  }
+
+  .editorial-object-info h2 a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .editorial-object-info h2 a:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
   }
 
   .editorial-object-info p {
@@ -1410,6 +1425,221 @@
     .editorial-object-purchase button {
       display: block;
       margin-top: 5px;
+    }
+  }
+}
+
+
+/* ══ PRODUCT PAGE (one object, /objects/<id>) ══════════════════════════════
+   Reached by clicking a card on the Objects shelf. Breadcrumb, one large
+   photograph, then the same information the card carried — name, the short
+   line, price — plus what the shelf has no room for: the full-width Add to
+   bag and the Object / Care / Collection accordion. */
+@layer components {
+  .editorial-retail-detail-page {
+    display: grid;
+    gap: 0 56px;
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: clamp(70px, 10vw, 120px) var(--shelf-gutter, clamp(22px, 8vw, 120px)) clamp(90px, 12vw, 160px);
+  }
+
+  @media (min-width: 900px) {
+    .editorial-retail-detail-page {
+      grid-template-columns: minmax(0, 1fr) minmax(340px, 0.62fr);
+      align-items: start;
+    }
+  }
+
+  .editorial-retail-detail-breadcrumb {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 22px;
+    color: var(--editorial-muted);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .editorial-retail-detail-breadcrumb a {
+    color: var(--editorial-muted);
+    text-decoration: none;
+    transition: color 160ms ease;
+  }
+
+  .editorial-retail-detail-breadcrumb a:hover {
+    color: var(--editorial-ink);
+  }
+
+  .editorial-retail-detail-breadcrumb [aria-current] {
+    color: var(--editorial-ink);
+  }
+
+  .editorial-retail-detail-image {
+    position: relative;
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+    background: var(--editorial-paper);
+  }
+
+  .editorial-retail-detail-image img {
+    position: absolute;
+    inset: 0;
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    padding: 8%;
+    object-fit: contain;
+    object-position: center;
+  }
+
+  .editorial-retail-detail-image .editorial-object-slide {
+    opacity: 0;
+    transition: opacity 320ms ease;
+    cursor: pointer;
+  }
+
+  .editorial-retail-detail-image .editorial-object-slide[data-shown] {
+    opacity: 1;
+  }
+
+  .editorial-retail-detail-image .editorial-object-dots {
+    left: 20px;
+    bottom: 16px;
+  }
+
+  .editorial-retail-detail-info {
+    padding-top: clamp(20px, 4vw, 8px);
+  }
+
+  .editorial-retail-detail-info h1 {
+    margin: 0 0 10px;
+    color: var(--editorial-ink);
+    font-family: var(--font-serif);
+    font-size: clamp(34px, 5vw, 48px);
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    line-height: 0.98;
+  }
+
+  .editorial-retail-detail-description {
+    max-width: 42ch;
+    margin: 0 0 18px;
+    color: var(--editorial-muted);
+    font-family: var(--font-serif);
+    font-size: 17px;
+    line-height: 1.35;
+  }
+
+  .editorial-retail-detail-price {
+    margin: 0 0 22px;
+    color: var(--editorial-ink);
+    font-family: var(--font-mono);
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+
+  .editorial-retail-detail-add {
+    display: block;
+    width: 100%;
+    padding: 16px 20px;
+    border: 1px solid var(--editorial-ink);
+    background: var(--editorial-ink);
+    color: var(--editorial-paper);
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-align: center;
+    text-transform: uppercase;
+    transition: opacity 160ms ease;
+  }
+
+  .editorial-retail-detail-add:hover:not(:disabled) {
+    opacity: 0.82;
+  }
+
+  .editorial-retail-detail-add:disabled {
+    border-color: var(--editorial-line);
+    background: var(--editorial-line);
+    color: var(--editorial-muted);
+    cursor: not-allowed;
+  }
+
+  .editorial-retail-detail-accordion {
+    margin-top: 30px;
+    border-top: 1px solid var(--editorial-line);
+  }
+
+  .editorial-retail-detail-accordion-row {
+    border-bottom: 1px solid var(--editorial-line);
+  }
+
+  .editorial-retail-detail-accordion-row button {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 16px 0;
+    border: 0;
+    background: transparent;
+    color: var(--editorial-ink);
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-align: left;
+    text-transform: uppercase;
+  }
+
+  .editorial-retail-detail-accordion-chevron {
+    flex-shrink: 0;
+    transition: transform 200ms ease;
+  }
+
+  .editorial-retail-detail-accordion-chevron.is-open {
+    transform: rotate(180deg);
+  }
+
+  .editorial-retail-detail-accordion-row p {
+    max-width: 46ch;
+    margin: 0 0 18px;
+    color: var(--editorial-muted);
+    font-family: var(--font-serif);
+    font-size: 15px;
+    line-height: 1.45;
+  }
+
+  .editorial-retail-detail-back {
+    display: inline-block;
+    margin-top: 26px;
+    color: var(--editorial-muted);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: color 160ms ease;
+  }
+
+  .editorial-retail-detail-back:hover {
+    color: var(--editorial-ink);
+  }
+
+  @media (max-width: 640px) {
+    .editorial-retail-detail-page {
+      padding-top: 44px;
+      gap: 26px;
     }
   }
 }
@@ -3174,6 +3404,150 @@
     display: grid;
     gap: 18px;
     margin-top: 26px;
+  }
+
+  /* Orders / Profile — the racer.com reference's shape, in the panel's own
+     type. Two tabs on one hairline rather than a segmented control, so they
+     read as part of the same ruled system as everything below them. */
+  .editorial-account-tabs {
+    display: flex;
+    gap: 22px;
+    margin-top: 22px;
+    border-bottom: 1px solid var(--editorial-line);
+  }
+
+  .editorial-account-tab {
+    padding: 0 0 10px;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    background: transparent;
+    color: var(--editorial-muted);
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: color 160ms ease, border-color 160ms ease;
+  }
+
+  .editorial-account-tab[data-active] {
+    border-bottom-color: var(--editorial-ink);
+    color: var(--editorial-ink);
+  }
+
+  .editorial-account-tab:hover {
+    color: var(--editorial-ink);
+  }
+
+  .editorial-account-orders {
+    margin-top: 22px;
+  }
+
+  .editorial-account-order-list {
+    display: grid;
+    gap: 14px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .editorial-account-order {
+    display: grid;
+    gap: 8px;
+    padding: 16px;
+    border: 1px solid var(--editorial-line);
+  }
+
+  .editorial-account-order-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 14px;
+  }
+
+  .editorial-account-order-ref {
+    color: var(--editorial-ink);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+  }
+
+  .editorial-account-order-status {
+    color: var(--editorial-muted);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .editorial-account-order-date {
+    margin: 0;
+    color: var(--editorial-muted);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.02em;
+  }
+
+  .editorial-account-order-lines {
+    display: grid;
+    gap: 4px;
+    margin: 4px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .editorial-account-order-lines li {
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+    color: var(--editorial-muted);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.01em;
+  }
+
+  .editorial-account-order-total {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 4px;
+    padding-top: 8px;
+    border-top: 1px solid var(--editorial-line);
+    color: var(--editorial-ink);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  /* The empty state — no orders yet, same read as racer's "Ready to shop?" */
+  .editorial-account-welcome {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 8px;
+    padding: 22px;
+    border: 1px solid var(--editorial-line);
+  }
+
+  .editorial-account-welcome h3 {
+    margin: 0;
+    color: var(--editorial-ink);
+    font-family: var(--font-serif);
+    font-size: 22px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+  }
+
+  .editorial-account-welcome p {
+    margin: 4px 0 0;
+    color: var(--editorial-muted);
+    font-family: var(--font-serif);
+    font-size: 15px;
   }
 
   .editorial-account-field {

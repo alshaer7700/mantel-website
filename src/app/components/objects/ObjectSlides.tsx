@@ -14,6 +14,10 @@ import { useState } from "react";
  *
  * A product with one image renders exactly the <img> the card rendered before,
  * with no dots and nothing to click.
+ *
+ * The image sits inside a link to the product's own page (Objects.tsx), so
+ * stepping between faces has to stop the click there rather than let it bubble
+ * into the anchor and navigate away mid-browse.
  */
 
 type Props = {
@@ -28,7 +32,11 @@ export function ObjectSlides({ images, alt }: Props) {
     return <img src={images[0]} alt={alt} loading="lazy" />;
   }
 
-  const advance = () => setShown((i) => (i + 1) % images.length);
+  const advance = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setShown((i) => (i + 1) % images.length);
+  };
 
   return (
     <>
@@ -52,7 +60,11 @@ export function ObjectSlides({ images, alt }: Props) {
           <button
             key={src}
             type="button"
-            onClick={() => setShown(i)}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setShown(i);
+            }}
             aria-label={`${alt}, view ${i + 1} of ${images.length}`}
             aria-current={i === shown}
             data-shown={i === shown ? "" : undefined}

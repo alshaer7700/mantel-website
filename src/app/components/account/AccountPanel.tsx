@@ -11,6 +11,8 @@ import {
   loadProfile,
   saveProfile,
 } from "@/lib/api/auth";
+import { listMyOrders, orderReference, type MyOrder } from "@/lib/api/orders";
+import { formatBhd } from "@/app/content/retail";
 import { messageFor, type AppError } from "@/lib/api/errors";
 import { ORDERING_OPEN } from "@/lib/constants";
 import { useDialogFocus } from "@/app/hooks/useDialogFocus";
@@ -47,19 +49,32 @@ type Props = {
   /** True when the page was opened from a password-recovery link. */
   recovering: boolean;
   onClose: () => void;
+  /** Takes the visitor to Objects from the Orders tab's empty state. */
+  onShopNow: () => void;
   navHeight: string;
   id?: string;
 };
 
-export function AccountPanel({ session, recovering, onClose, navHeight, id }: Props) {
+/** The two faces of a signed-in account, styled as tabs. */
+type Tab = "orders" | "profile";
+
+export function AccountPanel({ session, recovering, onClose, onShopNow, navHeight, id }: Props) {
   const [mode, setMode] = useState<Mode>(() =>
     recovering ? "recover" : session ? "account" : "signin",
   );
+  const [tab, setTab] = useState<Tab>("profile");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string>("");
   const [notice, setNotice] = useState<string>("");
   const firstFieldRef = useRef<HTMLInputElement>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
+
+  /* Fetched once per session, the first time the Orders tab is opened —
+     not on every sign-in, since nothing about the order history changes
+     between one panel open and the next. */
+  const [orders, setOrders] = useState<MyOrder[] | null>(null);
+  const [ordersLoading, setOrdersLoading] = useState(false);
+  const [ordersFailed, setOrdersFailed] = useState(false);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -105,6 +120,35 @@ export function AccountPanel({ session, recovering, onClose, navHeight, id }: Pr
       live = false;
     };
   }, [session, mode]);
+
+  /* Order history, fetched the first time the tab is opened rather than the
+     moment the account view mounts — most visits to this panel are a name or
+     phone edit, not a look back through past orders. orders_select_own scopes
+     the read to the signed-in customer; see lib/api/orders.ts. */
+  useEffect(() => {
+    if (!session?.user || mode !== "account" || tab !== "orders" || orders !== null) return;
+    let live = true;
+    setOrdersLoading(true);
+    setOrdersFailed(false);
+    listMyOrders(session.user.id).then((result) => {
+      if (!live) return;
+      setOrdersLoading(false);
+      if (result === null) setOrdersFailed(true);
+      else setOrders(result);
+    });
+    return () => {
+      live = false;
+    };
+  }, [session, mode, tab, orders]);
+
+  /* A fresh sign-in starts back on Profile, and the last customer's order
+     history never leaks into the next session on a shared device. */
+  useEffect(() => {
+    if (mode !== "account") {
+      setTab("profile");
+      setOrders(null);
+    }
+  }, [mode, session]);
 
   const fail = (e: AppError) => setError(messageFor(e));
 
@@ -200,14 +244,88 @@ export function AccountPanel({ session, recovering, onClose, navHeight, id }: Pr
           </button>
         </header>
 
+        {/* Signed in: Orders first, Profile second — the same order as the
+            racer.com reference this follows. Every other mode is one screen
+            and has no tabs to show. */}
+        {mode === "account" && (
+          <div className="editorial-account-tabs" role="tablist">
+            <button
+              type="button"
+              role="tab"
+              aria-selected={tab === "orders"}
+              className="editorial-account-tab"
+              data-active={tab === "orders" ? "" : undefined}
+              onClick={() => { setTab("orders"); setError(""); setNotice(""); }}
+            >
+              Orders
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={tab === "profile"}
+              className="editorial-account-tab"
+              data-active={tab === "profile" ? "" : undefined}
+              onClick={() => { setTab("profile"); setError(""); setNotice(""); }}
+            >
+              Profile
+            </button>
+          </div>
+        )}
+
         {/*
           * Answers the question the old panel left hanging: two boxes and a
           * button, with nothing anywhere saying what happens to what is typed
           * into them. One sentence per state, and true of what the code does.
           */}
-        <p className="editorial-account-blurb">{BLURBS[mode]}</p>
+        {!(mode === "account" && tab === "orders") && (
+          <p className="editorial-account-blurb">{BLURBS[mode]}</p>
+        )}
 
-        {mode === "sent" ? (
+        {mode === "account" && tab === "orders" ? (
+          <div className="editorial-account-orders">
+            {ordersLoading ? (
+              <p className="editorial-account-hint">Loading your orders…</p>
+            ) : ordersFailed ? (
+              <p className="editorial-account-hint">
+                Couldn't load your orders right now — please try again shortly.
+              </p>
+            ) : orders && orders.length > 0 ? (
+              <ul className="editorial-account-order-list">
+                {orders.map((order) => (
+                  <li key={order.id} className="editorial-account-order">
+                    <div className="editorial-account-order-head">
+                      <span className="editorial-account-order-ref">{orderReference(order.id)}</span>
+                      <span className="editorial-account-order-status">{STATUS_LABEL[order.status] ?? order.status}</span>
+                    </div>
+                    <p className="editorial-account-order-date">{formatOrderDate(order.createdAt)}</p>
+                    <ul className="editorial-account-order-lines">
+                      {order.lines.map((line, i) => (
+                        <li key={i}>
+                          <span>{line.quantity}× {line.name}</span>
+                          <span>{formatBhd(line.price * line.quantity)}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <div className="editorial-account-order-total">
+                      <span>Total</span>
+                      <span>{formatBhd(order.subtotal)}</span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div className="editorial-account-welcome">
+                <div>
+                  <h3>Welcome.</h3>
+                  <p>Ready to shop?</p>
+                </div>
+                <button type="button" className="editorial-account-primary" onClick={onShopNow}>
+                  Shop now
+                </button>
+              </div>
+            )}
+          </div>
+        ) : mode === "sent" ? (
           <div className="editorial-account-sent">
             <p className="editorial-account-sent-address">{email}</p>
             <p>
@@ -307,8 +425,8 @@ export function AccountPanel({ session, recovering, onClose, navHeight, id }: Pr
                     implying a history that cannot exist yet. */}
                 <p className="editorial-account-hint">
                   {ORDERING_OPEN
-                    ? "Your details fill in at checkout, and your orders appear here."
-                    : "Saved for checkout. Your orders will appear here once ordering opens."}
+                    ? "Your details fill in at checkout, and past orders are under the Orders tab above."
+                    : "Saved for checkout. Past orders will appear under the Orders tab once ordering opens."}
                 </p>
               </>
             )}
@@ -319,10 +437,10 @@ export function AccountPanel({ session, recovering, onClose, navHeight, id }: Pr
           </form>
         )}
 
-        {error && (
+        {!(mode === "account" && tab === "orders") && error && (
           <p className="editorial-account-error" role="alert">{error}</p>
         )}
-        {notice && (
+        {!(mode === "account" && tab === "orders") && notice && (
           <p className="editorial-account-notice" role="status">{notice}</p>
         )}
 
@@ -332,32 +450,34 @@ export function AccountPanel({ session, recovering, onClose, navHeight, id }: Pr
           * indistinguishable from the panel's own captions, which is why
           * "Create an account" looked like a label rather than the way in.
           */}
-        <div className="editorial-account-switches">
-          {mode === "signin" && (
-            <>
+        {!(mode === "account" && tab === "orders") && (
+          <div className="editorial-account-switches">
+            {mode === "signin" && (
+              <>
+                <Switch onClick={() => goTo("register")}>Create an account</Switch>
+                <Switch onClick={() => goTo("forgot")}>Forgot your password?</Switch>
+              </>
+            )}
+            {(mode === "register" || mode === "forgot" || mode === "sent") && (
+              <Switch onClick={() => goTo("signin")}>← Back to sign in</Switch>
+            )}
+            {mode === "forgot" && (
               <Switch onClick={() => goTo("register")}>Create an account</Switch>
-              <Switch onClick={() => goTo("forgot")}>Forgot your password?</Switch>
-            </>
-          )}
-          {(mode === "register" || mode === "forgot" || mode === "sent") && (
-            <Switch onClick={() => goTo("signin")}>← Back to sign in</Switch>
-          )}
-          {mode === "forgot" && (
-            <Switch onClick={() => goTo("register")}>Create an account</Switch>
-          )}
-          {mode === "account" && (
-            <Switch
-              onClick={() =>
-                run(async () => {
-                  const r = await signOut();
-                  if (!r.ok) fail(r.error);
-                })
-              }
-            >
-              Sign out
-            </Switch>
-          )}
-        </div>
+            )}
+            {mode === "account" && tab === "profile" && (
+              <Switch
+                onClick={() =>
+                  run(async () => {
+                    const r = await signOut();
+                    if (!r.ok) fail(r.error);
+                  })
+                }
+              >
+                Sign out
+              </Switch>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -396,6 +516,21 @@ const BLURBS: Record<Mode, string> = {
   account:
     "A name and a mobile, kept so they aren't retyped at every checkout. Nothing else is stored, and ordering never requires an account.",
 };
+
+/** The status column as the counter would say it, not the database's word for it. */
+const STATUS_LABEL: Record<string, string> = {
+  received: "Received",
+  preparing: "Preparing",
+  ready: "Ready for pickup",
+  completed: "Completed",
+  cancelled: "Cancelled",
+};
+
+const orderDateFormat = new Intl.DateTimeFormat("en-BH", { dateStyle: "medium", timeStyle: "short" });
+
+function formatOrderDate(iso: string): string {
+  return orderDateFormat.format(new Date(iso));
+}
 
 function Switch({ onClick, children }: { onClick: () => void; children: React.ReactNode }) {
   return (
