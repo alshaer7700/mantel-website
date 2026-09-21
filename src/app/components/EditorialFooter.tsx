@@ -68,6 +68,13 @@ export function EditorialFooter({ linkTo }: Props) {
           >
             Hidd, Muharraq <span aria-hidden="true">↗</span>
           </a>
+          {/* Already published on the Contact page, so it is a fact the site
+              stands behind rather than a new claim. Note these are the
+              PHONE LINE's hours, which is why no opening time appears here
+              or in the ticker. */}
+          <a className="editorial-footer-link" href="tel:+9733170385098">
+            +973 3170 385098
+          </a>
           <a
             className="editorial-footer-link"
             href={INSTAGRAM}

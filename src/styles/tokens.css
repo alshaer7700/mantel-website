@@ -62,6 +62,12 @@
   --ink-muted: #6E6E6E;  /* descriptions, secondary, every .label */
   --brand:     #9A1C1F;  /* heart red — accents only */
 
+  /* A quiet fill: image frames, tonal panels, the blocks that used to be
+     warm tans (#dbd4c7, #dedbd4, #e5dfd4, #f0ece4 — four different browns
+     doing one job). One value now, a shade off the ground so a frame reads
+     as a frame without becoming a colour. */
+  --fill:      #F2F2F2;
+
   /* The chrome. The nav and the ticker are the one part of the site that
      stays dark while the pages under them are white, so they are stated here
      rather than derived from the ground. */

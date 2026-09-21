@@ -219,7 +219,7 @@
     position: relative;
     min-height: min(76vh, 760px);
     overflow: hidden;
-    background: #312d26;
+    background: var(--chrome);
   }
 
   .editorial-hero img,
@@ -420,13 +420,31 @@
     color: var(--editorial-muted);
   }
 
+  /*
+   * ── HEADING CASE, THE ONE RULE ──────────────────────────────────────────
+   *
+   * A heading that sits OVER content — a page title, a section head — is
+   * uppercase and bold. A heading that sits INSIDE copy stays sentence case
+   * (the tray notes, the cart's empty state, the product folds), because
+   * uppercase running text is work to read.
+   *
+   * Stated as text-transform rather than by rewriting the strings: the copy
+   * stays readable in the source, and a screen reader still announces
+   * "Friday Espresso" rather than spelling it out.
+   *
+   * Before this, the family sweep had changed every heading to the grotesk
+   * but left the case exactly as EB Garamond had set it — so MENU and
+   * OBJECTS. shouted while Friday Espresso. and Contact Us murmured, and the
+   * two halves of the site looked like different sites.
+   */
   .editorial-intro h2,
   .editorial-manifesto h2,
   .editorial-newsletter h2 {
     margin: 0;
     font-family: var(--font-grotesk);
-    font-weight: 500;
-    letter-spacing: -0.035em;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
   }
 
   .editorial-intro h2 {
@@ -447,7 +465,7 @@
   .editorial-link-primary {
     padding: 11px 18px;
     border: 1px solid currentColor;
-    background: #f5f3ee;
+    background: var(--editorial-paper);
     color: var(--editorial-ink);
   }
 
@@ -457,7 +475,7 @@
 
   .editorial-link-primary:hover {
     background: transparent;
-    color: #f5f3ee;
+    color: var(--editorial-paper);
   }
 
   /*
@@ -475,7 +493,7 @@
     width: min(100%, 700px);
     aspect-ratio: 1.394;
     justify-self: start;
-    background: #dbd4c7;
+    background: var(--fill);
   }
 
   .editorial-intro-media img {
@@ -498,7 +516,7 @@
     position: relative;
     min-height: min(72vh, 720px);
     overflow: hidden;
-    background: #4c4b40;
+    background: var(--chrome);
   }
 
   .editorial-banner::after {
@@ -519,7 +537,7 @@
     bottom: clamp(34px, 7vw, 92px);
     z-index: 1;
     max-width: 420px;
-    color: #f6f3ed;
+    color: var(--editorial-paper);
   }
 
   .editorial-banner-copy h2 {
@@ -550,6 +568,8 @@
     font-weight: 500;
     letter-spacing: -0.035em;
     line-height: 0.96;
+    font-weight: 700;
+    text-transform: uppercase;
   }
 
   .editorial-section-heading p {
@@ -583,7 +603,7 @@
     position: relative;
     aspect-ratio: 0.78;
     overflow: hidden;
-    background: #dedbd4;
+    background: var(--fill);
   }
 
   .editorial-product-card img {
@@ -637,7 +657,7 @@
     grid-template-columns: minmax(200px, 0.68fr) minmax(0, 1.32fr);
     gap: clamp(36px, 10vw, 180px);
     padding: clamp(74px, 10vw, 132px) clamp(24px, 8vw, 120px);
-    background: #e5dfd4;
+    background: var(--fill);
   }
 
   .editorial-manifesto-media {
@@ -668,7 +688,7 @@
   .editorial-manifesto-copy p:not(.editorial-overline) {
     max-width: 50ch;
     margin: 0 0 30px;
-    color: #554e47;
+    color: var(--editorial-muted);
     font-family: var(--font-grotesk);
     font-size: clamp(19px, 2.2vw, 27px);
     line-height: 1.2;
@@ -679,7 +699,7 @@
     grid-template-columns: minmax(0, 0.8fr) minmax(320px, 1.2fr);
     gap: clamp(34px, 9vw, 150px);
     padding: clamp(74px, 10vw, 132px) clamp(24px, 8vw, 120px);
-    background: #f0ece4;
+    background: var(--fill);
   }
 
   .editorial-cafe-copy {
@@ -811,15 +831,15 @@
     z-index: 100;
     display: grid;
     place-items: center;
-    background: rgba(21, 19, 16, 0.51);
+    background: rgba(13, 13, 13, 0.51);
     padding: 20px;
   }
 
   .editorial-cookie-dialog {
     width: min(100%, 396px);
     padding: 27px 28px 24px;
-    background: #fff;
-    color: #171411;
+    background: var(--editorial-paper);
+    color: var(--editorial-ink);
     box-shadow: 0 18px 56px rgba(0, 0, 0, 0.18);
   }
 
@@ -882,8 +902,8 @@
     width: 100%;
     appearance: none;
     border: 0;
-    background: #171411;
-    color: #fff;
+    background: var(--editorial-ink);
+    color: var(--editorial-paper);
     cursor: pointer;
     padding: 15px 18px;
     text-align: center;
@@ -891,7 +911,7 @@
   }
 
   .editorial-cookie-button:hover {
-    background: #a5352c;
+    background: var(--editorial-red);
   }
 
   .editorial-cookie-button:active {
@@ -903,7 +923,7 @@
     gap: 8px;
     margin: 18px 0 24px;
     padding: 12px;
-    border: 1px solid #d9d4cd;
+    border: 1px solid var(--editorial-line);
     font-size: 10px;
   }
 
@@ -1423,7 +1443,7 @@
     width: 6px;
     height: 6px;
     padding: 0;
-    border: 1px solid var(--editorial-ink, #12100d);
+    border: 1px solid var(--editorial-ink);
     border-radius: 50%;
     background: transparent;
     opacity: 0.35;
@@ -1432,7 +1452,7 @@
   }
 
   .editorial-object-dots button[data-shown] {
-    background: var(--editorial-ink, #12100d);
+    background: var(--editorial-ink);
     opacity: 1;
   }
 
@@ -1441,7 +1461,7 @@
   }
 
   .editorial-object-dots button:focus-visible {
-    outline: 2px solid var(--editorial-ink, #12100d);
+    outline: 2px solid var(--editorial-ink);
     outline-offset: 3px;
     opacity: 1;
   }
@@ -1897,6 +1917,8 @@
     font-weight: 500;
     letter-spacing: -0.035em;
     line-height: 0.96;
+    font-weight: 700;
+    text-transform: uppercase;
   }
 
   .editorial-cart-header > button,
@@ -2377,6 +2399,8 @@
     font-weight: 500;
     letter-spacing: -0.035em;
     line-height: 0.96;
+    font-weight: 700;
+    text-transform: uppercase;
   }
 
   .editorial-contact-rail-actions {
@@ -2466,6 +2490,8 @@
     font-weight: 500;
     letter-spacing: -0.035em;
     line-height: 0.96;
+    font-weight: 700;
+    text-transform: uppercase;
   }
 
   .editorial-contact-copy {
@@ -2535,7 +2561,10 @@
 
   .editorial-contact-input:focus {
     border-color: var(--editorial-ink);
-    background: rgba(255, 255, 255, 0.24);
+    /* Was a 24% white wash, which read as a highlight on warm paper and is
+       invisible on white. The border carries the focus instead. */
+    background: transparent;
+    border-color: var(--editorial-ink);
   }
 
   .editorial-contact-input option {
@@ -3001,6 +3030,8 @@
     font-weight: 500;
     letter-spacing: -0.035em;
     line-height: 0.96;
+    font-weight: 700;
+    text-transform: uppercase;
   }
 
   .editorial-ritual-standfirst {
@@ -3029,7 +3060,7 @@
     position: relative;
     grid-column: 2;
     margin: 0;
-    background: #dbd4c7;
+    background: var(--fill);
   }
 
   /* A drawing is ink on the page, not a picture in a frame: no tinted plate
@@ -3164,6 +3195,8 @@
     font-weight: 500;
     letter-spacing: -0.035em;
     line-height: 0.96;
+    font-weight: 700;
+    text-transform: uppercase;
   }
 
   .editorial-ritual-specs-intro p {
@@ -3353,6 +3386,8 @@
     font-weight: 500;
     letter-spacing: -0.035em;
     line-height: 0.96;
+    font-weight: 700;
+    text-transform: uppercase;
   }
 
   .editorial-account-head .editorial-overline {
