@@ -210,9 +210,6 @@ export function FridayEspresso({ linkTo, menuItems }: Props) {
         <div className="editorial-ritual-specs-intro">
           <p className="editorial-overline">02 — How it is served</p>
           <h2 id="ritual-specs-title">The same, every Friday.</h2>
-          <p>
-            Two drinks, one tray, and no variation worth mentioning. That is the whole of it.
-          </p>
         </div>
 
         <dl className="editorial-ritual-spec-list">
