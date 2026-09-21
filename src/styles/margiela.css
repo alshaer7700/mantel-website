@@ -3989,9 +3989,53 @@
    * variables went with it: each was already an alias of a shared token, so
    * the rules name the tokens directly.
    *
-   * They are still grouped by surface rather than merged into the matching
-   * blocks above. Merging them is safe to do one surface at a time; what is
-   * no longer possible is the class of bug that made this necessary.
+   * ── THIRTY SELECTORS ARE DEFINED TWICE ─────────────────────────────────
+   *
+   * Each of these also has a block earlier in this file. Both apply; this one
+   * is later in the same layer, so it wins on any property they share. That
+   * is correct today and is the trap tomorrow: edit the block above and
+   * nothing happens, because the property is set again down here.
+   *
+   *   .editorial-footer
+   *   .editorial-footer-bottom
+   *   .editorial-footer-link
+   *   .editorial-footer-title
+   *   .editorial-hero-content h1
+   *   .editorial-hero-links .editorial-link
+   *   .editorial-hero-links .editorial-link::after
+   *   .editorial-mobile-trigger
+   *   .editorial-nav
+   *   .editorial-nav-action
+   *   .editorial-object-add
+   *   .editorial-object-add:hover:not(:disabled)
+   *   .editorial-object-fold
+   *   .editorial-object-fold button
+   *   .editorial-object-fold p
+   *   .editorial-object-inbag
+   *   .editorial-object-index
+   *   .editorial-object-info h2
+   *   .editorial-object-info p
+   *   .editorial-object-panel h1
+   *   .editorial-object-price
+   *   .editorial-object-purchase
+   *   .editorial-object-purchase button
+   *   .editorial-object-stage
+   *   .editorial-object-standfirst
+   *   .editorial-objects-grid
+   *   .editorial-objects-intro h1
+   *   .editorial-objects-intro-copy p
+   *   .editorial-ticker
+   *   .editorial-wordmark small
+   *
+   * Merging them was attempted mechanically and reverted: half of these have
+   * a third definition inside an @media block, and folding a top-level rule
+   * into a media-query rule changes WHEN it applies, not just what it says.
+   * The script that ignored that produced invalid CSS and failed the build —
+   * which is the argument for doing this by hand, one surface at a time,
+   * with the before/after pixel diff running, rather than in one pass.
+   *
+   * Until then: if a change to a surface above appears to do nothing, the
+   * override is here.
    */
 
 
