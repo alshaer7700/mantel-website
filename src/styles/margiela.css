@@ -405,9 +405,9 @@
     display: grid;
     grid-template-columns: minmax(0, 0.9fr) minmax(320px, 1.1fr);
     align-items: center;
-    gap: clamp(32px, 9vw, 150px);
+    gap: clamp(32px, 9vw, 170px);
     min-height: 580px;
-    padding: clamp(64px, 10vw, 132px) clamp(24px, 8vw, 120px);
+    padding: var(--air-xl) var(--gutter);
   }
 
   .editorial-intro-copy {
@@ -550,7 +550,7 @@
   }
 
   .editorial-products {
-    padding: clamp(74px, 10vw, 130px) clamp(18px, 5vw, 80px) clamp(82px, 10vw, 132px);
+    padding: var(--air-xl) var(--gutter);
   }
 
   .editorial-section-heading {
@@ -655,8 +655,8 @@
   .editorial-manifesto {
     display: grid;
     grid-template-columns: minmax(200px, 0.68fr) minmax(0, 1.32fr);
-    gap: clamp(36px, 10vw, 180px);
-    padding: clamp(74px, 10vw, 132px) clamp(24px, 8vw, 120px);
+    gap: clamp(36px, 10vw, 190px);
+    padding: var(--air-xl) var(--gutter);
     background: var(--fill);
   }
 
@@ -697,8 +697,8 @@
   .editorial-cafe-preview {
     display: grid;
     grid-template-columns: minmax(0, 0.8fr) minmax(320px, 1.2fr);
-    gap: clamp(34px, 9vw, 150px);
-    padding: clamp(74px, 10vw, 132px) clamp(24px, 8vw, 120px);
+    gap: clamp(34px, 9vw, 170px);
+    padding: var(--air-xl) var(--gutter);
     background: var(--fill);
   }
 
@@ -747,7 +747,7 @@
     grid-template-columns: minmax(0, 1fr) minmax(320px, 1fr);
     align-items: end;
     gap: 40px;
-    padding: clamp(74px, 9vw, 122px) clamp(24px, 8vw, 120px);
+    padding: var(--air-xl) var(--gutter);
   }
 
   .editorial-newsletter h2 {
@@ -934,7 +934,7 @@
   }
 
   .editorial-footer {
-    padding: 0 clamp(22px, 8vw, 120px) 28px;
+    padding: 0 var(--gutter) var(--air-md);
     background: var(--editorial-paper);
     border-top: 1px solid var(--editorial-line);
   }
@@ -948,7 +948,7 @@
    * copyright line below already says whose site this is.
    */
   .editorial-footer-mark {
-    padding: clamp(34px, 6vw, 70px) 0 clamp(20px, 3vw, 34px);
+    padding: var(--air-lg) 0 var(--air-md);
     color: var(--editorial-ink);
     font-family: var(--font-grotesk);
     font-size: clamp(56px, 15.5vw, 240px);
@@ -963,7 +963,7 @@
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 40px 24px;
-    padding: clamp(26px, 4vw, 44px) 0 clamp(30px, 5vw, 56px);
+    padding: var(--air-md) 0 var(--air-lg);
     border-top: 1px solid var(--editorial-line);
   }
 
@@ -1264,10 +1264,10 @@
    *     their voice.
    */
   .editorial-objects-page {
-    --shelf-gutter: clamp(22px, 8vw, 120px);
+    --shelf-gutter: var(--gutter);
 
     min-height: 70vh;
-    padding: clamp(70px, 10vw, 132px) 0 clamp(90px, 12vw, 160px);
+    padding: var(--air-xl) 0 var(--air-xl);
     background: var(--editorial-paper);
   }
 
@@ -1276,7 +1276,7 @@
     grid-template-columns: minmax(0, 1fr) minmax(260px, 0.7fr);
     align-items: end;
     gap: 40px;
-    padding: 0 var(--shelf-gutter) 52px;
+    padding: 0 var(--shelf-gutter) var(--air-lg);
   }
 
   .editorial-objects-intro h1 {
@@ -1328,12 +1328,23 @@
    * hairline above and below the whole run — so the eye reads a shelf, and the
    * objects on it are the only things with edges.
    */
+  /*
+   * The tiles used to touch — gutterless and borderless, which is the
+   * Margiela move the shelf was modelled on and reads as one continuous run.
+   * The brief is empty space now, so they separate: a wide column gap and a
+   * much wider row gap, so each object sits in its own air and the eye stops
+   * between them instead of scanning a strip.
+   *
+   * The closing hairline goes with it. With this much room between rows the
+   * grid no longer needs a line to say where it ends.
+   */
   .editorial-objects-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 0;
+    column-gap: clamp(20px, 3.5vw, 64px);
+    row-gap: var(--air-xl);
+    padding: 0 var(--shelf-gutter);
     background: var(--editorial-paper);
-    border-bottom: 1px solid var(--editorial-line);
   }
 
   /*
@@ -1390,7 +1401,7 @@
     box-sizing: border-box;
     width: 100%;
     height: 100%;
-    padding: var(--object-pad, 9%);
+    padding: var(--object-pad, 15%);
     object-fit: contain;
     object-position: center;
     filter: none;
@@ -1475,8 +1486,10 @@
     display: flex;
     flex: 1;
     flex-direction: column;
-    gap: 14px;
-    padding: 14px var(--caption-pad, 16px) 0;
+    gap: 16px;
+    /* No side padding any more: the grid's own gap does that job now, and
+       doubling it just narrowed the caption for no reason. */
+    padding: var(--air-sm) 0 0;
   }
 
   /*
@@ -1492,7 +1505,7 @@
    * side.
    */
   .editorial-object-info h2 {
-    margin: 0 0 8px;
+    margin: 0 0 10px;
     color: var(--editorial-ink);
     font-family: var(--font-grotesk);
     font-size: clamp(21px, 2.2vw, 29px);
@@ -1637,13 +1650,13 @@
 @layer components {
   .editorial-about-page {
     min-height: 62vh;
-    padding: clamp(76px, 12vw, 160px) clamp(24px, 9vw, 140px) clamp(100px, 14vw, 180px);
+    padding: var(--air-xl) var(--gutter);
     background: var(--editorial-paper);
   }
 
   .editorial-about-content {
     max-width: 680px;
-    margin: clamp(88px, 14vw, 190px) auto 0;
+    margin: var(--air-xl) auto 0;
   }
 
   /*
@@ -3729,8 +3742,7 @@
    */
   .editorial-object-page {
     min-height: 70vh;
-    padding: clamp(24px, 4vw, 44px) var(--shelf-gutter, clamp(22px, 8vw, 120px))
-      clamp(80px, 12vw, 150px);
+    padding: var(--air-md) var(--gutter) var(--air-xl);
     background: var(--editorial-paper);
   }
 
@@ -3782,7 +3794,7 @@
     margin: 0 auto;
     grid-template-columns: minmax(0, 1.25fr) minmax(300px, 0.75fr);
     align-items: start;
-    gap: clamp(30px, 5vw, 80px);
+    gap: clamp(30px, 5vw, 110px);
   }
 
   /* The same frame the shelf uses, so a product does not change size when it
@@ -4137,13 +4149,23 @@
 
 /* The action is a solid bar, always there, priced. No hover reveal: on the
    reference stores the button is the loudest thing on the card. */
+/*
+ * Quieter than it was, and deliberately quieter than the product page's.
+ *
+ * Five solid black bars down an otherwise open grid were the loudest thing on
+ * the shelf, and with this much air around them they read as five demands
+ * rather than five objects. The shelf's job is to show the things; the solid
+ * bar belongs on the product page, where it is the one action on the screen.
+ * Here it is an outline that fills in on approach.
+ */
 .editorial-object-purchase button {
   display: block;
   width: 100%;
-  margin-top: 10px;
-  padding: 11px 10px;
-  background: var(--editorial-ink);
-  color: #ffffff;
+  margin-top: var(--s-2);
+  padding: 12px 10px;
+  border: 1px solid var(--editorial-line);
+  background: transparent;
+  color: var(--editorial-ink);
   font-family: var(--font-grotesk);
   font-size: 9px;
   font-weight: 700;
@@ -4154,8 +4176,9 @@
 }
 
 .editorial-object-purchase button:hover:not(:disabled) {
-  background: #333333;
-  color: #ffffff;
+  border-color: var(--editorial-ink);
+  background: var(--editorial-ink);
+  color: var(--editorial-paper);
 }
 
 .editorial-objects-ledger,

@@ -29,11 +29,11 @@ export function Cafe({ linkTo, sections, category, loading, error }: Props) {
 
   return (
     <div>
-      <header className="text-center pt-[clamp(2.5rem,7vh,4rem)] pb-[clamp(2rem,6vh,3.5rem)]">
+      <header className="text-center pt-[var(--air-xl)] pb-[var(--air-lg)]">
         <h1 className="font-grotesk font-bold uppercase text-[length:var(--fs-page-title)] tracking-[-0.03em] leading-[0.92] m-0 text-[color:var(--ink)]">
           Menu
         </h1>
-        <div aria-hidden="true" className="mx-auto mt-[26px] mb-[16px] w-px h-[34px] bg-[color:var(--line)]" />
+        <div aria-hidden="true" className="mx-auto mt-[var(--air-md)] mb-[var(--air-sm)] w-px h-[48px] bg-[color:var(--line)]" />
         <p className={LABEL}>
           Permanent collection · Prices in BD
           {ORDERING_OPEN && PICKUP_OPEN && (
@@ -47,7 +47,7 @@ export function Cafe({ linkTo, sections, category, loading, error }: Props) {
         </p>
       </header>
 
-      <BleedPlate spec={PLATES.pour} className="mb-[clamp(3rem,8vh,5rem)]" />
+      <BleedPlate spec={PLATES.pour} className="mb-[var(--air-xl)]" />
 
       {loading ? (
         <p className="font-grotesk text-[14px] text-[color:var(--ink-muted)] py-[var(--s-5)]">

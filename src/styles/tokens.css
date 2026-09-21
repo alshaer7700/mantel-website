@@ -87,6 +87,33 @@
   --pad:   clamp(1.25rem, 5vw, 5rem);
   --shelf: 1px;
 
+  /* ── Air ────────────────────────────────────────────────────────────────
+   *
+   * The rhythm of the page, as four steps rather than the dozen unrelated
+   * clamp()s this file used to carry — clamp(74px,10vw,132px) next to
+   * clamp(70px,10vw,132px) next to clamp(76px,12vw,160px), three values
+   * doing one job and none of them agreeing.
+   *
+   * Sized deliberately generously. The brief was empty space: a shelf of
+   * five objects and a menu of twelve drinks does not need density, it needs
+   * room, and the room is what makes the things in it look chosen. Every
+   * step is fluid, so a phone gets a workable floor and a wide screen gets
+   * the air the design is actually about.
+   *
+   * --air-xl   between one section and the next
+   * --air-lg   inside a section: heading to content, content to close
+   * --air-md   between related blocks
+   * --air-sm   between a label and the thing it labels
+   */
+  --air-xl: clamp(104px, 17vh, 260px);
+  --air-lg: clamp(56px, 9vh, 132px);
+  --air-md: clamp(30px, 5vh, 64px);
+  --air-sm: clamp(16px, 2.4vh, 30px);
+
+  /* The side margin. Wider than the old 120–140px ceiling: on a large screen
+     the measure matters more than filling the glass. */
+  --gutter: clamp(22px, 7vw, 190px);
+
   /*
    * One deliberate deviation from the brief, which names this token --muted.
    * theme.css already defines --muted as the shadcn *surface* fill behind
