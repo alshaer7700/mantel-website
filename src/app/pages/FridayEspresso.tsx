@@ -208,13 +208,17 @@ export function FridayEspresso({ linkTo, menuItems }: Props) {
         </div>
 
         <dl className="editorial-ritual-spec-list">
-          {SERVICE_SPECS.map((spec) => (
-            <SpecRow key={spec.label} label={spec.label} value={spec.value} />
-          ))}
           {/* Prices are the menu's to state, so a row appears only for a drink
-              the menu currently carries a price for. */}
-          {espresso !== null && <SpecRow label="Espresso" value={formatBhd(espresso)} />}
-          {sparkling !== null && <SpecRow label="Sparkling water" value={formatBhd(sparkling)} />}
+              the menu currently carries a price for — folded into one array,
+              rather than three separate maps, so the cards number straight
+              through regardless of how many of the two price rows show. */}
+          {[
+            ...SERVICE_SPECS,
+            ...(espresso !== null ? [{ label: "Espresso", value: formatBhd(espresso) }] : []),
+            ...(sparkling !== null ? [{ label: "Sparkling water", value: formatBhd(sparkling) }] : []),
+          ].map((spec, i) => (
+            <SpecRow key={spec.label} index={i + 1} label={spec.label} value={spec.value} />
+          ))}
         </dl>
       </section>
 
@@ -233,8 +237,8 @@ export function FridayEspresso({ linkTo, menuItems }: Props) {
           </div>
 
           <dl className="editorial-ritual-spec-list">
-            {publishedExtraction.map((spec) => (
-              <SpecRow key={spec.label} label={spec.label} value={spec.value} />
+            {publishedExtraction.map((spec, i) => (
+              <SpecRow key={spec.label} index={i + 1} label={spec.label} value={spec.value} />
             ))}
           </dl>
         </section>
@@ -248,9 +252,10 @@ export function FridayEspresso({ linkTo, menuItems }: Props) {
   );
 }
 
-function SpecRow({ label, value }: { label: string; value: CoffeeSpec["value"] }) {
+function SpecRow({ index, label, value }: { index: number; label: string; value: CoffeeSpec["value"] }) {
   return (
     <div className="editorial-ritual-spec-row">
+      <span className="editorial-ritual-spec-index" aria-hidden="true">{String(index).padStart(2, "0")}</span>
       <dt>{label}</dt>
       <dd>{value}</dd>
     </div>

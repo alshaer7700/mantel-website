@@ -3209,24 +3209,38 @@
     line-height: 1.38;
   }
 
+  /*
+   * A grid of numbered cards rather than a flat label/value list — the same
+   * hairline-shared-as-gap trick the Objects shelf uses (margiela.css's own
+   * .editorial-objects-grid), so the rules between cards are drawn once by
+   * the grid gap instead of doubled up as borders on each cell.
+   */
   .editorial-ritual-spec-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1px;
     margin: 0;
+    border: 1px solid var(--editorial-line);
+    background: var(--editorial-line);
   }
 
   .editorial-ritual-spec-row {
     display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: 20px;
-    padding: 13px 0;
-    border-bottom: 1px solid var(--editorial-line);
+    flex-direction: column;
+    gap: 10px;
+    padding: 22px 20px;
+    background: var(--editorial-paper);
   }
 
-  .editorial-ritual-spec-row:first-child {
-    border-top: 1px solid var(--editorial-line);
+  .editorial-ritual-spec-index {
+    color: var(--editorial-muted);
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.16em;
   }
 
   .editorial-ritual-spec-row dt {
+    margin: -4px 0 0;
     color: var(--editorial-muted);
     font-family: var(--font-mono);
     font-size: 10px;
@@ -3240,9 +3254,24 @@
     margin: 0;
     color: var(--editorial-ink);
     font-family: var(--font-serif);
-    font-size: 17px;
-    line-height: 1.3;
-    text-align: right;
+    font-size: clamp(19px, 2.4vw, 25px);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    line-height: 1.08;
+  }
+
+  @media (min-width: 520px) {
+    .editorial-ritual-spec-list {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    /* An odd count (5 specs is the base case) would otherwise leave one
+       empty cell at the end — :last-child:nth-child(odd) is only true when
+       the total is odd, whatever that total turns out to be, so the last
+       card takes the full row instead of a grey gap sitting next to it. */
+    .editorial-ritual-spec-row:last-child:nth-child(odd) {
+      grid-column: 1 / -1;
+    }
   }
 
   .editorial-ritual-foot {
@@ -3326,16 +3355,6 @@
       left: -10px;
       width: 52px;
       height: 52px;
-    }
-
-    .editorial-ritual-spec-row {
-      align-items: start;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .editorial-ritual-spec-row dd {
-      text-align: left;
     }
   }
 
