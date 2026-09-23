@@ -8,6 +8,7 @@ import { fetchMenu, groupByCategory } from "@/lib/api/menu";
 import { Home } from "@/app/pages/Home";
 import { FridayEspresso } from "@/app/pages/FridayEspresso";
 import { Objects } from "@/app/pages/Objects";
+import { ProductDetail } from "@/app/pages/ProductDetail";
 import { RETAIL_PRODUCTS } from "@/app/content/retail";
 import { fetchObjects } from "@/lib/api/objects";
 import { CartDrawer, type CheckoutDetails } from "@/app/components/cart/CartDrawer";
@@ -100,6 +101,9 @@ export default function App() {
   const [cartHydrated, setCartHydrated] = useState(false);
   const [menuCategory, setMenuCategory] = useState<MenuCategory>(
     () => routeFor(window.location.pathname).menuCategory,
+  );
+  const [objectSlug, setObjectSlug] = useState<string | null>(
+    () => routeFor(window.location.pathname).objectSlug,
   );
   const [form, setForm] = useState<ContactForm>({ name: "", lastName: "", email: "", phone: "", comment: "" });
   /* The name and mobile ON THE ACCOUNT, kept apart from the contact form's own
@@ -279,9 +283,10 @@ export default function App() {
   }, []);
 
   /* Everything a navigation closes, regardless of what triggered it. */
-  const settle = (p: Page, category: MenuCategory = null) => {
+  const settle = (p: Page, category: MenuCategory = null, objectSlug: string | null = null) => {
     setPage(p);
     setMenuCategory(category);
+    setObjectSlug(objectSlug);
     setSidebarOpen(false);
     setSearchOpen(false);
     setAccountOpen(false);
@@ -289,19 +294,19 @@ export default function App() {
     window.scrollTo(0, 0);
   };
 
-  const goTo = (p: Page, category: MenuCategory = null) => {
-    const next = pathFor(p, category);
+  const goTo = (p: Page, category: MenuCategory = null, objectSlug: string | null = null) => {
+    const next = pathFor(p, category, objectSlug);
     if (window.location.pathname !== next) {
       window.history.pushState({}, "", next);
     }
-    settle(p, category);
+    settle(p, category, objectSlug);
   };
 
   /* Back and Forward move through the site instead of leaving it. */
   useEffect(() => {
     const onPop = () => {
       const r = routeFor(window.location.pathname);
-      settle(r.page, r.menuCategory);
+      settle(r.page, r.menuCategory, r.objectSlug);
     };
     window.addEventListener("popstate", onPop);
     return () => window.removeEventListener("popstate", onPop);
@@ -314,7 +319,7 @@ export default function App() {
      return to it. */
   useEffect(() => {
     const r = routeFor(window.location.pathname);
-    const canonical = pathFor(r.page, r.menuCategory);
+    const canonical = pathFor(r.page, r.menuCategory, r.objectSlug);
     if (window.location.pathname !== canonical) {
       window.history.replaceState({}, "", canonical);
     }
@@ -322,18 +327,27 @@ export default function App() {
 
   useEffect(() => {
     const seo = SEO_BY_PAGE[page];
-    const canonicalPath = pathFor(page, page === "menu" ? menuCategory : null);
+    const canonicalPath = pathFor(
+      page,
+      page === "menu" ? menuCategory : null,
+      page === "objects" ? objectSlug : null,
+    );
     const canonicalUrl = `${SITE_ORIGIN}${canonicalPath === "/" ? "/" : canonicalPath}`;
-    document.title = seo.title;
-    updateMeta("name", "description", seo.description);
+    const product = page === "objects" && objectSlug
+      ? retailProducts.find((p) => p.id === objectSlug)
+      : undefined;
+    const title = product ? `${product.name} — Mantel Retail` : seo.title;
+    const description = product ? product.description : seo.description;
+    document.title = title;
+    updateMeta("name", "description", description);
     updateMeta("name", "robots", page === "admin" ? "noindex,nofollow" : "index,follow");
-    updateMeta("property", "og:title", seo.title);
-    updateMeta("property", "og:description", seo.description);
+    updateMeta("property", "og:title", title);
+    updateMeta("property", "og:description", description);
     updateMeta("property", "og:url", canonicalUrl);
     updateMeta("property", "og:site_name", "Mantel");
     const canonical = document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]');
     if (canonical) canonical.href = canonicalUrl;
-  }, [page, menuCategory]);
+  }, [page, menuCategory, objectSlug, retailProducts]);
 
   useEffect(() => {
     const overlayOpen = sidebarOpen || searchOpen || accountOpen || cartOpen;
@@ -402,13 +416,13 @@ export default function App() {
     return result;
   };
 
-  const linkTo = (p: Page, category: MenuCategory = null) => ({
-    href: pathFor(p, category),
+  const linkTo = (p: Page, category: MenuCategory = null, objectSlug: string | null = null) => ({
+    href: pathFor(p, category, objectSlug),
     onClick: (e: React.MouseEvent) => {
       if (e.defaultPrevented || e.button !== 0) return;
       if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
       e.preventDefault();
-      goTo(p, category);
+      goTo(p, category, objectSlug);
     },
   });
 
@@ -539,7 +553,7 @@ export default function App() {
         id="mantel-mobile-drawer"
         ref={sidebarRef}
         className={`fixed inset-0 z-[70] bg-background flex flex-col transition-transform duration-300 ease-in-out ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
+          sidebarOpen ? "translate-y-0" : "-translate-y-full"
         }`}
         role="dialog"
         aria-modal="true"
@@ -587,25 +601,25 @@ export default function App() {
         {/* Drawer links */}
         <nav className="editorial-sidebar-links">
           <a
-            className="text-left font-serif font-normal text-2xl text-foreground hover:opacity-50 transition-opacity"
+            className="text-left font-serif font-normal text-lg text-foreground hover:opacity-50 transition-opacity"
             {...linkTo("menu")}
           >
             Menu
           </a>
           <a
-            className="text-left font-serif font-normal text-2xl text-foreground hover:opacity-50 transition-opacity"
+            className="text-left font-serif font-normal text-lg text-foreground hover:opacity-50 transition-opacity"
             {...linkTo("pickup")}
           >
             Pick Up
           </a>
           <a
-            className="text-left font-serif font-normal text-2xl text-foreground hover:opacity-50 transition-opacity"
+            className="text-left font-serif font-normal text-lg text-foreground hover:opacity-50 transition-opacity"
             {...linkTo("objects")}
           >
             Retail
           </a>
           <a
-            className="text-left font-serif font-normal text-2xl text-foreground hover:opacity-50 transition-opacity"
+            className="text-left font-serif font-normal text-lg text-foreground hover:opacity-50 transition-opacity"
             {...linkTo("story")}
           >
             About Us
@@ -651,6 +665,7 @@ export default function App() {
           recovering={recovering}
           navHeight={scrolled ? SCROLLED_NAV_HEIGHT : navHeight}
           onClose={() => { setAccountOpen(false); setRecovering(false); }}
+          onShopNow={() => goTo("objects")}
         />
       )}
 
@@ -719,7 +734,21 @@ export default function App() {
       {page === "objects" && (
         <main id="main-content" className="flex flex-col min-h-screen" style={{ paddingTop: navHeight }}>
           <div className="flex-1">
-            <Objects linkTo={linkTo} products={retailProducts} loading={retailLoading} error={retailError} cartLines={cartLines} onAdd={addToCart} />
+            {(() => {
+              const product = objectSlug ? retailProducts.find((p) => p.id === objectSlug) : undefined;
+              /* An unrecognised slug degrades to the shelf, same as an
+                 unrecognised menu category degrades to the full menu. */
+              return product ? (
+                <ProductDetail
+                  linkTo={linkTo}
+                  product={product}
+                  cartLines={cartLines}
+                  onAdd={addToCart}
+                />
+              ) : (
+                <Objects linkTo={linkTo} products={retailProducts} loading={retailLoading} error={retailError} cartLines={cartLines} onAdd={addToCart} />
+              );
+            })()}
           </div>
           <EditorialFooter linkTo={linkTo} />
         </main>

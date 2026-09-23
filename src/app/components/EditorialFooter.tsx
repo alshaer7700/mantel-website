@@ -22,8 +22,6 @@ export function EditorialFooter({ linkTo }: Props) {
           <p className="editorial-footer-title">Legal Information</p>
           <a {...linkTo("terms")} className="editorial-footer-link">Terms</a>
           <a {...linkTo("privacy")} className="editorial-footer-link">Privacy</a>
-          <a href="#cookie-policy" className="editorial-footer-link">Cookie</a>
-          <a href="#accessibility" className="editorial-footer-link">Accessibility Statement</a>
         </div>
 
         <div className="editorial-footer-instagram">

@@ -15,12 +15,14 @@
 //   CONTACT_NOTIFY_SECRET   same value stored in Vault as contact_notify_secret
 // Optional:
 //   CONTACT_NOTIFY_TO       default hello@bymantel.com
-//   CONTACT_NOTIFY_FROM     default Mantel <notifications@send.bymantel.com>
+//   CONTACT_NOTIFY_FROM     default Mantel <notifications@bymantel.com> — the
+//                           domain verified in Resend is bymantel.com itself,
+//                           not a send. subdomain, so FROM has to match that.
 
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 
 const TO = Deno.env.get("CONTACT_NOTIFY_TO") ?? "hello@bymantel.com";
-const FROM = Deno.env.get("CONTACT_NOTIFY_FROM") ?? "Mantel <notifications@send.bymantel.com>";
+const FROM = Deno.env.get("CONTACT_NOTIFY_FROM") ?? "Mantel <notifications@bymantel.com>";
 
 type ContactRecord = {
   id?: string;
