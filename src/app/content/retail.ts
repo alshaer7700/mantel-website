@@ -3,7 +3,6 @@ import retailToteImage from "@/imports/retail-tote.webp";
 import retailToteHeartImage from "@/imports/retail-tote-heart.webp";
 import retailLighterImage from "@/imports/retail-lighter.webp";
 import retailLighterCheckImage from "@/imports/retail-lighter-check.webp";
-import retailCandleImage from "@/imports/retail-candle.webp";
 import retailCandleTinMacroImage from "@/imports/retail-candle-tin-macro.webp";
 import retailMatchSticksWallImage from "@/imports/retail-match-sticks-wall.webp";
 import retailMatchSticksOpenAImage from "@/imports/retail-match-sticks-open-a.webp";
@@ -96,8 +95,7 @@ export const RETAIL_PRODUCTS: RetailProduct[] = [
     name: "Candles",
     description: "A soft light for the end of the day.",
     price: 7,
-    image: retailCandleImage,
-    images: [retailCandleImage, retailCandleTinMacroImage],
+    image: retailCandleTinMacroImage,
     tone: "candle",
     story: "Soy wax in a stamped tin, poured in small batches. Warm wood and dry smoke — the room after the counter closes.",
     care:
