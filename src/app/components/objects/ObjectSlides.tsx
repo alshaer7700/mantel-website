@@ -1,34 +1,62 @@
-import { useRef, useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { ChevronLeft, ChevronRight, Maximize2, X } from "lucide-react";
 
 /*
  * The image slot on a retail card, for products that have more than one face.
  *
- * Every product with two or more faces gets the same control: a swipeable
- * track, with a pair of arrow buttons for a pointer that doesn't drag and the
- * dots for aim. This used to give exactly-two-face products (the tote, the
- * lighter) a 3D card flip instead — dropped in favour of one interaction
- * that behaves the same everywhere, rather than a flip on some cards and a
- * swipe on others.
+ * Every product with more than one face — the tote, the lighter, the match
+ * sticks alike — gets the same swipeable track rather than a flip on some
+ * cards and a drag on others. This used to give exactly-two-face products
+ * (the tote, the lighter) a 3D card flip instead — dropped in favour of one
+ * interaction that behaves the same everywhere, rather than a flip on some
+ * cards and a swipe on others.
  *
  * A product with one image renders exactly the <img> the card rendered
  * before, with no dots and nothing to click.
  *
- * Both controls sit inside a link to the product's own page (Objects.tsx),
- * so every gesture here has to stop the click there rather than let it
- * bubble into the anchor and navigate away mid-browse.
+ * Every control here — swipe, arrows, dots, zoom — sits inside a link to the
+ * product's own page on the shelf grid (Objects.tsx), so every gesture has
+ * to stop the click there rather than let it bubble into the anchor and
+ * navigate away. `zoomable` defaults to off for exactly that reason: a
+ * magnify trigger is one more thing to tap past on an already-small grid
+ * tile, competing with the arrows and dots it already carries. The product's
+ * own page (ProductDetail.tsx), which has nothing else fighting the image
+ * for space, turns it on.
  */
 
 type Props = {
   images: readonly string[];
   alt: string;
+  zoomable?: boolean;
 };
 
-export function ObjectSlides({ images, alt }: Props) {
+export function ObjectSlides({ images, alt, zoomable = false }: Props) {
   const [shown, setShown] = useState(0);
+  const [zoomed, setZoomed] = useState(false);
+
+  const openZoom = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setZoomed(true);
+  };
 
   if (images.length < 2) {
-    return <img src={images[0]} alt={alt} loading="lazy" />;
+    return (
+      <>
+        <img src={images[0]} alt={alt} loading="lazy" />
+        {zoomable && (
+          <button
+            type="button"
+            className="editorial-object-zoom-trigger"
+            onClick={openZoom}
+            aria-label={`Zoom in on ${alt}`}
+          >
+            <Maximize2 size={14} strokeWidth={1.5} aria-hidden="true" />
+          </button>
+        )}
+        {zoomed && images[0] && <Lightbox src={images[0]} alt={alt} onClose={() => setZoomed(false)} />}
+      </>
+    );
   }
 
   const goPrev = (e: React.MouseEvent) => {
@@ -64,6 +92,16 @@ export function ObjectSlides({ images, alt }: Props) {
       >
         <ChevronRight size={16} strokeWidth={1.5} aria-hidden="true" />
       </button>
+      {zoomable && (
+        <button
+          type="button"
+          className="editorial-object-zoom-trigger"
+          onClick={openZoom}
+          aria-label={`Zoom in on ${alt}`}
+        >
+          <Maximize2 size={14} strokeWidth={1.5} aria-hidden="true" />
+        </button>
+      )}
       <div className="editorial-object-dots">
         {images.map((src, i) => (
           <button
@@ -80,7 +118,58 @@ export function ObjectSlides({ images, alt }: Props) {
           />
         ))}
       </div>
+      {zoomed && images[shown] && <Lightbox src={images[shown]} alt={alt} onClose={() => setZoomed(false)} />}
     </>
+  );
+}
+
+/*
+ * The zoomed view: the same photograph, full-screen, with nothing else on
+ * it. Closes on the X, on clicking the backdrop, or on Escape — three exits
+ * because a full-bleed dark overlay is easy to get stuck inside otherwise.
+ */
+function Lightbox({ src, alt, onClose }: { src: string; alt: string; onClose: () => void }) {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
+
+  return (
+    <div
+      className="editorial-object-lightbox"
+      role="dialog"
+      aria-modal="true"
+      aria-label={alt}
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        onClose();
+      }}
+    >
+      <button
+        type="button"
+        className="editorial-object-lightbox-close"
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          onClose();
+        }}
+        aria-label="Close"
+      >
+        <X size={20} strokeWidth={1.5} aria-hidden="true" />
+      </button>
+      <img
+        src={src}
+        alt={alt}
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+        }}
+      />
+    </div>
   );
 }
 
