@@ -91,15 +91,32 @@ export type CartLine = {
  * objects reads better than one with a drawing on it.
  *
  * EVERY FILE HERE IS A CUT-OUT ON TRANSPARENT PNG, trimmed to the object and
- * re-centred on one square canvas at a fixed margin. Both halves of that matter
- * and both are easy to get wrong:
+ * re-centred on one square canvas. Both of these matter and both are easy to
+ * get wrong:
  *
  *   transparent   the cards carry no tone block any more (see margiela.css).
  *                 An image with its own background paints a rectangle onto the
  *                 page, which is what the shelf looked like before.
- *   same margin   --object-pad frames every card identically, so a product
- *                 padded tighter in its own file simply reads larger on the
- *                 shelf. The object spans ~86% of its canvas in all of these.
+ *   real scale    every canvas is the same 1400x1400, but the object's fill
+ *                 of that canvas is NOT the same across products — it is
+ *                 chosen per product from its approximate real size, so a
+ *                 lighter reads smaller on the shelf than the tote it sits
+ *                 next to, the way it does on a real counter. Equal fill for
+ *                 every product (tried first) made a pocket lighter and a
+ *                 canvas tote read as the same size, which was the wrong
+ *                 fix — airier margins were the ask, not equal ones:
+ *
+ *                   tote            58%   (~38cm, the largest object here)
+ *                   candle sticks   50%   (~25cm, tall but slender)
+ *                   candles (tin)   45%   (~7.5cm, a squat tin)
+ *                   match sticks    42%   (~8cm box)
+ *                   lighters        40%   (~8cm, the smallest)
+ *
+ *                 Floored around 40% rather than scaled all the way down
+ *                 linearly — a lighter at its true fraction of a tote's size
+ *                 would be a speck, illegible on the shelf rather than
+ *                 "smaller." A new product's fill should slot into this
+ *                 table by its own real size, not default to 55%.
  *
  * A replacement has to meet both, or it will stand out from the rest.
  *
