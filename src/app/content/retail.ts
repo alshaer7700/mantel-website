@@ -99,7 +99,9 @@ export type CartLine = {
  *                 page, which is what the shelf looked like before.
  *   same margin   --object-pad frames every card identically, so a product
  *                 padded tighter in its own file simply reads larger on the
- *                 shelf. The object spans ~86% of its canvas in all of these.
+ *                 shelf. The object spans ~55% of its canvas in all of these —
+ *                 the airier, more generous margin of the Margiela reference
+ *                 this shelf is styled after, not a snug product-photo crop.
  *
  * A replacement has to meet both, or it will stand out from the rest.
  *
