@@ -7,7 +7,6 @@ import retailLighterLeopardBackImage from "@/imports/retail-lighter-leopard-back
 import retailLighterCheckerboardFrontImage from "@/imports/retail-lighter-checkerboard-front.webp";
 import retailLighterCheckerboardBackImage from "@/imports/retail-lighter-checkerboard-back.webp";
 import retailCandleTinMacroImage from "@/imports/retail-candle-tin-macro.webp";
-import retailMatchSticksOpenImage from "@/imports/retail-match-sticks-open.webp";
 import retailMatchSticksLabelImage from "@/imports/retail-match-sticks-label.webp";
 
 /*
@@ -65,15 +64,15 @@ export type CartLine = {
 /*
  * ── THE PRODUCT PHOTOGRAPHS ─────────────────────────────────────────────────
  *
- * All seven are the real objects, reshot 2026-09-23 (candles, candle-sticks
- * and match-sticks each moved from one face to several, stepped through by
- * ObjectSlides):
+ * All seven are the real objects, reshot 2026-09-23 (candles and candle-sticks
+ * moved from one face to several, stepped through by ObjectSlides; match-sticks
+ * went the other way — two faces, then back to the one straight-on shot):
  *
  *   candles                the stamped tin, macro
  *   lighters-leopard       front then back of the leopard lighter
  *   lighters-checkerboard  front then back of the checkerboard lighter
  *   candle-sticks          the pair of cream tapers, unlit then lit
- *   match-sticks           the printed label face, then the open box
+ *   match-sticks           the open box, straight on
  *   custom-bags-mantel     the "Mantel." wordmark tote
  *   custom-bags-heart      the red-heart tote
  *
@@ -185,7 +184,6 @@ export const RETAIL_PRODUCTS: RetailProduct[] = [
     description: "A little fire for the everyday ritual.",
     price: 2.5,
     image: retailMatchSticksLabelImage,
-    images: [retailMatchSticksLabelImage, retailMatchSticksOpenImage],
     tone: "matches",
     story: "A box of safety matches under the Mantel label, for the candles and everything else that needs a light.",
     care: "Store somewhere dry, away from the stove.",
