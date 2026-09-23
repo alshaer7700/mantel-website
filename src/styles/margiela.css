@@ -1302,8 +1302,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 26px;
-    height: 26px;
+    width: 32px;
+    height: 32px;
     padding: 0;
     border: none;
     background: none;
@@ -1638,8 +1638,13 @@
   }
 
   .editorial-retail-detail-image .editorial-object-arrow {
-    width: 32px;
-    height: 32px;
+    width: 42px;
+    height: 42px;
+  }
+
+  .editorial-retail-detail-image .editorial-object-arrow svg {
+    width: 26px;
+    height: 26px;
   }
 
   .editorial-retail-detail-image .editorial-object-arrow-prev {

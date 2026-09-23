@@ -81,7 +81,7 @@ export function ObjectSlides({ images, alt, zoomable = false }: Props) {
         disabled={shown === 0}
         aria-label={`${alt}, previous view`}
       >
-        <ChevronLeft size={16} strokeWidth={1.5} aria-hidden="true" />
+        <ChevronLeft size={20} strokeWidth={1.5} aria-hidden="true" />
       </button>
       <button
         type="button"
@@ -90,7 +90,7 @@ export function ObjectSlides({ images, alt, zoomable = false }: Props) {
         disabled={shown === images.length - 1}
         aria-label={`${alt}, next view`}
       >
-        <ChevronRight size={16} strokeWidth={1.5} aria-hidden="true" />
+        <ChevronRight size={20} strokeWidth={1.5} aria-hidden="true" />
       </button>
       {zoomable && (
         <button
