@@ -71,11 +71,16 @@ export type CartLine = {
  *   lighters-checkerboard  front then back of the checkerboard lighter
  *   candle-sticks          the pair of cream tapers, unlit then lit
  *   match-sticks           the printed label face, then the open box
- *   custom-bags            the "Mantel." tote and its red-heart face, also two
+ *   custom-bags            the "Mantel." wordmark tote, then the red-heart tote
  *
  * Lighters used to be one card stepping through both colourways. Split into
  * two products because they are two separate lighters, not two faces of one —
  * each needs its own Supabase objects row to stay purchasable (see 026).
+ *
+ * The two tote photos are two separate bags too, not two faces of one — the
+ * copy used to claim "printed both sides," which was wrong. Left as one
+ * product rather than split like lighters, since nobody has asked for that
+ * yet; if it comes up, follow the same pattern (026).
  *
  * matcha-powder used to be a sixth, and was the only one still on a pre-launch
  * mockup. It is gone rather than waiting for a photograph: a shelf of real
@@ -167,9 +172,9 @@ export const RETAIL_PRODUCTS: RetailProduct[] = [
     image: retailToteImage,
     images: [retailToteImage, retailToteHeartImage],
     tone: "bag",
-    story: "Heavy canvas, built for the walk home — the wordmark on one face, a red heart stitched on the other.",
+    story: "Heavy canvas, built for the walk home — two versions, one printed with the wordmark, one with a red heart.",
     care: "Machine wash cold, and hang to dry.",
-    collection: "Printed both sides — Mantel on one face, a red heart on the other.",
+    collection: "Two versions — one printed with the Mantel wordmark, one with a red heart.",
   },
 ];
 
