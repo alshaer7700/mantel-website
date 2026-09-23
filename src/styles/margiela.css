@@ -1381,33 +1381,19 @@
   }
 
   /*
-   * Price at rest, action on approach.
-   *
-   * Margiela's tile carries two caption layers: the default, and a second one
-   * absolutely positioned over it that only appears on hover. Six cards each
-   * shouting "Add to bag +" is the opposite of that. The price stays — it is
-   * information — and the button is what waits.
-   *
-   * It keeps its space while hidden, so nothing reflows, and it is revealed by
-   * focus-within as well as hover so the keyboard is never locked out. Below,
-   * any pointer that cannot hover gets it unconditionally.
-   */
-  /*
-   * A bordered box around price + CTA, not just plain text on the info
-   * stack — the shelf otherwise reads as pure typography with nowhere for
-   * the eye to land on "this is the buyable part." The button used to be
-   * invisible until hover, which meant a touch device (most of this site's
-   * traffic) only ever saw it via the separate hover:none escape hatch
-   * below; inside a box it reads as a real control, so it is visible from
-   * the start and that whole hover-reveal dance goes away.
+   * Price stays plain text — it is information. The button is the one
+   * filled black box on the card, the same treatment as the product page's
+   * own Add to bag (.editorial-retail-detail-add), so the shelf and the
+   * product page agree on what a "buy this" control looks like. It used to
+   * be invisible until hover, which meant a touch device (most of this
+   * site's traffic) never triggered that hover at all — a real button is
+   * visible from the start instead.
    */
   .editorial-object-purchase {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 8px;
-    border: 1px solid var(--editorial-line);
-    padding: 10px 14px;
     color: var(--editorial-ink);
     font-family: var(--font-mono);
     font-size: 13px;
@@ -1416,28 +1402,28 @@
 
   .editorial-object-purchase button {
     appearance: none;
-    border: 0;
-    background: transparent;
-    color: inherit;
+    border: 1px solid var(--editorial-ink);
+    background: var(--editorial-ink);
+    color: var(--editorial-paper);
     cursor: pointer;
     font-family: inherit;
     font-size: 10px;
     letter-spacing: 0.08em;
-    padding: 0;
+    padding: 8px 12px;
     text-transform: uppercase;
-    text-decoration: underline;
-    text-underline-offset: 3px;
     white-space: nowrap;
-    transition: color 160ms ease;
+    transition: opacity 160ms ease;
   }
 
-  .editorial-object-purchase button:hover {
-    color: var(--editorial-red);
+  .editorial-object-purchase button:hover:not(:disabled) {
+    opacity: 0.82;
   }
 
   .editorial-object-purchase button:disabled {
+    border-color: var(--editorial-line);
+    background: var(--editorial-line);
+    color: var(--editorial-muted);
     cursor: default;
-    opacity: 0.5;
   }
 
   /* The slide is decoration; the switch and the button must still happen. */
