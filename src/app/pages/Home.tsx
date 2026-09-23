@@ -196,7 +196,7 @@ export function Home({ linkTo }: Props) {
               To offer you a better experience, this site uses cookies and similar technologies for
               technical purposes and, with your consent, also for personalizing ads. For more
               information or to select your preferences click on “Monitoring Management” or read our
-              <a href="#cookie-policy"> Cookie Policy</a> and <a href="#privacy-policy">Privacy Policy</a>.
+              <a {...linkTo("privacy")}> Privacy Policy</a>.
             </p>
             {showCookieOptions && (
               <div className="editorial-cookie-options">

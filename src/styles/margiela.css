@@ -2459,8 +2459,7 @@
     max-width: 290px;
   }
 
-  .editorial-contact-rail-actions > a,
-  .editorial-contact-rail-pair a {
+  .editorial-contact-rail-actions > a {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -2476,21 +2475,9 @@
     transition: background-color 180ms ease, color 180ms ease;
   }
 
-  .editorial-contact-rail-actions > a:hover,
-  .editorial-contact-rail-pair a:hover {
+  .editorial-contact-rail-actions > a:hover {
     background: var(--editorial-ink);
     color: var(--editorial-paper);
-  }
-
-  .editorial-contact-rail-pair {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-  }
-
-  .editorial-contact-rail-pair a {
-    justify-content: center;
-    padding-inline: 8px;
   }
 
   .editorial-contact-rail-nav {

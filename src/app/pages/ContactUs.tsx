@@ -1,5 +1,5 @@
 import type { Dispatch, FormEvent, SetStateAction } from "react";
-import { ArrowUpRight, Mail, Phone, Search } from "lucide-react";
+import { ArrowUpRight, Mail, Search } from "lucide-react";
 import type { MenuCategory, Page } from "@/app/types";
 
 export type ContactForm = {
@@ -60,16 +60,10 @@ export function ContactUs({
             <Search size={15} strokeWidth={1.5} aria-hidden="true" />
             Search
           </a>
-          <div className="editorial-contact-rail-pair">
-            <a href="#mantel-contact-form" onClick={jumpToForm}>
-              <Mail size={14} strokeWidth={1.5} aria-hidden="true" />
-              Email
-            </a>
-            <a href="tel:+9733170385098">
-              <Phone size={14} strokeWidth={1.5} aria-hidden="true" />
-              Phone
-            </a>
-          </div>
+          <a href="#mantel-contact-form" onClick={jumpToForm}>
+            <Mail size={14} strokeWidth={1.5} aria-hidden="true" />
+            Email
+          </a>
         </div>
 
         <nav className="editorial-contact-rail-nav" aria-label="Support sections">
@@ -102,7 +96,6 @@ export function ContactUs({
 
         <div className="editorial-contact-copy">
           <p>We will respond to every email within 24 hours, from Monday to Saturday.</p>
-          <p>You can also call us at <a href="tel:+9733170385098">+973 3170 385098</a> — from 9 AM to 8 PM Bahrain time, Monday to Friday, and from 9 AM to 6 PM on Saturday.</p>
           <p>For wholesale, press, café, retail, or general feedback, send us a note and tell us how we can help.</p>
         </div>
 
