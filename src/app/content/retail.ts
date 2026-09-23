@@ -7,7 +7,6 @@ import retailCandleImage from "@/imports/retail-candle.webp";
 import retailCandleTinMacroImage from "@/imports/retail-candle-tin-macro.webp";
 import retailMatchSticksWallImage from "@/imports/retail-match-sticks-wall.webp";
 import retailMatchSticksOpenAImage from "@/imports/retail-match-sticks-open-a.webp";
-import retailMatchSticksOpenBImage from "@/imports/retail-match-sticks-open-b.webp";
 
 /*
  * The shape a cart line needs, regardless of whether it came from the Retail
@@ -135,7 +134,7 @@ export const RETAIL_PRODUCTS: RetailProduct[] = [
     description: "A little fire for the everyday ritual.",
     price: 2.5,
     image: retailMatchSticksWallImage,
-    images: [retailMatchSticksWallImage, retailMatchSticksOpenAImage, retailMatchSticksOpenBImage],
+    images: [retailMatchSticksWallImage, retailMatchSticksOpenAImage],
     tone: "matches",
     story: "A box of safety matches under the Mantel label, for the candles and everything else that needs a light.",
     care: "Store somewhere dry, away from the stove.",
