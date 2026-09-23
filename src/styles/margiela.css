@@ -1392,11 +1392,22 @@
    * focus-within as well as hover so the keyboard is never locked out. Below,
    * any pointer that cannot hover gets it unconditionally.
    */
+  /*
+   * A bordered box around price + CTA, not just plain text on the info
+   * stack — the shelf otherwise reads as pure typography with nowhere for
+   * the eye to land on "this is the buyable part." The button used to be
+   * invisible until hover, which meant a touch device (most of this site's
+   * traffic) only ever saw it via the separate hover:none escape hatch
+   * below; inside a box it reads as a real control, so it is visible from
+   * the start and that whole hover-reveal dance goes away.
+   */
   .editorial-object-purchase {
     display: flex;
-    align-items: end;
+    align-items: center;
     justify-content: space-between;
     gap: 8px;
+    border: 1px solid var(--editorial-line);
+    padding: 10px 14px;
     color: var(--editorial-ink);
     font-family: var(--font-mono);
     font-size: 13px;
@@ -1417,28 +1428,19 @@
     text-decoration: underline;
     text-underline-offset: 3px;
     white-space: nowrap;
-    opacity: 0;
-    transition: opacity 220ms ease, color 160ms ease;
-  }
-
-  .editorial-object-card:hover .editorial-object-purchase button,
-  .editorial-object-card:focus-within .editorial-object-purchase button {
-    opacity: 1;
+    transition: color 160ms ease;
   }
 
   .editorial-object-purchase button:hover {
     color: var(--editorial-red);
   }
 
-  /* A pointer that cannot hover can never reveal it, so it is never hidden. */
-  @media (hover: none) {
-    .editorial-object-purchase button {
-      opacity: 1;
-    }
+  .editorial-object-purchase button:disabled {
+    cursor: default;
+    opacity: 0.5;
   }
 
-  /* The slide and the reveal are decoration; the switch and the button
-     must still happen. */
+  /* The slide is decoration; the switch and the button must still happen. */
   @media (prefers-reduced-motion: reduce) {
     .editorial-object-swipe-track,
     .editorial-object-purchase button {
