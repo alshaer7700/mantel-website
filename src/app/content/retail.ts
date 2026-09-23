@@ -33,10 +33,13 @@ export type RetailProduct = CartProduct & {
   image: string;
   /*
    * Every face of the product, in the order the card steps through them, when
-   * there is more than one. The tote is printed on both sides and a shelf that
-   * shows one of them is selling half the bag. `image` stays the first entry:
-   * the cart line, and anything else that wants a single picture, reads that
-   * and never has to know a product has more than one.
+   * there is more than one — front and back of the same physical object, the
+   * way the lighters are. Two different objects (two tote prints, two lighter
+   * colourways) are two products, not one product with two `images`, or the
+   * shelf sells "whichever face this happened to land on" instead of letting
+   * a customer choose. `image` stays the first entry: the cart line, and
+   * anything else that wants a single picture, reads that and never has to
+   * know a product has more than one face.
    */
   images?: readonly string[];
   tone: string;
@@ -62,20 +65,26 @@ export type CartLine = {
 /*
  * ── THE PRODUCT PHOTOGRAPHS ─────────────────────────────────────────────────
  *
- * All six are the real objects, reshot 2026-09-23 (candles, candle-sticks and
- * match-sticks each moved from one face to several, stepped through by
- * ObjectSlides the same way the tote already was):
+ * All seven are the real objects, reshot 2026-09-23 (candles, candle-sticks
+ * and match-sticks each moved from one face to several, stepped through by
+ * ObjectSlides):
  *
  *   candles                the stamped tin, macro
  *   lighters-leopard       front then back of the leopard lighter
  *   lighters-checkerboard  front then back of the checkerboard lighter
  *   candle-sticks          the pair of cream tapers, unlit then lit
  *   match-sticks           the printed label face, then the open box
- *   custom-bags            the "Mantel." tote and its red-heart face, also two
+ *   custom-bags-mantel     the "Mantel." wordmark tote
+ *   custom-bags-heart      the red-heart tote
  *
- * Lighters used to be one card stepping through both colourways. Split into
- * two products because they are two separate lighters, not two faces of one —
- * each needs its own Supabase objects row to stay purchasable (see 026).
+ * Lighters and the tote both used to be one card stepping through two
+ * photos — a 3D flip for the tote, a swipe for the lighters — as if each was
+ * one product with two faces. Both are actually two separate objects (two
+ * distinct lighters, two distinct totes), so "add to bag" was really adding
+ * "whichever face this card happened to be showing," never a choice of
+ * colour or print. Split into two products each, matching pattern: each half
+ * needs its own Supabase objects row to stay purchasable (see 026 for the
+ * lighters split; the tote split follows the same shape).
  *
  * matcha-powder used to be a sixth, and was the only one still on a pre-launch
  * mockup. It is gone rather than waiting for a photograph: a shelf of real
@@ -160,16 +169,26 @@ export const RETAIL_PRODUCTS: RetailProduct[] = [
     collection: "The everyday companion to the candles on the shelf.",
   },
   {
-    id: "custom-bags",
-    name: "Custom Bags",
+    id: "custom-bags-mantel",
+    name: "Custom Bags - Mantel",
     description: "Made for the things you take with you.",
     price: 6.5,
     image: retailToteImage,
-    images: [retailToteImage, retailToteHeartImage],
     tone: "bag",
-    story: "Heavy canvas, built for the walk home — the wordmark on one face, a red heart stitched on the other.",
+    story: "Heavy canvas, built for the walk home, printed with the Mantel wordmark.",
     care: "Machine wash cold, and hang to dry.",
-    collection: "Printed both sides — Mantel on one face, a red heart on the other.",
+    collection: "The wordmark tote — heavy canvas, built for the walk home.",
+  },
+  {
+    id: "custom-bags-heart",
+    name: "Custom Bags - Heart",
+    description: "Made for the things you take with you.",
+    price: 6.5,
+    image: retailToteHeartImage,
+    tone: "bag",
+    story: "Heavy canvas, built for the walk home, printed with a red heart.",
+    care: "Machine wash cold, and hang to dry.",
+    collection: "The red-heart tote — heavy canvas, built for the walk home.",
   },
 ];
 
