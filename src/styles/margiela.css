@@ -1168,7 +1168,6 @@
     aspect-ratio: 3 / 4;
     overflow: hidden;
     background: var(--editorial-paper);
-    perspective: 1200px;
   }
 
   /*
@@ -1210,43 +1209,13 @@
   }
 
   /*
-   * A product with more than one face (the tote, printed both sides; the
-   * lighter, in two colourways) — a real card flip, not a crossfade. The
-   * wrapper carries the rotation; each face is pinned to its own side with
-   * backface-visibility so the one not facing the viewer is invisible rather
-   * than mirrored. The object itself is the control: clicking it flips to the
-   * other face, which is what a thumb reaches for. The dots are for aim and
-   * for the keyboard.
-   */
-  .editorial-object-flip {
-    position: absolute;
-    inset: 0;
-    cursor: pointer;
-    transform-style: preserve-3d;
-    transform: rotateY(var(--flip-angle, 0deg));
-    transition: transform 560ms cubic-bezier(0.23, 1, 0.32, 1);
-  }
-
-  .editorial-object-flip[data-flipped] {
-    --flip-angle: 180deg;
-  }
-
-  .editorial-object-slide-front,
-  .editorial-object-slide-back {
-    backface-visibility: hidden;
-  }
-
-  .editorial-object-slide-back {
-    transform: rotateY(180deg);
-  }
-
-  /*
-   * Three faces or more (the match sticks) — a swipeable track rather than a
-   * flip, since a flip only means something with exactly two sides. The two
-   * classes on each slide (.editorial-object-swipe .editorial-object-swipe-slide)
-   * are there to outrank .editorial-object-image img's own position: absolute,
-   * which would otherwise stack every face on top of the others instead of
-   * laying them out in a row for the track to slide.
+   * Every product with more than one face — the tote, the lighter, the match
+   * sticks alike — gets the same swipeable track rather than a flip on some
+   * cards and a drag on others. The two classes on each slide
+   * (.editorial-object-swipe .editorial-object-swipe-slide) are there to
+   * outrank .editorial-object-image img's own position: absolute, which would
+   * otherwise stack every face on top of the others instead of laying them
+   * out in a row for the track to slide.
    */
   .editorial-object-swipe {
     position: absolute;
@@ -1320,16 +1289,57 @@
     opacity: 1;
   }
 
-  .editorial-object-card:hover .editorial-object-image img:not(.editorial-object-slide-front, .editorial-object-slide-back) {
-    transform: scale(1.04);
-    filter: none;
+  /*
+   * Prev/next, sitting at the frame's vertical centre. Quiet by default so
+   * they don't compete with the object itself — the same restraint as the
+   * dots — and dropped to a faint ghost rather than removed once a track
+   * hits either end, so the control never jumps as it becomes unusable.
+   */
+  .editorial-object-arrow {
+    position: absolute;
+    top: 50%;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    border: none;
+    background: none;
+    color: var(--editorial-ink, #12100d);
+    opacity: 0.45;
+    cursor: pointer;
+    transform: translateY(-50%);
+    transition: opacity 200ms ease;
   }
 
-  /* The flip card's own hover zoom — on the wrapper, not the faces, since a
-     face's transform is its rotateY seat (front 0deg, back 180deg) and a
-     hover scale would silently replace it instead of adding to it. */
-  .editorial-object-card:hover .editorial-object-flip {
-    transform: scale(1.04) rotateY(var(--flip-angle, 0deg));
+  .editorial-object-arrow-prev {
+    left: 2px;
+  }
+
+  .editorial-object-arrow-next {
+    right: 2px;
+  }
+
+  .editorial-object-arrow:hover {
+    opacity: 0.9;
+  }
+
+  .editorial-object-arrow:focus-visible {
+    opacity: 1;
+    outline: 2px solid var(--editorial-ink, #12100d);
+    outline-offset: 2px;
+  }
+
+  .editorial-object-arrow:disabled {
+    opacity: 0.12;
+    cursor: default;
+  }
+
+  .editorial-object-card:hover .editorial-object-image img {
+    transform: scale(1.04);
+    filter: none;
   }
 
   .editorial-object-info {
@@ -1427,10 +1437,9 @@
     }
   }
 
-  /* The flip and the reveal are decoration; the switch and the button
+  /* The slide and the reveal are decoration; the switch and the button
      must still happen. */
   @media (prefers-reduced-motion: reduce) {
-    .editorial-object-flip,
     .editorial-object-swipe-track,
     .editorial-object-purchase button {
       transition: none;
@@ -1546,7 +1555,6 @@
     aspect-ratio: 3 / 4;
     overflow: hidden;
     background: var(--editorial-paper);
-    perspective: 1200px;
   }
 
   .editorial-retail-detail-image img {
@@ -1564,6 +1572,19 @@
   .editorial-retail-detail-image .editorial-object-dots {
     left: 20px;
     bottom: 16px;
+  }
+
+  .editorial-retail-detail-image .editorial-object-arrow {
+    width: 32px;
+    height: 32px;
+  }
+
+  .editorial-retail-detail-image .editorial-object-arrow-prev {
+    left: 8px;
+  }
+
+  .editorial-retail-detail-image .editorial-object-arrow-next {
+    right: 8px;
   }
 
   .editorial-retail-detail-info {

@@ -1,15 +1,15 @@
 import { useRef, useState } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 /*
  * The image slot on a retail card, for products that have more than one face.
  *
- * Two faces (the tote, printed both sides; the lighter, two colourways) get a
- * real 3D card flip — front and back, backface-visibility hidden. Three or
- * more (the match sticks, shot from three angles) get a swipeable track
- * instead: a flip only means something with exactly two sides, so a third
- * face needs a different control, the one a thumb already expects for a
- * gallery — drag or swipe, with the dots as the alternative for a pointer
- * that doesn't.
+ * Every product with two or more faces gets the same control: a swipeable
+ * track, with a pair of arrow buttons for a pointer that doesn't drag and the
+ * dots for aim. This used to give exactly-two-face products (the tote, the
+ * lighter) a 3D card flip instead — dropped in favour of one interaction
+ * that behaves the same everywhere, rather than a flip on some cards and a
+ * swipe on others.
  *
  * A product with one image renders exactly the <img> the card rendered
  * before, with no dots and nothing to click.
@@ -31,58 +31,55 @@ export function ObjectSlides({ images, alt }: Props) {
     return <img src={images[0]} alt={alt} loading="lazy" />;
   }
 
-  const dots = (
-    <div className="editorial-object-dots">
-      {images.map((src, i) => (
-        <button
-          key={src}
-          type="button"
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            setShown(i);
-          }}
-          aria-label={`${alt}, view ${i + 1} of ${images.length}`}
-          aria-current={i === shown}
-          data-shown={i === shown ? "" : undefined}
-        />
-      ))}
-    </div>
-  );
+  const goPrev = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setShown((s) => Math.max(0, s - 1));
+  };
 
-  if (images.length === 2) {
-    const flip = (e: React.MouseEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-      setShown((s) => (s === 0 ? 1 : 0));
-    };
-    return (
-      <>
-        <div className="editorial-object-flip" data-flipped={shown === 1 ? "" : undefined} onClick={flip}>
-          <img
-            src={images[0]}
-            alt={alt}
-            loading="lazy"
-            aria-hidden={shown !== 0}
-            className="editorial-object-slide editorial-object-slide-front"
-          />
-          <img
-            src={images[1]}
-            alt={alt}
-            loading="lazy"
-            aria-hidden={shown !== 1}
-            className="editorial-object-slide editorial-object-slide-back"
-          />
-        </div>
-        {dots}
-      </>
-    );
-  }
+  const goNext = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setShown((s) => Math.min(images.length - 1, s + 1));
+  };
 
   return (
     <>
       <SwipeTrack images={images} alt={alt} shown={shown} setShown={setShown} />
-      {dots}
+      <button
+        type="button"
+        className="editorial-object-arrow editorial-object-arrow-prev"
+        onClick={goPrev}
+        disabled={shown === 0}
+        aria-label={`${alt}, previous view`}
+      >
+        <ChevronLeft size={16} strokeWidth={1.5} aria-hidden="true" />
+      </button>
+      <button
+        type="button"
+        className="editorial-object-arrow editorial-object-arrow-next"
+        onClick={goNext}
+        disabled={shown === images.length - 1}
+        aria-label={`${alt}, next view`}
+      >
+        <ChevronRight size={16} strokeWidth={1.5} aria-hidden="true" />
+      </button>
+      <div className="editorial-object-dots">
+        {images.map((src, i) => (
+          <button
+            key={src}
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setShown(i);
+            }}
+            aria-label={`${alt}, view ${i + 1} of ${images.length}`}
+            aria-current={i === shown}
+            data-shown={i === shown ? "" : undefined}
+          />
+        ))}
+      </div>
     </>
   );
 }
