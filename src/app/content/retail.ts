@@ -62,21 +62,24 @@ export type CartLine = {
 /*
  * ── THE PRODUCT PHOTOGRAPHS ─────────────────────────────────────────────────
  *
- * All five are the real objects. Candles is still the 2026-09-15 macro shot;
- * the other four were reshot 2026-09-23 — lighters, candle-sticks and
+ * All six are the real objects, reshot 2026-09-23 (candles, candle-sticks and
  * match-sticks each moved from one face to several, stepped through by
- * ObjectSlides the same way the tote already was:
+ * ObjectSlides the same way the tote already was):
  *
- *   candles        the stamped tin, macro
- *   lighters       both colourways, front then back each — leopard,
- *                  leopard, checkerboard, checkerboard
- *   candle-sticks  the pair of cream tapers, unlit then lit
- *   match-sticks   the open box, then the printed label face
- *   custom-bags    the "Mantel." tote and its red-heart face, also two
+ *   candles                the stamped tin, macro
+ *   lighters-leopard       front then back of the leopard lighter
+ *   lighters-checkerboard  front then back of the checkerboard lighter
+ *   candle-sticks          the pair of cream tapers, unlit then lit
+ *   match-sticks           the printed label face, then the open box
+ *   custom-bags            the "Mantel." tote and its red-heart face, also two
+ *
+ * Lighters used to be one card stepping through both colourways. Split into
+ * two products because they are two separate lighters, not two faces of one —
+ * each needs its own Supabase objects row to stay purchasable (see 026).
  *
  * matcha-powder used to be a sixth, and was the only one still on a pre-launch
- * mockup. It is gone rather than waiting for a photograph: a shelf of five real
- * objects reads better than six with one drawing.
+ * mockup. It is gone rather than waiting for a photograph: a shelf of real
+ * objects reads better than one with a drawing on it.
  *
  * EVERY FILE HERE IS A CUT-OUT ON TRANSPARENT PNG, trimmed to the object and
  * re-centred on one square canvas at a fixed margin. Both halves of that matter
@@ -121,29 +124,36 @@ export const RETAIL_PRODUCTS: RetailProduct[] = [
     collection: "Sits alongside the candles — the pair the shelf was built around.",
   },
   {
-    id: "lighters",
-    name: "Lighters",
+    id: "lighters-leopard",
+    name: "Lighters - Leopard",
     description: "A small object with a little ceremony.",
     price: 3,
     image: retailLighterLeopardFrontImage,
-    images: [
-      retailLighterLeopardFrontImage,
-      retailLighterLeopardBackImage,
-      retailLighterCheckerboardFrontImage,
-      retailLighterCheckerboardBackImage,
-    ],
+    images: [retailLighterLeopardFrontImage, retailLighterLeopardBackImage],
     tone: "lighter",
-    story: "A refillable flame in a pocket-sized case — one in leopard, one in checkerboard.",
+    story: "A refillable flame in a pocket-sized case, printed leopard.",
     care: "Refillable. Keep it out of reach of children and away from heat.",
-    collection: "Two colourways, leopard and checkerboard — the small object with a little ceremony.",
+    collection: "The leopard colourway — the small object with a little ceremony.",
+  },
+  {
+    id: "lighters-checkerboard",
+    name: "Lighters - Checkerboard",
+    description: "A small object with a little ceremony.",
+    price: 3,
+    image: retailLighterCheckerboardFrontImage,
+    images: [retailLighterCheckerboardFrontImage, retailLighterCheckerboardBackImage],
+    tone: "lighter",
+    story: "A refillable flame in a pocket-sized case, printed checkerboard.",
+    care: "Refillable. Keep it out of reach of children and away from heat.",
+    collection: "The checkerboard colourway — the small object with a little ceremony.",
   },
   {
     id: "match-sticks",
     name: "Match Sticks",
     description: "A little fire for the everyday ritual.",
     price: 2.5,
-    image: retailMatchSticksOpenImage,
-    images: [retailMatchSticksOpenImage, retailMatchSticksLabelImage],
+    image: retailMatchSticksLabelImage,
+    images: [retailMatchSticksLabelImage, retailMatchSticksOpenImage],
     tone: "matches",
     story: "A box of safety matches under the Mantel label, for the candles and everything else that needs a light.",
     care: "Store somewhere dry, away from the stove.",
