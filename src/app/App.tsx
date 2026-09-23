@@ -129,13 +129,8 @@ export default function App() {
       if (!live) return;
       if (result.ok) {
         const byName = new Map(result.objects.map((object) => [object.name.toLowerCase(), object]));
-        const byAlias = new Map([
-          ["candles", "scented candle"],
-          ["match sticks", "safety matches"],
-          ["lighters", "cold brew"],
-        ]);
         const merged = RETAIL_PRODUCTS.map((product) => {
-          const source = byName.get(product.name.toLowerCase()) ?? byName.get(byAlias.get(product.name.toLowerCase()) ?? "");
+          const source = byName.get(product.name.toLowerCase());
           return source
             ? { ...product, backendId: source.id, price: Number(source.price), description: source.description || product.description }
             : product;

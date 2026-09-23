@@ -1,11 +1,14 @@
-import retailCandleSticksImage from "@/imports/retail-candle-sticks.webp";
+import retailCandleSticksUnlitImage from "@/imports/retail-candle-sticks-unlit.webp";
+import retailCandleSticksLitImage from "@/imports/retail-candle-sticks-lit.webp";
 import retailToteImage from "@/imports/retail-tote.webp";
 import retailToteHeartImage from "@/imports/retail-tote-heart.webp";
-import retailLighterImage from "@/imports/retail-lighter.webp";
-import retailLighterCheckImage from "@/imports/retail-lighter-check.webp";
+import retailLighterLeopardFrontImage from "@/imports/retail-lighter-leopard-front.webp";
+import retailLighterLeopardBackImage from "@/imports/retail-lighter-leopard-back.webp";
+import retailLighterCheckerboardFrontImage from "@/imports/retail-lighter-checkerboard-front.webp";
+import retailLighterCheckerboardBackImage from "@/imports/retail-lighter-checkerboard-back.webp";
 import retailCandleTinMacroImage from "@/imports/retail-candle-tin-macro.webp";
-import retailMatchSticksWallImage from "@/imports/retail-match-sticks-wall.webp";
-import retailMatchSticksOpenAImage from "@/imports/retail-match-sticks-open-a.webp";
+import retailMatchSticksOpenImage from "@/imports/retail-match-sticks-open.webp";
+import retailMatchSticksLabelImage from "@/imports/retail-match-sticks-label.webp";
 
 /*
  * The shape a cart line needs, regardless of whether it came from the Retail
@@ -59,19 +62,24 @@ export type CartLine = {
 /*
  * ── THE PRODUCT PHOTOGRAPHS ─────────────────────────────────────────────────
  *
- * All five are the real objects, shot 2026-09-15 and in the tree since
- * 2026-09-16:
+ * All six are the real objects, reshot 2026-09-23 (candles, candle-sticks and
+ * match-sticks each moved from one face to several, stepped through by
+ * ObjectSlides the same way the tote already was):
  *
- *   candles        the four stacked MANTEL tins
- *   lighters       both colourways, leopard then checkerboard — one card,
- *                  stepped through by ObjectSlides
- *   candle-sticks  the pair of cream tapers in the corrugated heart band
- *   match-sticks   the MANTEL safety-matches label
- *   custom-bags    the "Mantel." tote and its red-heart face, also two
+ *   candles                the stamped tin, macro
+ *   lighters-leopard       front then back of the leopard lighter
+ *   lighters-checkerboard  front then back of the checkerboard lighter
+ *   candle-sticks          the pair of cream tapers, unlit then lit
+ *   match-sticks           the printed label face, then the open box
+ *   custom-bags            the "Mantel." tote and its red-heart face, also two
+ *
+ * Lighters used to be one card stepping through both colourways. Split into
+ * two products because they are two separate lighters, not two faces of one —
+ * each needs its own Supabase objects row to stay purchasable (see 026).
  *
  * matcha-powder used to be a sixth, and was the only one still on a pre-launch
- * mockup. It is gone rather than waiting for a photograph: a shelf of five real
- * objects reads better than six with one drawing.
+ * mockup. It is gone rather than waiting for a photograph: a shelf of real
+ * objects reads better than one with a drawing on it.
  *
  * EVERY FILE HERE IS A CUT-OUT ON TRANSPARENT PNG, trimmed to the object and
  * re-centred on one square canvas at a fixed margin. Both halves of that matter
@@ -108,31 +116,44 @@ export const RETAIL_PRODUCTS: RetailProduct[] = [
     name: "Candle Sticks",
     description: "For the shelf, the table, and the in-between.",
     price: 5.5,
-    image: retailCandleSticksImage,
+    image: retailCandleSticksUnlitImage,
+    images: [retailCandleSticksUnlitImage, retailCandleSticksLitImage],
     tone: "sticks",
     story: "A pair of cream tapers, cut long enough to burn through an evening at the table.",
     care: "Wipe with a dry cloth. Keep upright, and away from direct heat.",
     collection: "Sits alongside the candles — the pair the shelf was built around.",
   },
   {
-    id: "lighters",
-    name: "Lighters",
+    id: "lighters-leopard",
+    name: "Lighters - Leopard",
     description: "A small object with a little ceremony.",
     price: 3,
-    image: retailLighterImage,
-    images: [retailLighterImage, retailLighterCheckImage],
+    image: retailLighterLeopardFrontImage,
+    images: [retailLighterLeopardFrontImage, retailLighterLeopardBackImage],
     tone: "lighter",
-    story: "A refillable flame in a pocket-sized case, printed leopard on one side and checkerboard on the other.",
+    story: "A refillable flame in a pocket-sized case, printed leopard.",
     care: "Refillable. Keep it out of reach of children and away from heat.",
-    collection: "Two colourways, leopard and checkerboard — the small object with a little ceremony.",
+    collection: "The leopard colourway — the small object with a little ceremony.",
+  },
+  {
+    id: "lighters-checkerboard",
+    name: "Lighters - Checkerboard",
+    description: "A small object with a little ceremony.",
+    price: 3,
+    image: retailLighterCheckerboardFrontImage,
+    images: [retailLighterCheckerboardFrontImage, retailLighterCheckerboardBackImage],
+    tone: "lighter",
+    story: "A refillable flame in a pocket-sized case, printed checkerboard.",
+    care: "Refillable. Keep it out of reach of children and away from heat.",
+    collection: "The checkerboard colourway — the small object with a little ceremony.",
   },
   {
     id: "match-sticks",
     name: "Match Sticks",
     description: "A little fire for the everyday ritual.",
     price: 2.5,
-    image: retailMatchSticksWallImage,
-    images: [retailMatchSticksWallImage, retailMatchSticksOpenAImage],
+    image: retailMatchSticksLabelImage,
+    images: [retailMatchSticksLabelImage, retailMatchSticksOpenImage],
     tone: "matches",
     story: "A box of safety matches under the Mantel label, for the candles and everything else that needs a light.",
     care: "Store somewhere dry, away from the stove.",
