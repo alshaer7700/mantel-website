@@ -108,8 +108,8 @@ export type CartLine = {
  *
  *                   tote            65%   (~38cm, the largest object here)
  *                   candle sticks   58%   (~25cm, tall but slender)
+ *                   match sticks    48%   (~8cm box)
  *                   candles (tin)   45%   (~7.5cm, a squat tin)
- *                   match sticks    42%   (~8cm box)
  *                   lighters        40%   (~8cm, the smallest)
  *
  *                 Floored around 40% rather than scaled all the way down
@@ -119,8 +119,10 @@ export type CartLine = {
  *                 time (58→65, 50→58) after the product page — a full-height
  *                 mobile frame, not a shelf tile — made them read too small
  *                 on their own page even though the relative order was
- *                 right; a new product's fill should slot into this table by
- *                 its own real size, not default to a number here.
+ *                 right; match sticks got the same bump a third time
+ *                 (42→48) once new box photos replaced the old ones — a new
+ *                 product's fill should slot into this table by its own real
+ *                 size, not default to a number here.
  *
  * A replacement has to meet both, or it will stand out from the rest.
  *
