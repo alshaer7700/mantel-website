@@ -1337,6 +1337,84 @@
     cursor: default;
   }
 
+  /* Top-right corner, same quiet-until-noticed treatment as the arrows —
+     opt-in per ObjectSlides caller via `zoomable`, see that component. */
+  .editorial-object-zoom-trigger {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    border: none;
+    background: none;
+    color: var(--editorial-ink, #12100d);
+    opacity: 0.45;
+    cursor: pointer;
+    transition: opacity 200ms ease;
+  }
+
+  .editorial-object-zoom-trigger:hover,
+  .editorial-object-zoom-trigger:focus-visible {
+    opacity: 0.9;
+  }
+
+  .editorial-object-zoom-trigger:focus-visible {
+    outline: 2px solid var(--editorial-ink, #12100d);
+    outline-offset: 2px;
+  }
+
+  /*
+   * The zoomed photograph, full-bleed. z-index 110: above the cart drawer
+   * (90) and the cookie banner (100), below only the skip link (120), which
+   * has to reach through absolutely everything.
+   */
+  .editorial-object-lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 110;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: rgba(18, 16, 13, 0.94);
+    cursor: zoom-out;
+  }
+
+  .editorial-object-lightbox img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    cursor: default;
+  }
+
+  .editorial-object-lightbox-close {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: none;
+    background: none;
+    color: var(--editorial-paper, #f5f3ee);
+    cursor: pointer;
+    opacity: 0.8;
+    transition: opacity 200ms ease;
+  }
+
+  .editorial-object-lightbox-close:hover,
+  .editorial-object-lightbox-close:focus-visible {
+    opacity: 1;
+  }
+
   .editorial-object-card:hover .editorial-object-image img {
     transform: scale(1.04);
     filter: none;
@@ -1570,6 +1648,13 @@
 
   .editorial-retail-detail-image .editorial-object-arrow-next {
     right: 8px;
+  }
+
+  .editorial-retail-detail-image .editorial-object-zoom-trigger {
+    top: 16px;
+    right: 16px;
+    width: 32px;
+    height: 32px;
   }
 
   .editorial-retail-detail-info {

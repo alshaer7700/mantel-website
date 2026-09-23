@@ -34,7 +34,7 @@ export function ProductDetail({ linkTo, product, cartLines, onAdd }: Props) {
       </nav>
 
       <div className="editorial-retail-detail-image">
-        <ObjectSlides images={product.images ?? [product.image]} alt={product.name} />
+        <ObjectSlides images={product.images ?? [product.image]} alt={product.name} zoomable />
       </div>
 
       <div className="editorial-retail-detail-info">

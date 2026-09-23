@@ -106,8 +106,8 @@ export type CartLine = {
  *                 canvas tote read as the same size, which was the wrong
  *                 fix — airier margins were the ask, not equal ones:
  *
- *                   tote            58%   (~38cm, the largest object here)
- *                   candle sticks   50%   (~25cm, tall but slender)
+ *                   tote            65%   (~38cm, the largest object here)
+ *                   candle sticks   58%   (~25cm, tall but slender)
  *                   candles (tin)   45%   (~7.5cm, a squat tin)
  *                   match sticks    42%   (~8cm box)
  *                   lighters        40%   (~8cm, the smallest)
@@ -115,8 +115,12 @@ export type CartLine = {
  *                 Floored around 40% rather than scaled all the way down
  *                 linearly — a lighter at its true fraction of a tote's size
  *                 would be a speck, illegible on the shelf rather than
- *                 "smaller." A new product's fill should slot into this
- *                 table by its own real size, not default to 55%.
+ *                 "smaller." Tote and candle-sticks were bumped up a second
+ *                 time (58→65, 50→58) after the product page — a full-height
+ *                 mobile frame, not a shelf tile — made them read too small
+ *                 on their own page even though the relative order was
+ *                 right; a new product's fill should slot into this table by
+ *                 its own real size, not default to a number here.
  *
  * A replacement has to meet both, or it will stand out from the rest.
  *
