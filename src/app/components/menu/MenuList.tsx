@@ -1,6 +1,6 @@
 import type { MenuItem, MenuCategoryKey } from "@/app/types";
 import { formatPrice, CATEGORY_LABELS } from "@/lib/format";
-import { LABEL, GROTESK } from "@/app/components/type";
+import { LABEL } from "@/app/components/type";
 
 /*
  * The permanent-collection redesign: a numbered section per category, its
@@ -28,8 +28,7 @@ export function MenuList({
         <section key={key} className="mb-[clamp(3rem,8vh,5rem)]">
           <p className={LABEL}>{String(index + 1).padStart(2, "0")} —</p>
           <h3
-            style={{ fontFamily: GROTESK }}
-            className="font-medium uppercase text-[length:clamp(28px,4.5vw,44px)] tracking-[0.005em] leading-[1.02] m-0 mt-[10px] mb-[28px] text-[color:var(--ink)]"
+            className="font-mono font-medium uppercase text-[length:clamp(28px,4.5vw,44px)] tracking-[-0.01em] leading-[1.02] m-0 mt-[10px] mb-[28px] text-[color:var(--ink)]"
           >
             {CATEGORY_LABELS[key]}
           </h3>
@@ -53,14 +52,12 @@ function Cell({ item }: { item: MenuItem }) {
   return (
     <div className="py-[18px]">
       <p
-        style={{ fontFamily: GROTESK }}
-        className="font-medium uppercase text-[13px] tracking-[0.01em] leading-[1.3] m-0 text-[color:var(--ink)]"
+        className="font-mono font-medium uppercase text-[13px] tracking-[-0.005em] leading-[1.3] m-0 text-[color:var(--ink)]"
       >
         {item.name}
       </p>
       <p
-        style={{ fontFamily: GROTESK }}
-        className="text-[12px] tracking-[0.01em] tabular-nums m-0 mt-[4px] text-[color:var(--ink-muted)]"
+        className="font-mono text-[12px] tracking-[-0.005em] tabular-nums m-0 mt-[4px] text-[color:var(--ink-muted)]"
       >
         {formatPrice(item.price)}
       </p>

@@ -130,31 +130,6 @@ export type CartLine = {
  */
 export const RETAIL_PRODUCTS: RetailProduct[] = [
   {
-    id: "candles",
-    name: "Candles",
-    description: "A soft light for the end of the day.",
-    price: 7,
-    image: retailCandleTinMacroImage,
-    tone: "candle",
-    story: "Soy wax in a stamped tin, poured in small batches. Warm wood and dry smoke — the room after the counter closes.",
-    care:
-      "Trim the wick to 5mm before each light. Burn for no more than four hours at a time, and keep it away from draughts so the wax burns evenly to the edge of the tin.",
-    collection:
-      "Soy wax, poured in small batches and finished in the same stamped tin as the rest of the counter shelf.",
-  },
-  {
-    id: "candle-sticks",
-    name: "Candle Sticks",
-    description: "For the shelf, the table, and the in-between.",
-    price: 5.5,
-    image: retailCandleSticksUnlitImage,
-    images: [retailCandleSticksUnlitImage, retailCandleSticksLitImage],
-    tone: "sticks",
-    story: "A pair of cream tapers, cut long enough to burn through an evening at the table.",
-    care: "Wipe with a dry cloth. Keep upright, and away from direct heat.",
-    collection: "Sits alongside the candles — the pair the shelf was built around.",
-  },
-  {
     id: "lighters-leopard",
     name: "Lighters - Leopard",
     description: "A small object with a little ceremony.",
@@ -190,15 +165,29 @@ export const RETAIL_PRODUCTS: RetailProduct[] = [
     collection: "The everyday companion to the candles on the shelf.",
   },
   {
-    id: "custom-bags-mantel",
-    name: "Custom Bags - Mantel",
-    description: "Made for the things you take with you.",
-    price: 6.5,
-    image: retailToteImage,
-    tone: "bag",
-    story: "Heavy canvas, built for the walk home, printed with the Mantel wordmark.",
-    care: "Machine wash cold, and hang to dry.",
-    collection: "The wordmark tote — heavy canvas, built for the walk home.",
+    id: "candles",
+    name: "Candles",
+    description: "A soft light for the end of the day.",
+    price: 7,
+    image: retailCandleTinMacroImage,
+    tone: "candle",
+    story: "Soy wax in a stamped tin, poured in small batches. Warm wood and dry smoke — the room after the counter closes.",
+    care:
+      "Trim the wick to 5mm before each light. Burn for no more than four hours at a time, and keep it away from draughts so the wax burns evenly to the edge of the tin.",
+    collection:
+      "Soy wax, poured in small batches and finished in the same stamped tin as the rest of the counter shelf.",
+  },
+  {
+    id: "candle-sticks",
+    name: "Candle Sticks",
+    description: "For the shelf, the table, and the in-between.",
+    price: 5.5,
+    image: retailCandleSticksUnlitImage,
+    images: [retailCandleSticksUnlitImage, retailCandleSticksLitImage],
+    tone: "sticks",
+    story: "A pair of cream tapers, cut long enough to burn through an evening at the table.",
+    care: "Wipe with a dry cloth. Keep upright, and away from direct heat.",
+    collection: "Sits alongside the candles — the pair the shelf was built around.",
   },
   {
     id: "custom-bags-heart",
@@ -210,6 +199,17 @@ export const RETAIL_PRODUCTS: RetailProduct[] = [
     story: "Heavy canvas, built for the walk home, printed with a red heart.",
     care: "Machine wash cold, and hang to dry.",
     collection: "The red-heart tote — heavy canvas, built for the walk home.",
+  },
+  {
+    id: "custom-bags-mantel",
+    name: "Custom Bags - Mantel",
+    description: "Made for the things you take with you.",
+    price: 6.5,
+    image: retailToteImage,
+    tone: "bag",
+    story: "Heavy canvas, built for the walk home, printed with the Mantel wordmark.",
+    care: "Machine wash cold, and hang to dry.",
+    collection: "The wordmark tote — heavy canvas, built for the walk home.",
   },
 ];
 

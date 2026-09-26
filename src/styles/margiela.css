@@ -1808,18 +1808,14 @@
     margin: clamp(88px, 14vw, 190px) auto 0;
   }
 
-  /* Bigger than --fs-section-title on purpose: everywhere else that token sets
-     a page's running head, but this page has no shelf rule and no other
-     heading to sit below — "About Us." is the whole masthead, so it earns a
-     size the rest of the site's titles don't need. */
   .editorial-about-content h1 {
     margin: 0 0 28px;
     color: var(--editorial-ink);
     font-family: var(--font-serif);
-    font-size: clamp(48px, 8vw, 92px);
+    font-size: var(--fs-section-title);
     font-weight: 500;
     letter-spacing: -0.035em;
-    line-height: 0.94;
+    line-height: 0.96;
   }
 
   .editorial-about-placeholder {
