@@ -54,13 +54,13 @@ function Cell({ item }: { item: MenuItem }) {
     <div className="py-[18px]">
       <p
         style={{ fontFamily: SYSTEM_SANS }}
-        className="font-medium text-[16px] tracking-[-0.005em] leading-[1.3] m-0 text-[color:var(--ink)]"
+        className="font-medium text-[20px] tracking-[-0.005em] leading-[1.3] m-0 text-[color:var(--ink)]"
       >
         {item.name}
       </p>
       <p
         style={{ fontFamily: SYSTEM_SANS }}
-        className="text-[12px] tracking-[-0.005em] tabular-nums m-0 mt-[4px] text-[color:var(--ink-muted)]"
+        className="text-[14px] tracking-[-0.005em] tabular-nums m-0 mt-[4px] text-[color:var(--ink-muted)]"
       >
         {formatPrice(item.price)}
       </p>
