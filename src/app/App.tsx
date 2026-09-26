@@ -488,8 +488,8 @@ export default function App() {
             </button>
             <nav className="editorial-nav-primary" aria-label="Primary">
               <a {...linkTo("menu")} className="editorial-nav-link">Menu</a>
-              <a {...linkTo("pickup")} className="editorial-nav-link">Pick Up</a>
               <a {...linkTo("objects")} className="editorial-nav-link">Retail</a>
+              <a {...linkTo("pickup")} className="editorial-nav-link">Pick Up</a>
               <a {...linkTo("story")} className="editorial-nav-link">About Us</a>
             </nav>
           </div>
@@ -603,15 +603,15 @@ export default function App() {
           </a>
           <a
             className="text-left font-serif font-normal text-lg text-foreground hover:opacity-50 transition-opacity"
-            {...linkTo("pickup")}
-          >
-            Pick Up
-          </a>
-          <a
-            className="text-left font-serif font-normal text-lg text-foreground hover:opacity-50 transition-opacity"
             {...linkTo("objects")}
           >
             Retail
+          </a>
+          <a
+            className="text-left font-serif font-normal text-lg text-foreground hover:opacity-50 transition-opacity"
+            {...linkTo("pickup")}
+          >
+            Pick Up
           </a>
           <a
             className="text-left font-serif font-normal text-lg text-foreground hover:opacity-50 transition-opacity"
@@ -700,7 +700,7 @@ export default function App() {
       {page === "menu" && (
         <main id="main-content" className="flex flex-col min-h-screen" style={{ paddingTop: navHeight }}>
           <div className="flex-1 px-[var(--pad)]">
-            <Cafe linkTo={linkTo} sections={sections} category={menuCategory} loading={menuLoading} error={menuError} />
+            <Cafe sections={sections} category={menuCategory} loading={menuLoading} error={menuError} />
           </div>
           <EditorialFooter linkTo={linkTo} />
         </main>

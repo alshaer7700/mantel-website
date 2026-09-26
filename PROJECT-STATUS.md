@@ -34,11 +34,11 @@ npm run build      # production bundle → dist/ (deploy this folder to go live)
 6. **Functional Search** — panel under nav, live-filters all menu items, result click jumps to the right menu category, Esc closes.
 7. **Functional Cart** — "+" buttons on menu items, badge count on bag icon, right-side "Pick Up" drawer with qty +/-, subtotal, and **Order for Pick Up** (submits order via FormSubmit). Persists in `localStorage` (`mantel-cart`).
 8. **Functional Account** — panel saving name+email to `localStorage` (`mantel-profile`); greets user, pre-fills contact form and orders; sign-out clears it.
-9. **Functional Send (contact form)** — POSTs to `https://formsubmit.co/ajax/naiffuad31@gmail.com` with sending/success/error states. Orders use the same endpoint (subject "MANTEL pick-up order").
+9. **Functional Send (contact form)** — POSTs to `https://formsubmit.co/ajax/naiffuad31@gmail.com` with sending/success/error states. Orders use the same endpoint (subject "MANTEL pick-up order"). _Superseded — see below: FormSubmit is gone from the codebase; contact, newsletter and order notifications now all go server-side to `hello@bymantel.com` via Supabase Edge Functions + Resend (`supabase/022`, `024`, `025`)._
 10. **Currency → Bahraini Dinar** — all prices are now `BD x.xxx` (3 decimals/fils), converted to realistic Bahrain café prices; cart math updated.
 
 ## ⚠️ Action items for the owner
-- [ ] **Activate FormSubmit:** check naiffuad31@gmail.com for an email from FormSubmit and click the activation link. Until then, form/order submissions return success but are NOT delivered.
+- [x] ~~**Activate FormSubmit:** check naiffuad31@gmail.com for an email from FormSubmit and click the activation link. Until then, form/order submissions return success but are NOT delivered.~~ FormSubmit was removed entirely; contact/newsletter/order notifications go through Supabase Edge Functions + Resend to `hello@bymantel.com` (see `SECURITY-AUDIT-AND-ROADMAP.md`, H-2 and M-1).
 - [x] **Real menu loaded** — the invented placeholder items (Mantel Latte, Crimson Cortado …) are gone. `supabase/006` adds the five real headings (Coffee, Not Coffee, Aqua, Sandwiches, Desserts) plus ingredient and nutrition columns; `supabase/007` loads the actual items. `supabase/008` removes a permissive RLS policy (`public_read_menu_items`, `using (true)`) that had been added outside this repo and was cancelling out the `is_available` gate — with it in place, the unpriced items below would have listed at 0.000. All three are applied to the MANTEL CAFE project.
 - [ ] **Confirm eleven missing prices** — Spanish Latte, Latte / Cappuccino, Salted Cardamom Latte, Salted Caramel Latte, V60, Cold Brew, Water, Sparkling Water, Cinnamon Bun, Crêpe and Waffle were cropped out of the source menu. They are loaded but hidden (`is_available = false`), so they do not appear on the site until a price is set. Publish one with:
   `update public.menu_items set price = 2.400, is_available = true where name = 'Spanish Latte';`
@@ -49,7 +49,7 @@ npm run build      # production bundle → dist/ (deploy this folder to go live)
 - Real "Our Story" page (the home OUR STORY button currently goes to Contact — likely a leftover to fix).
 - Move project out of `~/Downloads` into `~/Documents/PROJECTS/`.
 - (done) `dist/` deploys to Netlify at https://bymantel.com.
-- Menu item photos, opening hours, location/map section.
+- Menu item photos, location/map section. (Opening hours now live on the About Us page.)
 
 ## Environment notes
 - Preview/dev server config saved in the WORK AREA `.claude/launch.json` as `mantel-figma`.

@@ -18,10 +18,11 @@ export const formatPrice = (n: number) => n.toFixed(3);
  */
 export const CATEGORY_LABELS: Record<MenuCategoryKey, string> = {
   coffee: "Coffee",
-  "not-coffee": "Not Coffee",
+  "not-coffee": "Non Coffee",
   aqua: "Aqua",
   sandwiches: "Sandwiches",
   desserts: "Desserts",
+  "add-ons": "Add Ons",
 };
 
 /**
