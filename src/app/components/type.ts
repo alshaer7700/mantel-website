@@ -20,3 +20,12 @@ export const LABEL_INK =
 /** Display serif: tight leading, negative tracking. Headings only. */
 export const DISPLAY = "font-serif font-normal tracking-[-0.018em] leading-[0.94]";
 
+/*
+ * The regular proportional sans a keyboard actually types — not this site's
+ * two shipped faces (EB Garamond serif, Fira Mono monospace). Used for the
+ * permanent-collection Menu's category headings and item rows, which read
+ * wrong in a fixed-width face.
+ */
+export const SYSTEM_SANS =
+  "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
+
