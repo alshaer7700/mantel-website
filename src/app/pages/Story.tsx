@@ -13,7 +13,22 @@ export function Story({ linkTo }: Props) {
       <p className="editorial-overline">About Us</p>
       <div className="editorial-about-content">
         <h1>About Us.</h1>
-        <p className="editorial-about-placeholder">Mantel is a small place in Hidd for good espresso and the small rituals around it. We keep the counter warm, the menu considered, and the pace a little slower — whether you are passing through or staying for another cup.</p>
+        <p className="editorial-about-placeholder">
+          For mornings that take their time, afternoons that turn into evenings, and the
+          everyday moments worth keeping. Good things, made simply and shared often.
+        </p>
+
+        <dl className="editorial-about-hours" aria-label="Opening hours">
+          <div className="editorial-about-hours-row">
+            <dt>Weekday</dt>
+            <dd>7am – 10pm</dd>
+          </div>
+          <div className="editorial-about-hours-row">
+            <dt>Weekend</dt>
+            <dd>8am – 12am</dd>
+          </div>
+        </dl>
+
         <a {...linkTo("contact")} className="editorial-link">Contact Mantel</a>
       </div>
     </div>
