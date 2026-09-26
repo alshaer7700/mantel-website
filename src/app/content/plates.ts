@@ -1,4 +1,4 @@
-import espressoPourImage from "@/imports/mood-espresso-pour.jpeg";
+import espressoPourImage from "@/imports/mood-coffee-beans-pour.jpg";
 
 /*
  * Every photograph the site has a place for, and the brief for shooting it.
