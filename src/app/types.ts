@@ -27,9 +27,10 @@ export type Page =
 export const MENU_CATEGORIES = [
   "coffee",
   "not-coffee",
-  "aqua",
   "sandwiches",
   "desserts",
+  "aqua",
+  "add-ons",
 ] as const;
 
 export type MenuCategoryKey = (typeof MENU_CATEGORIES)[number];

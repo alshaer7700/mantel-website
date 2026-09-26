@@ -15,7 +15,7 @@ A Vite 6 + React 18 single-page café site (one main file, `src/app/App.tsx`, ~9
 | Cart | **Working** — localStorage, UI only |
 | Pick-up ordering | **Built but gated** — `place_order` RPC exists and is live; the UI button is disabled ("Ordering Opens Soon") |
 | Payments | **Not built** — `payment_method` column exists; card-only UI stub |
-| Contact / newsletter | **Working** — FormSubmit → owner Gmail (needs activation click) |
+| Contact / newsletter | **Working** — Supabase RPC → Edge Function + Resend → `hello@bymantel.com` (FormSubmit removed, see H-2) |
 | Accounts | **Local-only** — name+email in localStorage; no real auth |
 | Admin | **None** — menu/orders managed via Supabase dashboard |
 | Legal pages | **Done** — Privacy / Terms / Refund / FAQ, PDPL-aware |
@@ -48,6 +48,7 @@ Security posture is already better than typical for this stage: migration `003_s
 - **Impact:** inbox spam/flooding, owner email exposure, and (combined with the client-side order email, M-1) fake "order received" emails.
 - **Fix:** use FormSubmit's **random alias** endpoint instead of the raw address (FormSubmit issues one after activation), and remove `_captcha: "false"` (or set `_captcha: "true"`) at least on the newsletter and contact forms. Longer term, replace FormSubmit with a Supabase Edge Function + Resend (keeps the address server-side and adds rate limiting).
 - **Priority:** High · **Effort:** Low (alias swap) · **Acceptance:** built `dist/` bundle contains no `@gmail.com` string.
+- **Resolved.** FormSubmit and `CONTACT_ENDPOINT` are gone from `src/` entirely — confirmed no `naiffuad`/`formsubmit` string remains anywhere in the app source. The contact form now posts to the `submit_contact_message` RPC, which notifies server-side via `supabase/022_contact_message_notifications.sql` (Edge Function + Resend) to **`hello@bymantel.com`**, the same pattern M-1 uses for orders. No personal address ships in the bundle any more; the Netlify account itself was also moved off the personal Gmail to `hello@bymantel.com`.
 
 **H-3 · Vite has 2 high-severity advisories (dev-server file disclosure family).**
 - `npm audit`: arbitrary file read via dev-server WebSocket, `server.fs` bypasses, path traversal in optimized-deps maps. These are **dev-server** issues (production `dist/` is static), but the dev server runs on this machine regularly.

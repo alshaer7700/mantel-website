@@ -21,12 +21,11 @@ export const LABEL_INK =
 export const DISPLAY = "font-serif font-normal tracking-[-0.018em] leading-[0.94]";
 
 /*
- * A system sans stack for the permanent-collection Menu redesign's category
- * headings and item rows — the mockup uses a grotesk distinct from this
- * site's two shipped families (EB Garamond, Fira Mono; see
- * guidelines/FONTS.md). No new webfont is wired in yet, so this is a
- * placeholder: swap it for a real self-hosted face, following that guide,
- * once one is chosen.
+ * The regular proportional sans a keyboard actually types — not this site's
+ * two shipped faces (EB Garamond serif, Fira Mono monospace). Used for the
+ * permanent-collection Menu's category headings and item rows, which read
+ * wrong in a fixed-width face.
  */
-export const GROTESK =
+export const SYSTEM_SANS =
   "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
+

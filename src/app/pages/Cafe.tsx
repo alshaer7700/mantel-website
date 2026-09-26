@@ -1,9 +1,7 @@
-import type { MenuItem, MenuCategoryKey, MenuCategory, Page } from "@/app/types";
+import type { MenuItem, MenuCategoryKey, MenuCategory } from "@/app/types";
 import { BleedPlate } from "@/app/components/Plate";
 import { MenuList } from "@/app/components/menu/MenuList";
 import { PLATES } from "@/app/content/plates";
-import { LABEL, LABEL_INK } from "@/app/components/type";
-import { ORDERING_OPEN, PICKUP_OPEN } from "@/lib/constants";
 
 /*
  * The permanent-collection cover: a centered "Menu" in place of the old
@@ -13,38 +11,22 @@ import { ORDERING_OPEN, PICKUP_OPEN } from "@/lib/constants";
  */
 
 type Props = {
-  linkTo: (page: Page, category?: MenuCategory) => {
-    href: string;
-    onClick: (event: React.MouseEvent) => void;
-  };
   sections: ReadonlyArray<readonly [MenuCategoryKey, MenuItem[]]>;
   category: MenuCategory;
   loading: boolean;
   error: boolean;
 };
 
-export function Cafe({ linkTo, sections, category, loading, error }: Props) {
+export function Cafe({ sections, category, loading, error }: Props) {
   const shown = category ? sections.filter(([key]) => key === category) : sections;
   const hasItems = shown.some(([, items]) => items.length > 0);
 
   return (
     <div>
       <header className="text-center pt-[clamp(2.5rem,7vh,4rem)] pb-[clamp(2rem,6vh,3.5rem)]">
-        <h1 className="font-serif font-bold uppercase text-[length:var(--fs-section-title)] tracking-[-0.01em] leading-[0.96] m-0 text-[color:var(--ink)]">
+        <h1 className="font-serif font-bold uppercase text-[length:calc(var(--fs-section-title)*0.8)] tracking-[-0.01em] leading-[0.96] m-0 text-[color:var(--ink)]">
           Menu
         </h1>
-        <div aria-hidden="true" className="mx-auto mt-[26px] mb-[16px] w-px h-[34px] bg-[color:var(--line)]" />
-        <p className={LABEL}>
-          Permanent collection · Prices in BD
-          {ORDERING_OPEN && PICKUP_OPEN && (
-            <>
-              {" · "}
-              <a {...linkTo("pickup")} className={LABEL_INK}>
-                Order before reach <span aria-hidden="true">↗</span>
-              </a>
-            </>
-          )}
-        </p>
       </header>
 
       <BleedPlate spec={PLATES.pour} className="mb-[clamp(3rem,8vh,5rem)]" />
