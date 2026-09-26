@@ -52,7 +52,7 @@ function Cell({ item }: { item: MenuItem }) {
   return (
     <div className="py-[18px]">
       <p
-        className="font-mono font-medium uppercase text-[13px] tracking-[-0.005em] leading-[1.3] m-0 text-[color:var(--ink)]"
+        className="font-mono font-medium text-[13px] tracking-[-0.005em] leading-[1.3] m-0 text-[color:var(--ink)]"
       >
         {item.name}
       </p>
