@@ -178,18 +178,6 @@ export const RETAIL_PRODUCTS: RetailProduct[] = [
       "Soy wax, poured in small batches and finished in the same stamped tin as the rest of the counter shelf.",
   },
   {
-    id: "candle-sticks",
-    name: "Candle Sticks",
-    description: "For the shelf, the table, and the in-between.",
-    price: 1.9,
-    image: retailCandleSticksUnlitImage,
-    images: [retailCandleSticksUnlitImage, retailCandleSticksLitImage],
-    tone: "sticks",
-    story: "A pair of cream tapers, cut long enough to burn through an evening at the table.",
-    care: "Wipe with a dry cloth. Keep upright, and away from direct heat.",
-    collection: "Sits alongside the candles — the pair the shelf was built around.",
-  },
-  {
     id: "custom-bags-heart",
     name: "Custom Bags - Heart",
     description: "Made for the things you take with you.",
@@ -210,6 +198,18 @@ export const RETAIL_PRODUCTS: RetailProduct[] = [
     story: "Heavy canvas, built for the walk home, printed with the Mantel wordmark.",
     care: "Machine wash cold, and hang to dry.",
     collection: "The wordmark tote — heavy canvas, built for the walk home.",
+  },
+  {
+    id: "candle-sticks",
+    name: "Candle Sticks",
+    description: "For the shelf, the table, and the in-between.",
+    price: 1.9,
+    image: retailCandleSticksUnlitImage,
+    images: [retailCandleSticksUnlitImage, retailCandleSticksLitImage],
+    tone: "sticks",
+    story: "A pair of cream tapers, cut long enough to burn through an evening at the table.",
+    care: "Wipe with a dry cloth. Keep upright, and away from direct heat.",
+    collection: "Sits alongside the candles — the pair the shelf was built around.",
   },
 ];
 
