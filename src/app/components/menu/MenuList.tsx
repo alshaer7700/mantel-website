@@ -54,7 +54,7 @@ function Cell({ item }: { item: MenuItem }) {
     <div className="py-[18px]">
       <p
         style={{ fontFamily: SYSTEM_SANS }}
-        className="font-medium text-[20px] tracking-[-0.005em] leading-[1.3] m-0 text-[color:var(--ink)]"
+        className="font-normal text-[20px] tracking-[-0.005em] leading-[1.3] m-0 text-[color:var(--ink)]"
       >
         {item.name}
       </p>
