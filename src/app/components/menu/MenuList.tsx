@@ -29,10 +29,16 @@ export function MenuList({
           <p className={LABEL}>{String(index + 1).padStart(2, "0")} —</p>
           <h3
             style={{ fontFamily: SYSTEM_SANS }}
-            className="font-medium uppercase text-[length:clamp(28px,4.5vw,44px)] tracking-[-0.01em] leading-[1.02] m-0 mt-[10px] mb-[28px] text-[color:var(--ink)]"
+            className={`font-medium uppercase text-[length:clamp(28px,4.5vw,44px)] tracking-[-0.01em] leading-[1.02] m-0 mt-[10px] text-[color:var(--ink)] ${key === "coffee" ? "mb-[12px]" : "mb-[28px]"}`}
           >
             {CATEGORY_LABELS[key]}
           </h3>
+
+          {key === "coffee" && (
+            <p className="font-serif italic text-[15px] leading-[1.4] max-w-[34ch] m-0 mb-[28px] text-[color:var(--ink-muted)]">
+              A bite that stays special — a different single-origin harvest joins the lineup every Friday.
+            </p>
+          )}
 
           {chunk(items, 2).map((pair, rowIndex) => (
             <div
