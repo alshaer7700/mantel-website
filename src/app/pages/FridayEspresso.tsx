@@ -1,9 +1,7 @@
-import type { MenuCategory, MenuItem, Page } from "@/app/types";
-import { formatBhd } from "@/app/content/retail";
+import type { MenuCategory, Page } from "@/app/types";
 import { MAPS_URL, ORDERING_OPEN } from "@/lib/constants";
 import {
   EXTRACTION_SPECS,
-  SERVICE_SPECS,
   TRAY_ANNOTATIONS,
   TRAY_ASPECT,
   TRAY_PHOTO,
@@ -94,25 +92,9 @@ type Props = {
     href: string;
     onClick: (event: React.MouseEvent) => void;
   };
-  /** The live menu, for the two prices this page quotes. */
-  menuItems: MenuItem[];
 };
 
-/*
- * The tray's two named drinks are on the menu, so their prices are read from
- * it rather than restated here — a price written into a page is a price that
- * goes stale the first time the counter changes it. A missing item, or one
- * still priced at 0 while the menu is being set, simply shows no figure.
- */
-function priceOf(menuItems: MenuItem[], name: string): number | null {
-  const item = menuItems.find((entry) => entry.name.toLowerCase() === name.toLowerCase());
-  if (!item || !(item.price > 0)) return null;
-  return item.price;
-}
-
-export function FridayEspresso({ linkTo, menuItems }: Props) {
-  const espresso = priceOf(menuItems, "Espresso");
-  const sparkling = priceOf(menuItems, "Sparkling Water");
+export function FridayEspresso({ linkTo }: Props) {
   const publishedExtraction = EXTRACTION_SPECS.filter((spec) => spec.value !== null);
 
   return (
@@ -199,27 +181,6 @@ export function FridayEspresso({ linkTo, menuItems }: Props) {
             ))}
           </ol>
         </div>
-      </section>
-
-      <section className="editorial-ritual-specs" aria-labelledby="ritual-specs-title">
-        <div className="editorial-ritual-specs-intro">
-          <p className="editorial-overline">02 — How it is served</p>
-          <h2 id="ritual-specs-title">The same, every Friday.</h2>
-        </div>
-
-        <dl className="editorial-ritual-spec-list">
-          {/* Prices are the menu's to state, so a row appears only for a drink
-              the menu currently carries a price for — folded into one array,
-              rather than three separate maps, so the cards number straight
-              through regardless of how many of the two price rows show. */}
-          {[
-            ...SERVICE_SPECS,
-            ...(espresso !== null ? [{ label: "Espresso", value: formatBhd(espresso) }] : []),
-            ...(sparkling !== null ? [{ label: "Sparkling water", value: formatBhd(sparkling) }] : []),
-          ].map((spec, i) => (
-            <SpecRow key={spec.label} index={i + 1} label={spec.label} value={spec.value} />
-          ))}
-        </dl>
       </section>
 
       {/*
