@@ -690,7 +690,7 @@ export default function App() {
       {page === "ritual" && (
         <main id="main-content" className="flex flex-col min-h-screen" style={{ paddingTop: navHeight }}>
           <div className="flex-1">
-            <FridayEspresso linkTo={linkTo} menuItems={menuItems} />
+            <FridayEspresso linkTo={linkTo} />
           </div>
           <EditorialFooter linkTo={linkTo} />
         </main>

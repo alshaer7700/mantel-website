@@ -23,7 +23,7 @@ export function Cafe({ sections, category, loading, error }: Props) {
 
   return (
     <div>
-      <header className="text-center pt-[clamp(2.5rem,7vh,4rem)] pb-[clamp(2rem,6vh,3.5rem)]">
+      <header className="text-center pt-[clamp(2.5rem,7vh,4rem)] pb-[clamp(0.75rem,2vh,1.25rem)]">
         <h1 className="font-serif font-bold uppercase text-[length:calc(var(--fs-section-title)*0.8)] tracking-[-0.01em] leading-[0.96] m-0 text-[color:var(--ink)]">
           Menu
         </h1>
