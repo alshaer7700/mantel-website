@@ -60,7 +60,7 @@ function Cell({ item }: { item: MenuItem }) {
       </p>
       <p
         style={{ fontFamily: SYSTEM_SANS }}
-        className="text-[13px] sm:text-[14px] tracking-[-0.005em] tabular-nums m-0 mt-[4px] text-[color:var(--ink-muted)]"
+        className="text-[13px] sm:text-[14px] tracking-[-0.025em] tabular-nums m-0 mt-[1px] text-[color:var(--ink-muted)]"
       >
         {formatPrice(item.price)}
       </p>

@@ -183,6 +183,22 @@ export function FridayEspresso({ linkTo }: Props) {
         </div>
       </section>
 
+      <section
+        className="editorial-ritual-specs"
+        style={{ gridTemplateColumns: "1fr" }}
+        aria-labelledby="ritual-harvest-title"
+      >
+        <div className="editorial-ritual-specs-intro">
+          <p className="editorial-overline">02 — Special harvest</p>
+          <h2 id="ritual-harvest-title">A special harvest, every Friday.</h2>
+          <p>
+            Once a week the espresso runs on a different lot — a small,
+            single-origin harvest we rotate in just for the ritual. Same
+            tray, same cup, a new bean every time.
+          </p>
+        </div>
+      </section>
+
       {/*
         * The recipe, once there is one. EXTRACTION_SPECS ships empty and this
         * whole section stays out of the document until a value is filled in —
