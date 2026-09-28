@@ -23,13 +23,15 @@ export function Objects({ linkTo, products, loading, error, cartLines, onAdd }: 
         <div>
           <p className="editorial-overline">01 — Retail / small editions</p>
           <h1>Objects.</h1>
+          <div className="editorial-inline-links">
+            <a {...linkTo("home")} className="editorial-link">Back to Mantel</a>
+          </div>
         </div>
         <div className="editorial-objects-intro-copy">
           <p>
             A considered shelf of things for the ritual around the coffee. Five small objects,
             chosen to be used and kept.
           </p>
-          <a {...linkTo("home")} className="editorial-link">Back to Mantel</a>
         </div>
       </header>
 

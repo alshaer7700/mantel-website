@@ -189,7 +189,7 @@ export function FridayEspresso({ linkTo }: Props) {
         aria-labelledby="ritual-harvest-title"
       >
         <div className="editorial-ritual-specs-intro">
-          <p className="editorial-overline">02 — Special harvest</p>
+          <p className="editorial-overline">03 — Special harvest</p>
           <h2 id="ritual-harvest-title">A special harvest, every Friday.</h2>
           <p>
             Once a week the espresso runs on a different lot — a small,
@@ -208,7 +208,7 @@ export function FridayEspresso({ linkTo }: Props) {
       {publishedExtraction.length > 0 && (
         <section className="editorial-ritual-specs" aria-labelledby="ritual-recipe-title">
           <div className="editorial-ritual-specs-intro">
-            <p className="editorial-overline">03 — The coffee</p>
+            <p className="editorial-overline">04 — The coffee</p>
             <h2 id="ritual-recipe-title">How it is made.</h2>
             <p>The house recipe, weighed rather than judged by eye.</p>
           </div>
