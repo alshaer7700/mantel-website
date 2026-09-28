@@ -1097,6 +1097,14 @@
     line-height: 0.96;
   }
 
+  /* Tighter than .editorial-inline-links' own 30px: that spacing assumes a
+     row of several links standing apart from the copy above them, but here
+     it's a single "back" link that reads as part of the masthead, not a
+     separate block — it should sit close under the heading. */
+  .editorial-objects-intro .editorial-inline-links {
+    margin-top: 10px;
+  }
+
   .editorial-objects-intro-copy {
     max-width: 360px;
     justify-self: end;
