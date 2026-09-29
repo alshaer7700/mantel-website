@@ -2980,3 +2980,114 @@ a.adm-list-row:hover {
   width: 100%;
   accent-color: var(--a-ink);
 }
+
+/* ── Phone layout ───────────────────────────────────────────────────────────
+ * Rows with buttons on the right (menu, retail, today's orders…) squeezed
+ * the name into a one-letter column on a phone. Below 640px the buttons move
+ * to their own line under the name, and the wide tables become cards. */
+
+@media (max-width: 640px) {
+  .adm .adm-list-row {
+    flex-wrap: wrap;
+    row-gap: 10px;
+  }
+
+  .adm .adm-list-row > .adm-list-side {
+    flex: 1 0 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .adm .adm-topbar {
+    background: var(--a-bg);
+  }
+
+  /* Tabs wrap instead of scrolling sideways out of sight. */
+  .adm .adm-tabs {
+    flex-wrap: wrap;
+    column-gap: 18px;
+    row-gap: 0;
+    overflow: visible;
+  }
+
+  /* Tables → cards */
+  .adm .adm-table-wrap:has(.adm-cards) {
+    overflow: visible;
+  }
+
+  .adm .adm-cards,
+  .adm .adm-cards tbody {
+    display: block;
+    width: 100%;
+  }
+
+  .adm .adm-cards thead {
+    display: none;
+  }
+
+  .adm .adm-cards tr {
+    display: grid;
+    gap: 4px 12px;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--a-line);
+    align-items: baseline;
+  }
+
+  .adm .adm-cards tr:last-child {
+    border-bottom: 0;
+  }
+
+  .adm .adm-cards td {
+    display: block;
+    padding: 0;
+    border: 0;
+    max-width: none !important;
+    min-width: 0;
+  }
+
+  .adm .adm-cards td[data-label]::before {
+    content: attr(data-label) " ";
+    font-family: var(--a-ui);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--a-muted);
+  }
+
+  /* Orders: tick · reference · status / customer · total / items */
+  .adm .adm-cards-orders tr {
+    grid-template-columns: 28px minmax(0, 1fr) auto;
+    grid-template-areas: "check ref status" ". who total" ". items items";
+  }
+
+  .adm .adm-cards-orders td:nth-child(1) { grid-area: check; align-self: center; }
+  .adm .adm-cards-orders td:nth-child(2) { grid-area: ref; }
+  .adm .adm-cards-orders td:nth-child(3) { grid-area: who; }
+  .adm .adm-cards-orders td:nth-child(4) { grid-area: items; color: var(--a-muted); }
+  .adm .adm-cards-orders td:nth-child(5) { grid-area: total; text-align: end; }
+  .adm .adm-cards-orders td:nth-child(6) { grid-area: status; text-align: end; }
+
+  /* Customers: name · spent / orders · last visit / notes */
+  .adm .adm-cards-customers tr {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: "who spent" "orders last" "notes notes";
+  }
+
+  .adm .adm-cards-customers td:nth-child(1) { grid-area: who; }
+  .adm .adm-cards-customers td:nth-child(2) { grid-area: orders; text-align: start; }
+  .adm .adm-cards-customers td:nth-child(3) { grid-area: spent; text-align: end; font-weight: 600; }
+  .adm .adm-cards-customers td:nth-child(4) { grid-area: last; text-align: end; }
+  .adm .adm-cards-customers td:nth-child(5) { grid-area: notes; }
+
+  /* Invoices: number · status / customer · total / date */
+  .adm .adm-cards-invoices tr {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: "num status" "who total" "date date";
+  }
+
+  .adm .adm-cards-invoices td:nth-child(1) { grid-area: num; }
+  .adm .adm-cards-invoices td:nth-child(2) { grid-area: who; }
+  .adm .adm-cards-invoices td:nth-child(3) { grid-area: date; color: var(--a-muted); font-size: 13px; }
+  .adm .adm-cards-invoices td:nth-child(4) { grid-area: total; text-align: end; font-weight: 600; }
+  .adm .adm-cards-invoices td:nth-child(5) { grid-area: status; text-align: end; }
+}

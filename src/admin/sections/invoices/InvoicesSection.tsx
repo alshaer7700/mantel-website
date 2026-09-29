@@ -135,7 +135,7 @@ function InvoiceList() {
         />
       ) : (
         <div className="adm-table-wrap">
-          <table className="adm-table">
+          <table className="adm-table adm-cards adm-cards-invoices">
             <thead>
               <tr>
                 <th>{t("Number")}</th>

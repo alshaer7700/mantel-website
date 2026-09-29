@@ -391,7 +391,7 @@ function HistoryView({ version, onOpen, onChanged }: { version: number; onOpen: 
             {t("{n} orders · {total} after refunds (cancelled not counted)", { n: data.total, total: money(data.revenue) })}
           </p>
           <div className="adm-table-wrap">
-            <table className="adm-table">
+            <table className="adm-table adm-cards adm-cards-orders">
               <thead>
                 <tr>
                   <th style={{ width: 36 }}><span className="sr-only">{t("Select")}</span></th>

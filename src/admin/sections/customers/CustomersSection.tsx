@@ -110,7 +110,7 @@ export function CustomersSection() {
       ) : (
         <>
           <div className="adm-table-wrap">
-            <table className="adm-table">
+            <table className="adm-table adm-cards adm-cards-customers">
               <thead>
                 <tr>
                   <th>{t("Customer")}</th>
@@ -127,9 +127,9 @@ export function CustomersSection() {
                       <div className="adm-strong">{r.name}</div>
                       <div className="adm-small adm-muted" dir="ltr" style={{ textAlign: "start" }}>{r.email}</div>
                     </td>
-                    <td className="adm-num">{r.orders}</td>
+                    <td className="adm-num" data-label={t("Orders")}>{r.orders}</td>
                     <td className="adm-num">{money(r.spent)}</td>
-                    <td>{r.last_order ? ago(r.last_order) : "—"}</td>
+                    <td data-label={t("Last visit")}>{r.last_order ? ago(r.last_order) : "—"}</td>
                     <td>
                       <div className="adm-row" style={{ gap: 6, flexWrap: "wrap" }}>
                         {r.blocked && <Badge tone="danger">{t("Blocked")}</Badge>}
