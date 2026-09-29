@@ -148,7 +148,7 @@ const DEFAULT_HEAD: Letterhead = {
   name: "MANTEL.",
   cr_number: "197765-1",
   address: "SHOP 114D, BLDG 114, ROAD 16, BLOCK 111, HIDD, KINGDOM OF BAHRAIN",
-  logo_url: "https://bymantel.com/heart.webp",
+  logo_url: "https://bymantel.com/heart.png",
   logo_size: 12,
   email: "hello@bymantel.com",
   instagram: "bymantel",
@@ -176,8 +176,10 @@ async function loadLetterhead(): Promise<Letterhead> {
       styles[key] = { ...DEFAULT_STYLES[key], ...(saved && typeof saved === "object" ? saved : {}) };
       if (!(styles[key].font in FONTS)) styles[key].font = DEFAULT_STYLES[key].font;
     }
+    // Gmail turns a transparent WebP's background black; the heart is a PNG now.
+    const logo = pick("logo_url") === "https://bymantel.com/heart.webp" ? DEFAULT_HEAD.logo_url : pick("logo_url");
     return {
-      name: pick("name"), cr_number: pick("cr_number"), address: pick("address"), logo_url: pick("logo_url"),
+      name: pick("name"), cr_number: pick("cr_number"), address: pick("address"), logo_url: logo,
       logo_size: Math.min(40, Math.max(4, Number(value.logo_size) || 12)),
       email: pick("email"), instagram: pick("instagram"), styles,
     };

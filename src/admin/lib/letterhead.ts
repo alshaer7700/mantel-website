@@ -46,7 +46,15 @@ export type Letterhead = {
   styles: Record<StyleKey, TextStyle>;
 };
 
-export const DEFAULT_LOGO = "https://bymantel.com/heart.webp";
+export const DEFAULT_LOGO = "https://bymantel.com/heart.png";
+
+/** The heart before it became a PNG. Email apps (Gmail especially) turn a
+ * transparent WebP's background black, so the letterhead uses the PNG. */
+const LEGACY_LOGOS = ["https://bymantel.com/heart.webp"];
+
+export function isDefaultLogo(url: string): boolean {
+  return url === DEFAULT_LOGO || LEGACY_LOGOS.includes(url);
+}
 
 const style = (font: FontKey, size: number, extra: Partial<TextStyle> = {}): TextStyle => ({
   font, size, bold: false, italic: false, underline: false, caps: false, spacing: 0, color: "#171310", ...extra,
@@ -81,7 +89,9 @@ export function withDefaults(raw: Partial<Letterhead> | null | undefined): Lette
     if (!(merged.font in FONTS)) merged.font = DEFAULT_STYLES[key].font;
     styles[key] = merged;
   }
-  return { ...DEFAULT_LETTERHEAD, ...r, logo_size: Number(r.logo_size) || DEFAULT_LETTERHEAD.logo_size, styles };
+  const merged = { ...DEFAULT_LETTERHEAD, ...r, logo_size: Number(r.logo_size) || DEFAULT_LETTERHEAD.logo_size, styles };
+  if (merged.logo_url && isDefaultLogo(merged.logo_url)) merged.logo_url = DEFAULT_LOGO;
+  return merged;
 }
 
 /** A text style as CSS, for the sheet preview and print. */
@@ -220,8 +230,8 @@ export async function downloadLetterheadDocx(h: Letterhead): Promise<Result<true
 
     // The logo keeps its right edge where the template has it and grows to the
     // chosen width (1 mm = 36000 EMU).
-    let ratio = 218981 / 294695;
-    if (h.logo_url && h.logo_url !== DEFAULT_LOGO) {
+    let ratio = 1016 / 1200;
+    if (h.logo_url && !isDefaultLogo(h.logo_url)) {
       const logo = await logoAsPng(h.logo_url);
       if (logo) {
         zip.file("word/media/image1.png", logo.png);

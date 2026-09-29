@@ -11,6 +11,7 @@ import {
   DEFAULT_LOGO,
   DEFAULT_STYLES,
   downloadLetterheadDocx,
+  isDefaultLogo,
   instagramHandle,
   loadInvoiceSettings,
   loadLetterhead,
@@ -524,7 +525,7 @@ function LetterheadEditor() {
             </div>
             <ImagePicker
               label={t("Logo")}
-              value={draft.logo_url && draft.logo_url !== DEFAULT_LOGO ? draft.logo_url : null}
+              value={draft.logo_url && !isDefaultLogo(draft.logo_url) ? draft.logo_url : null}
               onChange={(url) => set("logo_url", url ?? DEFAULT_LOGO)}
               folder="letterhead"
               fallback={DEFAULT_LOGO}
