@@ -29,6 +29,7 @@ import { Modal, useConfirm, useToast } from "@/admin/ui/overlays";
 import { ImagePicker } from "@/admin/ui/ImagePicker";
 import { TextStyleBar } from "@/admin/ui/TextStyleBar";
 import { LetterheadSheet, PrintSheet, ScaledSheet } from "@/admin/ui/LetterheadSheet";
+import { downloadSheetPdf } from "@/admin/lib/pdf";
 import {
   InvoiceDocument,
   PAYMENT_LABEL,
@@ -300,7 +301,7 @@ function DocumentEditor({ id, newKind }: { id: string; newKind: DocKind | null }
   const [draft, setDraft] = useState<Draft | null>(null);
   const [saved, setSaved] = useState<string>("");
   const [busy, setBusy] = useState<string | null>(null);
-  const [printing, setPrinting] = useState(false);
+  const [pdfBusy, setPdfBusy] = useState(false);
   const [voidOpen, setVoidOpen] = useState(false);
 
   useEffect(() => {
@@ -420,12 +421,18 @@ function DocumentEditor({ id, newKind }: { id: string; newKind: DocKind | null }
     navigate("invoices", r.value);
   };
 
-  const print = () => {
-    setPrinting(true);
-    window.setTimeout(() => {
-      window.print();
-      setPrinting(false);
-    }, 150);
+  /* The print copy stays in the page (hidden on screen): Safari on iPhone
+     takes its print snapshot after print() returns, so a copy added just for
+     the call was gone by then and the whole dashboard printed instead. */
+  const print = () => window.print();
+
+  const downloadPdf = async () => {
+    const sheet = document.querySelector<HTMLElement>(".mtl-print .mtl-sheet");
+    if (!sheet) return;
+    setPdfBusy(true);
+    const r = await downloadSheetPdf(sheet, doc?.number ?? `${h.name.replace(/\.$/, "")}-${kind}-draft`);
+    setPdfBusy(false);
+    if (!r.ok) toast.error(t(r.error));
   };
 
   const emailLink = () => {
@@ -503,7 +510,8 @@ function DocumentEditor({ id, newKind }: { id: string; newKind: DocKind | null }
         subtitle={subtitle}
         actions={(
           <>
-            <Button icon={<Printer size={16} />} onClick={print}>{t("Print or save as PDF")}</Button>
+            <Button icon={<Download size={16} />} onClick={() => void downloadPdf()} loading={pdfBusy}>{t("Download PDF")}</Button>
+            <Button icon={<Printer size={16} />} onClick={print}>{t("Print")}</Button>
             {status !== "draft" && draft.bill_to.email && <Button icon={<Send size={16} />} onClick={emailLink}>{t("Email")}</Button>}
             {status === "draft" && <Button variant="primary" icon={<CheckCircle2 size={16} />} onClick={issue} loading={busy === "issue"}>{t(copy.issue)}</Button>}
             {kind === "invoice" && status === "issued" && <Button variant="primary" icon={<CheckCircle2 size={16} />} onClick={() => setStatus("paid")} loading={busy === "paid"}>{t("Mark as paid")}</Button>}
@@ -572,7 +580,7 @@ function DocumentEditor({ id, newKind }: { id: string; newKind: DocKind | null }
       </div>
 
       {editable && <SaveBar dirty={dirty} saving={busy === "save"} onSave={() => void save()} message={t("This draft has unsaved changes")} />}
-      {printing && <PrintSheet><InvoiceDocument invoice={preview} head={h} settings={s} /></PrintSheet>}
+      <PrintSheet><InvoiceDocument invoice={preview} head={h} settings={s} /></PrintSheet>
       <VoidModal open={voidOpen} onClose={() => setVoidOpen(false)} title={t(copy.voidIt)} onVoid={async (reason) => { setVoidOpen(false); await setStatus("void", reason); }} />
     </>
   );

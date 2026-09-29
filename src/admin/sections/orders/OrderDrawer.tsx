@@ -30,7 +30,6 @@ export function OrderDrawer({ orderId, onClose, onChanged }: { orderId: string |
   const [cancelOpen, setCancelOpen] = useState(false);
   const [refundOpen, setRefundOpen] = useState(false);
   const [note, setNote] = useState("");
-  const [printing, setPrinting] = useState(false);
   const { can, navigate } = useAdmin();
 
   const o = orderId ? order.data : null;
@@ -74,13 +73,10 @@ export function OrderDrawer({ orderId, onClose, onChanged }: { orderId: string |
     await order.reload();
   };
 
-  const print = () => {
-    setPrinting(true);
-    window.setTimeout(() => {
-      window.print();
-      setPrinting(false);
-    }, 80);
-  };
+  /* The ticket stays in the page (hidden on screen) while the order is open:
+     Safari on iPhone and iPad takes its print snapshot after print() has
+     returned, so a ticket added just for the call was already gone. */
+  const print = () => window.print();
 
   const wa = whatsappNumber(o?.customer_phone ?? null);
   const next = o ? NEXT_STEP[o.status] : undefined;
@@ -227,7 +223,7 @@ export function OrderDrawer({ orderId, onClose, onChanged }: { orderId: string |
 
           <CancelModal open={cancelOpen} onClose={() => setCancelOpen(false)} onConfirm={async (reason) => { setCancelOpen(false); await move("cancelled", reason); }} reference={o.reference} />
           <RefundModal open={refundOpen} onClose={() => setRefundOpen(false)} order={o} onDone={async () => { setRefundOpen(false); await order.reload(); onChanged(); }} />
-          {printing && <PrintTicket order={o} />}
+          {o && <PrintTicket order={o} />}
         </>
       )}
     </Drawer>

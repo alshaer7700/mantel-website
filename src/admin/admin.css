@@ -2496,6 +2496,11 @@ a.adm-list-row:hover {
     display: none !important;
   }
 
+  html:has(.adm-print-area),
+  body:has(.adm-print-area) {
+    background: #FFFFFF !important;
+  }
+
   .adm-print-area {
     display: block !important;
   }

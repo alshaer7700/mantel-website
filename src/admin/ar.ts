@@ -1225,4 +1225,6 @@ export const AR: Record<string, string> = {
   "{day} at {time}": "{day} الساعة {time}",
   "{day} closes": "إغلاق {day}",
   "{day} opens": "فتح {day}",
+  "Download PDF": "تنزيل PDF",
+  "Couldn't make the PDF. Try “Print” instead.": "تعذّر إنشاء ملف PDF. جرّب “طباعة” بدلًا من ذلك.",
 };
