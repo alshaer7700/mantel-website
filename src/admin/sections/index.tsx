@@ -5,6 +5,12 @@ import type { SectionId } from "@/admin/nav";
 import { SECTIONS } from "@/admin/nav";
 import { EmptyState, PageHeader } from "@/admin/ui/layout";
 import { AccountSection } from "@/admin/sections/account/AccountSection";
+import { HomeSection } from "@/admin/sections/home/HomeSection";
+import { OrdersSection } from "@/admin/sections/orders/OrdersSection";
+import { MenuSection } from "@/admin/sections/catalog/MenuSection";
+import { RetailSection } from "@/admin/sections/catalog/RetailSection";
+import { MessagesSection } from "@/admin/sections/messages/MessagesSection";
+import { MarketingSection } from "@/admin/sections/marketing/MarketingSection";
 
 function ComingSoon({ id }: { id: SectionId }) {
   const t = useT();
@@ -18,6 +24,12 @@ function ComingSoon({ id }: { id: SectionId }) {
 }
 
 const VIEWS: Partial<Record<SectionId, ComponentType>> = {
+  home: HomeSection,
+  orders: OrdersSection,
+  menu: MenuSection,
+  retail: RetailSection,
+  messages: MessagesSection,
+  marketing: MarketingSection,
   account: AccountSection,
 };
 
