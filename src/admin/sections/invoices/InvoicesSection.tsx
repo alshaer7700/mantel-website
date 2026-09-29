@@ -9,6 +9,7 @@ import {
   DEFAULT_INVOICE_SETTINGS,
   DEFAULT_LETTERHEAD,
   DEFAULT_LOGO,
+  DEFAULT_STYLES,
   downloadLetterheadDocx,
   instagramHandle,
   loadInvoiceSettings,
@@ -17,11 +18,14 @@ import {
   saveLetterhead,
   type InvoiceSettings,
   type Letterhead,
+  type StyleKey,
+  type TextStyle,
 } from "@/admin/lib/letterhead";
 import { Button, Chips, IconButton, MoneyField, NumberField, SearchInput, TextArea, TextField, Toggle } from "@/admin/ui/controls";
 import { Badge, Card, EmptyState, LoadError, Loading, Notice, PageHeader, SaveBar, Stat, Tabs } from "@/admin/ui/layout";
 import { Modal, useConfirm, useToast } from "@/admin/ui/overlays";
 import { ImagePicker } from "@/admin/ui/ImagePicker";
+import { TextStyleBar } from "@/admin/ui/TextStyleBar";
 import { LetterheadSheet, PrintSheet, ScaledSheet } from "@/admin/ui/LetterheadSheet";
 import { InvoiceDocument, lineAmount, totalsFor, type BillTo, type Invoice, type InvoiceLine } from "@/admin/sections/invoices/InvoiceDocument";
 
@@ -480,7 +484,8 @@ function LetterheadEditor() {
   if (loaded.error) return <LoadError message={loaded.error} onRetry={loaded.reload} />;
   if (!draft) return null;
 
-  const set = (key: keyof Letterhead, value: string) => setDraft({ ...draft, [key]: value });
+  const set = (key: "name" | "cr_number" | "address" | "logo_url" | "email" | "instagram", value: string) => setDraft({ ...draft, [key]: value });
+  const setStyle = (key: StyleKey, value: TextStyle) => setDraft({ ...draft, styles: { ...draft.styles, [key]: value } });
 
   const save = async () => {
     const clean = { ...draft, instagram: instagramHandle(draft.instagram), name: draft.name.trim(), email: draft.email.trim() };
@@ -506,10 +511,17 @@ function LetterheadEditor() {
           {t("What you set here appears on invoices, on the new-order emails and in the Word letterhead you can download. Invoices already issued keep the letterhead they were issued with.")}
         </Notice>
         <Card title={t("Top of the page")}>
-          <div className="adm-stack">
-            <TextField label={t("Name")} value={draft.name} onChange={(v) => set("name", v)} maxLength={40} />
-            <TextField label={t("CR number")} optional value={draft.cr_number} onChange={(v) => set("cr_number", v)} maxLength={40} dir="ltr" hint={t("Printed as “CR No.” followed by this.")} />
-            <TextArea label={t("Address")} optional rows={2} value={draft.address} onChange={(v) => set("address", v)} maxLength={200} />
+          <div className="adm-stack" style={{ gap: 18 }}>
+            <div className="adm-stack" style={{ gap: 6 }}>
+              <TextField label={t("Name")} value={draft.name} onChange={(v) => set("name", v)} maxLength={40} />
+              <TextStyleBar label={t("Name")} value={draft.styles.name} fallback={DEFAULT_STYLES.name} onChange={(v) => setStyle("name", v)} />
+            </div>
+            <div className="adm-stack" style={{ gap: 6 }}>
+              <TextField label={t("CR number")} optional value={draft.cr_number} onChange={(v) => set("cr_number", v)} maxLength={40} dir="ltr" hint={t("Printed as “CR No.” followed by this.")} />
+              <TextArea label={t("Address")} optional rows={2} value={draft.address} onChange={(v) => set("address", v)} maxLength={200} />
+              <p className="adm-small adm-muted">{t("Look of the CR number and address")}</p>
+              <TextStyleBar label={t("Company details")} value={draft.styles.details} fallback={DEFAULT_STYLES.details} onChange={(v) => setStyle("details", v)} />
+            </div>
             <ImagePicker
               label={t("Logo")}
               value={draft.logo_url && draft.logo_url !== DEFAULT_LOGO ? draft.logo_url : null}
@@ -518,22 +530,45 @@ function LetterheadEditor() {
               fallback={DEFAULT_LOGO}
               hint={t("Shown small in the top corner. A square or wide image with a plain background works best.")}
             />
+            <div className="adm-field">
+              <label className="adm-label" htmlFor="logo-size">{t("Logo size")} · {draft.logo_size} mm</label>
+              <input id="logo-size" className="adm-range" type="range" min={6} max={40} step={1} value={draft.logo_size} onChange={(e) => setDraft({ ...draft, logo_size: Number(e.target.value) })} />
+            </div>
           </div>
         </Card>
         <Card title={t("Footer")} subtitle={t("Leave one empty to hide it.")}>
-          <div className="adm-stack">
+          <div className="adm-stack" style={{ gap: 18 }}>
             <TextField label={t("Email")} optional type="email" dir="ltr" value={draft.email} onChange={(v) => set("email", v)} maxLength={120} />
             <TextField label={t("Instagram")} optional dir="ltr" prefix="@" value={draft.instagram.replace(/^@/, "")} onChange={(v) => set("instagram", v)} maxLength={60} />
+            <div className="adm-stack" style={{ gap: 6 }}>
+              <p className="adm-small adm-muted">{t("Small labels (EMAIL, INSTAGRAM, and the headings on invoices)")}</p>
+              <TextStyleBar label={t("Labels")} value={draft.styles.labels} fallback={DEFAULT_STYLES.labels} onChange={(v) => setStyle("labels", v)} />
+            </div>
+            <div className="adm-stack" style={{ gap: 6 }}>
+              <p className="adm-small adm-muted">{t("The email address and Instagram name")}</p>
+              <TextStyleBar label={t("Footer details")} value={draft.styles.values} fallback={DEFAULT_STYLES.values} onChange={(v) => setStyle("values", v)} />
+            </div>
           </div>
+        </Card>
+        <Card title={t("Page text")} subtitle={t("The writing on invoices, under the letterhead.")}>
+          <TextStyleBar label={t("Page text")} value={draft.styles.body} fallback={DEFAULT_STYLES.body} onChange={(v) => setStyle("body", v)} />
         </Card>
         <div className="adm-row" style={{ flexWrap: "wrap" }}>
           <Button icon={<Download size={16} />} onClick={download} loading={downloading}>{t("Download as Word")}</Button>
+          <Button variant="ghost" onClick={() => setDraft({ ...draft, styles: DEFAULT_STYLES, logo_size: DEFAULT_LETTERHEAD.logo_size })}>{t("Reset the look")}</Button>
           <Button variant="ghost" onClick={() => setDraft({ ...DEFAULT_LETTERHEAD })}>{t("Reset to the original")}</Button>
         </div>
       </div>
       <div className="adm-invoice-preview">
         <p className="adm-overline" style={{ marginBottom: 8 }}>{t("Preview")}</p>
-        <ScaledSheet><LetterheadSheet head={{ ...draft, instagram: instagramHandle(draft.instagram) }} /></ScaledSheet>
+        <ScaledSheet>
+          <LetterheadSheet head={{ ...draft, instagram: instagramHandle(draft.instagram) }}>
+            <div className="mtl-label">{t("Sample")}</div>
+            <p style={{ marginTop: "2mm", maxWidth: "140mm" }}>
+              This is how the writing on invoices and letters will look. Change the page text above to see it here.
+            </p>
+          </LetterheadSheet>
+        </ScaledSheet>
       </div>
       <SaveBar dirty={dirty} saving={saving} onSave={save} onDiscard={() => setDraft(loaded.data ?? null)} />
     </div>

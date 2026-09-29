@@ -101,15 +101,58 @@ function bahrainTime(iso: string | null | undefined): string {
 // every function; if that read fails, the built-in letterhead is used so the
 // order email still goes out. Tables and inline styles only, because that is
 // all email clients reliably render.
-type Letterhead = { name: string; cr_number: string; address: string; logo_url: string; email: string; instagram: string };
+type TextStyle = { font: string; size: number; bold: boolean; italic: boolean; underline: boolean; caps: boolean; spacing: number; color: string };
+type StyleKey = "name" | "details" | "labels" | "values" | "body";
+type Letterhead = {
+  name: string; cr_number: string; address: string; logo_url: string; logo_size: number;
+  email: string; instagram: string; styles: Record<StyleKey, TextStyle>;
+};
+
+// Same keys as FONTS in src/admin/lib/letterhead.ts.
+const FONTS: Record<string, string> = {
+  "fira-mono": `'Fira Mono',Menlo,Consolas,'Courier New',monospace`,
+  "eb-garamond": `'EB Garamond',Georgia,'Times New Roman',serif`,
+  georgia: `Georgia,'Times New Roman',serif`,
+  times: `'Times New Roman',Times,serif`,
+  arial: `Arial,Helvetica,sans-serif`,
+  verdana: `Verdana,Geneva,sans-serif`,
+  courier: `'Courier New',Courier,monospace`,
+};
+
+const st = (font: string, size: number, extra: Partial<TextStyle> = {}): TextStyle => ({
+  font, size, bold: false, italic: false, underline: false, caps: false, spacing: 0, color: "#171310", ...extra,
+});
+
+const DEFAULT_STYLES: Record<StyleKey, TextStyle> = {
+  name: st("fira-mono", 30, { spacing: -3 }),
+  details: st("eb-garamond", 8, { spacing: 4 }),
+  labels: st("fira-mono", 6.5, { caps: true, spacing: 15, color: "#766E66" }),
+  values: st("fira-mono", 8.5, { bold: true }),
+  body: st("eb-garamond", 10.5),
+};
+
+// The letterhead's sizes are points on an A4 page; an email is read on a
+// phone, so the small print is scaled up (the name is already large).
+const EMAIL_SCALE: Record<StyleKey, number> = { name: 1, details: 1.375, labels: 1.55, values: 1.4, body: 1.43 };
+
+function cssOf(key: StyleKey, s: TextStyle, sizeOverride?: number): string {
+  const size = Math.min(80, Math.max(4, Number(s.size) || DEFAULT_STYLES[key].size));
+  const px = Math.round((sizeOverride ?? size * EMAIL_SCALE[key]) * 10) / 10;
+  const spacing = Math.min(50, Math.max(-20, Number(s.spacing) || 0));
+  return `font-family:${FONTS[s.font] ?? FONTS["eb-garamond"]};font-size:${px}px;font-weight:${s.bold ? 700 : 400};` +
+    `font-style:${s.italic ? "italic" : "normal"};text-decoration:${s.underline ? "underline" : "none"};` +
+    `text-transform:${s.caps ? "uppercase" : "none"};letter-spacing:${spacing / 100}em;color:${/^#[0-9a-f]{6}$/i.test(String(s.color)) ? s.color : "#171310"};`;
+}
 
 const DEFAULT_HEAD: Letterhead = {
   name: "MANTEL.",
   cr_number: "197765-1",
   address: "SHOP 114D, BLDG 114, ROAD 16, BLOCK 111, HIDD, KINGDOM OF BAHRAIN",
   logo_url: "https://bymantel.com/heart.webp",
+  logo_size: 12,
   email: "hello@bymantel.com",
   instagram: "bymantel",
+  styles: DEFAULT_STYLES,
 };
 
 async function loadLetterhead(): Promise<Letterhead> {
@@ -125,8 +168,19 @@ async function loadLetterhead(): Promise<Letterhead> {
     const rows = await res.json();
     const value = Array.isArray(rows) ? rows[0]?.value : null;
     if (!value || typeof value !== "object") return DEFAULT_HEAD;
-    const pick = (k: keyof Letterhead) => (typeof value[k] === "string" ? String(value[k]).trim() : DEFAULT_HEAD[k]);
-    return { name: pick("name"), cr_number: pick("cr_number"), address: pick("address"), logo_url: pick("logo_url"), email: pick("email"), instagram: pick("instagram") };
+    const pick = (k: "name" | "cr_number" | "address" | "logo_url" | "email" | "instagram") =>
+      (typeof value[k] === "string" ? String(value[k]).trim() : DEFAULT_HEAD[k]);
+    const styles = { ...DEFAULT_STYLES };
+    for (const key of Object.keys(DEFAULT_STYLES) as StyleKey[]) {
+      const saved = value.styles?.[key];
+      styles[key] = { ...DEFAULT_STYLES[key], ...(saved && typeof saved === "object" ? saved : {}) };
+      if (!(styles[key].font in FONTS)) styles[key].font = DEFAULT_STYLES[key].font;
+    }
+    return {
+      name: pick("name"), cr_number: pick("cr_number"), address: pick("address"), logo_url: pick("logo_url"),
+      logo_size: Math.min(40, Math.max(4, Number(value.logo_size) || 12)),
+      email: pick("email"), instagram: pick("instagram"), styles,
+    };
   } catch {
     return DEFAULT_HEAD;
   }
@@ -137,29 +191,29 @@ function handleOf(value: string): string {
 }
 
 const INK = "#171310";
-const INK_2 = "#3A342D";
 const MUTED = "#766E66";
 const LINE = "#E8E4DC";
 const MONO = "font-family:'Fira Mono',Menlo,Consolas,'Courier New',monospace;";
-const SERIF = "font-family:'EB Garamond',Georgia,'Times New Roman',serif;";
 
-function detailRow(label: string, value: string): string {
+function detailRow(head: Letterhead, label: string, value: string): string {
   // Both cells sit on one baseline: the small label and the larger value
   // read as one line instead of the label floating above.
-  return `<tr><td style="padding:5px 20px 5px 0;${MONO}font-size:11px;line-height:22px;letter-spacing:1.5px;text-transform:uppercase;color:${MUTED};white-space:nowrap;width:1%;vertical-align:baseline">${label}</td>` +
+  return `<tr><td style="padding:5px 20px 5px 0;${cssOf("labels", head.styles.labels, 11)}line-height:22px;white-space:nowrap;width:1%;vertical-align:baseline">${label}</td>` +
     `<td style="padding:5px 0;line-height:22px;vertical-align:baseline">${value}</td></tr>`;
 }
 
-function footerItem(label: string, href: string, value: string, align: "left" | "right"): string {
+function footerItem(head: Letterhead, label: string, href: string, value: string, align: "left" | "right"): string {
+  const v = head.styles.values;
   return `<td style="vertical-align:top;text-align:${align}">` +
-    `<div style="${MONO}font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:${MUTED}">${label}</div>` +
-    `<div style="margin-top:4px;${MONO}font-size:12px;font-weight:700"><a href="${href}" style="color:${INK};text-decoration:none">${value}</a></div>` +
+    `<div style="${cssOf("labels", head.styles.labels)}">${label}</div>` +
+    `<div style="margin-top:4px;${cssOf("values", v)}"><a href="${href}" style="${cssOf("values", v)}">${value}</a></div>` +
     `</td>`;
 }
 
 function letterhead(body: string, head: Letterhead): string {
   const handle = handleOf(head.instagram);
   const email = head.email.trim();
+  const logoPx = Math.round(head.logo_size * 3.6);
   return [
     `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"></head>`,
     `<body style="margin:0;padding:0;background:#F6F5F2">`,
@@ -169,11 +223,11 @@ function letterhead(body: string, head: Letterhead): string {
     `<tr><td style="padding:32px 32px 0">`,
     `<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>`,
     `<td style="vertical-align:top">`,
-    `<div style="${MONO}font-size:30px;line-height:1;letter-spacing:-1px;color:${INK}">${esc(head.name)}</div>`,
-    head.cr_number ? `<div style="margin-top:14px;${SERIF}font-size:11px;letter-spacing:0.5px;color:${INK}">CR No.${esc(head.cr_number)}</div>` : "",
-    head.address ? `<div style="margin-top:6px;${SERIF}font-size:11px;letter-spacing:0.5px;color:${INK}">${esc(head.address)}</div>` : "",
+    `<div style="${cssOf("name", head.styles.name)}line-height:1">${esc(head.name)}</div>`,
+    head.cr_number ? `<div style="margin-top:14px;${cssOf("details", head.styles.details)}">CR No.${esc(head.cr_number)}</div>` : "",
+    head.address ? `<div style="margin-top:6px;${cssOf("details", head.styles.details)}">${esc(head.address)}</div>` : "",
     `</td>`,
-    head.logo_url ? `<td style="vertical-align:top;text-align:right;width:56px"><img src="${esc(head.logo_url)}" width="44" alt="${esc(head.name)}" style="display:block;margin-left:auto;width:44px;height:auto;border:0"></td>` : "",
+    head.logo_url ? `<td style="vertical-align:top;text-align:right;width:${logoPx + 12}px"><img src="${esc(head.logo_url)}" width="${logoPx}" alt="${esc(head.name)}" style="display:block;margin-left:auto;width:${logoPx}px;height:auto;border:0"></td>` : "",
     `</tr></table>`,
     `<div style="height:1px;background:${INK};margin:24px 0 0;line-height:1px;font-size:0">&nbsp;</div>`,
     `</td></tr>`,
@@ -184,8 +238,8 @@ function letterhead(body: string, head: Letterhead): string {
       `<tr><td style="padding:0 32px 28px">`,
       `<div style="height:1px;background:${LINE};line-height:1px;font-size:0;margin:0 0 18px">&nbsp;</div>`,
       `<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>`,
-      email ? footerItem("Email", `mailto:${esc(email)}`, esc(email), "left") : `<td></td>`,
-      handle ? footerItem("Instagram", `https://www.instagram.com/${encodeURIComponent(handle)}`, `@${esc(handle)}`, "right") : `<td></td>`,
+      email ? footerItem(head, "Email", `mailto:${esc(email)}`, esc(email), "left") : `<td></td>`,
+      handle ? footerItem(head, "Instagram", `https://www.instagram.com/${encodeURIComponent(handle)}`, `@${esc(handle)}`, "right") : `<td></td>`,
       `</tr></table>`,
       `</td></tr>`,
     ].join("") : "",
@@ -260,23 +314,23 @@ Deno.serve(async (req: Request) => {
   ].join("\n");
 
   const html = letterhead([
-    `<p style="margin:0 0 6px;${MONO}font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${MUTED}">New order</p>`,
+    `<p style="margin:0 0 6px;${cssOf("labels", head.styles.labels, 11)}">New order</p>`,
     `<h1 style="margin:0 0 2px;${MONO}font-size:24px;font-weight:700;letter-spacing:-0.5px;color:${INK}">${esc(reference)}</h1>`,
-    `<p style="margin:0 0 24px;${SERIF}font-size:17px;color:${INK_2}">${esc(name)}</p>`,
-    `<table role="presentation" cellpadding="0" cellspacing="0" style="border-collapse:collapse;width:100%;${SERIF}font-size:15px;line-height:1.5;color:${INK}">`,
-    detailRow("Pick-up", `<strong>${esc(pickup)}</strong>`),
-    detailRow("Phone", esc(phone)),
-    detailRow("Email", email ? `<a href="mailto:${esc(email)}" style="color:${INK}">${esc(email)}</a>` : "—"),
-    detailRow("Payment", esc(payment)),
+    `<p style="margin:0 0 24px;${cssOf("body", head.styles.body, (Number(head.styles.body.size) || 10.5) * 1.62)}">${esc(name)}</p>`,
+    `<table role="presentation" cellpadding="0" cellspacing="0" style="border-collapse:collapse;width:100%;${cssOf("body", head.styles.body)}line-height:1.5">`,
+    detailRow(head, "Pick-up", `<strong>${esc(pickup)}</strong>`),
+    detailRow(head, "Phone", esc(phone)),
+    detailRow(head, "Email", email ? `<a href="mailto:${esc(email)}" style="color:inherit">${esc(email)}</a>` : "—"),
+    detailRow(head, "Payment", esc(payment)),
     `</table>`,
-    `<table role="presentation" cellpadding="0" cellspacing="0" style="border-collapse:collapse;width:100%;margin:24px 0 0;${SERIF}font-size:15px;line-height:1.5;color:${INK}">`,
+    `<table role="presentation" cellpadding="0" cellspacing="0" style="border-collapse:collapse;width:100%;margin:24px 0 0;${cssOf("body", head.styles.body)}line-height:1.5">`,
     ...lines.map(
       (l) =>
         `<tr><td style="padding:10px 12px 10px 0;border-top:1px solid ${LINE};${MONO}font-size:13px;line-height:22px;color:${MUTED};white-space:nowrap;width:1%;vertical-align:baseline">${l.qty} ×</td>` +
         `<td style="padding:10px 12px 10px 0;border-top:1px solid ${LINE};line-height:22px;vertical-align:baseline">${esc(l.label)}</td>` +
         `<td style="padding:10px 0;border-top:1px solid ${LINE};${MONO}font-size:13px;line-height:22px;color:${MUTED};text-align:right;white-space:nowrap;vertical-align:baseline">${esc(bd(l.each))}</td></tr>`,
     ),
-    `<tr><td colspan="2" style="padding:12px 12px 0 0;border-top:1px solid ${INK};${MONO}font-size:12px;line-height:22px;letter-spacing:2px;text-transform:uppercase;vertical-align:baseline">Total</td>` +
+    `<tr><td colspan="2" style="padding:12px 12px 0 0;border-top:1px solid ${INK};${cssOf("labels", head.styles.labels, 12)}color:${INK};line-height:22px;vertical-align:baseline">Total</td>` +
       `<td style="padding:12px 0 0;border-top:1px solid ${INK};${MONO}font-size:15px;line-height:22px;font-weight:700;text-align:right;white-space:nowrap;vertical-align:baseline">${esc(bd(record.subtotal))}</td></tr>`,
     `</table>`,
   ].join(""), head);

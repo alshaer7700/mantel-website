@@ -2637,10 +2637,12 @@ a.adm-list-row:hover {
   display: flex;
   flex-direction: column;
   background: #FFFFFF;
-  color: #171310;
-  font-family: "EB Garamond", Georgia, "Times New Roman", serif;
-  font-style: normal;
-  font-size: 10.5pt;
+  color: var(--mtl-body-color, #171310);
+  font-family: var(--mtl-body-font, "EB Garamond", Georgia, "Times New Roman", serif);
+  font-style: var(--mtl-body-style, normal);
+  font-weight: var(--mtl-body-weight, 400);
+  font-size: var(--mtl-body-size, 10.5pt);
+  letter-spacing: var(--mtl-body-spacing, 0);
   line-height: 1.45;
   text-align: left;
   overflow: hidden;
@@ -2696,19 +2698,27 @@ a.adm-list-row:hover {
   margin-top: 10mm;
 }
 
-.mtl-label {
-  font-family: "Fira Mono", Menlo, Consolas, monospace;
-  font-size: 6.5pt;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: #766E66;
+.mtl-sheet .mtl-label {
+  font-family: var(--mtl-label-font, "Fira Mono", Menlo, Consolas, monospace);
+  font-size: var(--mtl-label-size, 6.5pt);
+  font-weight: var(--mtl-label-weight, 400);
+  font-style: var(--mtl-label-style, normal);
+  text-decoration: var(--mtl-label-decoration, none);
+  letter-spacing: var(--mtl-label-spacing, 0.15em);
+  text-transform: var(--mtl-label-transform, uppercase);
+  color: var(--mtl-label-color, #766E66);
 }
 
-.mtl-foot-value {
+.mtl-sheet .mtl-foot-value {
   margin-top: 1mm;
-  font-family: "Fira Mono", Menlo, Consolas, monospace;
-  font-weight: 500;
-  font-size: 8.5pt;
+  font-family: var(--mtl-value-font, "Fira Mono", Menlo, Consolas, monospace);
+  font-size: var(--mtl-value-size, 8.5pt);
+  font-weight: var(--mtl-value-weight, 700);
+  font-style: var(--mtl-value-style, normal);
+  text-decoration: var(--mtl-value-decoration, none);
+  letter-spacing: var(--mtl-value-spacing, 0);
+  text-transform: var(--mtl-value-transform, none);
+  color: var(--mtl-value-color, #171310);
 }
 
 .mtl-mono {
@@ -2734,12 +2744,13 @@ a.adm-list-row:hover {
 }
 
 .mtl-table th {
-  font-family: "Fira Mono", Menlo, Consolas, monospace;
-  font-weight: 400;
-  font-size: 6.5pt;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: #766E66;
+  font-family: var(--mtl-label-font, "Fira Mono", Menlo, Consolas, monospace);
+  font-weight: var(--mtl-label-weight, 400);
+  font-style: var(--mtl-label-style, normal);
+  font-size: var(--mtl-label-size, 6.5pt);
+  letter-spacing: var(--mtl-label-spacing, 0.15em);
+  text-transform: var(--mtl-label-transform, uppercase);
+  color: var(--mtl-label-color, #766E66);
   text-align: left;
   padding: 0 3mm 2mm 0;
   border-bottom: 0.3mm solid #171310;
@@ -2766,8 +2777,8 @@ a.adm-list-row:hover {
 }
 
 .mtl-table th.num {
-  font-family: "Fira Mono", Menlo, Consolas, monospace;
-  font-size: 6.5pt;
+  font-family: var(--mtl-label-font, "Fira Mono", Menlo, Consolas, monospace);
+  font-size: var(--mtl-label-size, 6.5pt);
 }
 
 .mtl-scaled {
@@ -2880,4 +2891,92 @@ a.adm-list-row:hover {
 
 .adm .adm-link-back:hover {
   color: var(--a-ink);
+}
+
+/* ── Formatting toolbar (Letterhead) ─────────────────────────────────────── */
+
+.adm .adm-fmtbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--a-line-strong);
+  background: var(--a-surface-2);
+}
+
+.adm .adm-fmt-select {
+  height: 32px;
+  border: 1px solid var(--a-line);
+  background: var(--a-surface);
+  color: var(--a-ink);
+  font-family: var(--a-ui);
+  font-size: 12px;
+  padding: 0 6px;
+  border-radius: 0;
+}
+
+.adm .adm-fmt-font {
+  width: 150px;
+}
+
+.adm .adm-fmt-size {
+  width: 64px;
+}
+
+.adm .adm-fmt-btn {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--a-ink);
+  cursor: pointer;
+}
+
+.adm .adm-fmt-btn:hover {
+  border-color: var(--a-line-strong);
+  background: var(--a-surface);
+}
+
+.adm .adm-fmt-btn[aria-pressed="true"] {
+  background: var(--a-ink);
+  color: var(--a-bg);
+}
+
+.adm .adm-fmt-sep {
+  width: 1px;
+  height: 22px;
+  background: var(--a-line-strong);
+  margin: 0 2px;
+}
+
+.adm .adm-fmt-color {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.adm .adm-fmt-color input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+}
+
+.adm .adm-fmt-swatch {
+  width: 18px;
+  height: 18px;
+  border: 1px solid var(--a-line-strong);
+}
+
+.adm .adm-range {
+  width: 100%;
+  accent-color: var(--a-ink);
 }
