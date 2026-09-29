@@ -1299,4 +1299,7 @@ export const AR: Record<string, string> = {
   "The tray photo and where its numbered notes point stay as they are: they're measured off the picture.": "صورة الصينية ومواضع الملاحظات المرقمة تبقى كما هي، لأنها مقاسة على الصورة.",
   "This section only appears once at least one line has a value.": "يظهر هذا القسم فقط عندما يكون لسطر واحد على الأقل قيمة.",
   "e.g. 18 g in, 36 g out": "مثال: 18 g in, 36 g out",
+  "PDF on the letterhead": "PDF على الورق الرسمي",
+  "Looks the same on every phone and computer. Best for sending.": "يظهر بنفس الشكل على كل هاتف وكمبيوتر. الأفضل للإرسال.",
+  "For changing it afterwards. Opens best in the Word app.": "للتعديل لاحقًا. يفتح بشكل أفضل في تطبيق Word.",
 };

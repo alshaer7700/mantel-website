@@ -42,25 +42,47 @@ export async function downloadSheetPdf(sheet: HTMLElement, filename: string): Pr
     await document.fonts?.ready;
     await imagesReady(copy);
 
+    /* Where a page may end: under a table row or a block, never through one. */
+    const top = copy.getBoundingClientRect().top;
+    const cssHeight = copy.getBoundingClientRect().height;
+    const cuts = Array.from(copy.querySelectorAll("tr, p, h1, h2, h3, .mtl-keep"))
+      .map((el) => el.getBoundingClientRect().bottom - top)
+      .sort((x, y) => x - y);
+
     const canvas = await html2canvas(copy, { scale: 3, backgroundColor: "#FFFFFF", useCORS: true, logging: false });
     const pdf = new jsPDF({ unit: "mm", format: "a4", orientation: "portrait", compress: true });
 
-    /* Pixels per millimetre of the capture; one A4 page is this many pixels tall. */
+    /* Pixels per millimetre of the capture, and of the page in CSS pixels. */
     const pxPerMm = canvas.width / A4_W_MM;
-    const pageH = Math.round(A4_H_MM * pxPerMm);
-    const pages = Math.max(1, Math.ceil((canvas.height - 2) / pageH));
+    const cssToPx = canvas.height / cssHeight;
+    const mm = (n: number) => Math.round(n * pxPerMm);
 
-    for (let i = 0; i < pages; i++) {
+    let start = 0;
+    let page = 0;
+    while (start < canvas.height - 2) {
+      /* The first page brings its own top margin; later pages get one here. */
+      const padTop = page === 0 ? 0 : mm(14);
+      const room = mm(A4_H_MM) - padTop - mm(12);
+      let end = canvas.height;
+      /* Whatever's left fits on this page (the sheet has its own bottom margin). */
+      const fitsWhole = canvas.height - start <= mm(A4_H_MM) - padTop + mm(1);
+      if (!fitsWhole) {
+        const limit = start + room;
+        const fit = cuts.map((c) => Math.round(c * cssToPx)).filter((c) => c > start + room * 0.3 && c <= limit);
+        end = fit.length ? fit[fit.length - 1]! : limit;
+      }
       const slice = document.createElement("canvas");
       slice.width = canvas.width;
-      slice.height = Math.min(pageH, canvas.height - i * pageH);
+      slice.height = end - start;
       const ctx = slice.getContext("2d");
       if (!ctx) throw new Error("canvas");
       ctx.fillStyle = "#FFFFFF";
       ctx.fillRect(0, 0, slice.width, slice.height);
-      ctx.drawImage(canvas, 0, -i * pageH);
-      if (i > 0) pdf.addPage();
-      pdf.addImage(slice.toDataURL("image/jpeg", 0.92), "JPEG", 0, 0, A4_W_MM, slice.height / pxPerMm);
+      ctx.drawImage(canvas, 0, -start);
+      if (page > 0) pdf.addPage();
+      pdf.addImage(slice.toDataURL("image/jpeg", 0.92), "JPEG", 0, padTop / pxPerMm, A4_W_MM, slice.height / pxPerMm);
+      start = end;
+      page += 1;
     }
 
     pdf.save(`${filename}.pdf`);
