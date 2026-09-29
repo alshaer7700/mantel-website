@@ -94,6 +94,64 @@ function bahrainTime(iso: string | null | undefined): string {
   }).format(d);
 }
 
+// The café letterhead (the Word template staff use for letters), rebuilt as an
+// email: MANTEL. with the CR number and address on top, the heart at the
+// right, and the café's own contact details in the footer. Tables and inline
+// styles only, because that is all email clients reliably render.
+const ADDRESS = "SHOP 114D, BLDG 114, ROAD 16, BLOCK 111, HIDD, KINGDOM OF BAHRAIN";
+const HEART = "https://bymantel.com/heart.webp";
+const INK = "#171310";
+const INK_2 = "#3A342D";
+const MUTED = "#766E66";
+const LINE = "#E8E4DC";
+const MONO = "font-family:'Fira Mono',Menlo,Consolas,'Courier New',monospace;";
+const SERIF = "font-family:'EB Garamond',Georgia,'Times New Roman',serif;";
+
+function detailRow(label: string, value: string): string {
+  return `<tr><td style="padding:3px 16px 3px 0;${MONO}font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:${MUTED};white-space:nowrap;width:1%;vertical-align:top">${label}</td>` +
+    `<td style="padding:3px 0">${value}</td></tr>`;
+}
+
+function letterhead(body: string): string {
+  return [
+    `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"></head>`,
+    `<body style="margin:0;padding:0;background:#F6F5F2">`,
+    `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F6F5F2"><tr><td align="center" style="padding:24px 12px">`,
+    `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;background:#FFFFFF;border:1px solid #D9D4CB">`,
+    // Letterhead
+    `<tr><td style="padding:32px 32px 0">`,
+    `<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>`,
+    `<td style="vertical-align:top">`,
+    `<div style="${MONO}font-size:30px;line-height:1;letter-spacing:-1px;color:${INK}">MANTEL.</div>`,
+    `<div style="margin-top:14px;${SERIF}font-size:11px;letter-spacing:0.5px;color:${INK}">CR No.197765-1</div>`,
+    `<div style="margin-top:6px;${SERIF}font-size:11px;letter-spacing:0.5px;color:${INK}">${ADDRESS}</div>`,
+    `</td>`,
+    `<td style="vertical-align:top;text-align:right;width:56px"><img src="${HEART}" width="44" alt="Mantel" style="display:block;margin-left:auto;width:44px;height:auto;border:0"></td>`,
+    `</tr></table>`,
+    `<div style="height:1px;background:${INK};margin:24px 0 0;line-height:1px;font-size:0">&nbsp;</div>`,
+    `</td></tr>`,
+    // Body
+    `<tr><td style="padding:28px 32px 36px">${body}</td></tr>`,
+    // Footer
+    `<tr><td style="padding:0 32px 28px">`,
+    `<div style="height:1px;background:${LINE};line-height:1px;font-size:0;margin:0 0 18px">&nbsp;</div>`,
+    `<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>`,
+    `<td style="vertical-align:top">`,
+    `<div style="${MONO}font-size:12px;font-weight:700;color:${INK}">MANTEL.</div>`,
+    `<div style="margin-top:2px;${SERIF}font-size:12px;color:${INK_2}"><a href="https://www.instagram.com/bymantel" style="color:${INK_2};text-decoration:none">@BYMANTEL</a></div>`,
+    `</td>`,
+    `<td style="vertical-align:top;text-align:right;${MONO}font-size:11px;font-weight:700;line-height:1.8">`,
+    `<a href="https://bymantel.com" style="color:${INK};text-decoration:none">bymantel.com</a><br>`,
+    `<a href="mailto:hello@bymantel.com" style="color:${INK};text-decoration:none">hello@bymantel.com</a>`,
+    `</td>`,
+    `</tr></table>`,
+    `</td></tr>`,
+    `</table>`,
+    `</td></tr></table>`,
+    `</body></html>`,
+  ].join("");
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method !== "POST") {
     return new Response("method not allowed", { status: 405 });
@@ -135,6 +193,10 @@ Deno.serve(async (req: Request) => {
   });
 
   const text = [
+    `MANTEL.`,
+    `CR No.197765-1`,
+    ADDRESS,
+    ``,
     `New order ${reference} — ${name}`,
     ``,
     `Pick-up:  ${pickup}`,
@@ -145,28 +207,33 @@ Deno.serve(async (req: Request) => {
     ...lines.map((l) => `  ${l.qty} × ${l.label}   ${bd(l.each)}`),
     ``,
     `Total:    ${bd(record.subtotal)}`,
+    ``,
+    `—`,
+    `MANTEL.  @BYMANTEL`,
+    `bymantel.com  ·  hello@bymantel.com`,
   ].join("\n");
 
-  const html = [
-    `<h2 style="margin:0 0 4px;font:600 18px/1.3 system-ui,sans-serif">New order ${esc(reference)}</h2>`,
-    `<p style="margin:0 0 16px;font:14px/1.5 system-ui,sans-serif;color:#666">${esc(name)}</p>`,
-    `<table style="font:14px/1.5 system-ui,sans-serif;border-collapse:collapse">`,
-    `<tr><td style="padding:2px 12px 2px 0;color:#666">Pick-up</td><td><strong>${esc(pickup)}</strong></td></tr>`,
-    `<tr><td style="padding:2px 12px 2px 0;color:#666">Phone</td><td>${esc(phone)}</td></tr>`,
-    `<tr><td style="padding:2px 12px 2px 0;color:#666">Email</td><td>${esc(email || "—")}</td></tr>`,
-    `<tr><td style="padding:2px 12px 2px 0;color:#666">Payment</td><td>${esc(payment)}</td></tr>`,
+  const html = letterhead([
+    `<p style="margin:0 0 6px;${MONO}font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${MUTED}">New order</p>`,
+    `<h1 style="margin:0 0 2px;${MONO}font-size:24px;font-weight:700;letter-spacing:-0.5px;color:${INK}">${esc(reference)}</h1>`,
+    `<p style="margin:0 0 24px;${SERIF}font-size:17px;color:${INK_2}">${esc(name)}</p>`,
+    `<table role="presentation" cellpadding="0" cellspacing="0" style="border-collapse:collapse;width:100%;${SERIF}font-size:15px;line-height:1.5;color:${INK}">`,
+    detailRow("Pick-up", `<strong>${esc(pickup)}</strong>`),
+    detailRow("Phone", esc(phone)),
+    detailRow("Email", email ? `<a href="mailto:${esc(email)}" style="color:${INK}">${esc(email)}</a>` : "—"),
+    detailRow("Payment", esc(payment)),
     `</table>`,
-    `<table style="font:14px/1.6 system-ui,sans-serif;border-collapse:collapse;margin:16px 0 0">`,
+    `<table role="presentation" cellpadding="0" cellspacing="0" style="border-collapse:collapse;width:100%;margin:24px 0 0;${SERIF}font-size:15px;line-height:1.5;color:${INK}">`,
     ...lines.map(
       (l) =>
-        `<tr><td style="padding:2px 12px 2px 0;text-align:right;color:#666">${l.qty} ×</td>` +
-        `<td style="padding:2px 16px 2px 0">${esc(l.label)}</td>` +
-        `<td style="padding:2px 0;color:#666">${esc(bd(l.each))}</td></tr>`,
+        `<tr><td style="padding:8px 12px 8px 0;border-top:1px solid ${LINE};${MONO}font-size:13px;color:${MUTED};white-space:nowrap;width:1%">${l.qty} ×</td>` +
+        `<td style="padding:8px 12px 8px 0;border-top:1px solid ${LINE}">${esc(l.label)}</td>` +
+        `<td style="padding:8px 0;border-top:1px solid ${LINE};${MONO}font-size:13px;color:${MUTED};text-align:right;white-space:nowrap">${esc(bd(l.each))}</td></tr>`,
     ),
-    `<tr><td colspan="2" style="padding:8px 12px 0 0;text-align:right;border-top:1px solid #eee"><strong>Total</strong></td>` +
-      `<td style="padding:8px 0 0;border-top:1px solid #eee"><strong>${esc(bd(record.subtotal))}</strong></td></tr>`,
+    `<tr><td colspan="2" style="padding:12px 12px 0 0;border-top:1px solid ${INK};${MONO}font-size:12px;letter-spacing:2px;text-transform:uppercase">Total</td>` +
+      `<td style="padding:12px 0 0;border-top:1px solid ${INK};${MONO}font-size:15px;font-weight:700;text-align:right;white-space:nowrap">${esc(bd(record.subtotal))}</td></tr>`,
     `</table>`,
-  ].join("");
+  ].join(""));
 
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
