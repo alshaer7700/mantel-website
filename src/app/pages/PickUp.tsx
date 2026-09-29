@@ -5,6 +5,7 @@ import { SectionHead } from "@/app/components/SectionHead";
 import { PickUpList } from "@/app/components/pickup/PickUpList";
 import { LABEL } from "@/app/components/type";
 import { PICKUP_OPEN } from "@/lib/constants";
+import type { PAGE_DEFAULTS } from "@/lib/content/pages";
 
 /*
  * Order Before Reach: the only place on the site where a café item can be
@@ -26,9 +27,10 @@ type Props = {
   onAdd: (item: MenuItem) => void;
   onIncrement: (id: string) => void;
   onDecrement: (id: string) => void;
+  content: (typeof PAGE_DEFAULTS)["pickup"];
 };
 
-export function PickUp({ linkTo, sections, loading, error, cartLines, onAdd, onIncrement, onDecrement }: Props) {
+export function PickUp({ linkTo, sections, loading, error, cartLines, onAdd, onIncrement, onDecrement, content }: Props) {
   const hasItems = sections.some(([, items]) => items.length > 0);
   const itemCount = cartLines.reduce((total, line) => total + line.quantity, 0);
 
@@ -41,12 +43,9 @@ export function PickUp({ linkTo, sections, loading, error, cartLines, onAdd, onI
   if (!PICKUP_OPEN) {
     return (
       <div className="editorial-soon">
-        <p className="editorial-overline">Order before reach</p>
-        <h1>Coming soon.</h1>
-        <p className="editorial-soon-copy">
-          Ordering ahead isn't open yet. The menu is here to browse in the meantime, and the
-          counter is open as usual.
-        </p>
+        <p className="editorial-overline">{content.soon_overline}</p>
+        <h1>{content.soon_title}</h1>
+        <p className="editorial-soon-copy">{content.soon_text}</p>
         <div className="editorial-inline-links">
           <a {...linkTo("menu")} className="editorial-link">View the menu</a>
           <a {...linkTo("contact")} className="editorial-link">Contact us</a>
@@ -60,7 +59,7 @@ export function PickUp({ linkTo, sections, loading, error, cartLines, onAdd, onI
       <Shelf tag="Order before reach" note="Prices in BD">
         <SectionHead
           as="h1"
-          title="Order Before Reach."
+          title={content.title}
           aside={
             <a {...linkTo("menu")} className={`${LABEL} editorial-menu-retail-link`}>
               View the full menu <span aria-hidden="true">↗</span>
@@ -69,8 +68,7 @@ export function PickUp({ linkTo, sections, loading, error, cartLines, onAdd, onI
         />
 
         <p className="font-serif text-[1rem] text-[color:var(--ink-muted)] max-w-[46ch] mb-[clamp(2rem,6vh,3.5rem)]">
-          Browse, add what you want, and place your order before you leave. It'll be ready when
-          you reach.{" "}
+          {content.text}{" "}
           {itemCount > 0 && (
             <span className="font-mono text-[13px] tracking-[0.02em] text-[color:var(--ink)]">
               {itemCount} item{itemCount === 1 ? "" : "s"} in your bag.

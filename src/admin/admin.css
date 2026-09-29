@@ -3261,3 +3261,19 @@ a.adm-list-row:hover {
     grid-column: 1 / -1;
   }
 }
+
+/* ── Website pages ───────────────────────────────────────────────────────── */
+.adm .adm-cms-item {
+  display: grid;
+  gap: 12px;
+  padding: 14px 16px 16px;
+  border: 1px solid var(--a-line);
+  background: var(--a-bg);
+}
+
+.adm .adm-cms-item-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}

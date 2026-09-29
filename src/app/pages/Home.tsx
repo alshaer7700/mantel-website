@@ -1,7 +1,6 @@
 import { useRef, useState } from "react";
 import type { MenuCategory, Page } from "@/app/types";
-import heroImage from "@/imports/mantel-landing.webp";
-import fridayImage from "@/imports/mood-friday-espresso-table.webp";
+import type { PAGE_DEFAULTS } from "@/lib/content/pages";
 import { formErrorMessage, subscribeNewsletter } from "@/lib/api/forms";
 import { MAPS_URL } from "@/lib/constants";
 
@@ -10,6 +9,11 @@ type Props = {
     href: string;
     onClick: (e: React.MouseEvent) => void;
   };
+  /** Words and photos from the dashboard's Website pages, over the defaults. */
+  content: (typeof PAGE_DEFAULTS)["home"];
+  /** False until the published content has had a moment to arrive, so a
+      changed photo doesn't flash the old one first. */
+  imagesReady: boolean;
 };
 
 type CookiePreferences = {
@@ -34,7 +38,7 @@ function readCookieConsent(): CookiePreferences | null {
   }
 }
 
-export function Home({ linkTo }: Props) {
+export function Home({ linkTo, content, imagesReady }: Props) {
   const savedCookieConsent = readCookieConsent();
   const [cookieOpen, setCookieOpen] = useState(savedCookieConsent === null);
   const [showCookieOptions, setShowCookieOptions] = useState(false);
@@ -90,20 +94,20 @@ export function Home({ linkTo }: Props) {
   return (
     <div className="editorial-home">
       <section className="editorial-hero" aria-label="Mantel introduction">
-        <img className="editorial-hero-photo" src={heroImage} alt="A Mantel shirt in the warm light of the café" />
+        <img className="editorial-hero-photo" src={content.hero_image} alt={content.hero_alt} style={imagesReady ? undefined : { visibility: "hidden" }} />
         <div className="editorial-hero-content">
           <div className="editorial-hero-links">
-            <a {...linkTo("menu")} className="editorial-link">Menu</a>
+            <a {...linkTo("menu")} className="editorial-link">{content.hero_link}</a>
           </div>
         </div>
       </section>
 
       <section className="editorial-intro" id="menu">
         <div className="editorial-intro-copy">
-          <p className="editorial-overline">01 — A Mantel ritual</p>
-          <h2>Friday Espresso.</h2>
+          <p className="editorial-overline">{content.ritual_overline}</p>
+          <h2>{content.ritual_title}</h2>
           <div className="editorial-inline-links">
-            <a {...linkTo("ritual")} className="editorial-link">View the details</a>
+            <a {...linkTo("ritual")} className="editorial-link">{content.ritual_link}</a>
             {/*
              * The one outbound link in this section, and the only reason it is a
              * plain <a> rather than a linkTo(): "Find us" means the pin on
@@ -122,24 +126,21 @@ export function Home({ linkTo }: Props) {
           </div>
         </div>
         <div className="editorial-intro-media">
-          <img
-            src={fridayImage}
-            alt="A small white-clothed table set for two between black chairs, against the shop's concrete wall"
-          />
+          <img src={content.ritual_image} alt={content.ritual_alt} style={imagesReady ? undefined : { visibility: "hidden" }} />
         </div>
       </section>
 
       <section className="editorial-newsletter" aria-labelledby="newsletter-heading">
         <div>
-          <p className="editorial-overline">02 — Keep in touch</p>
-          <h2 id="newsletter-heading">Receive the newsletter.</h2>
+          <p className="editorial-overline">{content.newsletter_overline}</p>
+          <h2 id="newsletter-heading">{content.newsletter_title}</h2>
         </div>
         <div className="editorial-newsletter-copy">
           {newsletterStatus === "sent" ? (
-            <p className="editorial-newsletter-success" role="status">You’re on the list. See you at the counter.</p>
+            <p className="editorial-newsletter-success" role="status">{content.newsletter_thanks}</p>
           ) : (
             <>
-              <p>Stay up to date with new collections, events, and the occasional good idea.</p>
+              <p>{content.newsletter_text}</p>
               <form className="editorial-newsletter-form" onSubmit={submitNewsletter} aria-busy={newsletterStatus === "sending"}>
                 <input
                   type="text"
