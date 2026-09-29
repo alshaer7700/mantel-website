@@ -135,7 +135,13 @@ function wordRunProps(st: TextStyle): string {
 }
 
 export type InvoiceSettings = {
-  prefix: string;
+  /** The middle part of every number: INV-MTL-001. */
+  code: string;
+  invoice_prefix: string;
+  receipt_prefix: string;
+  letter_prefix: string;
+  letter_signoff: string;
+  letter_signature: string;
   vat_registered: boolean;
   vat_number: string;
   vat_rate: number;
@@ -145,7 +151,12 @@ export type InvoiceSettings = {
 };
 
 export const DEFAULT_INVOICE_SETTINGS: InvoiceSettings = {
-  prefix: "INV",
+  code: "MTL",
+  invoice_prefix: "INV",
+  receipt_prefix: "REC",
+  letter_prefix: "LTR",
+  letter_signoff: "Kind regards,",
+  letter_signature: "Mantel",
   vat_registered: false,
   vat_number: "",
   vat_rate: 10,
@@ -160,6 +171,13 @@ export async function loadLetterhead(): Promise<Result<Letterhead>> {
 }
 export const saveLetterhead = (value: Letterhead): Promise<Result<true>> => saveSetting("letterhead", value, false);
 export const loadInvoiceSettings = () => getSetting<InvoiceSettings>("payments.invoices", DEFAULT_INVOICE_SETTINGS);
+
+/** How the next number of a kind will look, e.g. INV-MTL-001. */
+export function numberExample(s: InvoiceSettings, kind: "invoice" | "receipt" | "letter", n = 1): string {
+  const clean = (v: string, fallback: string) => v.toUpperCase().replace(/[^A-Z0-9]/g, "") || fallback;
+  const prefix = kind === "invoice" ? clean(s.invoice_prefix, "INV") : kind === "receipt" ? clean(s.receipt_prefix, "REC") : clean(s.letter_prefix, "LTR");
+  return `${prefix}-${clean(s.code, "MTL")}-${n < 1000 ? String(n).padStart(3, "0") : n}`;
+}
 export const saveInvoiceSettings = (value: InvoiceSettings): Promise<Result<true>> => saveSetting("payments.invoices", value, false);
 
 /** "@bymantel", "bymantel" or a full link all become the handle. */

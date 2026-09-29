@@ -63,7 +63,7 @@ export type NavSection = {
 export const SECTIONS: NavSection[] = [
   { id: "home", label: "Today", icon: Home, area: null, group: null, keywords: "home overview dashboard today summary" },
   { id: "orders", label: "Orders", icon: Receipt, area: "orders", group: "Run the café", keywords: "orders board queue pickup tickets print refund cancel" },
-  { id: "invoices", label: "Invoices & letterhead", icon: FileText, area: "payments", group: "Run the café", keywords: "invoice invoices bill receipt vat tax letterhead template word logo cr address footer" },
+  { id: "invoices", label: "Documents", icon: FileText, area: "payments", group: "Run the café", keywords: "documents invoice invoices bill receipt receipts letter letters vat tax letterhead template word logo cr address footer" },
   { id: "menu", label: "Menu", icon: Coffee, area: "catalog", group: "Run the café", keywords: "menu items drinks food prices categories options sold out allergens" },
   { id: "retail", label: "Retail shop", icon: ShoppingBag, area: "catalog", group: "Run the café", keywords: "retail products objects shop stock candles totes" },
   { id: "website", label: "Website pages", icon: Globe, area: "content", group: "Website", keywords: "website pages faq privacy terms refund about home friday espresso seo google share" },
