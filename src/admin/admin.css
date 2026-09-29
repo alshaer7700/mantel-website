@@ -3125,3 +3125,134 @@ a.adm-list-row:hover {
   font-size: 14px;
   color: var(--a-muted);
 }
+
+/* ── Shop settings ───────────────────────────────────────────────────────── */
+.adm-shop-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 20px;
+  border: 1px solid var(--a-line);
+  border-inline-start: 4px solid var(--a-ok);
+  background: var(--a-ok-soft);
+}
+
+.adm-shop-status.is-closed {
+  border-inline-start-color: var(--a-warn);
+  background: var(--a-warn-soft);
+}
+
+.adm-shop-status-text {
+  display: grid;
+  gap: 6px;
+  justify-items: start;
+  min-width: 0;
+  flex: 1 1 280px;
+}
+
+.adm-shop-status-text strong {
+  font-family: var(--a-display);
+  font-size: 1.3rem;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.adm-shop-status-text > span:last-child {
+  color: var(--a-muted);
+}
+
+.adm-hours {
+  display: grid;
+}
+
+.adm-hours-row {
+  display: grid;
+  grid-template-columns: 8.5rem 7.5rem 1fr;
+  align-items: center;
+  gap: 12px;
+  min-height: 56px;
+  padding: 6px 0;
+  border-top: 1px solid var(--a-line);
+}
+
+.adm-hours-row:first-child {
+  border-top: 0;
+}
+
+.adm-hours-day {
+  font-weight: 600;
+}
+
+.adm-hours-times {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.adm-hours-times .adm-input {
+  width: 8.5rem;
+  font-family: var(--a-mono);
+}
+
+.adm-closure {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.3fr auto;
+  align-items: start;
+  gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--a-line);
+}
+
+.adm-closure > .adm-icon-btn,
+.adm-closure > button {
+  margin-top: 26px;
+}
+
+.adm-announce-preview {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px 14px;
+  padding: 9px 16px;
+  background: #171311;
+  color: #F5F3EE;
+  font-family: var(--a-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-align: center;
+}
+
+@media (max-width: 640px) {
+  .adm-hours-row {
+    grid-template-columns: 1fr auto;
+    row-gap: 6px;
+  }
+
+  .adm-hours-times {
+    grid-column: 1 / -1;
+  }
+
+  .adm-hours-times label {
+    flex: 1;
+  }
+
+  .adm-hours-times .adm-input {
+    width: 100%;
+  }
+
+  .adm-closure {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .adm-closure > .adm-field:nth-child(3) {
+    grid-column: 1 / -1;
+  }
+
+  .adm-closure > button {
+    margin-top: 0;
+    justify-self: end;
+    grid-column: 1 / -1;
+  }
+}
