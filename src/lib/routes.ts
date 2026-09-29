@@ -81,6 +81,12 @@ export function routeFor(pathname: string): Route {
     return { page: "menu", menuCategory: category, objectSlug: null };
   }
 
+  /* The staff dashboard owns everything under /admin — /admin/orders,
+     /admin/menu/<id> — and reads the rest of the path itself. */
+  if (path.startsWith(`${ROUTES.admin}/`)) {
+    return { page: "admin", menuCategory: null, objectSlug: null };
+  }
+
   if (path.startsWith(`${ROUTES.objects}/`)) {
     const slug = path.slice(ROUTES.objects.length + 1);
     return { page: "objects", menuCategory: null, objectSlug: slug || null };

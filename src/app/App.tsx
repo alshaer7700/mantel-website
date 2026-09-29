@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { PolicyPage } from "@/app/components/PolicyPage";
 import { FaqAccordion } from "@/app/components/FaqAccordion";
 import { NewsletterSignup } from "@/app/components/NewsletterSignup";
@@ -19,7 +19,6 @@ import { Cafe } from "@/app/pages/Cafe";
 import { PickUp } from "@/app/pages/PickUp";
 import { Story } from "@/app/pages/Story";
 import { ContactUs, type ContactForm } from "@/app/pages/ContactUs";
-import { AdminDashboard } from "@/app/pages/AdminDashboard";
 import { useScrolled } from "@/app/hooks/useScrolled";
 import { SearchOverlay } from "@/app/components/SearchOverlay";
 import { AccountPanel } from "@/app/components/account/AccountPanel";
@@ -31,6 +30,9 @@ import { ORDERING_OPEN } from "@/lib/constants";
 import { formErrorMessage, submitContactMessage } from "@/lib/api/forms";
 import { useDialogFocus } from "@/app/hooks/useDialogFocus";
 import SEO_DATA from "@/content/seo.json";
+
+/* The staff dashboard is its own bundle: customers never download it. */
+const AdminApp = lazy(() => import("@/admin/AdminApp"));
 
 const CART_STORAGE_KEY = "mantel-cart-v1";
 const SITE_ORIGIN = "https://bymantel.com";
@@ -314,6 +316,7 @@ export default function App() {
      return to it. */
   useEffect(() => {
     const r = routeFor(window.location.pathname);
+    if (r.page === "admin") return;
     const canonical = pathFor(r.page, r.menuCategory, r.objectSlug);
     if (window.location.pathname !== canonical) {
       window.history.replaceState({}, "", canonical);
@@ -465,6 +468,14 @@ export default function App() {
   const SCROLLED_NAV_HEIGHT = "54px";
 
   /* Footer rendering lives in EditorialFooter so all routes share the same editorial shell. */
+
+  if (page === "admin") {
+    return (
+      <Suspense fallback={<p className="p-8 font-mono text-sm">Loading the staff dashboard…</p>}>
+        <AdminApp />
+      </Suspense>
+    );
+  }
 
   return (
     <div className="bg-background text-foreground font-mono font-normal min-h-screen">
@@ -775,15 +786,6 @@ export default function App() {
           </div>
           <EditorialFooter linkTo={linkTo} />
         </main>
-      )}
-
-      {page === "admin" && (
-        <div className="flex flex-col min-h-screen" style={{ paddingTop: navHeight }}>
-          <div className="flex-1">
-            <AdminDashboard session={session} onRequireSignIn={() => setAccountOpen(true)} />
-          </div>
-          <EditorialFooter linkTo={linkTo} />
-        </div>
       )}
 
       {/* ══ FAQ PAGE ══ */}
