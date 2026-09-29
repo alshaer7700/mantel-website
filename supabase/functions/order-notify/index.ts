@@ -301,7 +301,9 @@ Deno.serve(async (req: Request) => {
     ``,
     `New order ${reference} — ${name}`,
     ``,
-    `Pick-up:  ${pickup}`,
+    // Checkout doesn't offer a pickup time, so every order is "as soon as
+    // it's ready" and the line only appears if a time was actually chosen.
+    ...(record.pickup_at ? [`Pick-up:  ${pickup}`] : []),
     `Phone:    ${phone}`,
     `Email:    ${email || "—"}`,
     `Payment:  ${payment}`,
@@ -320,7 +322,7 @@ Deno.serve(async (req: Request) => {
     `<h1 style="margin:0 0 2px;${MONO}font-size:24px;font-weight:700;letter-spacing:-0.5px;color:${INK}">${esc(reference)}</h1>`,
     `<p style="margin:0 0 24px;${cssOf("body", head.styles.body, (Number(head.styles.body.size) || 10.5) * 1.62)}">${esc(name)}</p>`,
     `<table role="presentation" cellpadding="0" cellspacing="0" style="border-collapse:collapse;width:100%;${cssOf("body", head.styles.body)}line-height:1.5">`,
-    detailRow(head, "Pick-up", `<strong>${esc(pickup)}</strong>`),
+    record.pickup_at ? detailRow(head, "Pick-up", `<strong>${esc(pickup)}</strong>`) : "",
     detailRow(head, "Phone", esc(phone)),
     detailRow(head, "Email", email ? `<a href="mailto:${esc(email)}" style="color:inherit">${esc(email)}</a>` : "—"),
     detailRow(head, "Payment", esc(payment)),
