@@ -16,6 +16,7 @@ import { TeamSection } from "@/admin/sections/team/TeamSection";
 import { ReportsSection } from "@/admin/sections/reports/ReportsSection";
 import { HealthSection } from "@/admin/sections/health/HealthSection";
 import { PhotosSection } from "@/admin/sections/photos/PhotosSection";
+import { InvoicesSection } from "@/admin/sections/invoices/InvoicesSection";
 
 function ComingSoon({ id }: { id: SectionId }) {
   const t = useT();
@@ -40,6 +41,7 @@ const VIEWS: Partial<Record<SectionId, ComponentType>> = {
   reports: ReportsSection,
   health: HealthSection,
   photos: PhotosSection,
+  invoices: InvoicesSection,
   account: AccountSection,
 };
 

@@ -41,7 +41,7 @@ function loadImage(file: Blob): Promise<HTMLImageElement> {
  * faster page for every customer. Transparency survives (WebP has alpha), which
  * matters for the retail cut-outs.
  */
-async function prepare(file: File, maxDim: number): Promise<{ blob: Blob; width: number; height: number; ext: string; type: string }> {
+async function prepare(file: File, maxDim: number, png = false): Promise<{ blob: Blob; width: number; height: number; ext: string; type: string }> {
   if (file.type === "image/gif") {
     const img = await loadImage(file);
     return { blob: file, width: img.naturalWidth, height: img.naturalHeight, ext: "gif", type: "image/gif" };
@@ -56,6 +56,12 @@ async function prepare(file: File, maxDim: number): Promise<{ blob: Blob; width:
   const ctx = canvas.getContext("2d");
   if (!ctx) throw new Error("no canvas");
   ctx.drawImage(img, 0, 0, width, height);
+  // Logos go into emails, and Gmail fills a transparent WebP's background
+  // with black; a PNG keeps it clear everywhere.
+  if (png) {
+    const pngBlob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/png"));
+    if (pngBlob) return { blob: pngBlob, width, height, ext: "png", type: "image/png" };
+  }
   const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/webp", 0.86));
   if (blob && blob.type === "image/webp") return { blob, width, height, ext: "webp", type: "image/webp" };
   const jpeg = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/jpeg", 0.88));
@@ -68,7 +74,7 @@ export async function uploadImage(file: File, folder = "general", alt = "", maxD
   if (file.size > 25 * 1024 * 1024) return { ok: false, error: t("That photo is too large. Choose one under 25 MB.") };
   let prepared;
   try {
-    prepared = await prepare(file, maxDim);
+    prepared = folder === "letterhead" ? await prepare(file, Math.min(maxDim, 800), true) : await prepare(file, maxDim);
   } catch {
     return { ok: false, error: t("This photo couldn't be read. Try saving it as JPG and uploading again.") };
   }

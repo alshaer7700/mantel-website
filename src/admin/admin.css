@@ -2623,3 +2623,505 @@ a.adm-list-row:hover {
     display: none !important;
   }
 }
+
+/* ── Letterhead sheet (invoices, letterhead preview) ─────────────────────────
+ * Not scoped under .adm: the printed copy is portalled to <body>, outside the
+ * dashboard. Sized in millimetres so screen and paper match. */
+
+.mtl-sheet {
+  position: relative;
+  box-sizing: border-box;
+  width: 210mm;
+  min-height: 297mm;
+  padding: 16mm 17mm 12mm;
+  display: flex;
+  flex-direction: column;
+  background: #FFFFFF;
+  color: var(--mtl-body-color, #171310);
+  font-family: var(--mtl-body-font, "EB Garamond", Georgia, "Times New Roman", serif);
+  font-style: var(--mtl-body-style, normal);
+  font-weight: var(--mtl-body-weight, 400);
+  font-size: var(--mtl-body-size, 10.5pt);
+  letter-spacing: var(--mtl-body-spacing, 0);
+  line-height: 1.45;
+  text-align: left;
+  overflow: hidden;
+}
+
+.mtl-sheet *,
+.mtl-sheet *::before,
+.mtl-sheet *::after {
+  box-sizing: border-box;
+}
+
+.mtl-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8mm;
+}
+
+.mtl-name {
+  font-family: "Fira Mono", Menlo, Consolas, monospace;
+  font-size: 30pt;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.mtl-small {
+  font-size: 8pt;
+  letter-spacing: 0.04em;
+}
+
+.mtl-logo {
+  width: 13mm;
+  height: auto;
+  display: block;
+}
+
+.mtl-rule {
+  height: 0;
+  border-top: 0.3mm solid #171310;
+  margin: 7mm 0 8mm;
+}
+
+.mtl-body {
+  flex: 1;
+}
+
+.mtl-foot {
+  display: flex;
+  justify-content: space-between;
+  gap: 8mm;
+  border-top: 0.2mm solid #E8E4DC;
+  padding-top: 4mm;
+  margin-top: 10mm;
+}
+
+.mtl-sheet .mtl-label {
+  font-family: var(--mtl-label-font, "Fira Mono", Menlo, Consolas, monospace);
+  font-size: var(--mtl-label-size, 6.5pt);
+  font-weight: var(--mtl-label-weight, 400);
+  font-style: var(--mtl-label-style, normal);
+  text-decoration: var(--mtl-label-decoration, none);
+  letter-spacing: var(--mtl-label-spacing, 0.15em);
+  text-transform: var(--mtl-label-transform, uppercase);
+  color: var(--mtl-label-color, #766E66);
+}
+
+.mtl-sheet .mtl-foot-value {
+  margin-top: 1mm;
+  font-family: var(--mtl-value-font, "Fira Mono", Menlo, Consolas, monospace);
+  font-size: var(--mtl-value-size, 8.5pt);
+  font-weight: var(--mtl-value-weight, 700);
+  font-style: var(--mtl-value-style, normal);
+  text-decoration: var(--mtl-value-decoration, none);
+  letter-spacing: var(--mtl-value-spacing, 0);
+  text-transform: var(--mtl-value-transform, none);
+  color: var(--mtl-value-color, #171310);
+}
+
+.mtl-mono {
+  font-family: "Fira Mono", Menlo, Consolas, monospace;
+}
+
+.mtl-watermark {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  font-family: "Fira Mono", Menlo, Consolas, monospace;
+  font-size: 90pt;
+  letter-spacing: 0.1em;
+  color: rgba(154, 28, 31, 0.12);
+  transform: rotate(-24deg);
+}
+
+.mtl-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.mtl-table th {
+  font-family: var(--mtl-label-font, "Fira Mono", Menlo, Consolas, monospace);
+  font-weight: var(--mtl-label-weight, 400);
+  font-style: var(--mtl-label-style, normal);
+  font-size: var(--mtl-label-size, 6.5pt);
+  letter-spacing: var(--mtl-label-spacing, 0.15em);
+  text-transform: var(--mtl-label-transform, uppercase);
+  color: var(--mtl-label-color, #766E66);
+  text-align: left;
+  padding: 0 3mm 2mm 0;
+  border-bottom: 0.3mm solid #171310;
+}
+
+.mtl-table td {
+  padding: 2.4mm 3mm 2.4mm 0;
+  border-bottom: 0.2mm solid #E8E4DC;
+  vertical-align: baseline;
+}
+
+/* Small mono labels beside larger text share its baseline. */
+.mtl-sheet td {
+  vertical-align: baseline;
+}
+
+.mtl-table .num {
+  text-align: right;
+  white-space: nowrap;
+  font-family: "Fira Mono", Menlo, Consolas, monospace;
+  font-size: 9pt;
+  padding-right: 0;
+  padding-left: 3mm;
+}
+
+.mtl-table th.num {
+  font-family: var(--mtl-label-font, "Fira Mono", Menlo, Consolas, monospace);
+  font-size: var(--mtl-label-size, 6.5pt);
+}
+
+.mtl-scaled {
+  width: 100%;
+  overflow: hidden;
+  border: 1px solid var(--a-line-strong, #D9D4CB);
+  background: #FFFFFF;
+}
+
+@media print {
+  .mtl-print {
+    page: mtl-a4;
+  }
+
+  .mtl-print .mtl-sheet {
+    min-height: 296mm;
+  }
+
+  @page mtl-a4 {
+    size: A4;
+    margin: 0;
+  }
+}
+
+/* ── Invoices ───────────────────────────────────────────────────────────── */
+
+.adm .adm-invoice-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.adm .adm-invoice-preview {
+  position: sticky;
+  top: 16px;
+}
+
+@media (max-width: 1100px) {
+  .adm .adm-invoice-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .adm .adm-invoice-preview {
+    position: static;
+  }
+}
+
+.adm .adm-invoice-line {
+  display: grid;
+  grid-template-columns: 80px 150px minmax(0, 1fr) 40px;
+  grid-template-areas: "desc desc desc desc" "qty price amount remove";
+  gap: 6px 10px;
+  align-items: end;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--a-line);
+}
+
+.adm .adm-invoice-line > :nth-child(1) { grid-area: desc; }
+.adm .adm-invoice-line > :nth-child(2) { grid-area: qty; }
+.adm .adm-invoice-line > :nth-child(3) { grid-area: price; }
+.adm .adm-invoice-line > :nth-child(4) { grid-area: amount; }
+.adm .adm-invoice-line > :nth-child(5) { grid-area: remove; }
+
+.adm .adm-invoice-amount {
+  padding-bottom: 12px;
+  text-align: end;
+  font-family: var(--a-mono);
+  font-size: 14px;
+}
+
+@media (max-width: 480px) {
+  .adm .adm-invoice-line {
+    grid-template-columns: 64px minmax(0, 1fr) 40px;
+    grid-template-areas: "desc desc desc" "qty price remove";
+  }
+
+  .adm .adm-invoice-amount {
+    display: none;
+  }
+}
+
+.adm .adm-invoice-totals {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 6px 16px;
+  justify-items: end;
+  border-top: 1px solid var(--a-ink);
+  padding-top: 12px;
+  margin-top: 4px;
+  font-family: var(--a-ui);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.adm .adm-invoice-totals strong {
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 15px;
+}
+
+.adm .adm-link-back {
+  all: unset;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.adm .adm-link-back:hover {
+  color: var(--a-ink);
+}
+
+/* ── Formatting toolbar (Letterhead) ─────────────────────────────────────── */
+
+.adm .adm-fmtbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--a-line-strong);
+  background: var(--a-surface-2);
+}
+
+.adm .adm-fmt-select {
+  height: 32px;
+  border: 1px solid var(--a-line);
+  background: var(--a-surface);
+  color: var(--a-ink);
+  font-family: var(--a-ui);
+  font-size: 12px;
+  padding: 0 6px;
+  border-radius: 0;
+}
+
+.adm .adm-fmt-font {
+  width: 150px;
+}
+
+.adm .adm-fmt-size {
+  width: 64px;
+}
+
+.adm .adm-fmt-btn {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--a-ink);
+  cursor: pointer;
+}
+
+.adm .adm-fmt-btn:hover {
+  border-color: var(--a-line-strong);
+  background: var(--a-surface);
+}
+
+.adm .adm-fmt-btn[aria-pressed="true"] {
+  background: var(--a-ink);
+  color: var(--a-bg);
+}
+
+.adm .adm-fmt-sep {
+  width: 1px;
+  height: 22px;
+  background: var(--a-line-strong);
+  margin: 0 2px;
+}
+
+.adm .adm-fmt-color {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.adm .adm-fmt-color input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+}
+
+.adm .adm-fmt-swatch {
+  width: 18px;
+  height: 18px;
+  border: 1px solid var(--a-line-strong);
+}
+
+.adm .adm-range {
+  width: 100%;
+  accent-color: var(--a-ink);
+}
+
+/* ── Phone layout ───────────────────────────────────────────────────────────
+ * Rows with buttons on the right (menu, retail, today's orders…) squeezed
+ * the name into a one-letter column on a phone. Below 640px the buttons move
+ * to their own line under the name, and the wide tables become cards. */
+
+@media (max-width: 640px) {
+  .adm .adm-list-row {
+    flex-wrap: wrap;
+    row-gap: 10px;
+  }
+
+  .adm .adm-list-row > .adm-list-side {
+    flex: 1 0 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .adm .adm-topbar {
+    background: var(--a-bg);
+  }
+
+  /* Tabs wrap instead of scrolling sideways out of sight. */
+  .adm .adm-tabs {
+    flex-wrap: wrap;
+    column-gap: 18px;
+    row-gap: 0;
+    overflow: visible;
+  }
+
+  /* Tables → cards */
+  .adm .adm-table-wrap:has(.adm-cards) {
+    overflow: visible;
+  }
+
+  .adm .adm-cards,
+  .adm .adm-cards tbody {
+    display: block;
+    width: 100%;
+  }
+
+  .adm .adm-cards thead {
+    display: none;
+  }
+
+  .adm .adm-cards tr {
+    display: grid;
+    gap: 4px 12px;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--a-line);
+    align-items: baseline;
+  }
+
+  .adm .adm-cards tr:last-child {
+    border-bottom: 0;
+  }
+
+  .adm .adm-cards td {
+    display: block;
+    padding: 0;
+    border: 0;
+    max-width: none !important;
+    min-width: 0;
+  }
+
+  .adm .adm-cards td[data-label]::before {
+    content: attr(data-label) " ";
+    font-family: var(--a-ui);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--a-muted);
+  }
+
+  /* Orders: tick · reference · status / customer · total / items */
+  .adm .adm-cards-orders tr {
+    grid-template-columns: 28px minmax(0, 1fr) auto;
+    grid-template-areas: "check ref status" ". who total" ". items items";
+  }
+
+  .adm .adm-cards-orders td:nth-child(1) { grid-area: check; align-self: center; }
+  .adm .adm-cards-orders td:nth-child(2) { grid-area: ref; }
+  .adm .adm-cards-orders td:nth-child(3) { grid-area: who; }
+  .adm .adm-cards-orders td:nth-child(4) { grid-area: items; color: var(--a-muted); }
+  .adm .adm-cards-orders td:nth-child(5) { grid-area: total; text-align: end; }
+  .adm .adm-cards-orders td:nth-child(6) { grid-area: status; text-align: end; }
+
+  /* Customers: name · spent / orders · last visit / notes */
+  .adm .adm-cards-customers tr {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: "who spent" "orders last" "notes notes";
+  }
+
+  .adm .adm-cards-customers td:nth-child(1) { grid-area: who; }
+  .adm .adm-cards-customers td:nth-child(2) { grid-area: orders; text-align: start; }
+  .adm .adm-cards-customers td:nth-child(3) { grid-area: spent; text-align: end; font-weight: 600; }
+  .adm .adm-cards-customers td:nth-child(4) { grid-area: last; text-align: end; }
+  .adm .adm-cards-customers td:nth-child(5) { grid-area: notes; }
+
+  /* Invoices: number · status / customer · total / date */
+  .adm .adm-cards-invoices tr {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: "num status" "who total" "date date";
+  }
+
+  .adm .adm-cards-invoices td:nth-child(1) { grid-area: num; }
+  .adm .adm-cards-invoices td:nth-child(2) { grid-area: who; }
+  .adm .adm-cards-invoices td:nth-child(3) { grid-area: date; color: var(--a-muted); font-size: 13px; }
+  .adm .adm-cards-invoices td:nth-child(4) { grid-area: total; text-align: end; font-weight: 600; }
+  .adm .adm-cards-invoices td:nth-child(5) { grid-area: status; text-align: end; }
+}
+
+/* ── Download choices ────────────────────────────────────────────────────── */
+
+.adm .adm-choice {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  width: 100%;
+  padding: 16px;
+  text-align: start;
+  background: var(--a-surface);
+  border: 1px solid var(--a-line-strong);
+  color: var(--a-ink);
+  cursor: pointer;
+}
+
+.adm .adm-choice:hover {
+  border-color: var(--a-ink);
+}
+
+.adm .adm-choice:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.adm .adm-choice > span {
+  display: grid;
+  gap: 2px;
+}
+
+.adm .adm-choice > span > span {
+  font-size: 14px;
+  color: var(--a-muted);
+}

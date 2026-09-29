@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Bell, BellOff, ChevronDown, Download, Plus, Receipt } from "lucide-react";
+import { Bell, BellOff, ChevronDown, Plus, Receipt } from "lucide-react";
 import { useT } from "@/admin/i18n";
 import { useAdmin } from "@/admin/context";
 import { useAsync, useInterval } from "@/admin/lib/useAsync";
-import { ago, bahrainToday, dateTime, downloadFile, minutesSince, money, timeOnly, toCsv } from "@/admin/lib/format";
+import { ago, bahrainToday, dateTime, minutesSince, money, timeOnly } from "@/admin/lib/format";
+import type { ExportSpec } from "@/admin/lib/letterhead";
+import { ExportButton } from "@/admin/ui/ExportButton";
 import { askNotificationPermission, chime, notify, setSoundEnabled, soundEnabled } from "@/admin/lib/alerts";
 import { Button, Checkbox, Chips, SearchInput } from "@/admin/ui/controls";
 import { Badge, EmptyState, LoadError, Loading, PageHeader, Tabs } from "@/admin/ui/layout";
@@ -251,7 +253,6 @@ function HistoryView({ version, onOpen, onChanged }: { version: number; onOpen: 
   const [source, setSource] = useState("");
   const [page, setPage] = useState(0);
   const [selected, setSelected] = useState<Set<string>>(new Set());
-  const [exporting, setExporting] = useState(false);
   const PAGE = 50;
 
   useEffect(() => {
@@ -281,15 +282,13 @@ function HistoryView({ version, onOpen, onChanged }: { version: number; onOpen: 
     }
   };
 
-  const exportCsv = async () => {
-    setExporting(true);
+  const exportSpec = async (): Promise<ExportSpec> => {
     const rows: Record<string, unknown>[] = [];
+    let revenue = 0;
     for (let offset = 0; offset < 5000; offset += 200) {
       const r = await fetchOrders({ statuses, from: from || null, to: to || null, query: debounced, source, limit: 200, offset });
-      if (!r.ok) {
-        setExporting(false);
-        return toast.error(r.error);
-      }
+      if (!r.ok) throw new Error(r.error);
+      if (offset === 0) revenue = r.value.revenue;
       for (const o of r.value.rows) {
         rows.push({
           reference: o.reference,
@@ -297,18 +296,38 @@ function HistoryView({ version, onOpen, onChanged }: { version: number; onOpen: 
           customer: o.customer_name,
           email: o.customer_email ?? "",
           phone: o.customer_phone ?? "",
-          status: t(STATUS[o.status].label),
+          status: STATUS[o.status].label,
           source: o.source,
-          items: o.items.map((i) => `${i.quantity}x ${i.name}`).join("; "),
-          total_bd: o.subtotal.toFixed(3),
-          refunded_bd: o.refunded_amount.toFixed(3),
+          items: o.items.map((i) => `${i.quantity}× ${i.name}`).join(", "),
+          total: `BD ${o.subtotal.toFixed(3)}`,
+          refunded: o.refunded_amount ? `BD ${o.refunded_amount.toFixed(3)}` : "",
           payment: o.payment_method,
         });
       }
       if (r.value.rows.length < 200) break;
     }
-    downloadFile(`mantel-orders-${bahrainToday()}.csv`, toCsv(rows));
-    setExporting(false);
+    const period = from || to ? `${from || "…"} to ${to || "…"}` : "All dates";
+    return {
+      title: "Orders",
+      subtitle: `${period} · ${rows.length} orders · BD ${Number(revenue).toFixed(3)} after refunds`,
+      filename: `mantel-orders-${bahrainToday()}`,
+      sections: [{
+        columns: [
+          { key: "reference", label: "Order", weight: 1.3 },
+          { key: "date", label: "Placed", weight: 1.3 },
+          { key: "customer", label: "Customer", weight: 1.4 },
+          { key: "items", label: "Items", weight: 3 },
+          { key: "total", label: "Total", weight: 1.2, align: "right" },
+          { key: "status", label: "Status", weight: 1.1 },
+          { key: "email", label: "Email", wordless: true },
+          { key: "phone", label: "Phone", wordless: true },
+          { key: "source", label: "Source", wordless: true },
+          { key: "refunded", label: "Refunded", wordless: true },
+          { key: "payment", label: "Payment", wordless: true },
+        ],
+        rows,
+      }],
+    };
   };
 
   const bulk = async (to: OrderStatus) => {
@@ -365,7 +384,7 @@ function HistoryView({ version, onOpen, onChanged }: { version: number; onOpen: 
           <Button size="sm" variant="ghost" onClick={() => setRange(29)}>{t("Last 30 days")}</Button>
           <Button size="sm" variant="ghost" onClick={() => setRange(null)}>{t("Any time")}</Button>
         </div>
-        <Button size="sm" icon={<Download size={14} />} loading={exporting} onClick={exportCsv} disabled={!data?.total}>{t("Download spreadsheet")}</Button>
+        <ExportButton spec={exportSpec} disabled={!data?.total} />
       </div>
 
       {selected.size > 0 && (
@@ -391,7 +410,7 @@ function HistoryView({ version, onOpen, onChanged }: { version: number; onOpen: 
             {t("{n} orders · {total} after refunds (cancelled not counted)", { n: data.total, total: money(data.revenue) })}
           </p>
           <div className="adm-table-wrap">
-            <table className="adm-table">
+            <table className="adm-table adm-cards adm-cards-orders">
               <thead>
                 <tr>
                   <th style={{ width: 36 }}><span className="sr-only">{t("Select")}</span></th>

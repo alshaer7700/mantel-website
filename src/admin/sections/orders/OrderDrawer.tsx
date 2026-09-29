@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { Mail, MessageCircle, Phone, Printer, RotateCcw, XCircle } from "lucide-react";
+import { FileText, Mail, Receipt, MessageCircle, Phone, Printer, RotateCcw, XCircle } from "lucide-react";
 import { useT } from "@/admin/i18n";
 import { useAsync } from "@/admin/lib/useAsync";
+import { useAdmin } from "@/admin/context";
+import { rpc } from "@/admin/lib/db";
 import { dateTime, money, timeOnly } from "@/admin/lib/format";
 import { Button, MoneyField, SelectField, TextArea } from "@/admin/ui/controls";
 import { Badge, LoadError, Loading, Notice } from "@/admin/ui/layout";
@@ -29,8 +31,18 @@ export function OrderDrawer({ orderId, onClose, onChanged }: { orderId: string |
   const [refundOpen, setRefundOpen] = useState(false);
   const [note, setNote] = useState("");
   const [printing, setPrinting] = useState(false);
+  const { can, navigate } = useAdmin();
 
   const o = orderId ? order.data : null;
+
+  const makeDocument = async (kind: "invoice" | "receipt") => {
+    if (!o) return;
+    setBusy(kind);
+    const r = await rpc<string>("admin_document_from_order", { p_order_id: o.id, p_kind: kind });
+    setBusy(null);
+    if (!r.ok) return toast.error(r.error);
+    navigate("invoices", r.value);
+  };
 
   useEffect(() => {
     setNote(o?.staff_note ?? "");
@@ -82,6 +94,8 @@ export function OrderDrawer({ orderId, onClose, onChanged }: { orderId: string |
         o && (
           <>
             <Button icon={<Printer size={16} />} onClick={print}>{t("Print ticket")}</Button>
+            {can("payments") && <Button icon={<FileText size={16} />} loading={busy === "invoice"} onClick={() => makeDocument("invoice")}>{t("Make an invoice")}</Button>}
+            {can("payments") && <Button icon={<Receipt size={16} />} loading={busy === "receipt"} onClick={() => makeDocument("receipt")}>{t("Make a receipt")}</Button>}
             {next && (
               <Button variant="primary" loading={busy === next.to} onClick={() => move(next.to)}>{t(next.label)}</Button>
             )}
