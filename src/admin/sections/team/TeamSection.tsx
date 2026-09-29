@@ -77,6 +77,7 @@ const ENTITY_LABEL: Record<string, string> = {
   staff_invites: "Invite",
   staff_role_permissions: "Role permission",
   customer_notes: "Customer note",
+  invoices: "Invoice",
 };
 
 type Tab = "people" | "roles" | "security" | "activity";

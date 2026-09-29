@@ -94,12 +94,48 @@ function bahrainTime(iso: string | null | undefined): string {
   }).format(d);
 }
 
-// The café letterhead (the Word template staff use for letters), rebuilt as an
-// email: MANTEL. with the CR number and address on top, the heart at the
-// right, and the café's email and Instagram, labelled, in the footer. Tables
-// and inline styles only, because that is all email clients reliably render.
-const ADDRESS = "SHOP 114D, BLDG 114, ROAD 16, BLOCK 111, HIDD, KINGDOM OF BAHRAIN";
-const HEART = "https://bymantel.com/heart.webp";
+// The café letterhead, as edited in the dashboard (Invoices & letterhead →
+// Letterhead, stored in site_settings 'letterhead'): name with the CR number
+// and address on top, the logo at the right, and the labelled email and
+// Instagram in the footer. Read with the service role the platform gives
+// every function; if that read fails, the built-in letterhead is used so the
+// order email still goes out. Tables and inline styles only, because that is
+// all email clients reliably render.
+type Letterhead = { name: string; cr_number: string; address: string; logo_url: string; email: string; instagram: string };
+
+const DEFAULT_HEAD: Letterhead = {
+  name: "MANTEL.",
+  cr_number: "197765-1",
+  address: "SHOP 114D, BLDG 114, ROAD 16, BLOCK 111, HIDD, KINGDOM OF BAHRAIN",
+  logo_url: "https://bymantel.com/heart.webp",
+  email: "hello@bymantel.com",
+  instagram: "bymantel",
+};
+
+async function loadLetterhead(): Promise<Letterhead> {
+  const url = Deno.env.get("SUPABASE_URL");
+  const key = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  if (!url || !key) return DEFAULT_HEAD;
+  try {
+    const res = await fetch(`${url}/rest/v1/site_settings?key=eq.letterhead&select=value`, {
+      headers: { apikey: key, Authorization: `Bearer ${key}` },
+      signal: AbortSignal.timeout(3000),
+    });
+    if (!res.ok) return DEFAULT_HEAD;
+    const rows = await res.json();
+    const value = Array.isArray(rows) ? rows[0]?.value : null;
+    if (!value || typeof value !== "object") return DEFAULT_HEAD;
+    const pick = (k: keyof Letterhead) => (typeof value[k] === "string" ? String(value[k]).trim() : DEFAULT_HEAD[k]);
+    return { name: pick("name"), cr_number: pick("cr_number"), address: pick("address"), logo_url: pick("logo_url"), email: pick("email"), instagram: pick("instagram") };
+  } catch {
+    return DEFAULT_HEAD;
+  }
+}
+
+function handleOf(value: string): string {
+  return value.trim().replace(/^https?:\/\/(www\.)?instagram\.com\//i, "").replace(/[/?].*$/, "").replace(/^@/, "");
+}
+
 const INK = "#171310";
 const INK_2 = "#3A342D";
 const MUTED = "#766E66";
@@ -119,7 +155,9 @@ function footerItem(label: string, href: string, value: string, align: "left" | 
     `</td>`;
 }
 
-function letterhead(body: string): string {
+function letterhead(body: string, head: Letterhead): string {
+  const handle = handleOf(head.instagram);
+  const email = head.email.trim();
   return [
     `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"></head>`,
     `<body style="margin:0;padding:0;background:#F6F5F2">`,
@@ -129,24 +167,26 @@ function letterhead(body: string): string {
     `<tr><td style="padding:32px 32px 0">`,
     `<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>`,
     `<td style="vertical-align:top">`,
-    `<div style="${MONO}font-size:30px;line-height:1;letter-spacing:-1px;color:${INK}">MANTEL.</div>`,
-    `<div style="margin-top:14px;${SERIF}font-size:11px;letter-spacing:0.5px;color:${INK}">CR No.197765-1</div>`,
-    `<div style="margin-top:6px;${SERIF}font-size:11px;letter-spacing:0.5px;color:${INK}">${ADDRESS}</div>`,
+    `<div style="${MONO}font-size:30px;line-height:1;letter-spacing:-1px;color:${INK}">${esc(head.name)}</div>`,
+    head.cr_number ? `<div style="margin-top:14px;${SERIF}font-size:11px;letter-spacing:0.5px;color:${INK}">CR No.${esc(head.cr_number)}</div>` : "",
+    head.address ? `<div style="margin-top:6px;${SERIF}font-size:11px;letter-spacing:0.5px;color:${INK}">${esc(head.address)}</div>` : "",
     `</td>`,
-    `<td style="vertical-align:top;text-align:right;width:56px"><img src="${HEART}" width="44" alt="Mantel" style="display:block;margin-left:auto;width:44px;height:auto;border:0"></td>`,
+    head.logo_url ? `<td style="vertical-align:top;text-align:right;width:56px"><img src="${esc(head.logo_url)}" width="44" alt="${esc(head.name)}" style="display:block;margin-left:auto;width:44px;height:auto;border:0"></td>` : "",
     `</tr></table>`,
     `<div style="height:1px;background:${INK};margin:24px 0 0;line-height:1px;font-size:0">&nbsp;</div>`,
     `</td></tr>`,
     // Body
     `<tr><td style="padding:28px 32px 36px">${body}</td></tr>`,
     // Footer
-    `<tr><td style="padding:0 32px 28px">`,
-    `<div style="height:1px;background:${LINE};line-height:1px;font-size:0;margin:0 0 18px">&nbsp;</div>`,
-    `<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>`,
-    footerItem("Email", "mailto:hello@bymantel.com", "hello@bymantel.com", "left"),
-    footerItem("Instagram", "https://www.instagram.com/bymantel", "@bymantel", "right"),
-    `</tr></table>`,
-    `</td></tr>`,
+    email || handle ? [
+      `<tr><td style="padding:0 32px 28px">`,
+      `<div style="height:1px;background:${LINE};line-height:1px;font-size:0;margin:0 0 18px">&nbsp;</div>`,
+      `<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>`,
+      email ? footerItem("Email", `mailto:${esc(email)}`, esc(email), "left") : `<td></td>`,
+      handle ? footerItem("Instagram", `https://www.instagram.com/${encodeURIComponent(handle)}`, `@${esc(handle)}`, "right") : `<td></td>`,
+      `</tr></table>`,
+      `</td></tr>`,
+    ].join("") : "",
     `</table>`,
     `</td></tr></table>`,
     `</body></html>`,
@@ -193,10 +233,13 @@ Deno.serve(async (req: Request) => {
     return { qty, label, each: i.item_price };
   });
 
+  const head = await loadLetterhead();
+  const handle = handleOf(head.instagram);
+
   const text = [
-    `MANTEL.`,
-    `CR No.197765-1`,
-    ADDRESS,
+    head.name,
+    ...(head.cr_number ? [`CR No.${head.cr_number}`] : []),
+    ...(head.address ? [head.address] : []),
     ``,
     `New order ${reference} — ${name}`,
     ``,
@@ -210,8 +253,8 @@ Deno.serve(async (req: Request) => {
     `Total:    ${bd(record.subtotal)}`,
     ``,
     `—`,
-    `Email:      hello@bymantel.com`,
-    `Instagram:  @bymantel`,
+    ...(head.email ? [`Email:      ${head.email}`] : []),
+    ...(handle ? [`Instagram:  @${handle}`] : []),
   ].join("\n");
 
   const html = letterhead([
@@ -234,7 +277,7 @@ Deno.serve(async (req: Request) => {
     `<tr><td colspan="2" style="padding:12px 12px 0 0;border-top:1px solid ${INK};${MONO}font-size:12px;letter-spacing:2px;text-transform:uppercase">Total</td>` +
       `<td style="padding:12px 0 0;border-top:1px solid ${INK};${MONO}font-size:15px;font-weight:700;text-align:right;white-space:nowrap">${esc(bd(record.subtotal))}</td></tr>`,
     `</table>`,
-  ].join(""));
+  ].join(""), head);
 
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",

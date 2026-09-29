@@ -2623,3 +2623,256 @@ a.adm-list-row:hover {
     display: none !important;
   }
 }
+
+/* ── Letterhead sheet (invoices, letterhead preview) ─────────────────────────
+ * Not scoped under .adm: the printed copy is portalled to <body>, outside the
+ * dashboard. Sized in millimetres so screen and paper match. */
+
+.mtl-sheet {
+  position: relative;
+  box-sizing: border-box;
+  width: 210mm;
+  min-height: 297mm;
+  padding: 16mm 17mm 12mm;
+  display: flex;
+  flex-direction: column;
+  background: #FFFFFF;
+  color: #171310;
+  font-family: "EB Garamond", Georgia, "Times New Roman", serif;
+  font-style: normal;
+  font-size: 10.5pt;
+  line-height: 1.45;
+  text-align: left;
+  overflow: hidden;
+}
+
+.mtl-sheet *,
+.mtl-sheet *::before,
+.mtl-sheet *::after {
+  box-sizing: border-box;
+}
+
+.mtl-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8mm;
+}
+
+.mtl-name {
+  font-family: "Fira Mono", Menlo, Consolas, monospace;
+  font-size: 30pt;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.mtl-small {
+  font-size: 8pt;
+  letter-spacing: 0.04em;
+}
+
+.mtl-logo {
+  width: 13mm;
+  height: auto;
+  display: block;
+}
+
+.mtl-rule {
+  height: 0;
+  border-top: 0.3mm solid #171310;
+  margin: 7mm 0 8mm;
+}
+
+.mtl-body {
+  flex: 1;
+}
+
+.mtl-foot {
+  display: flex;
+  justify-content: space-between;
+  gap: 8mm;
+  border-top: 0.2mm solid #E8E4DC;
+  padding-top: 4mm;
+  margin-top: 10mm;
+}
+
+.mtl-label {
+  font-family: "Fira Mono", Menlo, Consolas, monospace;
+  font-size: 6.5pt;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #766E66;
+}
+
+.mtl-foot-value {
+  margin-top: 1mm;
+  font-family: "Fira Mono", Menlo, Consolas, monospace;
+  font-weight: 500;
+  font-size: 8.5pt;
+}
+
+.mtl-mono {
+  font-family: "Fira Mono", Menlo, Consolas, monospace;
+}
+
+.mtl-watermark {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  font-family: "Fira Mono", Menlo, Consolas, monospace;
+  font-size: 90pt;
+  letter-spacing: 0.1em;
+  color: rgba(154, 28, 31, 0.12);
+  transform: rotate(-24deg);
+}
+
+.mtl-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.mtl-table th {
+  font-family: "Fira Mono", Menlo, Consolas, monospace;
+  font-weight: 400;
+  font-size: 6.5pt;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #766E66;
+  text-align: left;
+  padding: 0 3mm 2mm 0;
+  border-bottom: 0.3mm solid #171310;
+}
+
+.mtl-table td {
+  padding: 2.4mm 3mm 2.4mm 0;
+  border-bottom: 0.2mm solid #E8E4DC;
+  vertical-align: top;
+}
+
+.mtl-table .num {
+  text-align: right;
+  white-space: nowrap;
+  font-family: "Fira Mono", Menlo, Consolas, monospace;
+  font-size: 9pt;
+  padding-right: 0;
+  padding-left: 3mm;
+}
+
+.mtl-table th.num {
+  font-family: "Fira Mono", Menlo, Consolas, monospace;
+  font-size: 6.5pt;
+}
+
+.mtl-scaled {
+  width: 100%;
+  overflow: hidden;
+  border: 1px solid var(--a-line-strong, #D9D4CB);
+  background: #FFFFFF;
+}
+
+@media print {
+  .mtl-print {
+    page: mtl-a4;
+  }
+
+  .mtl-print .mtl-sheet {
+    min-height: 296mm;
+  }
+
+  @page mtl-a4 {
+    size: A4;
+    margin: 0;
+  }
+}
+
+/* ── Invoices ───────────────────────────────────────────────────────────── */
+
+.adm .adm-invoice-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.adm .adm-invoice-preview {
+  position: sticky;
+  top: 16px;
+}
+
+@media (max-width: 1100px) {
+  .adm .adm-invoice-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .adm .adm-invoice-preview {
+    position: static;
+  }
+}
+
+.adm .adm-invoice-line {
+  display: grid;
+  grid-template-columns: 80px 150px minmax(0, 1fr) 40px;
+  grid-template-areas: "desc desc desc desc" "qty price amount remove";
+  gap: 6px 10px;
+  align-items: end;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--a-line);
+}
+
+.adm .adm-invoice-line > :nth-child(1) { grid-area: desc; }
+.adm .adm-invoice-line > :nth-child(2) { grid-area: qty; }
+.adm .adm-invoice-line > :nth-child(3) { grid-area: price; }
+.adm .adm-invoice-line > :nth-child(4) { grid-area: amount; }
+.adm .adm-invoice-line > :nth-child(5) { grid-area: remove; }
+
+.adm .adm-invoice-amount {
+  padding-bottom: 12px;
+  text-align: end;
+  font-family: var(--a-mono);
+  font-size: 14px;
+}
+
+@media (max-width: 480px) {
+  .adm .adm-invoice-line {
+    grid-template-columns: 64px minmax(0, 1fr) 40px;
+    grid-template-areas: "desc desc desc" "qty price remove";
+  }
+
+  .adm .adm-invoice-amount {
+    display: none;
+  }
+}
+
+.adm .adm-invoice-totals {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 6px 16px;
+  justify-items: end;
+  border-top: 1px solid var(--a-ink);
+  padding-top: 12px;
+  margin-top: 4px;
+  font-family: var(--a-ui);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.adm .adm-invoice-totals strong {
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 15px;
+}
+
+.adm .adm-link-back {
+  all: unset;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.adm .adm-link-back:hover {
+  color: var(--a-ink);
+}
