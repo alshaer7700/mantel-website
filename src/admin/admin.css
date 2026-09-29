@@ -2549,3 +2549,77 @@ a.adm-list-row:hover {
 .adm[dir="rtl"] .adm-sidebar .adm-brand {
   align-items: flex-end;
 }
+
+/* ── Reports: chart readouts, heatmap labels, table toggles ──────────────── */
+
+.adm-chart-tip {
+  position: absolute;
+  width: 160px;
+  pointer-events: none;
+  display: grid;
+  gap: 2px;
+  padding: 8px 10px;
+  background: var(--a-surface);
+  border: 1px solid var(--a-line-strong);
+  box-shadow: var(--a-shadow);
+  font-size: 13px;
+  color: var(--a-ink);
+}
+
+.adm-chart-tip span {
+  color: var(--a-muted);
+}
+
+.adm-heat-hour,
+.adm-heat-day {
+  font-family: var(--a-ui);
+  font-size: 11px;
+  color: var(--a-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+
+.adm-heat-cell.is-empty {
+  background: var(--a-surface-2);
+}
+
+.adm-heat-cell:focus-visible,
+.adm-heat-cell:hover {
+  outline: 2px solid var(--a-focus);
+  outline-offset: 1px;
+}
+
+.adm-truncate {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.adm-details {
+  margin-top: 12px;
+}
+
+.adm-details > summary {
+  cursor: pointer;
+  font-family: var(--a-ui);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--a-muted);
+  margin-bottom: 10px;
+}
+
+.adm-gallery-lg {
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+}
+
+@media print {
+  .adm-sidebar,
+  .adm-topbar,
+  .adm-page-head .adm-actions,
+  .adm-chips {
+    display: none !important;
+  }
+}
