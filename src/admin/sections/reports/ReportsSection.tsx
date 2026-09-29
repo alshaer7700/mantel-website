@@ -1,8 +1,10 @@
 import { useMemo, useState } from "react";
-import { BarChart3, Download, Printer } from "lucide-react";
+import { BarChart3, Printer } from "lucide-react";
 import { useLang, useT } from "@/admin/i18n";
 import { useAsync } from "@/admin/lib/useAsync";
-import { bahrainToday, downloadFile, money, num, toCsv, weekdayName } from "@/admin/lib/format";
+import { bahrainToday, money, num, weekdayName } from "@/admin/lib/format";
+import type { ExportSpec } from "@/admin/lib/letterhead";
+import { ExportButton } from "@/admin/ui/ExportButton";
 import { db, rpc, run } from "@/admin/lib/db";
 import { Button, Chips, TextField } from "@/admin/ui/controls";
 import { Card, EmptyState, LoadError, Loading, PageHeader, Stat } from "@/admin/ui/layout";
@@ -77,11 +79,34 @@ export function ReportsSection() {
   const oneDay = range.from === range.to;
   const shortMoney = (v: number) => (v >= 1000 ? `${(v / 1000).toFixed(1)}k` : v % 1 === 0 ? String(v) : v.toFixed(1));
 
-  const exportCsv = () => {
-    if (!r) return;
-    const days = r.by_day.map((d) => ({ date: d.day, orders: d.orders, sales_bd: n(d.revenue).toFixed(3) }));
-    const items = r.top_items.map((i) => ({ item: i.name, sold: i.quantity, sales_bd: n(i.revenue).toFixed(3) }));
-    downloadFile(`mantel-sales-${range.from}-to-${range.to}.csv`, `${toCsv(days)}\r\n\r\n${toCsv(items)}`);
+  const exportSpec = (): ExportSpec => {
+    const fmt = (d: string) => new Intl.DateTimeFormat("en-GB", { weekday: "short", day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }).format(new Date(`${d}T00:00:00Z`));
+    const rr = r!;
+    return {
+      title: "Sales report",
+      subtitle: `${fmt(range.from)} – ${fmt(range.to)} · ${rr.totals.orders} orders · BD ${n(rr.totals.revenue).toFixed(3)} after refunds · cash BD ${n(rr.totals.cash).toFixed(3)}`,
+      filename: `mantel-sales-${range.from}-to-${range.to}`,
+      sections: [
+        {
+          heading: "Sales by day",
+          columns: [
+            { key: "date", label: "Day", weight: 2 },
+            { key: "orders", label: "Orders", weight: 1, align: "right" },
+            { key: "sales", label: "Sales", weight: 1.4, align: "right" },
+          ],
+          rows: rr.by_day.map((d) => ({ date: fmt(d.day), orders: d.orders, sales: `BD ${n(d.revenue).toFixed(3)}` })),
+        },
+        {
+          heading: "Best sellers",
+          columns: [
+            { key: "item", label: "Item", weight: 3 },
+            { key: "sold", label: "Sold", weight: 1, align: "right" },
+            { key: "sales", label: "Sales", weight: 1.4, align: "right" },
+          ],
+          rows: rr.top_items.map((i) => ({ item: i.name, sold: i.quantity, sales: `BD ${n(i.revenue).toFixed(3)}` })),
+        },
+      ],
+    };
   };
 
   return (
@@ -94,7 +119,7 @@ export function ReportsSection() {
         actions={(
           <>
             <Button icon={<Printer size={16} />} onClick={() => window.print()} disabled={!r}>{t("Print")}</Button>
-            <Button icon={<Download size={16} />} onClick={exportCsv} disabled={!r || !orders}>{t("Download for the accountant")}</Button>
+            <ExportButton spec={exportSpec} disabled={!r || !orders} label={t("Download for the accountant")} />
           </>
         )}
       />

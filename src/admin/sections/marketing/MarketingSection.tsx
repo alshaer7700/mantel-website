@@ -1,11 +1,12 @@
 import { useMemo, useState } from "react";
-import { Download, Mail, Megaphone } from "lucide-react";
+import { Mail, Megaphone } from "lucide-react";
 import { useT } from "@/admin/i18n";
 import { useAdmin } from "@/admin/context";
 import { useAsync } from "@/admin/lib/useAsync";
-import { bahrainToday, dateOnly, downloadFile, toCsv } from "@/admin/lib/format";
+import { bahrainToday, dateOnly } from "@/admin/lib/format";
+import { ExportButton } from "@/admin/ui/ExportButton";
 import { db, run } from "@/admin/lib/db";
-import { Button, Chips, SearchInput, Toggle } from "@/admin/ui/controls";
+import { Chips, SearchInput, Toggle } from "@/admin/ui/controls";
 import { EmptyState, LoadError, Loading, PageHeader, Stat, Tabs } from "@/admin/ui/layout";
 import { useToast } from "@/admin/ui/overlays";
 
@@ -81,13 +82,22 @@ function Subscribers() {
         />
         <div className="adm-row">
           <SearchInput value={query} onChange={setQuery} placeholder={t("Search emails")} />
-          <Button
-            icon={<Download size={16} />}
+          <ExportButton
             disabled={!list.length}
-            onClick={() => downloadFile(`mantel-subscribers-${bahrainToday()}.csv`, toCsv(list.map((s) => ({ email: s.email, status: s.status, subscribed: dateOnly(s.subscribed_at) }))))}
-          >
-            {t("Download spreadsheet")}
-          </Button>
+            spec={() => ({
+              title: "Newsletter subscribers",
+              subtitle: `${list.length} ${filter === "active" ? "subscribed" : filter === "unsubscribed" ? "unsubscribed" : "in total"}`,
+              filename: `mantel-subscribers-${bahrainToday()}`,
+              sections: [{
+                columns: [
+                  { key: "email", label: "Email", weight: 3 },
+                  { key: "status", label: "Status", weight: 1.2 },
+                  { key: "subscribed", label: "Since", weight: 1.4 },
+                ],
+                rows: list.map((s) => ({ email: s.email, status: s.status === "active" ? "Subscribed" : "Unsubscribed", subscribed: dateOnly(s.subscribed_at) })),
+              }],
+            })}
+          />
         </div>
       </div>
       {subs.loading && !subs.data ? (

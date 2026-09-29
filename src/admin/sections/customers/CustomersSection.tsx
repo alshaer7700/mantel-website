@@ -3,7 +3,9 @@ import { Download, Mail, MessageCircle, Phone, Trash2, Users } from "lucide-reac
 import { useT } from "@/admin/i18n";
 import { useAdmin } from "@/admin/context";
 import { useAsync } from "@/admin/lib/useAsync";
-import { ago, bahrainToday, dateOnly, dateTime, downloadFile, money, toCsv } from "@/admin/lib/format";
+import { ago, bahrainToday, dateOnly, dateTime, downloadFile, money } from "@/admin/lib/format";
+import type { ExportSpec } from "@/admin/lib/letterhead";
+import { ExportButton } from "@/admin/ui/ExportButton";
 import { rpc } from "@/admin/lib/db";
 import { Button, Chips, SearchInput, TagInput, TextArea, TextField, Toggle } from "@/admin/ui/controls";
 import { Badge, Card, EmptyState, LoadError, Loading, Notice, PageHeader, Stat } from "@/admin/ui/layout";
@@ -62,17 +64,30 @@ export function CustomersSection() {
   );
   const rows = (list.data?.rows ?? []).map((r) => ({ ...r, spent: Number(r.spent) }));
 
-  const exportList = () =>
-    downloadFile(
-      `mantel-customers-${bahrainToday()}.csv`,
-      toCsv(
-        rows.map((r) => ({
-          name: r.name, email: r.email, phone: r.phone ?? "", orders: r.orders, spent: r.spent.toFixed(3),
-          first_order: dateOnly(r.first_order), last_order: dateOnly(r.last_order), tags: r.tags.join(" "),
-          newsletter: r.subscribed ? "yes" : "no", blocked: r.blocked ? "yes" : "no",
-        })),
-      ),
-    );
+  const exportSpec = (): ExportSpec => ({
+    title: "Customers",
+    subtitle: `${rows.length} customers${search ? ` matching “${search}”` : ""}`,
+    filename: `mantel-customers-${bahrainToday()}`,
+    sections: [{
+      columns: [
+        { key: "name", label: "Customer", weight: 2 },
+        { key: "email", label: "Email", weight: 2.4 },
+        { key: "phone", label: "Phone", weight: 1.4 },
+        { key: "orders", label: "Orders", weight: 0.8, align: "right" },
+        { key: "spent", label: "Spent", weight: 1.2, align: "right" },
+        { key: "last_order", label: "Last visit", weight: 1.3 },
+        { key: "first_order", label: "First order", wordless: true },
+        { key: "tags", label: "Tags", wordless: true },
+        { key: "newsletter", label: "Newsletter", wordless: true },
+        { key: "blocked", label: "Blocked", wordless: true },
+      ],
+      rows: rows.map((r) => ({
+        name: r.name, email: r.email, phone: r.phone ?? "", orders: r.orders, spent: `BD ${r.spent.toFixed(3)}`,
+        first_order: dateOnly(r.first_order), last_order: dateOnly(r.last_order), tags: r.tags.join(" "),
+        newsletter: r.subscribed ? "yes" : "no", blocked: r.blocked ? "yes" : "no",
+      })),
+    }],
+  });
 
   return (
     <>
@@ -81,7 +96,7 @@ export function CustomersSection() {
         title={t("Customers.")}
         subtitle={t("Everyone who has ordered, with their history, notes and privacy requests.")}
         help={t("Customers are grouped by email address. Guests who order without an account appear too.")}
-        actions={<Button icon={<Download size={16} />} disabled={!rows.length} onClick={exportList}>{t("Download spreadsheet")}</Button>}
+        actions={<ExportButton spec={exportSpec} disabled={!rows.length} />}
       />
 
       <div className="adm-spread">

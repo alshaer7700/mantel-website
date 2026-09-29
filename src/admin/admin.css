@@ -3091,3 +3091,37 @@ a.adm-list-row:hover {
   .adm .adm-cards-invoices td:nth-child(4) { grid-area: total; text-align: end; font-weight: 600; }
   .adm .adm-cards-invoices td:nth-child(5) { grid-area: status; text-align: end; }
 }
+
+/* ── Download choices ────────────────────────────────────────────────────── */
+
+.adm .adm-choice {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  width: 100%;
+  padding: 16px;
+  text-align: start;
+  background: var(--a-surface);
+  border: 1px solid var(--a-line-strong);
+  color: var(--a-ink);
+  cursor: pointer;
+}
+
+.adm .adm-choice:hover {
+  border-color: var(--a-ink);
+}
+
+.adm .adm-choice:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.adm .adm-choice > span {
+  display: grid;
+  gap: 2px;
+}
+
+.adm .adm-choice > span > span {
+  font-size: 14px;
+  color: var(--a-muted);
+}

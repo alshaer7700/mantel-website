@@ -211,72 +211,195 @@ async function logoAsPng(url: string): Promise<{ png: Blob; width: number; heigh
   }
 }
 
+type Zip = import("jszip");
+
+/** The Word letterhead filled with the saved details: header, footer, logo and styles. */
+async function buildLetterhead(h: Letterhead): Promise<Zip> {
+  const { default: JSZip } = await import("jszip");
+  const zip = await JSZip.loadAsync(await (await fetch(templateUrl)).arrayBuffer());
+  const handle = instagramHandle(h.instagram);
+  const tokens: Record<string, string> = {
+    NAME: h.name.trim(),
+    CR_LINE: crLine(h),
+    ADDRESS: h.address.trim(),
+    EMAIL_LABEL: h.email.trim() ? "EMAIL" : "",
+    EMAIL: h.email.trim(),
+    INSTAGRAM_LABEL: handle ? "INSTAGRAM" : "",
+    INSTAGRAM: handle ? `@${handle}` : "",
+    EMAIL_URL: h.email.trim() || "hello@bymantel.com",
+    INSTAGRAM_URL: `https://www.instagram.com/${handle || "bymantel"}`,
+  };
+  const styleOf: Record<string, StyleKey> = {
+    NAME: "name", CR_LINE: "details", ADDRESS: "details",
+    EMAIL_LABEL: "labels", INSTAGRAM_LABEL: "labels", EMAIL: "values", INSTAGRAM: "values",
+  };
+  const restyle = (xml: string) => {
+    let out = xml;
+    for (const [token, key] of Object.entries(styleOf)) {
+      const re = new RegExp(`<w:rPr>(?:(?!</w:rPr>)[\\s\\S])*</w:rPr>(<w:t(?: [^>]*)?>\\{\\{${token}\\}\\}</w:t>)`, "g");
+      out = out.replace(re, (_, t: string) => wordRunProps(h.styles[key]) + t);
+    }
+    return out;
+  };
+  const fill = (xml: string) => restyle(xml).replace(/\{\{([A-Z_]+)\}\}/g, (_, key: string) => xmlEscape(tokens[key] ?? ""));
+  for (const path of ["word/document.xml", "word/_rels/document.xml.rels"]) {
+    const file = zip.file(path);
+    if (file) zip.file(path, fill(await file.async("string")));
+  }
+
+  // The logo keeps its right edge where the template has it and grows to the
+  // chosen width (1 mm = 36000 EMU).
+  let ratio = 1016 / 1200;
+  if (h.logo_url && !isDefaultLogo(h.logo_url)) {
+    const logo = await logoAsPng(h.logo_url);
+    if (logo) {
+      zip.file("word/media/image1.png", logo.png);
+      ratio = logo.height / logo.width;
+    }
+  }
+  const header = zip.file("word/header1.xml");
+  if (header) {
+    const cx = Math.round(Math.min(40, Math.max(4, h.logo_size)) * 36000);
+    const cy = Math.round(cx * ratio);
+    const rightEdge = 7190456 + 294695;
+    const xml = (await header.async("string"))
+      .replace(/(<wp:positionH relativeFrom="page"><wp:posOffset>)\d+(<\/wp:posOffset>)/, `$1${rightEdge - cx}$2`)
+      .replace(/<wp:extent cx="\d+" cy="\d+"\/>/, `<wp:extent cx="${cx}" cy="${cy}"/>`)
+      .replace(/<a:ext cx="\d+" cy="\d+"\/>/, `<a:ext cx="${cx}" cy="${cy}"/>`);
+    zip.file("word/header1.xml", xml);
+  }
+  return zip;
+}
+
+async function saveZip(zip: Zip, filename: string) {
+  const blob = await zip.generateAsync({ type: "blob", mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
 /** Fills the Word letterhead with the saved details and downloads it. */
 export async function downloadLetterheadDocx(h: Letterhead): Promise<Result<true>> {
   try {
-    const { default: JSZip } = await import("jszip");
-    const zip = await JSZip.loadAsync(await (await fetch(templateUrl)).arrayBuffer());
-    const handle = instagramHandle(h.instagram);
-    const tokens: Record<string, string> = {
-      NAME: h.name.trim(),
-      CR_LINE: crLine(h),
-      ADDRESS: h.address.trim(),
-      EMAIL_LABEL: h.email.trim() ? "EMAIL" : "",
-      EMAIL: h.email.trim(),
-      INSTAGRAM_LABEL: handle ? "INSTAGRAM" : "",
-      INSTAGRAM: handle ? `@${handle}` : "",
-      EMAIL_URL: h.email.trim() || "hello@bymantel.com",
-      INSTAGRAM_URL: `https://www.instagram.com/${handle || "bymantel"}`,
-    };
-    const styleOf: Record<string, StyleKey> = {
-      NAME: "name", CR_LINE: "details", ADDRESS: "details",
-      EMAIL_LABEL: "labels", INSTAGRAM_LABEL: "labels", EMAIL: "values", INSTAGRAM: "values",
-    };
-    const restyle = (xml: string) => {
-      let out = xml;
-      for (const [token, key] of Object.entries(styleOf)) {
-        const re = new RegExp(`<w:rPr>(?:(?!</w:rPr>)[\\s\\S])*</w:rPr>(<w:t(?: [^>]*)?>\\{\\{${token}\\}\\}</w:t>)`, "g");
-        out = out.replace(re, (_, t: string) => wordRunProps(h.styles[key]) + t);
-      }
-      return out;
-    };
-    const fill = (xml: string) => restyle(xml).replace(/\{\{([A-Z_]+)\}\}/g, (_, key: string) => xmlEscape(tokens[key] ?? ""));
-    for (const path of ["word/document.xml", "word/_rels/document.xml.rels"]) {
-      const file = zip.file(path);
-      if (file) zip.file(path, fill(await file.async("string")));
-    }
+    await saveZip(await buildLetterhead(h), "Mantel-letterhead.docx");
+    return { ok: true, value: true };
+  } catch {
+    return { ok: false, error: translate(currentLang(), "The Word file couldn't be made. Try again.") };
+  }
+}
 
-    // The logo keeps its right edge where the template has it and grows to the
-    // chosen width (1 mm = 36000 EMU).
-    let ratio = 1016 / 1200;
-    if (h.logo_url && !isDefaultLogo(h.logo_url)) {
-      const logo = await logoAsPng(h.logo_url);
-      if (logo) {
-        zip.file("word/media/image1.png", logo.png);
-        ratio = logo.height / logo.width;
-      }
-    }
-    const header = zip.file("word/header1.xml");
-    if (header) {
-      const cx = Math.round(Math.min(40, Math.max(4, h.logo_size)) * 36000);
-      const cy = Math.round(cx * ratio);
-      const rightEdge = 7190456 + 294695;
-      const xml = (await header.async("string"))
-        .replace(/(<wp:positionH relativeFrom="page"><wp:posOffset>)\d+(<\/wp:posOffset>)/, `$1${rightEdge - cx}$2`)
-        .replace(/<wp:extent cx="\d+" cy="\d+"\/>/, `<wp:extent cx="${cx}" cy="${cy}"/>`)
-        .replace(/<a:ext cx="\d+" cy="\d+"\/>/, `<a:ext cx="${cx}" cy="${cy}"/>`);
-      zip.file("word/header1.xml", xml);
-    }
+/* ── Lists on the letterhead ─────────────────────────────────────────────── */
 
-    const blob = await zip.generateAsync({ type: "blob", mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "Mantel-letterhead.docx";
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
+export type ExportColumn = {
+  key: string;
+  label: string;
+  /** Relative width in the Word table. */
+  weight?: number;
+  align?: "left" | "right";
+  /** Left out of the Word table (it is still in the spreadsheet). */
+  wordless?: boolean;
+};
+
+export type ExportSection = { heading?: string; columns: ExportColumn[]; rows: Record<string, unknown>[] };
+
+export type ExportSpec = { title: string; subtitle?: string; filename: string; sections: ExportSection[] };
+
+const TEXT_WIDTH = 9670; // twips between the template's margins, less its 115 indent
+
+function cellText(v: unknown): string {
+  if (v === null || v === undefined) return "";
+  if (typeof v === "number") return String(v);
+  return String(v);
+}
+
+function runs(text: string, rPr: string): string {
+  const parts = text.split(/\r?\n/);
+  return parts.map((p, i) => `${i ? "<w:r><w:br/></w:r>" : ""}<w:r>${rPr}<w:t xml:space="preserve">${xmlEscape(p)}</w:t></w:r>`).join("");
+}
+
+function para(text: string, rPr: string, { before = 0, after = 0, align = "left" }: { before?: number; after?: number; align?: string } = {}): string {
+  return `<w:p><w:pPr><w:spacing w:before="${before}" w:after="${after}"/><w:ind w:left="115"/>${align === "right" ? '<w:jc w:val="right"/>' : ""}</w:pPr>${runs(text, rPr)}</w:p>`;
+}
+
+function tableXml(h: Letterhead, section: ExportSection): string {
+  const cols = section.columns.filter((c) => !c.wordless);
+  const total = cols.reduce((sum, c) => sum + (c.weight ?? 1), 0);
+  const widths = cols.map((c) => Math.round((TEXT_WIDTH * (c.weight ?? 1)) / total));
+  const small = cols.length > 5;
+  const body = { ...h.styles.body, size: Math.max(7, h.styles.body.size - (small ? 2 : 1)) };
+  const labelRpr = wordRunProps(h.styles.labels);
+  const bodyRpr = wordRunProps(body);
+  const cell = (text: string, width: number, rPr: string, align: string | undefined, border: string) =>
+    `<w:tc><w:tcPr><w:tcW w:w="${width}" w:type="dxa"/><w:tcBorders><w:bottom ${border}/></w:tcBorders></w:tcPr>` +
+    `<w:p><w:pPr><w:spacing w:before="60" w:after="60"/>${align === "right" ? '<w:jc w:val="right"/>' : ""}</w:pPr>${runs(text, rPr)}</w:p></w:tc>`;
+  const headRow = `<w:tr><w:trPr><w:tblHeader/></w:trPr>${cols.map((c, i) => cell(c.label, widths[i]!, labelRpr, c.align, 'w:val="single" w:sz="8" w:space="0" w:color="171310"')).join("")}</w:tr>`;
+  const rows = section.rows.map((r) =>
+    `<w:tr><w:trPr><w:cantSplit/></w:trPr>${cols.map((c, i) => cell(cellText(r[c.key]), widths[i]!, bodyRpr, c.align, 'w:val="single" w:sz="4" w:space="0" w:color="E8E4DC"')).join("")}</w:tr>`,
+  ).join("");
+  const none = ['top', 'left', 'bottom', 'right', 'insideH', 'insideV'].map((b) => `<w:${b} w:val="nil"/>`).join("");
+  return `<w:tbl><w:tblPr><w:tblW w:w="${TEXT_WIDTH}" w:type="dxa"/><w:tblInd w:w="115" w:type="dxa"/><w:tblBorders>${none}</w:tblBorders>` +
+    `<w:tblLayout w:type="fixed"/><w:tblCellMar><w:left w:w="0" w:type="dxa"/><w:right w:w="120" w:type="dxa"/></w:tblCellMar><w:tblLook w:val="0000"/></w:tblPr>` +
+    `<w:tblGrid>${widths.map((w) => `<w:gridCol w:w="${w}"/>`).join("")}</w:tblGrid>${headRow}${rows}</w:tbl>`;
+}
+
+/** Splits a body into its top-level paragraphs and tables. */
+function topLevel(body: string): string[] {
+  const out: string[] = [];
+  const re = /<(\/?)w:(p|tbl)\b[^>]*?(\/?)>/g;
+  let depth = 0;
+  let start = 0;
+  for (let m = re.exec(body); m; m = re.exec(body)) {
+    if (m[3]) continue;
+    if (!m[1]) {
+      if (depth === 0) start = m.index;
+      depth += 1;
+    } else {
+      depth -= 1;
+      if (depth === 0) out.push(body.slice(start, re.lastIndex));
+    }
+  }
+  return out;
+}
+
+/**
+ * A list (orders, customers, subscribers, sales…) as a Word document on the
+ * café letterhead: the template's blank writing space is replaced with a
+ * title and a table whose heading row repeats on every page.
+ */
+export async function downloadLetterheadTable(h: Letterhead, spec: ExportSpec): Promise<Result<true>> {
+  try {
+    const zip = await buildLetterhead(h);
+    const file = zip.file("word/document.xml");
+    if (!file) throw new Error("no document");
+    const xml = await file.async("string");
+    const open = xml.indexOf("<w:body>") + "<w:body>".length;
+    const close = xml.lastIndexOf("<w:sectPr");
+    const parts = topLevel(xml.slice(open, close));
+    const breaks = parts.map((p, i) => (p.includes("<w:sectPr") ? i : -1)).filter((i) => i >= 0);
+    if (breaks.length < 2) throw new Error("unexpected template");
+    const [first, second] = [breaks[0]!, breaks[1]!];
+
+    const titleRpr = wordRunProps({ ...h.styles.body, bold: true, size: h.styles.body.size + 5 });
+    const mutedRpr = wordRunProps({ ...h.styles.body, color: "#766E66", size: Math.max(7, h.styles.body.size - 1) });
+    const headingRpr = wordRunProps({ ...h.styles.body, bold: true, size: h.styles.body.size + 1 });
+    const content = [
+      para(spec.title, titleRpr, { before: 360, after: 40 }),
+      spec.subtitle ? para(spec.subtitle, mutedRpr, { after: 120 }) : "",
+      ...spec.sections.flatMap((section) => [
+        section.heading ? para(section.heading, headingRpr, { before: 280, after: 80 }) : "",
+        section.rows.length ? tableXml(h, section) : para("Nothing to show.", mutedRpr, { before: 120 }),
+      ]),
+      para(`Downloaded ${new Intl.DateTimeFormat("en-GB", { timeZone: "Asia/Bahrain", day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" }).format(new Date())}`, mutedRpr, { before: 240, after: 240 }),
+    ].join("");
+
+    const body = [...parts.slice(0, first + 1), content, ...parts.slice(second)].join("");
+    zip.file("word/document.xml", xml.slice(0, open) + body + xml.slice(close));
+    await saveZip(zip, spec.filename.endsWith(".docx") ? spec.filename : `${spec.filename}.docx`);
     return { ok: true, value: true };
   } catch {
     return { ok: false, error: translate(currentLang(), "The Word file couldn't be made. Try again.") };
