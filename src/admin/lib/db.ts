@@ -1,5 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { supabase } from "@/lib/supabaseClient";
+import { supabase } from "@/lib/api/staffClient";
 import { settle } from "@/lib/api/settle";
 import type { QueryError } from "@/lib/api/errors";
 import { translate, currentLang } from "@/admin/i18n";

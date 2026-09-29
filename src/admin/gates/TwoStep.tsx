@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { ShieldCheck } from "lucide-react";
-import { supabase } from "@/lib/supabaseClient";
+import { supabase } from "@/lib/api/staffClient";
 import { useT } from "@/admin/i18n";
 import { Button, TextField } from "@/admin/ui/controls";
 import { Loading, Notice } from "@/admin/ui/layout";

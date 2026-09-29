@@ -385,3 +385,95 @@ export function HelpTip({ children }: { children: ReactNode }) {
 }
 
 export const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+
+/*
+ * English and Arabic side by side. Arabic is always optional: a blank Arabic
+ * field means the Arabic version of the site shows the English text.
+ */
+export function BilingualField({
+  label,
+  en,
+  ar,
+  onEn,
+  onAr,
+  multiline,
+  hint,
+  error,
+  required,
+  maxLength,
+  rows,
+}: {
+  label: ReactNode;
+  en: string;
+  ar: string;
+  onEn: (v: string) => void;
+  onAr: (v: string) => void;
+  multiline?: boolean;
+  hint?: ReactNode;
+  error?: string;
+  required?: boolean;
+  maxLength?: number;
+  rows?: number;
+}) {
+  const t = useT();
+  const id = useId();
+  const box = (which: "en" | "ar") => {
+    const common = {
+      id: `${id}-${which}`,
+      value: which === "en" ? en : ar,
+      dir: which === "en" ? "ltr" : "rtl",
+      lang: which,
+      maxLength,
+      placeholder: which === "ar" ? t("Leave blank to use the English") : undefined,
+      "aria-invalid": which === "en" && error ? true : undefined,
+    } as const;
+    const set = which === "en" ? onEn : onAr;
+    return multiline ? (
+      <textarea {...common} className="adm-textarea" rows={rows} onChange={(e) => set(e.target.value)} />
+    ) : (
+      <input {...common} className="adm-input" onChange={(e) => set(e.target.value)} />
+    );
+  };
+  return (
+    <fieldset className="adm-field adm-span-2" style={{ border: 0, padding: 0, margin: 0, minWidth: 0 }}>
+      <legend className="adm-label" style={{ marginBottom: 6 }}>
+        {label}
+        {!required && <span className="adm-label-opt">({t("optional")})</span>}
+      </legend>
+      <div className="adm-grid-2" style={{ gap: 10 }}>
+        <div className="adm-field">
+          <label className="adm-hint" htmlFor={`${id}-en`}>English</label>
+          {box("en")}
+        </div>
+        <div className="adm-field">
+          <label className="adm-hint" htmlFor={`${id}-ar`}>العربية</label>
+          {box("ar")}
+        </div>
+      </div>
+      {hint && <p className="adm-hint">{hint}</p>}
+      {error && <p className="adm-error" role="alert">{error}</p>}
+    </fieldset>
+  );
+}
+
+/** Up/down buttons for putting a list in order — easier on a tablet than dragging. */
+export function MoveButtons({ index, count, onMove, label }: { index: number; count: number; onMove: (from: number, to: number) => void; label: string }) {
+  const t = useT();
+  return (
+    <span className="adm-row" style={{ gap: 2, flexWrap: "nowrap" }}>
+      <IconButton label={t("Move {name} up", { name: label })} disabled={index === 0} onClick={() => onMove(index, index - 1)} style={{ width: 34, height: 34 }}>
+        <span aria-hidden="true">↑</span>
+      </IconButton>
+      <IconButton label={t("Move {name} down", { name: label })} disabled={index === count - 1} onClick={() => onMove(index, index + 1)} style={{ width: 34, height: 34 }}>
+        <span aria-hidden="true">↓</span>
+      </IconButton>
+    </span>
+  );
+}
+
+export function moveInArray<T>(list: T[], from: number, to: number): T[] {
+  const next = [...list];
+  const [item] = next.splice(from, 1);
+  if (item !== undefined) next.splice(to, 0, item);
+  return next;
+}

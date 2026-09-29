@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Eye, EyeOff, Languages } from "lucide-react";
-import { supabase } from "@/lib/supabaseClient";
+import { supabase } from "@/lib/api/staffClient";
 import { useT, type Lang } from "@/admin/i18n";
 import { Button, EMAIL_RE, TextField } from "@/admin/ui/controls";
 import { Notice } from "@/admin/ui/layout";

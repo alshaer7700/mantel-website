@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { KeyRound, ShieldCheck } from "lucide-react";
-import { supabase } from "@/lib/supabaseClient";
 import { useLang, useT } from "@/admin/i18n";
 import { roleLabel, useAdmin } from "@/admin/context";
 import { rpc } from "@/admin/lib/db";
@@ -8,6 +7,7 @@ import { Button, Segmented, TextField } from "@/admin/ui/controls";
 import { Badge, Card, Notice, PageHeader } from "@/admin/ui/layout";
 import { Modal, useToast } from "@/admin/ui/overlays";
 import { TwoStepSetup } from "@/admin/gates/TwoStep";
+import { SignInDetails } from "@/admin/sections/account/SignInDetails";
 
 export function AccountSection() {
   const t = useT();
@@ -16,9 +16,6 @@ export function AccountSection() {
   const { me, reloadMe, theme, setTheme } = useAdmin();
   const [name, setName] = useState(me.display_name);
   const [savingName, setSavingName] = useState(false);
-  const [password, setPassword] = useState("");
-  const [password2, setPassword2] = useState("");
-  const [savingPassword, setSavingPassword] = useState(false);
   const [twoStepOpen, setTwoStepOpen] = useState(false);
   const [pinOpen, setPinOpen] = useState(false);
   const [pin, setPin] = useState("");
@@ -32,20 +29,6 @@ export function AccountSection() {
     else {
       toast.ok(t("Name saved"));
       await reloadMe();
-    }
-  };
-
-  const savePassword = async () => {
-    if (password.length < 8) return toast.error(t("Use at least 8 characters."));
-    if (password !== password2) return toast.error(t("The two passwords don't match."));
-    setSavingPassword(true);
-    const { error } = await supabase.auth.updateUser({ password });
-    setSavingPassword(false);
-    if (error) toast.error(t("Couldn't change the password. Sign out and use “Forgot password?” instead."));
-    else {
-      setPassword("");
-      setPassword2("");
-      toast.ok(t("Password changed"));
     }
   };
 
@@ -66,6 +49,7 @@ export function AccountSection() {
   return (
     <>
       <PageHeader title={t("My account")} subtitle={t("Your own preferences. They don't change anything for the rest of the team.")} />
+      <SignInDetails />
       <div className="adm-grid-2">
         <Card title={t("About you")}>
           <div className="adm-spread">
@@ -97,12 +81,6 @@ export function AccountSection() {
           </div>
         </Card>
 
-        <Card title={t("Password")}>
-          <TextField label={t("New password")} type="password" autoComplete="new-password" value={password} onChange={setPassword} hint={t("At least 8 characters.")} dir="ltr" />
-          <TextField label={t("Type it again")} type="password" autoComplete="new-password" value={password2} onChange={setPassword2} dir="ltr" />
-          <div><Button onClick={savePassword} loading={savingPassword} disabled={!password}>{t("Change password")}</Button></div>
-        </Card>
-
         <Card title={t("Extra security")}>
           <div className="adm-spread">
             <div className="adm-stack" style={{ gap: 2 }}>
@@ -132,7 +110,7 @@ export function AccountSection() {
         title={me.has_pin ? t("Change PIN") : t("Set PIN")}
         footer={<><Button onClick={() => setPinOpen(false)}>{t("Cancel")}</Button><Button variant="primary" onClick={savePin} loading={savingPin}>{t("Save PIN")}</Button></>}
       >
-        <Notice>{t("Choose 4 digits that aren't easy to guess, like your birthday. Don't share it with the team.")}</Notice>
+        <Notice>{t("Avoid easy guesses like 1234 or your birthday. Don't share it with the team.")}</Notice>
         <TextField label={t("New PIN")} type="password" inputMode="numeric" maxLength={4} value={pin} onChange={(v) => setPin(v.replace(/\D/g, ""))} dir="ltr" autoComplete="off" />
       </Modal>
     </>

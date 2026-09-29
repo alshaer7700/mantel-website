@@ -78,9 +78,10 @@ export const SECTIONS: NavSection[] = [
 
 export function sectionFromPath(pathname: string): { section: SectionId; rest: string[] } {
   const parts = pathname.replace(/\/+$/, "").split("/").filter(Boolean);
-  const id = (parts[1] ?? "home") as SectionId;
+  const tail = parts[0] === "admin" ? parts.slice(1) : parts;
+  const id = (tail[0] ?? "home") as SectionId;
   const known = SECTIONS.some((s) => s.id === id);
-  return { section: known ? id : "home", rest: known ? parts.slice(2) : [] };
+  return { section: known ? id : "home", rest: known ? tail.slice(1) : [] };
 }
 
 export function adminPath(section: SectionId, ...rest: (string | null | undefined)[]): string {

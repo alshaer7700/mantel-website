@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/supabaseClient";
+import { supabase } from "@/lib/api/staffClient";
 import { db, run, type Result } from "@/admin/lib/db";
 import { currentLang, translate } from "@/admin/i18n";
 

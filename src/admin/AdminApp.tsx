@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { ExternalLink, LogOut, Menu as MenuIcon, Moon, Search, Sun, Monitor, Languages } from "lucide-react";
 import "@/admin/admin.css";
-import { supabase } from "@/lib/supabaseClient";
+import { supabase } from "@/lib/api/staffClient";
 import { LangContext, setActiveLang, translate, useLang, useT, type Lang } from "@/admin/i18n";
 import { AdminContext, roleLabel, type Counts, type Me } from "@/admin/context";
 import { SECTIONS, adminPath, sectionFromPath, type Area, type SectionId } from "@/admin/nav";
