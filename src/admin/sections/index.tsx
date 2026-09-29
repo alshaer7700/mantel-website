@@ -11,6 +11,11 @@ import { MenuSection } from "@/admin/sections/catalog/MenuSection";
 import { RetailSection } from "@/admin/sections/catalog/RetailSection";
 import { MessagesSection } from "@/admin/sections/messages/MessagesSection";
 import { MarketingSection } from "@/admin/sections/marketing/MarketingSection";
+import { CustomersSection } from "@/admin/sections/customers/CustomersSection";
+import { TeamSection } from "@/admin/sections/team/TeamSection";
+import { ReportsSection } from "@/admin/sections/reports/ReportsSection";
+import { HealthSection } from "@/admin/sections/health/HealthSection";
+import { PhotosSection } from "@/admin/sections/photos/PhotosSection";
 
 function ComingSoon({ id }: { id: SectionId }) {
   const t = useT();
@@ -30,6 +35,11 @@ const VIEWS: Partial<Record<SectionId, ComponentType>> = {
   retail: RetailSection,
   messages: MessagesSection,
   marketing: MarketingSection,
+  customers: CustomersSection,
+  team: TeamSection,
+  reports: ReportsSection,
+  health: HealthSection,
+  photos: PhotosSection,
   account: AccountSection,
 };
 
