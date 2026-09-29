@@ -2496,6 +2496,11 @@ a.adm-list-row:hover {
     display: none !important;
   }
 
+  html:has(.adm-print-area),
+  body:has(.adm-print-area) {
+    background: #FFFFFF !important;
+  }
+
   .adm-print-area {
     display: block !important;
   }
@@ -3254,5 +3259,37 @@ a.adm-list-row:hover {
     margin-top: 0;
     justify-self: end;
     grid-column: 1 / -1;
+  }
+}
+
+/* ── Website pages ───────────────────────────────────────────────────────── */
+.adm .adm-cms-item {
+  display: grid;
+  gap: 12px;
+  padding: 14px 16px 16px;
+  border: 1px solid var(--a-line);
+  background: var(--a-bg);
+}
+
+.adm .adm-cms-item-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+/* A sheet drawn only to be captured as a PDF (lists). Off screen, not
+   display:none, so it has a real layout to copy. */
+.adm-print-offscreen {
+  position: fixed;
+  left: -10000px;
+  top: 0;
+  width: 210mm;
+  pointer-events: none;
+}
+
+@media print {
+  .adm-print-offscreen {
+    display: none !important;
   }
 }

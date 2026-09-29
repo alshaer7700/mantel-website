@@ -1,7 +1,6 @@
 import type { MenuCategory, Page } from "@/app/types";
 import { MAPS_URL, ORDERING_OPEN } from "@/lib/constants";
 import {
-  EXTRACTION_SPECS,
   TRAY_ANNOTATIONS,
   TRAY_ASPECT,
   TRAY_PHOTO,
@@ -10,6 +9,7 @@ import {
   type TrayAnnotation,
 } from "@/app/content/ritual";
 import { TrayArt } from "@/app/components/ritual/TrayArt";
+import type { PAGE_DEFAULTS } from "@/lib/content/pages";
 
 /*
  * Friday Espresso — the page behind "View the details" in the home page's
@@ -92,16 +92,20 @@ type Props = {
     href: string;
     onClick: (event: React.MouseEvent) => void;
   };
+  /** Words from the dashboard's Website pages. The photo and where its notes
+      point stay in content/ritual.ts: they're measured off the picture. */
+  content: (typeof PAGE_DEFAULTS)["friday"];
 };
 
-export function FridayEspresso({ linkTo }: Props) {
-  const publishedExtraction = EXTRACTION_SPECS.filter((spec) => spec.value !== null);
+export function FridayEspresso({ linkTo, content }: Props) {
+  const publishedExtraction = content.recipe.filter((spec) => spec.label.trim() && spec.value.trim());
+  const annotations = TRAY_ANNOTATIONS.map((a, i) => ({ ...a, title: (i === 0 ? content.note_1 : i === 1 ? content.note_2 : a.title) || a.title }));
 
   return (
     <article className="editorial-ritual-page">
       <header className="editorial-ritual-head">
-        <p className="editorial-overline">01 — A Mantel ritual</p>
-        <h1>Friday Espresso.</h1>
+        <p className="editorial-overline">{content.overline}</p>
+        <h1>{content.title}</h1>
         <div className="editorial-inline-links">
           {ORDERING_OPEN && (
             <a {...linkTo("pickup")} className="editorial-link">Order before reach</a>
@@ -169,7 +173,7 @@ export function FridayEspresso({ linkTo }: Props) {
           </svg>
 
           <ol className="editorial-ritual-notes">
-            {TRAY_ANNOTATIONS.map((annotation) => (
+            {annotations.map((annotation) => (
               <li
                 key={annotation.n}
                 className={`editorial-ritual-note editorial-ritual-note-${annotation.side}`}
@@ -189,13 +193,9 @@ export function FridayEspresso({ linkTo }: Props) {
         aria-labelledby="ritual-harvest-title"
       >
         <div className="editorial-ritual-specs-intro">
-          <p className="editorial-overline">03 — Special harvest</p>
-          <h2 id="ritual-harvest-title">A special harvest, every Friday.</h2>
-          <p>
-            Once a week the espresso runs on a different lot — a small,
-            single-origin harvest we rotate in just for the ritual. Same
-            tray, same cup, a new bean every time.
-          </p>
+          <p className="editorial-overline">{content.harvest_overline}</p>
+          <h2 id="ritual-harvest-title">{content.harvest_title}</h2>
+          <p style={{ whiteSpace: "pre-line" }}>{content.harvest_text}</p>
         </div>
       </section>
 
@@ -208,9 +208,9 @@ export function FridayEspresso({ linkTo }: Props) {
       {publishedExtraction.length > 0 && (
         <section className="editorial-ritual-specs" aria-labelledby="ritual-recipe-title">
           <div className="editorial-ritual-specs-intro">
-            <p className="editorial-overline">04 — The coffee</p>
-            <h2 id="ritual-recipe-title">How it is made.</h2>
-            <p>The house recipe, weighed rather than judged by eye.</p>
+            <p className="editorial-overline">{content.recipe_overline}</p>
+            <h2 id="ritual-recipe-title">{content.recipe_title}</h2>
+            <p>{content.recipe_text}</p>
           </div>
 
           <dl className="editorial-ritual-spec-list">

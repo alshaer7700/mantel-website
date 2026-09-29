@@ -2,7 +2,6 @@ import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { PolicyPage } from "@/app/components/PolicyPage";
 import { FaqAccordion } from "@/app/components/FaqAccordion";
 import { NewsletterSignup } from "@/app/components/NewsletterSignup";
-import { PRIVACY_POLICY, TERMS_OF_SERVICE, REFUND_POLICY, FAQ_ITEMS } from "@/app/content/legal";
 import { Instagram, Search, ShoppingBag, User } from "lucide-react";
 import { fetchMenu, groupByCategory } from "@/lib/api/menu";
 import { Home } from "@/app/pages/Home";
@@ -27,7 +26,8 @@ import type { Session } from "@supabase/supabase-js";
 import type { Page, MenuCategory, MenuItem } from "@/app/types";
 import { pathFor, routeFor } from "@/lib/routes";
 import { ORDERING_OPEN } from "@/lib/constants";
-import { describeOpening, fetchSite, isLive, type SiteInfo } from "@/lib/api/site";
+import { describeOpening, fetchSite, hoursRows, isLive, type SiteInfo } from "@/lib/api/site";
+import { contentKey, mergePage, toLegalDoc, type PageKey } from "@/lib/content/pages";
 import { AnnouncementBar, MaintenancePage, SitePopup } from "@/app/components/SiteNotices";
 import { formErrorMessage, submitContactMessage } from "@/lib/api/forms";
 import { useDialogFocus } from "@/app/hooks/useDialogFocus";
@@ -129,16 +129,25 @@ export default function App() {
 
   /* ── shop settings (from the staff dashboard) ── */
   const [site, setSite] = useState<SiteInfo | null>(null);
+  /* Photos from Website pages wait for the published content (or at most a
+     moment), so a changed photo doesn't flash the old one first. */
+  const [contentReady, setContentReady] = useState(false);
 
   useEffect(() => {
     let live = true;
-    const load = () => fetchSite().then((info) => { if (live && info) setSite(info); });
+    const load = () => fetchSite().then((info) => {
+      if (!live) return;
+      if (info) setSite(info);
+      setContentReady(true);
+    });
     load();
+    const giveUp = window.setTimeout(() => setContentReady(true), 1500);
     /* A pause or a closing time should reach a page left open on a phone. */
     const timer = window.setInterval(load, 2 * 60 * 1000);
     return () => {
       live = false;
       window.clearInterval(timer);
+      window.clearTimeout(giveUp);
     };
   }, []);
 
@@ -498,6 +507,7 @@ export default function App() {
     return <MaintenancePage message={site.maintenance.message} />;
   }
 
+  const pageText = <K extends PageKey>(key: K) => mergePage(key, site?.content[contentKey(key)]);
   const status = site?.status;
   const orderingOpen = ORDERING_OPEN && (status?.open ?? true);
   const opening = describeOpening(status?.next_open);
@@ -729,7 +739,7 @@ export default function App() {
       {page === "home" && (
         <main id="main-content" className="flex flex-col min-h-screen" style={{ paddingTop: navHeight }}>
           <div className="flex-1">
-            <Home linkTo={linkTo} />
+            <Home linkTo={linkTo} content={pageText("home")} imagesReady={contentReady} />
           </div>
           <EditorialFooter linkTo={linkTo} />
         </main>
@@ -739,7 +749,7 @@ export default function App() {
       {page === "ritual" && (
         <main id="main-content" className="flex flex-col min-h-screen" style={{ paddingTop: navHeight }}>
           <div className="flex-1">
-            <FridayEspresso linkTo={linkTo} />
+            <FridayEspresso linkTo={linkTo} content={pageText("friday")} />
           </div>
           <EditorialFooter linkTo={linkTo} />
         </main>
@@ -768,6 +778,7 @@ export default function App() {
               onAdd={(item) => addToCart(menuItemToCartProduct(item))}
               onIncrement={incrementCart}
               onDecrement={decrementCart}
+              content={pageText("pickup")}
             />
           </div>
           <EditorialFooter linkTo={linkTo} />
@@ -801,7 +812,7 @@ export default function App() {
       {page === "story" && (
         <main id="main-content" className="flex flex-col min-h-screen" style={{ paddingTop: navHeight }}>
           <div className="flex-1 px-[var(--pad)]">
-            <Story linkTo={linkTo} />
+            <Story linkTo={linkTo} content={pageText("about")} hours={hoursRows(site?.hours?.week)} />
           </div>
           <EditorialFooter linkTo={linkTo} />
         </main>
@@ -830,8 +841,8 @@ export default function App() {
       {page === "faq" && (
         <main id="main-content" className="min-h-screen flex flex-col" style={{ paddingTop: navHeight }}>
           <div className="flex-1 max-w-2xl w-full mx-auto px-6 py-14">
-            <h1 className="font-serif font-semibold text-[length:var(--fs-section-title)] leading-[0.96] mb-12">FAQ</h1>
-            <FaqAccordion items={FAQ_ITEMS} />
+            <h1 className="font-serif font-semibold text-[length:var(--fs-section-title)] leading-[0.96] mb-12">{pageText("faq").title}</h1>
+            <FaqAccordion items={pageText("faq").items.filter((f) => f.question.trim())} />
           </div>
           <NewsletterSignup />
           <EditorialFooter linkTo={linkTo} />
@@ -841,15 +852,7 @@ export default function App() {
       {/* ══ POLICY PAGES ══ */}
       {(page === "privacy" || page === "terms" || page === "refund") && (
         <main id="main-content" className="min-h-screen flex flex-col" style={{ paddingTop: navHeight }}>
-          <PolicyPage
-            doc={
-              page === "privacy"
-                ? PRIVACY_POLICY
-                : page === "terms"
-                  ? TERMS_OF_SERVICE
-                  : REFUND_POLICY
-            }
-          />
+          <PolicyPage doc={toLegalDoc(pageText(page))} />
           <EditorialFooter linkTo={linkTo} />
         </main>
       )}

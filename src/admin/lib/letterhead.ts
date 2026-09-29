@@ -257,18 +257,74 @@ async function buildLetterhead(h: Letterhead): Promise<Zip> {
       ratio = logo.height / logo.width;
     }
   }
-  const header = zip.file("word/header1.xml");
-  if (header) {
-    const cx = Math.round(Math.min(40, Math.max(4, h.logo_size)) * 36000);
-    const cy = Math.round(cx * ratio);
-    const rightEdge = 7190456 + 294695;
-    const xml = (await header.async("string"))
-      .replace(/(<wp:positionH relativeFrom="page"><wp:posOffset>)\d+(<\/wp:posOffset>)/, `$1${rightEdge - cx}$2`)
-      .replace(/<wp:extent cx="\d+" cy="\d+"\/>/, `<wp:extent cx="${cx}" cy="${cy}"/>`)
-      .replace(/<a:ext cx="\d+" cy="\d+"\/>/, `<a:ext cx="${cx}" cy="${cy}"/>`);
-    zip.file("word/header1.xml", xml);
-  }
+  const cx = Math.round(Math.min(40, Math.max(4, h.logo_size)) * 36000);
+  const cy = Math.round(cx * ratio);
+  await placeLogoInPage(zip, cx, cy);
   return zip;
+}
+
+/*
+ * The template floats the heart in the page header, pinned to the corner.
+ * Word draws that, but the iPhone's built-in preview (Safari, Files, Mail)
+ * doesn't: it showed an empty box where the heart should be. So the heart
+ * moves into the page itself, in a borderless two-column row with the name,
+ * CR number and address on the left — a plain picture every viewer draws —
+ * and the header is left empty.
+ */
+async function placeLogoInPage(zip: Zip, cx: number, cy: number) {
+  const header = zip.file("word/header1.xml");
+  if (header) zip.file("word/header1.xml", (await header.async("string")).replace(/<w:r>(?:(?!<\/w:r>)[\s\S])*?<w:drawing>[\s\S]*?<\/w:drawing><\/w:r>/, ""));
+
+  const rels = zip.file("word/_rels/document.xml.rels");
+  if (rels) {
+    const xml = await rels.async("string");
+    if (!xml.includes('Id="rIdMtlLogo"')) {
+      zip.file("word/_rels/document.xml.rels", xml.replace("</Relationships>",
+        '<Relationship Id="rIdMtlLogo" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/image1.png"/></Relationships>'));
+    }
+  }
+
+  const doc = zip.file("word/document.xml");
+  if (!doc) return;
+  const xml = await doc.async("string");
+  const open = xml.indexOf("<w:body>") + "<w:body>".length;
+  const close = xml.lastIndexOf("<w:sectPr");
+  const parts = topLevel(xml.slice(open, close));
+  if (parts.length < 3 || parts.slice(0, 3).some((p) => !p.startsWith("<w:p"))) return;
+
+  const logoTw = Math.round(cx / 635); // EMU → twips
+  const right = logoTw + 60;
+  const left = PAGE_TEXT_WIDTH - right;
+  const a = "http://schemas.openxmlformats.org/drawingml/2006/main";
+  const pic = "http://schemas.openxmlformats.org/drawingml/2006/picture";
+  const drawing =
+    `<w:drawing><wp:inline distT="0" distB="0" distL="0" distR="0"><wp:extent cx="${cx}" cy="${cy}"/><wp:effectExtent l="0" t="0" r="0" b="0"/>` +
+    `<wp:docPr id="101" name="Mantel logo"/><wp:cNvGraphicFramePr><a:graphicFrameLocks xmlns:a="${a}" noChangeAspect="1"/></wp:cNvGraphicFramePr>` +
+    `<a:graphic xmlns:a="${a}"><a:graphicData uri="${pic}"><pic:pic xmlns:pic="${pic}"><pic:nvPicPr><pic:cNvPr id="101" name="Mantel logo"/><pic:cNvPicPr/></pic:nvPicPr>` +
+    `<pic:blipFill><a:blip r:embed="rIdMtlLogo"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill>` +
+    `<pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="${cx}" cy="${cy}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing>`;
+  const none = ["top", "left", "bottom", "right", "insideH", "insideV"].map((b) => `<w:${b} w:val="nil"/>`).join("");
+  const row =
+    `<w:tbl><w:tblPr><w:tblW w:w="${PAGE_TEXT_WIDTH}" w:type="dxa"/><w:tblBorders>${none}</w:tblBorders><w:tblLayout w:type="fixed"/>` +
+    `<w:tblCellMar><w:left w:w="0" w:type="dxa"/><w:right w:w="0" w:type="dxa"/></w:tblCellMar><w:tblLook w:val="0000"/></w:tblPr>` +
+    `<w:tblGrid><w:gridCol w:w="${left}"/><w:gridCol w:w="${right}"/></w:tblGrid><w:tr>` +
+    `<w:tc><w:tcPr><w:tcW w:w="${left}" w:type="dxa"/></w:tcPr>${parts.slice(0, 3).join("")}</w:tc>` +
+    `<w:tc><w:tcPr><w:tcW w:w="${right}" w:type="dxa"/></w:tcPr><w:p><w:pPr><w:spacing w:before="166" w:after="0"/><w:jc w:val="right"/></w:pPr><w:r><w:rPr><w:noProof/></w:rPr>${drawing}</w:r></w:p></w:tc>` +
+    `</w:tr></w:tbl>`;
+  zip.file("word/document.xml", xml.slice(0, open) + row + parts.slice(3).join("") + xml.slice(close));
+}
+
+/*
+ * The template is three sections (letterhead, writing space, footer) with
+ * continuous breaks between them. They share one page size and margins, so
+ * they merge into one without moving anything — and the iPhone preview,
+ * which drew each break as a small empty square, has nothing to draw.
+ */
+async function singleSection(zip: Zip) {
+  const doc = zip.file("word/document.xml");
+  if (!doc) return;
+  const xml = await doc.async("string");
+  zip.file("word/document.xml", xml.replace(/<w:sectPr\b[^>]*>(?:(?!<\/w:sectPr>)[\s\S])*<\/w:sectPr>(?=<\/w:pPr>)/g, ""));
 }
 
 async function saveZip(zip: Zip, filename: string) {
@@ -286,7 +342,9 @@ async function saveZip(zip: Zip, filename: string) {
 /** Fills the Word letterhead with the saved details and downloads it. */
 export async function downloadLetterheadDocx(h: Letterhead): Promise<Result<true>> {
   try {
-    await saveZip(await buildLetterhead(h), "Mantel-letterhead.docx");
+    const zip = await buildLetterhead(h);
+    await singleSection(zip);
+    await saveZip(zip, "Mantel-letterhead.docx");
     return { ok: true, value: true };
   } catch {
     return { ok: false, error: translate(currentLang(), "The Word file couldn't be made. Try again.") };
@@ -310,6 +368,7 @@ export type ExportSection = { heading?: string; columns: ExportColumn[]; rows: R
 export type ExportSpec = { title: string; subtitle?: string; filename: string; sections: ExportSection[] };
 
 const TEXT_WIDTH = 9670; // twips between the template's margins, less its 115 indent
+const PAGE_TEXT_WIDTH = 11910 - 992 - 1133; // the template's page width less its margins
 
 function cellText(v: unknown): string {
   if (v === null || v === undefined) return "";
@@ -399,6 +458,7 @@ export async function downloadLetterheadTable(h: Letterhead, spec: ExportSpec): 
 
     const body = [...parts.slice(0, first + 1), content, ...parts.slice(second)].join("");
     zip.file("word/document.xml", xml.slice(0, open) + body + xml.slice(close));
+    await singleSection(zip);
     await saveZip(zip, spec.filename.endsWith(".docx") ? spec.filename : `${spec.filename}.docx`);
     return { ok: true, value: true };
   } catch {

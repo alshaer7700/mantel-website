@@ -1,21 +1,30 @@
-import { useState } from "react";
-import { Download, FileSpreadsheet, FileText } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
+import { Download, FileSpreadsheet, FileText, FileType2 } from "lucide-react";
 import { useT } from "@/admin/i18n";
 import { downloadFile, toCsv } from "@/admin/lib/format";
-import { downloadLetterheadTable, loadLetterhead, type ExportSpec } from "@/admin/lib/letterhead";
+import { downloadLetterheadTable, loadLetterhead, type ExportSpec, type Letterhead } from "@/admin/lib/letterhead";
+import { downloadSheetPdf } from "@/admin/lib/pdf";
 import { Button } from "@/admin/ui/controls";
+import { ListSheet } from "@/admin/ui/ListSheet";
 import { Modal, useToast } from "@/admin/ui/overlays";
 
 /*
- * "Download" for any list in the dashboard. The Word document is the café
- * letterhead with the list in a table — what opens nicely on a phone and
- * prints well. The spreadsheet (CSV) is for Excel, Numbers or the accountant.
+ * "Download" for any list in the dashboard, three ways:
+ *
+ *   PDF          the letterhead with the list on it, exactly as it looks
+ *                here — the one to send, and the one a phone shows properly
+ *   Word         the same on the café's Word letterhead, for editing
+ *   Spreadsheet  CSV for Excel, Numbers or the accountant
  */
 export function ExportButton({ spec, disabled, label }: { spec: () => ExportSpec | Promise<ExportSpec>; disabled?: boolean; label?: string }) {
   const t = useT();
   const toast = useToast();
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
+  /* The sheet for the PDF, drawn off screen while it's captured. */
+  const [sheet, setSheet] = useState<{ head: Letterhead; spec: ExportSpec } | null>(null);
+  const sheetRef = useRef<HTMLDivElement>(null);
 
   /** The list itself may need loading (all orders, not just this page). */
   const getSpec = async (): Promise<ExportSpec | null> => {
@@ -27,15 +36,41 @@ export function ExportButton({ spec, disabled, label }: { spec: () => ExportSpec
     }
   };
 
+  const withLetterhead = async (): Promise<{ head: Letterhead; spec: ExportSpec } | null> => {
+    const [head, s] = await Promise.all([loadLetterhead(), getSpec()]);
+    if (!s) return null;
+    if (!head.ok) {
+      toast.error(head.error);
+      return null;
+    }
+    return { head: head.value, spec: s };
+  };
+
+  const pdf = async () => {
+    setBusy(true);
+    const job = await withLetterhead();
+    if (!job) return setBusy(false);
+    setSheet(job);
+  };
+
+  useEffect(() => {
+    if (!sheet) return;
+    const node = sheetRef.current?.querySelector<HTMLElement>(".mtl-sheet");
+    if (!node) return;
+    void downloadSheetPdf(node, sheet.spec.filename).then((r) => {
+      setSheet(null);
+      setBusy(false);
+      if (!r.ok) return toast.error(t(r.error));
+      setOpen(false);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sheet]);
+
   const word = async () => {
     setBusy(true);
-    const [head, s] = await Promise.all([loadLetterhead(), getSpec()]);
-    if (!s) return setBusy(false);
-    if (!head.ok) {
-      setBusy(false);
-      return toast.error(head.error);
-    }
-    const r = await downloadLetterheadTable(head.value, s);
+    const job = await withLetterhead();
+    if (!job) return setBusy(false);
+    const r = await downloadLetterheadTable(job.head, job.spec);
     setBusy(false);
     if (!r.ok) return toast.error(r.error);
     setOpen(false);
@@ -58,11 +93,18 @@ export function ExportButton({ spec, disabled, label }: { spec: () => ExportSpec
       <Button icon={<Download size={16} />} disabled={disabled} onClick={() => setOpen(true)}>{label ?? t("Download")}</Button>
       <Modal open={open} onClose={() => setOpen(false)} title={t("Download")}>
         <div className="adm-stack" style={{ gap: 10 }}>
+          <button type="button" className="adm-choice" onClick={pdf} disabled={busy}>
+            <FileType2 size={22} aria-hidden="true" />
+            <span>
+              <strong>{t("PDF on the letterhead")}</strong>
+              <span>{t("Looks the same on every phone and computer. Best for sending.")}</span>
+            </span>
+          </button>
           <button type="button" className="adm-choice" onClick={word} disabled={busy}>
             <FileText size={22} aria-hidden="true" />
             <span>
               <strong>{t("Word document on the letterhead")}</strong>
-              <span>{t("Opens on a phone, looks right when printed or sent.")}</span>
+              <span>{t("For changing it afterwards. Opens best in the Word app.")}</span>
             </span>
           </button>
           <button type="button" className="adm-choice" onClick={csv} disabled={busy}>
@@ -75,6 +117,12 @@ export function ExportButton({ spec, disabled, label }: { spec: () => ExportSpec
           {busy && <p className="adm-small adm-muted">{t("Making the document…")}</p>}
         </div>
       </Modal>
+      {sheet && createPortal(
+        <div ref={sheetRef} className="adm-print-offscreen" aria-hidden="true">
+          <ListSheet head={sheet.head} spec={sheet.spec} />
+        </div>,
+        document.body,
+      )}
     </>
   );
 }
