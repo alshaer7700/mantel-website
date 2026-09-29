@@ -96,8 +96,8 @@ function bahrainTime(iso: string | null | undefined): string {
 
 // The café letterhead (the Word template staff use for letters), rebuilt as an
 // email: MANTEL. with the CR number and address on top, the heart at the
-// right, and the café's own contact details in the footer. Tables and inline
-// styles only, because that is all email clients reliably render.
+// right, and the café's email and Instagram, labelled, in the footer. Tables
+// and inline styles only, because that is all email clients reliably render.
 const ADDRESS = "SHOP 114D, BLDG 114, ROAD 16, BLOCK 111, HIDD, KINGDOM OF BAHRAIN";
 const HEART = "https://bymantel.com/heart.webp";
 const INK = "#171310";
@@ -110,6 +110,13 @@ const SERIF = "font-family:'EB Garamond',Georgia,'Times New Roman',serif;";
 function detailRow(label: string, value: string): string {
   return `<tr><td style="padding:3px 16px 3px 0;${MONO}font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:${MUTED};white-space:nowrap;width:1%;vertical-align:top">${label}</td>` +
     `<td style="padding:3px 0">${value}</td></tr>`;
+}
+
+function footerItem(label: string, href: string, value: string, align: "left" | "right"): string {
+  return `<td style="vertical-align:top;text-align:${align}">` +
+    `<div style="${MONO}font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:${MUTED}">${label}</div>` +
+    `<div style="margin-top:4px;${MONO}font-size:12px;font-weight:700"><a href="${href}" style="color:${INK};text-decoration:none">${value}</a></div>` +
+    `</td>`;
 }
 
 function letterhead(body: string): string {
@@ -136,14 +143,8 @@ function letterhead(body: string): string {
     `<tr><td style="padding:0 32px 28px">`,
     `<div style="height:1px;background:${LINE};line-height:1px;font-size:0;margin:0 0 18px">&nbsp;</div>`,
     `<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>`,
-    `<td style="vertical-align:top">`,
-    `<div style="${MONO}font-size:12px;font-weight:700;color:${INK}">MANTEL.</div>`,
-    `<div style="margin-top:2px;${SERIF}font-size:12px;color:${INK_2}"><a href="https://www.instagram.com/bymantel" style="color:${INK_2};text-decoration:none">@BYMANTEL</a></div>`,
-    `</td>`,
-    `<td style="vertical-align:top;text-align:right;${MONO}font-size:11px;font-weight:700;line-height:1.8">`,
-    `<a href="https://bymantel.com" style="color:${INK};text-decoration:none">bymantel.com</a><br>`,
-    `<a href="mailto:hello@bymantel.com" style="color:${INK};text-decoration:none">hello@bymantel.com</a>`,
-    `</td>`,
+    footerItem("Email", "mailto:hello@bymantel.com", "hello@bymantel.com", "left"),
+    footerItem("Instagram", "https://www.instagram.com/bymantel", "@bymantel", "right"),
     `</tr></table>`,
     `</td></tr>`,
     `</table>`,
@@ -209,8 +210,8 @@ Deno.serve(async (req: Request) => {
     `Total:    ${bd(record.subtotal)}`,
     ``,
     `—`,
-    `MANTEL.  @BYMANTEL`,
-    `bymantel.com  ·  hello@bymantel.com`,
+    `Email:      hello@bymantel.com`,
+    `Instagram:  @bymantel`,
   ].join("\n");
 
   const html = letterhead([
