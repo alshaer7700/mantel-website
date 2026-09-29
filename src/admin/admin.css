@@ -11,65 +11,71 @@
  */
 
 .adm {
+  /* Colours and type from guidelines/DESIGN_SYSTEM.md — the website's own. */
   --a-bg: #F6F5F2;
-  --a-surface: #FFFFFF;
-  --a-surface-2: #FAF8F4;
+  --a-surface: #FCFBF9;
+  --a-surface-2: #EFECE6;
   --a-ink: #171310;
   --a-ink-2: #3A342D;
-  --a-muted: #6F695F;
-  --a-line: #E6E1D8;
-  --a-line-strong: #CFC8BC;
+  --a-muted: #766E66;
+  --a-line: #E8E4DC;
+  --a-line-strong: #D9D4CB;
   --a-brand: #9A1C1F;
-  --a-brand-soft: #F6E7E5;
-  --a-ok: #2F6B3F;
-  --a-ok-soft: #E3F0E5;
+  --a-brand-soft: #F4E6E4;
+  --a-ok: #3E5E3F;
+  --a-ok-soft: #E7EDE4;
   --a-warn: #7A5200;
-  --a-warn-soft: #FBF0D6;
-  --a-info: #25507A;
-  --a-info-soft: #E2EBF5;
-  --a-focus: #25507A;
-  --a-shadow: 0 1px 2px rgba(23, 19, 16, 0.06), 0 8px 24px rgba(23, 19, 16, 0.06);
-  --a-radius: 10px;
-  --a-radius-sm: 7px;
-  --a-sidebar: 256px;
-  --a-font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans Arabic", "Geeza Pro", Tahoma, sans-serif;
+  --a-warn-soft: #F6EDD8;
+  --a-info: #3A342D;
+  --a-info-soft: #EFECE6;
+  --a-focus: #9A1C1F;
+  --a-shadow: 0 12px 40px rgba(23, 19, 16, 0.12);
+  --a-radius: 0;
+  --a-radius-sm: 0;
+  --a-sidebar: 248px;
+  --a-font: "EB Garamond", Georgia, "Times New Roman", "Noto Naskh Arabic", "Geeza Pro", Tahoma, serif;
   --a-display: "EB Garamond", Georgia, "Times New Roman", serif;
-  --a-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --a-ui: "Fira Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --a-mono: "Fira Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --a-arabic: system-ui, "Noto Sans Arabic", "Geeza Pro", Tahoma, sans-serif;
 
   color-scheme: light;
   background: var(--a-bg);
   color: var(--a-ink);
   font-family: var(--a-font);
-  font-size: 15px;
-  line-height: 1.5;
+  font-size: 17px;
+  line-height: 1.45;
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
 }
 
 .adm[data-theme="dark"] {
   --a-bg: #14110E;
-  --a-surface: #1C1815;
-  --a-surface-2: #221D19;
+  --a-surface: #1B1714;
+  --a-surface-2: #231E1A;
   --a-ink: #EDE7DD;
   --a-ink-2: #D4CCC0;
   --a-muted: #A59D91;
-  --a-line: #312B25;
-  --a-line-strong: #463F37;
+  --a-line: #2C2621;
+  --a-line-strong: #423A33;
   --a-brand: #E0676A;
   --a-brand-soft: #3A1C1C;
-  --a-ok: #7BC48C;
-  --a-ok-soft: #1B3121;
+  --a-ok: #9BC39C;
+  --a-ok-soft: #1E2B1F;
   --a-warn: #E3B35C;
-  --a-warn-soft: #3A2E17;
-  --a-info: #8DB8E3;
-  --a-info-soft: #1B2A3A;
-  --a-focus: #8DB8E3;
-  --a-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.3);
+  --a-warn-soft: #33291A;
+  --a-info: #D4CCC0;
+  --a-info-soft: #231E1A;
+  --a-focus: #E0676A;
+  --a-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
   color-scheme: dark;
 }
 
 .adm[dir="rtl"] {
-  --a-display: var(--a-font);
+  --a-font: var(--a-arabic);
+  --a-display: var(--a-arabic);
+  --a-ui: var(--a-arabic);
+  font-size: 16px;
 }
 
 .adm *,
@@ -1837,4 +1843,709 @@ a.adm-list-row:hover {
 
 .adm[dir="rtl"] .adm-flip-rtl {
   transform: scaleX(-1);
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Editorial skin — the website's language applied to the dashboard.
+   Square corners, hairlines, Fira Mono uppercase for every piece of apparatus,
+   EB Garamond for the voice. See guidelines/DESIGN_SYSTEM.md.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.adm .adm-label,
+.adm .adm-nav-item,
+.adm .adm-nav-group,
+.adm .adm-btn,
+.adm .adm-chip,
+.adm .adm-seg button,
+.adm .adm-tab,
+.adm .adm-badge,
+.adm .adm-stat-label,
+.adm .adm-overline,
+.adm .adm-table th,
+.adm .adm-hint.adm-ui,
+.adm .adm-toast button,
+.adm .adm-kbd {
+  font-family: var(--a-ui);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 500;
+}
+
+.adm[dir="rtl"] .adm-label,
+.adm[dir="rtl"] .adm-nav-item,
+.adm[dir="rtl"] .adm-nav-group,
+.adm[dir="rtl"] .adm-btn,
+.adm[dir="rtl"] .adm-chip,
+.adm[dir="rtl"] .adm-seg button,
+.adm[dir="rtl"] .adm-tab,
+.adm[dir="rtl"] .adm-badge,
+.adm[dir="rtl"] .adm-stat-label,
+.adm[dir="rtl"] .adm-overline,
+.adm[dir="rtl"] .adm-table th {
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.adm .adm-overline {
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--a-muted);
+}
+
+/* Sidebar: the website's nav, turned on its side. */
+.adm .adm-sidebar {
+  background: var(--a-bg);
+  border-inline-end: 1px solid var(--a-line-strong);
+  padding: 22px 16px;
+}
+
+.adm .adm-brand {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+  padding: 2px 10px 22px;
+}
+
+.adm .adm-brand strong {
+  font-family: var(--a-display);
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 0.82;
+}
+
+.adm .adm-brand span {
+  font-family: var(--a-ui);
+  font-size: 7px;
+  font-weight: 500;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--a-muted);
+}
+
+.adm .adm-nav-group {
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  padding: 18px 10px 6px;
+}
+
+.adm .adm-nav-item {
+  font-size: 11px;
+  min-height: 40px;
+  color: var(--a-ink);
+  border-radius: 0;
+}
+
+.adm .adm-nav-item svg {
+  color: var(--a-ink);
+  opacity: 0.55;
+}
+
+.adm .adm-nav-item:hover {
+  background: transparent;
+  opacity: 0.56;
+}
+
+.adm .adm-nav-item[aria-current="page"] {
+  background: var(--a-ink);
+  color: var(--a-bg);
+  opacity: 1;
+}
+
+.adm .adm-nav-item[aria-current="page"] svg {
+  color: var(--a-bg);
+  opacity: 1;
+}
+
+.adm .adm-nav-count {
+  border-radius: 0;
+  font-family: var(--a-ui);
+  font-size: 10px;
+  letter-spacing: 0;
+}
+
+.adm .adm-user strong {
+  font-family: var(--a-display);
+  font-size: 17px;
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.adm .adm-user span {
+  font-size: 10px;
+}
+
+.adm .adm-sidebar-foot {
+  border-top-color: var(--a-line-strong);
+}
+
+/* Top bar on phones: the website's own header — menu, centred wordmark, tools. */
+.adm .adm-topbar {
+  background: rgba(246, 245, 242, 0.96);
+  border-bottom: 1px solid rgba(23, 19, 16, 0.1);
+  display: none;
+  grid-template-columns: 1fr auto 1fr;
+  min-height: 58px;
+}
+
+.adm[data-theme="dark"] .adm-topbar {
+  background: rgba(20, 17, 14, 0.96);
+}
+
+.adm .adm-topbar .adm-brand {
+  align-items: center;
+  padding: 0;
+  justify-self: center;
+}
+
+.adm .adm-topbar .adm-brand strong {
+  font-size: 21px;
+}
+
+.adm .adm-topbar-tools {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+@media (max-width: 1023px) {
+  .adm .adm-topbar {
+    display: grid;
+  }
+}
+
+/* Page head: overline, serif title with a full stop, muted serif lede. */
+.adm .adm-page-head {
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--a-line-strong);
+}
+
+.adm .adm-page-title {
+  font-family: var(--a-display);
+  font-size: clamp(30px, 3.4vw, 44px);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 0.96;
+}
+
+.adm[dir="rtl"] .adm-page-title {
+  letter-spacing: 0;
+  font-weight: 700;
+  font-size: clamp(26px, 3vw, 34px);
+  line-height: 1.2;
+}
+
+.adm .adm-page-sub {
+  font-size: 18px;
+  line-height: 1.35;
+}
+
+/* Surfaces: hairline panels, no rounding, no shadow. */
+.adm .adm-card,
+.adm .adm-stat,
+.adm .adm-list,
+.adm .adm-table-wrap,
+.adm .adm-board-col,
+.adm .adm-ticket,
+.adm .adm-notice,
+.adm .adm-image-frame,
+.adm .adm-gallery-item,
+.adm .adm-gate-card,
+.adm .adm-preview {
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.adm .adm-card,
+.adm .adm-stat,
+.adm .adm-list,
+.adm .adm-table-wrap,
+.adm .adm-gate-card {
+  border-color: var(--a-line-strong);
+}
+
+.adm .adm-card-title {
+  font-family: var(--a-display);
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.adm[dir="rtl"] .adm-card-title {
+  letter-spacing: 0;
+  font-weight: 700;
+  font-size: 19px;
+}
+
+.adm .adm-card-sub,
+.adm .adm-hint,
+.adm .adm-list-meta,
+.adm .adm-stat-note {
+  font-size: 15px;
+}
+
+.adm .adm-stat-label {
+  font-size: 10px;
+  letter-spacing: 0.12em;
+}
+
+.adm .adm-stat-value {
+  font-family: var(--a-display);
+  font-size: 40px;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.adm .adm-stat.is-alert {
+  border-color: var(--a-brand);
+  background: var(--a-surface);
+}
+
+.adm .adm-list-title {
+  font-weight: 500;
+  font-size: 18px;
+}
+
+.adm .adm-list-row {
+  border-bottom-color: var(--a-line);
+}
+
+/* Buttons: the cart's black primary and hairline secondary. */
+.adm .adm-btn {
+  border-radius: 0;
+  font-size: 11px;
+  min-height: 44px;
+  padding: 10px 18px;
+  border: 1px solid var(--a-line-strong);
+  background: transparent;
+  color: var(--a-ink);
+}
+
+.adm .adm-btn:hover {
+  background: transparent;
+  border-color: var(--a-ink);
+}
+
+.adm .adm-btn-primary {
+  background: var(--a-ink);
+  border-color: var(--a-ink);
+  color: var(--a-bg);
+}
+
+.adm .adm-btn-primary:hover {
+  background: var(--a-ink);
+  opacity: 0.82;
+}
+
+.adm .adm-btn-danger {
+  color: var(--a-brand);
+  border-color: var(--a-brand);
+}
+
+.adm .adm-btn-danger:hover {
+  background: var(--a-brand-soft);
+}
+
+.adm .adm-btn-ghost {
+  border-color: transparent;
+}
+
+.adm .adm-btn-ghost:hover {
+  border-color: transparent;
+  opacity: 0.56;
+}
+
+.adm .adm-btn-sm {
+  font-size: 10px;
+  min-height: 36px;
+  padding: 6px 12px;
+}
+
+.adm .adm-btn-lg {
+  font-size: 12px;
+  min-height: 52px;
+}
+
+.adm .adm-icon-btn {
+  border-radius: 0;
+}
+
+.adm .adm-icon-btn:hover {
+  background: transparent;
+  border-color: transparent;
+  opacity: 0.56;
+}
+
+/* Fields: ruled, not boxed — the checkout's email field. */
+.adm .adm-label {
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--a-muted);
+}
+
+.adm .adm-label-opt {
+  text-transform: none;
+  letter-spacing: 0;
+  font-family: var(--a-font);
+  font-size: 14px;
+}
+
+.adm .adm-input,
+.adm .adm-select {
+  border: 0;
+  border-bottom: 1px solid var(--a-ink);
+  border-radius: 0;
+  background: transparent;
+  padding: 10px 0;
+  font-family: var(--a-ui);
+  font-size: 16px;
+  letter-spacing: 0.01em;
+}
+
+.adm[dir="rtl"] .adm-input,
+.adm[dir="rtl"] .adm-select {
+  font-family: var(--a-arabic);
+}
+
+.adm .adm-input[dir="rtl"],
+.adm .adm-textarea[dir="rtl"] {
+  font-family: var(--a-arabic);
+  letter-spacing: 0;
+}
+
+.adm .adm-select {
+  padding-inline-end: 24px;
+}
+
+.adm .adm-textarea {
+  border: 1px solid var(--a-line-strong);
+  border-radius: 0;
+  background: var(--a-surface);
+  font-family: var(--a-font);
+  font-size: 17px;
+  padding: 10px 12px;
+}
+
+.adm .adm-input:focus,
+.adm .adm-select:focus,
+.adm .adm-textarea:focus {
+  outline: 2px solid var(--a-focus);
+  outline-offset: 4px;
+  border-color: var(--a-ink);
+}
+
+.adm .adm-input::placeholder,
+.adm .adm-textarea::placeholder {
+  color: var(--a-muted);
+}
+
+.adm .adm-input-affix {
+  border: 0;
+  border-bottom: 1px solid var(--a-ink);
+  border-radius: 0;
+  background: transparent;
+}
+
+.adm .adm-input-affix:focus-within {
+  outline: 2px solid var(--a-focus);
+  outline-offset: 4px;
+}
+
+.adm .adm-input-affix span {
+  background: transparent;
+  border: 0;
+  padding: 0 10px 0 0;
+  font-family: var(--a-ui);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+}
+
+.adm[dir="rtl"] .adm-input-affix span {
+  padding: 0 0 0 10px;
+}
+
+.adm .adm-input-affix .adm-input {
+  border-bottom: 0;
+}
+
+/* Switch: square, ink when on. */
+.adm .adm-switch {
+  border-radius: 0;
+  background: var(--a-line-strong);
+  width: 44px;
+  height: 24px;
+}
+
+.adm .adm-switch::after {
+  border-radius: 0;
+  top: 3px;
+  width: 18px;
+  height: 18px;
+  box-shadow: none;
+}
+
+.adm .adm-toggle input:checked + .adm-switch {
+  background: var(--a-ink);
+}
+
+.adm[data-theme="dark"] .adm-toggle input:checked + .adm-switch::after {
+  background: var(--a-bg);
+}
+
+.adm .adm-toggle-text strong {
+  font-weight: 500;
+  font-size: 17px;
+}
+
+.adm .adm-check input {
+  accent-color: var(--a-ink);
+}
+
+/* Chips, segments, tabs, badges: mono labels on hairlines. */
+.adm .adm-chip {
+  border-radius: 0;
+  font-size: 10px;
+  min-height: 34px;
+  border-color: var(--a-line-strong);
+  background: transparent;
+}
+
+.adm .adm-chip[aria-pressed="true"] {
+  background: var(--a-ink);
+  border-color: var(--a-ink);
+  color: var(--a-bg);
+}
+
+.adm .adm-seg {
+  border-radius: 0;
+  background: transparent;
+  border-color: var(--a-line-strong);
+  padding: 2px;
+}
+
+.adm .adm-seg button {
+  border-radius: 0;
+  font-size: 10px;
+}
+
+.adm .adm-seg button[aria-pressed="true"] {
+  background: var(--a-ink);
+  color: var(--a-bg);
+  box-shadow: none;
+}
+
+.adm .adm-tabs {
+  border-bottom-color: var(--a-line-strong);
+  gap: 18px;
+}
+
+.adm .adm-tab {
+  font-size: 11px;
+  padding: 12px 0;
+}
+
+.adm .adm-badge {
+  border-radius: 0;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  padding: 3px 7px;
+  background: transparent;
+  border: 1px solid var(--a-line-strong);
+  color: var(--a-muted);
+}
+
+.adm .adm-badge-ok { color: var(--a-ok); background: var(--a-ok-soft); border-color: transparent; }
+.adm .adm-badge-warn { color: var(--a-warn); background: var(--a-warn-soft); border-color: transparent; }
+.adm .adm-badge-danger { color: var(--a-brand); background: var(--a-brand-soft); border-color: transparent; }
+.adm .adm-badge-info { color: var(--a-ink-2); background: var(--a-surface-2); border-color: transparent; }
+.adm .adm-badge-dark { color: var(--a-bg); background: var(--a-ink); border-color: var(--a-ink); }
+
+.adm .adm-notice {
+  border: 1px solid transparent;
+}
+
+.adm .adm-notice-info,
+.adm .adm-notice:not(.adm-notice-warn):not(.adm-notice-danger):not(.adm-notice-ok) {
+  background: var(--a-surface);
+  border-color: var(--a-line-strong);
+}
+
+.adm .adm-notice svg {
+  color: var(--a-ink);
+}
+
+.adm .adm-notice-danger svg { color: var(--a-brand); }
+.adm .adm-notice-warn svg { color: var(--a-warn); }
+.adm .adm-notice-ok svg { color: var(--a-ok); }
+
+.adm .adm-table th {
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  background: transparent;
+  border-bottom-color: var(--a-line-strong);
+}
+
+.adm .adm-table td {
+  border-bottom-color: var(--a-line);
+}
+
+.adm .adm-thumb {
+  border-radius: 0;
+}
+
+/* Overlays: paper panels with a hairline edge. */
+.adm .adm-modal,
+.adm .adm-drawer {
+  border-radius: 0;
+  background: var(--a-bg);
+}
+
+.adm .adm-modal-title,
+.adm .adm-drawer-title {
+  font-family: var(--a-display);
+  font-size: 24px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.adm[dir="rtl"] .adm-modal-title,
+.adm[dir="rtl"] .adm-drawer-title {
+  letter-spacing: 0;
+  font-weight: 700;
+  font-size: 20px;
+}
+
+.adm .adm-drawer-head,
+.adm .adm-drawer-foot {
+  background: var(--a-bg);
+  border-color: var(--a-line-strong);
+}
+
+.adm .adm-modal-foot {
+  border-top-color: var(--a-line-strong);
+}
+
+.adm .adm-savebar-inner,
+.adm .adm-toast {
+  border-radius: 0;
+}
+
+.adm .adm-toast p {
+  font-size: 16px;
+}
+
+.adm .adm-toast button {
+  border-radius: 0;
+  font-size: 10px;
+}
+
+.adm .adm-help-btn {
+  font-family: var(--a-ui);
+  font-size: 10px;
+}
+
+.adm .adm-help-pop {
+  border-radius: 0;
+  font-family: var(--a-font);
+  font-size: 15px;
+}
+
+/* Sign-in: the website's centred wordmark over a ruled form. */
+.adm .adm-gate-card {
+  background: transparent;
+  border: 0;
+  padding: 24px 0;
+}
+
+.adm .adm-gate-card .adm-brand {
+  align-items: center;
+  padding-bottom: 8px;
+}
+
+.adm .adm-gate-title {
+  font-size: clamp(30px, 4vw, 40px);
+  letter-spacing: -0.035em;
+  line-height: 1;
+}
+
+.adm .adm-gate-sub {
+  font-size: 18px;
+}
+
+.adm .adm-pinpad button {
+  border-radius: 0;
+  font-family: var(--a-ui);
+}
+
+.adm .adm-pin-dots span {
+  border-radius: 0;
+}
+
+/* Kitchen ticket: printed on its own, everything else hidden. */
+.adm-print-area {
+  display: none;
+}
+
+@media print {
+  body:has(.adm-print-area) > *:not(.adm-print-area) {
+    display: none !important;
+  }
+
+  .adm-print-area {
+    display: block !important;
+  }
+
+  @page {
+    margin: 4mm;
+  }
+}
+
+.adm .adm-hide-sm {
+  display: inline-flex;
+}
+
+@media (max-width: 640px) {
+  .adm .adm-hide-sm {
+    display: none;
+  }
+
+  .adm .adm-list-row {
+    flex-wrap: wrap;
+  }
+
+  .adm .adm-list-side {
+    flex-wrap: wrap;
+  }
+}
+
+/* Lists inside cards: one hairline, not a box in a box. */
+.adm .adm-card {
+  align-content: start;
+}
+
+.adm .adm-card .adm-list {
+  border: 0;
+  border-top: 1px solid var(--a-line-strong);
+  background: transparent;
+}
+
+.adm .adm-card .adm-list-row {
+  padding-inline: 0;
+}
+
+.adm .adm-list-main {
+  flex: 1 1 220px;
+}
+
+.adm .adm-brand {
+  direction: ltr;
+}
+
+.adm[dir="rtl"] .adm-sidebar .adm-brand {
+  align-items: flex-end;
 }

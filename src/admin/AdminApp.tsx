@@ -41,7 +41,7 @@ const EMPTY_COUNTS: Counts = { new_orders: 0, active_orders: 0, unread_messages:
 
 export default function AdminApp() {
   const [lang, setLangState] = useState<Lang>(() => readLocal<Lang>(LANG_KEY, ["en", "ar"], "en"));
-  const [theme, setThemeState] = useState<"system" | "light" | "dark">(() => readLocal(THEME_KEY, ["system", "light", "dark"] as const, "system"));
+  const [theme, setThemeState] = useState<"system" | "light" | "dark">(() => readLocal(THEME_KEY, ["system", "light", "dark"] as const, "light"));
   const [systemDark, setSystemDark] = useState(() => window.matchMedia?.("(prefers-color-scheme: dark)").matches ?? false);
   const [portalRoot, setPortalRoot] = useState<HTMLDivElement | null>(null);
 
@@ -324,17 +324,19 @@ function Shell({ me, reloadMe, theme, setTheme }: { me: Me; reloadMe: () => Prom
 
         <div className="adm-main">
           <header className="adm-topbar">
-            <IconButton label={t("Open menu")} onClick={() => setMenuOpen(true)}><MenuIcon size={20} /></IconButton>
+            <div><IconButton label={t("Open menu")} onClick={() => setMenuOpen(true)}><MenuIcon size={20} /></IconButton></div>
             <a className="adm-brand" href="/admin" onClick={(e) => { e.preventDefault(); navigate("home"); }}>
-              <strong style={{ fontSize: 20 }}>Mantel.</strong>
+              <strong>Mantel.</strong>
               <span>{t("Staff")}</span>
             </a>
-            <IconButton label={t("Search")} onClick={() => setPaletteOpen(true)} style={{ marginInlineStart: "auto" }}><Search size={20} /></IconButton>
-            {counts.new_orders > 0 && (
-              <button type="button" className="adm-badge adm-badge-danger" onClick={() => navigate("orders")} style={{ cursor: "pointer" }}>
-                {t("{n} new", { n: counts.new_orders })}
-              </button>
-            )}
+            <div className="adm-topbar-tools">
+              {counts.new_orders > 0 && (
+                <button type="button" className="adm-badge adm-badge-danger" onClick={() => navigate("orders")} style={{ cursor: "pointer" }}>
+                  {t("{n} new", { n: counts.new_orders })}
+                </button>
+              )}
+              <IconButton label={t("Search")} onClick={() => setPaletteOpen(true)}><Search size={20} /></IconButton>
+            </div>
           </header>
           <main className="adm-content" id="main-content">
             {allowed ? <SectionView section={location.section} /> : <NoAccess />}

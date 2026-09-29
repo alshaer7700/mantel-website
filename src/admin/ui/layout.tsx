@@ -3,10 +3,12 @@ import { AlertTriangle, CheckCircle2, Info, Loader2, OctagonAlert } from "lucide
 import { useT } from "@/admin/i18n";
 import { Button, HelpTip } from "@/admin/ui/controls";
 
-export function PageHeader({ title, subtitle, actions, help }: { title: ReactNode; subtitle?: ReactNode; actions?: ReactNode; help?: ReactNode }) {
+export function PageHeader({ title, subtitle, actions, help, overline }: { title: ReactNode; subtitle?: ReactNode; actions?: ReactNode; help?: ReactNode; overline?: ReactNode }) {
+  const t = useT();
   return (
     <header className="adm-page-head">
       <div>
+        <p className="adm-overline">{overline ?? t("Mantel — Staff")}</p>
         <div className="adm-row" style={{ gap: 10 }}>
           <h1 className="adm-page-title">{title}</h1>
           {help && <HelpTip>{help}</HelpTip>}
