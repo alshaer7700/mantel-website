@@ -90,6 +90,12 @@ export function toAppError(error: QueryError | null): AppError {
     return { kind: "forbidden" };
   }
 
+  /* MTL01 from 035: ordering closed, below the minimum or over the item
+     limit. Every one of those raises is a sentence written for customers. */
+  if (error.code === "MTL01" && error.message) {
+    return { kind: "notice", message: error.message };
+  }
+
   // Raised without an explicit errcode, so it arrives as the generic
   // raise_exception P0001 and has to be recognised by what it says.
   if (error.message?.includes("unknown, unavailable, or invalid-quantity")) {

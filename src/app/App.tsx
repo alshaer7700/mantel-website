@@ -27,6 +27,8 @@ import type { Session } from "@supabase/supabase-js";
 import type { Page, MenuCategory, MenuItem } from "@/app/types";
 import { pathFor, routeFor } from "@/lib/routes";
 import { ORDERING_OPEN } from "@/lib/constants";
+import { describeOpening, fetchSite, isLive, type SiteInfo } from "@/lib/api/site";
+import { AnnouncementBar, MaintenancePage, SitePopup } from "@/app/components/SiteNotices";
 import { formErrorMessage, submitContactMessage } from "@/lib/api/forms";
 import { useDialogFocus } from "@/app/hooks/useDialogFocus";
 import SEO_DATA from "@/content/seo.json";
@@ -124,6 +126,21 @@ export default function App() {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [menuLoading, setMenuLoading] = useState(true);
   const [menuError, setMenuError] = useState(false);
+
+  /* ── shop settings (from the staff dashboard) ── */
+  const [site, setSite] = useState<SiteInfo | null>(null);
+
+  useEffect(() => {
+    let live = true;
+    const load = () => fetchSite().then((info) => { if (live && info) setSite(info); });
+    load();
+    /* A pause or a closing time should reach a page left open on a phone. */
+    const timer = window.setInterval(load, 2 * 60 * 1000);
+    return () => {
+      live = false;
+      window.clearInterval(timer);
+    };
+  }, []);
 
   useEffect(() => {
     let live = true;
@@ -477,6 +494,19 @@ export default function App() {
     );
   }
 
+  if (site?.maintenance?.enabled) {
+    return <MaintenancePage message={site.maintenance.message} />;
+  }
+
+  const status = site?.status;
+  const orderingOpen = ORDERING_OPEN && (status?.open ?? true);
+  const opening = describeOpening(status?.next_open);
+  const closedNote = !ORDERING_OPEN
+    ? undefined
+    : status && !status.open
+      ? `${status.message ?? "Online orders are closed right now."}${opening ? ` Orders open again ${opening}.` : ""}`
+      : undefined;
+
   return (
     <div className="bg-background text-foreground font-mono font-normal min-h-screen">
 
@@ -679,7 +709,10 @@ export default function App() {
         id="mantel-cart-drawer"
         open={cartOpen}
         lines={cartLines}
-        orderingOpen={ORDERING_OPEN}
+        orderingOpen={orderingOpen}
+        closedNote={closedNote}
+        minOrder={status?.min_order ?? 0}
+        maxItems={status?.max_items ?? 20}
         onClose={() => setCartOpen(false)}
         onIncrement={incrementCart}
         onDecrement={decrementCart}
@@ -687,6 +720,11 @@ export default function App() {
         onCheckout={submitCartOrder}
         defaultEmail={session?.user.email ?? ""}
       />
+
+      {site && isLive(site.announcement) && site.announcement?.text.trim() && (
+        <AnnouncementBar announcement={site.announcement} navHeight={navHeight} />
+      )}
+      {site?.popup && isLive(site.popup) && site.popup.title.trim() && <SitePopup popup={site.popup} />}
 
       {page === "home" && (
         <main id="main-content" className="flex flex-col min-h-screen" style={{ paddingTop: navHeight }}>

@@ -24,6 +24,10 @@ type Props = {
   open: boolean;
   lines: CartLine[];
   orderingOpen: boolean;
+  /** Why ordering is closed, from Shop settings: paused, outside hours, a day off. */
+  closedNote?: string;
+  minOrder?: number;
+  maxItems?: number;
   onClose: () => void;
   onIncrement: (productId: string) => void;
   onDecrement: (productId: string) => void;
@@ -38,6 +42,9 @@ export function CartDrawer({
   open,
   lines,
   orderingOpen,
+  closedNote,
+  minOrder = 0,
+  maxItems = 20,
   onClose,
   onIncrement,
   onDecrement,
@@ -48,6 +55,16 @@ export function CartDrawer({
 }: Props) {
   const itemCount = lines.reduce((total, line) => total + line.quantity, 0);
   const subtotal = lines.reduce((total, line) => total + line.product.price * line.quantity, 0);
+  const belowMinimum = minOrder > 0 && lines.length > 0 && subtotal < minOrder;
+  const overLimit = itemCount > maxItems;
+  const canOrder = orderingOpen && !belowMinimum && !overLimit;
+  const notice = !orderingOpen
+    ? closedNote
+    : belowMinimum
+      ? `The minimum for an online order is ${formatBhd(minOrder)}.`
+      : overLimit
+        ? `Online orders can have up to ${maxItems} items. For bigger orders, please message us.`
+        : undefined;
   const [checkoutOpen, setCheckoutOpen] = useState(false);
   const [customerEmail, setCustomerEmail] = useState(defaultEmail ?? "");
   const [checkoutError, setCheckoutError] = useState("");
@@ -173,6 +190,7 @@ export function CartDrawer({
               <strong>{formatBhd(subtotal)}</strong>
             </div>
             <p>Pickup at Mantel · Bahrain. Payment at the counter.</p>
+            {notice && <p className="editorial-cart-notice" role="status">{notice}</p>}
             {checkoutError && <p className="editorial-cart-error" role="alert">{checkoutError}</p>}
             {checkoutOpen ? (
               <form className="editorial-cart-checkout" onSubmit={handleCheckout}>
@@ -205,7 +223,7 @@ export function CartDrawer({
                   <button
                     type="submit"
                     className="editorial-cart-primary"
-                    disabled={submitting || lines.length === 0 || !orderingOpen}
+                    disabled={submitting || lines.length === 0 || !canOrder}
                   >
                     {submitting ? "Sending…" : "Place order"}
                     <ArrowUpRight size={15} strokeWidth={1.4} aria-hidden="true" />
@@ -216,7 +234,7 @@ export function CartDrawer({
               <button
                 type="button"
                 className="editorial-cart-primary"
-                disabled={lines.length === 0 || !orderingOpen}
+                disabled={lines.length === 0 || !canOrder}
                 onClick={() => { setCheckoutError(""); setCheckoutOpen(true); }}
               >
                 {orderingOpen ? "Continue to checkout" : "Ordering unavailable"}

@@ -381,6 +381,8 @@ export type Database = {
         }
         Returns: string
       }
+      ordering_status: { Args: never; Returns: Json }
+      public_site: { Args: never; Returns: Json }
       request_client_ip: { Args: never; Returns: string }
       submit_contact_message: {
         Args: {
