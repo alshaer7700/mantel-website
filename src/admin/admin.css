@@ -2748,7 +2748,12 @@ a.adm-list-row:hover {
 .mtl-table td {
   padding: 2.4mm 3mm 2.4mm 0;
   border-bottom: 0.2mm solid #E8E4DC;
-  vertical-align: top;
+  vertical-align: baseline;
+}
+
+/* Small mono labels beside larger text share its baseline. */
+.mtl-sheet td {
+  vertical-align: baseline;
 }
 
 .mtl-table .num {

@@ -144,8 +144,10 @@ const MONO = "font-family:'Fira Mono',Menlo,Consolas,'Courier New',monospace;";
 const SERIF = "font-family:'EB Garamond',Georgia,'Times New Roman',serif;";
 
 function detailRow(label: string, value: string): string {
-  return `<tr><td style="padding:3px 16px 3px 0;${MONO}font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:${MUTED};white-space:nowrap;width:1%;vertical-align:top">${label}</td>` +
-    `<td style="padding:3px 0">${value}</td></tr>`;
+  // Both cells sit on one baseline: the small label and the larger value
+  // read as one line instead of the label floating above.
+  return `<tr><td style="padding:5px 20px 5px 0;${MONO}font-size:11px;line-height:22px;letter-spacing:1.5px;text-transform:uppercase;color:${MUTED};white-space:nowrap;width:1%;vertical-align:baseline">${label}</td>` +
+    `<td style="padding:5px 0;line-height:22px;vertical-align:baseline">${value}</td></tr>`;
 }
 
 function footerItem(label: string, href: string, value: string, align: "left" | "right"): string {
@@ -270,12 +272,12 @@ Deno.serve(async (req: Request) => {
     `<table role="presentation" cellpadding="0" cellspacing="0" style="border-collapse:collapse;width:100%;margin:24px 0 0;${SERIF}font-size:15px;line-height:1.5;color:${INK}">`,
     ...lines.map(
       (l) =>
-        `<tr><td style="padding:8px 12px 8px 0;border-top:1px solid ${LINE};${MONO}font-size:13px;color:${MUTED};white-space:nowrap;width:1%">${l.qty} ×</td>` +
-        `<td style="padding:8px 12px 8px 0;border-top:1px solid ${LINE}">${esc(l.label)}</td>` +
-        `<td style="padding:8px 0;border-top:1px solid ${LINE};${MONO}font-size:13px;color:${MUTED};text-align:right;white-space:nowrap">${esc(bd(l.each))}</td></tr>`,
+        `<tr><td style="padding:10px 12px 10px 0;border-top:1px solid ${LINE};${MONO}font-size:13px;line-height:22px;color:${MUTED};white-space:nowrap;width:1%;vertical-align:baseline">${l.qty} ×</td>` +
+        `<td style="padding:10px 12px 10px 0;border-top:1px solid ${LINE};line-height:22px;vertical-align:baseline">${esc(l.label)}</td>` +
+        `<td style="padding:10px 0;border-top:1px solid ${LINE};${MONO}font-size:13px;line-height:22px;color:${MUTED};text-align:right;white-space:nowrap;vertical-align:baseline">${esc(bd(l.each))}</td></tr>`,
     ),
-    `<tr><td colspan="2" style="padding:12px 12px 0 0;border-top:1px solid ${INK};${MONO}font-size:12px;letter-spacing:2px;text-transform:uppercase">Total</td>` +
-      `<td style="padding:12px 0 0;border-top:1px solid ${INK};${MONO}font-size:15px;font-weight:700;text-align:right;white-space:nowrap">${esc(bd(record.subtotal))}</td></tr>`,
+    `<tr><td colspan="2" style="padding:12px 12px 0 0;border-top:1px solid ${INK};${MONO}font-size:12px;line-height:22px;letter-spacing:2px;text-transform:uppercase;vertical-align:baseline">Total</td>` +
+      `<td style="padding:12px 0 0;border-top:1px solid ${INK};${MONO}font-size:15px;line-height:22px;font-weight:700;text-align:right;white-space:nowrap;vertical-align:baseline">${esc(bd(record.subtotal))}</td></tr>`,
     `</table>`,
   ].join(""), head);
 
