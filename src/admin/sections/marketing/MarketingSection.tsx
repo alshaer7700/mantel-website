@@ -9,6 +9,7 @@ import { db, run } from "@/admin/lib/db";
 import { Chips, SearchInput, Toggle } from "@/admin/ui/controls";
 import { EmptyState, LoadError, Loading, PageHeader, Stat, Tabs } from "@/admin/ui/layout";
 import { useToast } from "@/admin/ui/overlays";
+import { NewslettersPanel } from "@/admin/sections/marketing/NewslettersPanel";
 
 type Subscriber = { email: string; status: "active" | "unsubscribed"; subscribed_at: string };
 
@@ -18,9 +19,11 @@ export function MarketingSection() {
   const t = useT();
   const { rest, navigate } = useAdmin();
   const tab = (["subscribers", "campaigns", "promos", "loyalty"].includes(rest[0] ?? "") ? rest[0] : "subscribers") as Tab;
+  /* One newsletter open: it brings its own header. */
+  if (tab === "campaigns" && rest[1]) return <NewslettersPanel />;
   return (
     <>
-      <PageHeader overline={t("03 — Keep in touch")} title={t("Marketing.")} subtitle={t("Newsletter subscribers now; campaigns, promo codes and loyalty are on their way.")} />
+      <PageHeader overline={t("03 — Keep in touch")} title={t("Marketing.")} subtitle={t("Your subscribers and the newsletters you send them, promo codes, loyalty and gift cards.")} />
       <Tabs
         label={t("Marketing sections")}
         value={tab}
@@ -32,7 +35,7 @@ export function MarketingSection() {
           { value: "loyalty", label: t("Loyalty & gift cards") },
         ]}
       />
-      {tab === "subscribers" ? <Subscribers /> : <EmptyState icon={<Megaphone size={32} />} title={t("This screen is being built")} body={t("It will appear here in the next update.")} />}
+      {tab === "subscribers" ? <Subscribers /> : tab === "campaigns" ? <NewslettersPanel /> : <EmptyState icon={<Megaphone size={32} />} title={t("This screen is being built")} body={t("It will appear here in the next update.")} />}
     </>
   );
 }

@@ -381,6 +381,7 @@ export type Database = {
         }
         Returns: string
       }
+      newsletter_unsubscribe: { Args: { p_token: string }; Returns: Json }
       ordering_status: { Args: never; Returns: Json }
       public_site: { Args: never; Returns: Json }
       request_client_ip: { Args: never; Returns: string }

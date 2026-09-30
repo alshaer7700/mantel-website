@@ -17,6 +17,7 @@ import { EditorialFooter } from "@/app/components/EditorialFooter";
 import { Cafe } from "@/app/pages/Cafe";
 import { PickUp } from "@/app/pages/PickUp";
 import { Story } from "@/app/pages/Story";
+import { Unsubscribe } from "@/app/pages/Unsubscribe";
 import { ContactUs, type ContactForm } from "@/app/pages/ContactUs";
 import { useScrolled } from "@/app/hooks/useScrolled";
 import { SearchOverlay } from "@/app/components/SearchOverlay";
@@ -364,7 +365,7 @@ export default function App() {
     const description = product ? product.description : seo.description;
     document.title = title;
     updateMeta("name", "description", description);
-    updateMeta("name", "robots", page === "admin" ? "noindex,nofollow" : "index,follow");
+    updateMeta("name", "robots", page === "admin" || page === "unsubscribe" ? "noindex,nofollow" : "index,follow");
     updateMeta("property", "og:title", title);
     updateMeta("property", "og:description", description);
     updateMeta("property", "og:url", canonicalUrl);
@@ -838,6 +839,15 @@ export default function App() {
       )}
 
       {/* ══ FAQ PAGE ══ */}
+      {page === "unsubscribe" && (
+        <main id="main-content" className="min-h-screen flex flex-col" style={{ paddingTop: navHeight }}>
+          <div className="flex-1 px-[var(--pad)]">
+            <Unsubscribe linkTo={linkTo} />
+          </div>
+          <EditorialFooter linkTo={linkTo} />
+        </main>
+      )}
+
       {page === "faq" && (
         <main id="main-content" className="min-h-screen flex flex-col" style={{ paddingTop: navHeight }}>
           <div className="flex-1 max-w-2xl w-full mx-auto px-6 py-14">
