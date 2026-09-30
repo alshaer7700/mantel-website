@@ -151,7 +151,7 @@ const DEFAULT_HEAD: Letterhead = {
   logo_url: "https://bymantel.com/heart.png",
   logo_size: 12,
   email: "hello@bymantel.com",
-  instagram: "bymantel",
+  instagram: "mantelbh",
   styles: DEFAULT_STYLES,
 };
 

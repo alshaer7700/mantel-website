@@ -107,15 +107,15 @@ export function SitePopup({ popup }: { popup: Popup }) {
   );
 }
 
-export function MaintenancePage({ message }: { message: string }) {
+export function MaintenancePage({ message, instagramUrl }: { message: string; instagramUrl: string }) {
   return (
     <main id="main-content" className="site-maintenance">
       <p className="site-maintenance-mark">Mantel.</p>
       <h1>{message || "We're making a few changes. Back very soon."}</h1>
       <p>In the meantime, the café is open as usual in Hidd.</p>
-      <a href="https://www.instagram.com/bymantel" target="_blank" rel="noopener noreferrer" aria-label="Mantel on Instagram">
+      <a href={instagramUrl} target="_blank" rel="noopener noreferrer" aria-label="Mantel on Instagram">
         <Instagram size={18} strokeWidth={1.4} />
-        <span>@bymantel</span>
+        <span>@{instagramUrl.replace(/^https?:\/\/(www\.)?instagram\.com\//i, "").replace(/[/?#].*$/, "") || "mantelbh"}</span>
       </a>
     </main>
   );

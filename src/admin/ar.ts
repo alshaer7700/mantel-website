@@ -1348,4 +1348,12 @@ export const AR: Record<string, string> = {
   "Your account has no email address.": "حسابك بدون بريد إلكتروني.",
   "Email sending isn't set up (RESEND_API_KEY is missing).": "إرسال البريد غير مُعد (RESEND_API_KEY مفقود).",
   "Your subscribers and the newsletters you send them, promo codes, loyalty and gift cards.": "المشتركون والنشرات التي ترسلها لهم، وأكواد الخصم، والولاء وبطاقات الهدايا.",
+  "Contact details": "بيانات التواصل",
+  "Links on the website": "الروابط في الموقع",
+  "The Instagram button in the footer, and “Find us” on the home and Friday Espresso pages.": "زر إنستغرام في أسفل الموقع، و“Find us” في الصفحة الرئيسية وصفحة إسبريسو الجمعة.",
+  "Google Maps": "خرائط جوجل",
+  "Paste the profile link without anything after a “?”.": "الصق رابط الحساب بدون أي شيء بعد “?”.",
+  "In Google Maps, open the café, tap Share and copy the link.": "في خرائط جوجل، افتح المقهى، اضغط مشاركة وانسخ الرابط.",
+  "How to reach the café": "طرق التواصل مع المقهى",
+  "Use a full link starting with https://": "استخدم رابطًا كاملًا يبدأ بـ https://",
 };

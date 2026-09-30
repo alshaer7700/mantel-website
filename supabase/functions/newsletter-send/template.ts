@@ -28,7 +28,7 @@ export const DEFAULT_NEWSLETTER_HEAD: NewsletterHead = {
   logo_url: "https://bymantel.com/heart.png",
   address: "Hidd, Kingdom of Bahrain",
   email: "hello@bymantel.com",
-  instagram: "bymantel",
+  instagram: "mantelbh",
 };
 
 const INK = "#171310";

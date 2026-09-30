@@ -26,7 +26,7 @@ import { getSession, onAuthChange, loadProfile } from "@/lib/api/auth";
 import type { Session } from "@supabase/supabase-js";
 import type { Page, MenuCategory, MenuItem } from "@/app/types";
 import { pathFor, routeFor } from "@/lib/routes";
-import { ORDERING_OPEN } from "@/lib/constants";
+import { INSTAGRAM_URL, MAPS_URL, ORDERING_OPEN } from "@/lib/constants";
 import { describeOpening, fetchSite, hoursRows, isLive, type SiteInfo } from "@/lib/api/site";
 import { contentKey, mergePage, toLegalDoc, type PageKey } from "@/lib/content/pages";
 import { AnnouncementBar, MaintenancePage, SitePopup } from "@/app/components/SiteNotices";
@@ -504,8 +504,12 @@ export default function App() {
     );
   }
 
+  /* Contact links from Shop settings, falling back to lib/constants. */
+  const instagramUrl = site?.contact?.instagram?.trim() || INSTAGRAM_URL;
+  const mapsUrl = site?.contact?.maps_url?.trim() || MAPS_URL;
+
   if (site?.maintenance?.enabled) {
-    return <MaintenancePage message={site.maintenance.message} />;
+    return <MaintenancePage message={site.maintenance.message} instagramUrl={instagramUrl} />;
   }
 
   const pageText = <K extends PageKey>(key: K) => mergePage(key, site?.content[contentKey(key)]);
@@ -676,7 +680,7 @@ export default function App() {
         {/* Drawer footer */}
         <div className="editorial-sidebar-footer">
           <a
-            href="https://www.instagram.com/bymantel?igsi=MTk3NDhxZGVuNWFucA=="
+            href={instagramUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="text-foreground/60 hover:text-foreground transition-colors"
@@ -740,9 +744,9 @@ export default function App() {
       {page === "home" && (
         <main id="main-content" className="flex flex-col min-h-screen" style={{ paddingTop: navHeight }}>
           <div className="flex-1">
-            <Home linkTo={linkTo} content={pageText("home")} imagesReady={contentReady} />
+            <Home linkTo={linkTo} content={pageText("home")} imagesReady={contentReady} mapsUrl={mapsUrl} />
           </div>
-          <EditorialFooter linkTo={linkTo} />
+          <EditorialFooter linkTo={linkTo} instagramUrl={instagramUrl} />
         </main>
       )}
 
@@ -750,9 +754,9 @@ export default function App() {
       {page === "ritual" && (
         <main id="main-content" className="flex flex-col min-h-screen" style={{ paddingTop: navHeight }}>
           <div className="flex-1">
-            <FridayEspresso linkTo={linkTo} content={pageText("friday")} />
+            <FridayEspresso linkTo={linkTo} content={pageText("friday")} mapsUrl={mapsUrl} />
           </div>
-          <EditorialFooter linkTo={linkTo} />
+          <EditorialFooter linkTo={linkTo} instagramUrl={instagramUrl} />
         </main>
       )}
 
@@ -762,7 +766,7 @@ export default function App() {
           <div className="flex-1 px-[var(--pad)]">
             <Cafe sections={sections} category={menuCategory} loading={menuLoading} error={menuError} />
           </div>
-          <EditorialFooter linkTo={linkTo} />
+          <EditorialFooter linkTo={linkTo} instagramUrl={instagramUrl} />
         </main>
       )}
 
@@ -782,7 +786,7 @@ export default function App() {
               content={pageText("pickup")}
             />
           </div>
-          <EditorialFooter linkTo={linkTo} />
+          <EditorialFooter linkTo={linkTo} instagramUrl={instagramUrl} />
         </main>
       )}
 
@@ -806,7 +810,7 @@ export default function App() {
               );
             })()}
           </div>
-          <EditorialFooter linkTo={linkTo} />
+          <EditorialFooter linkTo={linkTo} instagramUrl={instagramUrl} />
         </main>
       )}
 
@@ -815,7 +819,7 @@ export default function App() {
           <div className="flex-1 px-[var(--pad)]">
             <Story linkTo={linkTo} content={pageText("about")} hours={hoursRows(site?.hours?.week)} />
           </div>
-          <EditorialFooter linkTo={linkTo} />
+          <EditorialFooter linkTo={linkTo} instagramUrl={instagramUrl} />
         </main>
       )}
 
@@ -834,7 +838,7 @@ export default function App() {
               submitContact={submitContact}
             />
           </div>
-          <EditorialFooter linkTo={linkTo} />
+          <EditorialFooter linkTo={linkTo} instagramUrl={instagramUrl} />
         </main>
       )}
 
@@ -844,7 +848,7 @@ export default function App() {
           <div className="flex-1 px-[var(--pad)]">
             <Unsubscribe linkTo={linkTo} />
           </div>
-          <EditorialFooter linkTo={linkTo} />
+          <EditorialFooter linkTo={linkTo} instagramUrl={instagramUrl} />
         </main>
       )}
 
@@ -855,7 +859,7 @@ export default function App() {
             <FaqAccordion items={pageText("faq").items.filter((f) => f.question.trim())} />
           </div>
           <NewsletterSignup />
-          <EditorialFooter linkTo={linkTo} />
+          <EditorialFooter linkTo={linkTo} instagramUrl={instagramUrl} />
         </main>
       )}
 
@@ -863,7 +867,7 @@ export default function App() {
       {(page === "privacy" || page === "terms" || page === "refund") && (
         <main id="main-content" className="min-h-screen flex flex-col" style={{ paddingTop: navHeight }}>
           <PolicyPage doc={toLegalDoc(pageText(page))} />
-          <EditorialFooter linkTo={linkTo} />
+          <EditorialFooter linkTo={linkTo} instagramUrl={instagramUrl} />
         </main>
       )}
     </div>

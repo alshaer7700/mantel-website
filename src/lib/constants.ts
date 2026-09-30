@@ -29,5 +29,12 @@ export const PICKUP_OPEN = false;
  * pin is claimed — that is the only edit needed, since every "Find us" on the
  * site reads this constant.
  */
-export const MAPS_URL =
-  "https://www.google.com/maps/search/?api=1&query=Mantel%20Coffee%2C%20Hidd%2C%20Muharraq%2C%20Bahrain";
+export const MAPS_URL = "https://share.google/QqJQcQ3gv7i0IIXpO";
+
+/*
+ * The café's Instagram, without a share-tracking code: a link copied from the
+ * app's Share button carries ?igsh=… (the site had a garbled ?igsi=…), which
+ * Instagram can refuse. Both this and MAPS_URL are only the fallbacks — the
+ * live values come from Shop settings → Contact details.
+ */
+export const INSTAGRAM_URL = "https://www.instagram.com/mantelbh/";

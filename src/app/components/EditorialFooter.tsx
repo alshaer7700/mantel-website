@@ -1,14 +1,16 @@
 import { Instagram } from "lucide-react";
 import type { MenuCategory, Page } from "@/app/types";
+import { INSTAGRAM_URL } from "@/lib/constants";
 
 type Props = {
   linkTo: (page: Page, category?: MenuCategory) => {
     href: string;
     onClick: (event: React.MouseEvent) => void;
   };
+  instagramUrl?: string;
 };
 
-export function EditorialFooter({ linkTo }: Props) {
+export function EditorialFooter({ linkTo, instagramUrl = INSTAGRAM_URL }: Props) {
   return (
     <footer className="editorial-footer" id="footer">
       <div className="editorial-footer-grid">
@@ -27,7 +29,7 @@ export function EditorialFooter({ linkTo }: Props) {
         <div className="editorial-footer-instagram">
           <a
             className="editorial-footer-social"
-            href="https://www.instagram.com/bymantel?igsi=MTk3NDhxZGVuNWFucA=="
+            href={instagramUrl}
             target="_blank"
             rel="noreferrer"
             aria-label="Mantel on Instagram"
