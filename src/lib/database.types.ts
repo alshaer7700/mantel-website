@@ -378,10 +378,12 @@ export type Database = {
           items: Json
           payment_method?: string
           pickup_at?: string
+          promo_code?: string
         }
         Returns: string
       }
       newsletter_unsubscribe: { Args: { p_token: string }; Returns: Json }
+      check_promo: { Args: { p_code: string; p_subtotal: number; p_email?: string }; Returns: Json }
       ordering_status: { Args: never; Returns: Json }
       public_site: { Args: never; Returns: Json }
       request_client_ip: { Args: never; Returns: string }

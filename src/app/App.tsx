@@ -436,6 +436,7 @@ export default function App() {
          sends none, which the RPC accepts. */
       customerPhone: profilePhone || null,
       paymentMethod: "cash",
+      promoCode: details.promoCode ?? null,
     });
     if (result.ok) setCartLines([]);
     return result;

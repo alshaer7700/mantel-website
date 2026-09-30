@@ -39,7 +39,11 @@ type OrderRecord = {
   customer_name?: string;
   customer_email?: string;
   customer_phone?: string;
+  /** What the customer pays, after any promo code. */
   subtotal?: number | string;
+  /** What a promo code took off (supabase/037). */
+  discount?: number | string;
+  promo_code?: string | null;
   payment_method?: string;
   pickup_at?: string | null;
   created_at?: string;
@@ -293,6 +297,9 @@ Deno.serve(async (req: Request) => {
 
   const head = await loadLetterhead();
   const handle = handleOf(head.instagram);
+  // Without this line the items wouldn't add up to the total.
+  const discount = Number(record.discount) || 0;
+  const promo = discount > 0 ? `Promo code ${(record.promo_code ?? "").trim()}`.trim() : "";
 
   const text = [
     head.name,
@@ -309,6 +316,7 @@ Deno.serve(async (req: Request) => {
     `Payment:  ${payment}`,
     ``,
     ...lines.map((l) => `  ${l.qty} × ${l.label}   ${bd(l.each)}`),
+    ...(promo ? [`  ${promo}   −${bd(discount)}`] : []),
     ``,
     `Total:    ${bd(record.subtotal)}`,
     ``,
@@ -334,6 +342,11 @@ Deno.serve(async (req: Request) => {
         `<td style="padding:10px 12px 10px 0;border-top:1px solid ${LINE};line-height:22px;vertical-align:baseline">${esc(l.label)}</td>` +
         `<td style="padding:10px 0;border-top:1px solid ${LINE};${MONO}font-size:13px;line-height:22px;color:${MUTED};text-align:right;white-space:nowrap;vertical-align:baseline">${esc(bd(l.each))}</td></tr>`,
     ),
+    promo
+      ? `<tr><td style="padding:10px 12px 10px 0;border-top:1px solid ${LINE};width:1%"></td>` +
+        `<td style="padding:10px 12px 10px 0;border-top:1px solid ${LINE};line-height:22px;vertical-align:baseline">${esc(promo)}</td>` +
+        `<td style="padding:10px 0;border-top:1px solid ${LINE};${MONO}font-size:13px;line-height:22px;color:${MUTED};text-align:right;white-space:nowrap;vertical-align:baseline">−${esc(bd(discount))}</td></tr>`
+      : "",
     `<tr><td colspan="2" style="padding:12px 12px 0 0;border-top:1px solid ${INK};${cssOf("labels", head.styles.labels, 12)}color:${INK};line-height:22px;vertical-align:baseline">Total</td>` +
       `<td style="padding:12px 0 0;border-top:1px solid ${INK};${MONO}font-size:15px;line-height:22px;font-weight:700;text-align:right;white-space:nowrap;vertical-align:baseline">${esc(bd(record.subtotal))}</td></tr>`,
     `</table>`,

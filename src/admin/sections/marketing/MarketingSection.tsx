@@ -10,6 +10,7 @@ import { Chips, SearchInput, Toggle } from "@/admin/ui/controls";
 import { EmptyState, LoadError, Loading, PageHeader, Stat, Tabs } from "@/admin/ui/layout";
 import { useToast } from "@/admin/ui/overlays";
 import { NewslettersPanel } from "@/admin/sections/marketing/NewslettersPanel";
+import { PromosPanel } from "@/admin/sections/marketing/PromosPanel";
 
 type Subscriber = { email: string; status: "active" | "unsubscribed"; subscribed_at: string };
 
@@ -35,7 +36,7 @@ export function MarketingSection() {
           { value: "loyalty", label: t("Loyalty & gift cards") },
         ]}
       />
-      {tab === "subscribers" ? <Subscribers /> : tab === "campaigns" ? <NewslettersPanel /> : <EmptyState icon={<Megaphone size={32} />} title={t("This screen is being built")} body={t("It will appear here in the next update.")} />}
+      {tab === "subscribers" ? <Subscribers /> : tab === "campaigns" ? <NewslettersPanel /> : tab === "promos" ? <PromosPanel /> : <EmptyState icon={<Megaphone size={32} />} title={t("This screen is being built")} body={t("It will appear here in the next update.")} />}
     </>
   );
 }

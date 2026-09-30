@@ -128,6 +128,13 @@ export function OrderDrawer({ orderId, onClose, onChanged }: { orderId: string |
                     <td className="adm-num" style={{ textAlign: "end" }}>{money(item.price * item.quantity)}</td>
                   </tr>
                 ))}
+                {o.discount > 0 && (
+                  <tr>
+                    <td />
+                    <td>{t("Promo code {code}", { code: o.promo_code ?? "" })}</td>
+                    <td className="adm-num" style={{ textAlign: "end" }}>−{money(o.discount)}</td>
+                  </tr>
+                )}
                 <tr>
                   <td />
                   <td className="adm-strong">{t("Total · cash at the counter")}</td>
@@ -303,6 +310,12 @@ function PrintTicket({ order }: { order: Order }) {
             <span>{(i.price * i.quantity).toFixed(3)}</span>
           </div>
         ))}
+        {order.discount > 0 && (
+          <div style={{ display: "flex", justifyContent: "space-between", gap: 8 }}>
+            <span>{t("Promo code {code}", { code: order.promo_code ?? "" })}</span>
+            <span>−{order.discount.toFixed(3)}</span>
+          </div>
+        )}
         <hr style={{ border: 0, borderTop: "1px dashed #000", margin: "8px 0" }} />
         <div style={{ display: "flex", justifyContent: "space-between", fontWeight: 700 }}>
           <span>{t("Total")} BD</span>
