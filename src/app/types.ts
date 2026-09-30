@@ -12,6 +12,8 @@ export type Page =
   | "privacy"
   | "terms"
   | "refund"
+  /* Where a newsletter's unsubscribe link lands (?t=token). Not in the nav. */
+  | "unsubscribe"
   | "admin";
 
 /*

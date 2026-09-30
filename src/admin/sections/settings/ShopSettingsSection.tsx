@@ -62,6 +62,8 @@ type Popup = {
 
 type Maintenance = { enabled: boolean; message: string; message_ar: string };
 
+type Contact = { email: string; phone: string; whatsapp: string; instagram: string; maps_url: string; address: string; address_ar: string };
+
 type Status = {
   open: boolean;
   reason?: "maintenance" | "paused" | "closure" | "hours" | null;
@@ -78,11 +80,12 @@ const HOURS: Hours = {
 const ANNOUNCEMENT: Announcement = { enabled: false, text: "", text_ar: "", link_url: "", link_label: "", link_label_ar: "", starts_at: null, ends_at: null };
 const POPUP: Popup = { enabled: false, version: 1, title: "", title_ar: "", body: "", body_ar: "", image: "", link_url: "", link_label: "", link_label_ar: "", starts_at: null, ends_at: null };
 const MAINTENANCE: Maintenance = { enabled: false, message: "", message_ar: "" };
+const CONTACT: Contact = { email: "", phone: "", whatsapp: "", instagram: "", maps_url: "", address: "", address_ar: "" };
 
 /** Bahrain's week starts on Saturday. */
 const WEEK_ORDER = [6, 0, 1, 2, 3, 4, 5];
 
-type Tab = "ordering" | "hours" | "website" | "maintenance";
+type Tab = "ordering" | "hours" | "website" | "contact" | "maintenance";
 
 /* ── Helpers ─────────────────────────────────────────────────────────────── */
 
@@ -151,7 +154,7 @@ function useSettingDraft<T extends object>(key: string, fallback: T) {
 export function ShopSettingsSection() {
   const t = useT();
   const { rest, navigate } = useAdmin();
-  const tab = (["hours", "website", "maintenance"].includes(rest[0] ?? "") ? rest[0] : "ordering") as Tab;
+  const tab = (["hours", "website", "contact", "maintenance"].includes(rest[0] ?? "") ? rest[0] : "ordering") as Tab;
   const status = useAsync(() => rpc<Status>("ordering_status"), []);
   useInterval(status.reload, 60_000);
 
@@ -172,12 +175,14 @@ export function ShopSettingsSection() {
             { value: "ordering", label: t("Online orders") },
             { value: "hours", label: t("Opening hours") },
             { value: "website", label: t("Announcements") },
+            { value: "contact", label: t("Contact details") },
             { value: "maintenance", label: t("Back-soon page") },
           ]}
         />
         {tab === "ordering" && <OrderingPanel onSaved={status.reload} />}
         {tab === "hours" && <HoursPanel onSaved={status.reload} />}
         {tab === "website" && <WebsitePanel />}
+        {tab === "contact" && <ContactPanel />}
         {tab === "maintenance" && <MaintenancePanel onSaved={status.reload} />}
       </div>
     </>
@@ -591,6 +596,56 @@ function MaintenancePanel({ onSaved }: { onSaved: () => void }) {
             maxLength={160}
             hint={t("Blank: “We're making a few changes. Back very soon.”")}
           />
+        </div>
+      </Card>
+      <SaveBar dirty={s.dirty} saving={saving} onSave={save} onDiscard={s.discard} />
+    </div>
+  );
+}
+
+/* ── Contact details ─────────────────────────────────────────────────────── */
+
+function ContactPanel() {
+  const t = useT();
+  const toast = useToast();
+  const s = useSettingDraft<Contact>("contact", CONTACT);
+  const [saving, setSaving] = useState(false);
+
+  if (s.loaded.loading && !s.loaded.data) return <Loading />;
+  if (s.loaded.error) return <LoadError message={s.loaded.error} onRetry={s.loaded.reload} />;
+  const d = s.draft;
+  if (!d) return null;
+  const set = (patch: Partial<Contact>) => s.setDraft({ ...d, ...patch });
+
+  const linkError = (url: string) => (url.trim() && !/^https:\/\//i.test(url.trim()) ? t("Use a full link starting with https://") : undefined);
+  const errors = { instagram: linkError(d.instagram), maps: linkError(d.maps_url) };
+
+  const save = async () => {
+    if (errors.instagram || errors.maps) return toast.error(t("Check the highlighted fields."));
+    setSaving(true);
+    const clean = Object.fromEntries(Object.entries(d).map(([k, v]) => [k, typeof v === "string" ? v.trim() : v])) as Contact;
+    const r = await s.save(clean);
+    setSaving(false);
+    if (!r.ok) return toast.error(r.error);
+    toast.ok(t("Saved. The website updates within a minute or two."));
+  };
+
+  return (
+    <div className="adm-stack" style={{ gap: 16, maxWidth: 760 }}>
+      <Card title={t("Links on the website")} subtitle={t("The Instagram button in the footer, and “Find us” on the home and Friday Espresso pages.")}>
+        <div className="adm-stack">
+          <TextField label={t("Instagram")} value={d.instagram} onChange={(v) => set({ instagram: v })} dir="ltr" placeholder="https://www.instagram.com/mantelbh/" error={errors.instagram} hint={t("Paste the profile link without anything after a “?”.")} />
+          <TextField label={t("Google Maps")} value={d.maps_url} onChange={(v) => set({ maps_url: v })} dir="ltr" placeholder="https://share.google/…" error={errors.maps} hint={t("In Google Maps, open the café, tap Share and copy the link.")} />
+        </div>
+      </Card>
+      <Card title={t("How to reach the café")}>
+        <div className="adm-stack">
+          <div className="adm-form-grid">
+            <TextField label={t("Email")} value={d.email} onChange={(v) => set({ email: v })} dir="ltr" type="email" />
+            <TextField label={t("Phone")} optional value={d.phone} onChange={(v) => set({ phone: v })} dir="ltr" placeholder="+973" />
+            <TextField label={t("WhatsApp")} optional value={d.whatsapp} onChange={(v) => set({ whatsapp: v })} dir="ltr" placeholder="+973" />
+          </div>
+          <BilingualField label={t("Address")} en={d.address} ar={d.address_ar} onEn={(v) => set({ address: v })} onAr={(v) => set({ address_ar: v })} maxLength={200} />
         </div>
       </Card>
       <SaveBar dirty={s.dirty} saving={saving} onSave={save} onDiscard={s.discard} />

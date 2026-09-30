@@ -73,6 +73,19 @@ export async function subscribeNewsletter(emailInput: string): Promise<FormResul
   return { ok: true, value: true };
 }
 
+/*
+ * The newsletter's unsubscribe link (supabase/036). The token is the whole
+ * credential — it's in only that subscriber's emails — and the database hands
+ * back a masked address so the page can say whose it was.
+ */
+export async function unsubscribeNewsletter(token: string): Promise<FormResult<{ email: string } | null>> {
+  if (!/^[0-9a-f-]{36}$/i.test(token)) return { ok: true, value: null };
+  const { data, error } = await settle(supabase.rpc("newsletter_unsubscribe", { p_token: token }));
+  if (error) return { ok: false, error: toAppError(error) };
+  const r = data as { ok?: boolean; email?: string } | null;
+  return { ok: true, value: r?.ok ? { email: String(r.email ?? "") } : null };
+}
+
 export function formErrorMessage(error: AppError): string {
   return messageFor(error);
 }

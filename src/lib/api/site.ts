@@ -57,6 +57,8 @@ export type SiteInfo = {
   announcement: Announcement | null;
   popup: Popup | null;
   maintenance: { enabled: boolean; message: string } | null;
+  /** Shop settings → Contact details. Blank fields fall back to lib/constants. */
+  contact: { instagram?: string; maps_url?: string; email?: string } | null;
 };
 
 /** One minute: long enough to spare reloads, short enough that a pause shows quickly. */
@@ -80,6 +82,7 @@ async function loadSite(): Promise<SiteInfo | null> {
     announcement: (s.announcement as Announcement | undefined) ?? null,
     popup: (s.popup as Popup | undefined) ?? null,
     maintenance: (s.maintenance as SiteInfo["maintenance"] | undefined) ?? null,
+    contact: (s.contact as SiteInfo["contact"] | undefined) ?? null,
   };
 }
 

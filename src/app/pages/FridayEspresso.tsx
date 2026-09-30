@@ -1,5 +1,5 @@
 import type { MenuCategory, Page } from "@/app/types";
-import { MAPS_URL, ORDERING_OPEN } from "@/lib/constants";
+import { ORDERING_OPEN } from "@/lib/constants";
 import {
   TRAY_ANNOTATIONS,
   TRAY_ASPECT,
@@ -95,9 +95,10 @@ type Props = {
   /** Words from the dashboard's Website pages. The photo and where its notes
       point stay in content/ritual.ts: they're measured off the picture. */
   content: (typeof PAGE_DEFAULTS)["friday"];
+  mapsUrl: string;
 };
 
-export function FridayEspresso({ linkTo, content }: Props) {
+export function FridayEspresso({ linkTo, content, mapsUrl }: Props) {
   const publishedExtraction = content.recipe.filter((spec) => spec.label.trim() && spec.value.trim());
   const annotations = TRAY_ANNOTATIONS.map((a, i) => ({ ...a, title: (i === 0 ? content.note_1 : i === 1 ? content.note_2 : a.title) || a.title }));
 
@@ -112,7 +113,7 @@ export function FridayEspresso({ linkTo, content }: Props) {
           )}
           <a
             className="editorial-link"
-            href={MAPS_URL}
+            href={mapsUrl}
             target="_blank"
             rel="noopener noreferrer"
           >

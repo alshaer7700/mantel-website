@@ -75,7 +75,7 @@ export const DEFAULT_LETTERHEAD: Letterhead = {
   logo_url: DEFAULT_LOGO,
   logo_size: 12,
   email: "hello@bymantel.com",
-  instagram: "bymantel",
+  instagram: "mantelbh",
   styles: DEFAULT_STYLES,
 };
 
@@ -180,7 +180,7 @@ export function numberExample(s: InvoiceSettings, kind: "invoice" | "receipt" | 
 }
 export const saveInvoiceSettings = (value: InvoiceSettings): Promise<Result<true>> => saveSetting("payments.invoices", value, false);
 
-/** "@bymantel", "bymantel" or a full link all become the handle. */
+/** "@mantelbh", "mantelbh" or a full link all become the handle. */
 export function instagramHandle(value: string): string {
   return value.trim().replace(/^https?:\/\/(www\.)?instagram\.com\//i, "").replace(/[/?].*$/, "").replace(/^@/, "");
 }
@@ -227,7 +227,7 @@ async function buildLetterhead(h: Letterhead): Promise<Zip> {
     INSTAGRAM_LABEL: handle ? "INSTAGRAM" : "",
     INSTAGRAM: handle ? `@${handle}` : "",
     EMAIL_URL: h.email.trim() || "hello@bymantel.com",
-    INSTAGRAM_URL: `https://www.instagram.com/${handle || "bymantel"}`,
+    INSTAGRAM_URL: `https://www.instagram.com/${handle || "mantelbh"}`,
   };
   const styleOf: Record<string, StyleKey> = {
     NAME: "name", CR_LINE: "details", ADDRESS: "details",

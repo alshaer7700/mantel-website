@@ -2,7 +2,6 @@ import { useRef, useState } from "react";
 import type { MenuCategory, Page } from "@/app/types";
 import type { PAGE_DEFAULTS } from "@/lib/content/pages";
 import { formErrorMessage, subscribeNewsletter } from "@/lib/api/forms";
-import { MAPS_URL } from "@/lib/constants";
 
 type Props = {
   linkTo: (p: Page, c?: MenuCategory) => {
@@ -14,6 +13,8 @@ type Props = {
   /** False until the published content has had a moment to arrive, so a
       changed photo doesn't flash the old one first. */
   imagesReady: boolean;
+  /** "Find us": the Google Maps link from Shop settings. */
+  mapsUrl: string;
 };
 
 type CookiePreferences = {
@@ -38,7 +39,7 @@ function readCookieConsent(): CookiePreferences | null {
   }
 }
 
-export function Home({ linkTo, content, imagesReady }: Props) {
+export function Home({ linkTo, content, imagesReady, mapsUrl }: Props) {
   const savedCookieConsent = readCookieConsent();
   const [cookieOpen, setCookieOpen] = useState(savedCookieConsent === null);
   const [showCookieOptions, setShowCookieOptions] = useState(false);
@@ -117,7 +118,7 @@ export function Home({ linkTo, content, imagesReady }: Props) {
              */}
             <a
               className="editorial-link"
-              href={MAPS_URL}
+              href={mapsUrl}
               target="_blank"
               rel="noopener noreferrer"
             >

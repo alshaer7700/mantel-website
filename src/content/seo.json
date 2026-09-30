@@ -46,5 +46,9 @@
   "admin": {
     "title": "Staff Dashboard — Mantel",
     "description": "Protected Mantel staff operations dashboard."
+  },
+  "unsubscribe": {
+    "title": "Unsubscribe — Mantel Bahrain",
+    "description": "Stop receiving the Mantel newsletter."
   }
 }

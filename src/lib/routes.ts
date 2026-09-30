@@ -24,6 +24,7 @@ export const ROUTES: Record<Page, string> = {
   privacy: "/privacy",
   terms: "/terms",
   refund: "/refund",
+  unsubscribe: "/unsubscribe",
   admin: "/admin",
 };
 
