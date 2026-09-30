@@ -13,7 +13,11 @@ export type Order = {
   customer_email: string | null;
   customer_phone: string | null;
   status: OrderStatus;
+  /** What the customer pays, after any promo code. */
   subtotal: number;
+  /** What a promo code took off (supabase/037); 0 when none was used. */
+  discount: number;
+  promo_code: string | null;
   payment_method: string;
   pickup_at: string | null;
   created_at: string;
@@ -38,6 +42,8 @@ export function normalizeOrder(raw: Order): Order {
   return {
     ...raw,
     subtotal: n(raw.subtotal),
+    discount: n(raw.discount),
+    promo_code: raw.promo_code ?? null,
     refunded_amount: n(raw.refunded_amount),
     items: (raw.items ?? []).map((i) => ({ ...i, price: n(i.price) })),
   };

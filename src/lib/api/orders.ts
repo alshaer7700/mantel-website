@@ -47,6 +47,8 @@ export type PlaceOrderInput = {
    * Phase 4 — so nothing should pass 'card' until a hosted checkout exists.
    */
   paymentMethod: "cash" | "card";
+  /** A promo code the cart has already checked; the server checks it again. */
+  promoCode?: string | null;
 };
 
 export type PlaceOrderResult =
@@ -86,12 +88,37 @@ export async function placeOrder(input: PlaceOrderInput): Promise<PlaceOrderResu
      */
     pickup_at: input.pickupAt ? input.pickupAt.toISOString() : undefined,
     payment_method: input.paymentMethod,
+    promo_code: input.promoCode?.trim().slice(0, 40) || undefined,
   }));
 
   if (error) return { ok: false, error: toAppError(error) };
   if (!data) return { ok: false, error: { kind: "unknown", message: "No order id returned." } };
 
   return { ok: true, orderId: data };
+}
+
+export type PromoQuote =
+  | { ok: true; code: string; discount: number; label: string }
+  | { ok: false; message: string };
+
+/*
+ * Asks what a code would take off this bag (supabase/037). Display only: the
+ * discount on the order is worked out again by place_order from the real
+ * prices, so nothing the browser sends can change what's charged.
+ */
+export async function checkPromo(code: string, subtotal: number, email: string | null): Promise<PromoQuote> {
+  const { data, error } = await settle(supabase.rpc("check_promo", {
+    p_code: code.trim().slice(0, 40),
+    p_subtotal: Math.round(subtotal * 1000) / 1000,
+    p_email: email?.trim().slice(0, 254) || undefined,
+  }));
+  if (error || !data || typeof data !== "object") {
+    return { ok: false, message: "Couldn't check that code just now. Try again in a moment." };
+  }
+  const r = data as { ok?: boolean; code?: string; discount?: number | string; label?: string; message?: string };
+  return r.ok
+    ? { ok: true, code: String(r.code ?? ""), discount: Number(r.discount ?? 0), label: String(r.label ?? "") }
+    : { ok: false, message: String(r.message ?? "That code isn't valid.") };
 }
 
 /*

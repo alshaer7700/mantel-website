@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ArrowUpRight, Minus, Plus, X } from "lucide-react";
 import { formatBhd, type CartLine } from "@/app/content/retail";
-import { orderReference, type PlaceOrderResult } from "@/lib/api/orders";
+import { checkPromo, orderReference, type PlaceOrderResult, type PromoQuote } from "@/lib/api/orders";
 import { messageFor } from "@/lib/api/errors";
 import { useDialogFocus } from "@/app/hooks/useDialogFocus";
 
@@ -18,6 +18,8 @@ import { useDialogFocus } from "@/app/hooks/useDialogFocus";
  */
 export type CheckoutDetails = {
   customerEmail: string;
+  /** A code the cart checked; place_order checks it again against real prices. */
+  promoCode?: string;
 };
 
 type Props = {
@@ -71,6 +73,33 @@ export function CartDrawer({
   const [submitting, setSubmitting] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(null);
 
+  /* Promo code: tucked behind a link so the one-field checkout stays one field. */
+  const [promoOpen, setPromoOpen] = useState(false);
+  const [promoInput, setPromoInput] = useState("");
+  const [promo, setPromo] = useState<Extract<PromoQuote, { ok: true }> | null>(null);
+  const [promoMessage, setPromoMessage] = useState("");
+  const [promoBusy, setPromoBusy] = useState(false);
+  const discount = promo ? Math.min(promo.discount, subtotal) : 0;
+
+  const applyPromo = async (code = promoInput) => {
+    if (!code.trim()) return;
+    setPromoBusy(true);
+    setPromoMessage("");
+    const quote = await checkPromo(code, subtotal, customerEmail.trim() || null);
+    setPromoBusy(false);
+    if (quote.ok) setPromo(quote);
+    else {
+      setPromo(null);
+      setPromoMessage(quote.message);
+    }
+  };
+
+  /* The bag changed: the code's discount (or whether it still applies) may too. */
+  useEffect(() => {
+    if (promo) void applyPromo(promo.code);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [subtotal]);
+
   /* The session usually resolves after this mounts, so the address is filled in
      when it arrives — but never over something already typed. */
   useEffect(() => {
@@ -81,7 +110,7 @@ export function CartDrawer({
     event.preventDefault();
     setCheckoutError("");
     setSubmitting(true);
-    const result = await onCheckout({ customerEmail });
+    const result = await onCheckout({ customerEmail, promoCode: promo?.code });
     setSubmitting(false);
     if (!result.ok) {
       setCheckoutError(messageFor(result.error));
@@ -89,6 +118,9 @@ export function CartDrawer({
     }
     setOrderId(result.orderId);
     setCheckoutOpen(false);
+    setPromo(null);
+    setPromoInput("");
+    setPromoOpen(false);
   };
 
   const resetAfterClose = () => {
@@ -189,6 +221,18 @@ export function CartDrawer({
               <span>Subtotal</span>
               <strong>{formatBhd(subtotal)}</strong>
             </div>
+            {promo && discount > 0 && (
+              <>
+                <div className="editorial-cart-subtotal editorial-cart-discount">
+                  <span>{promo.code} · {promo.label}</span>
+                  <strong>−{formatBhd(discount)}</strong>
+                </div>
+                <div className="editorial-cart-subtotal">
+                  <span>Total</span>
+                  <strong>{formatBhd(subtotal - discount)}</strong>
+                </div>
+              </>
+            )}
             <p>Pickup at Mantel · Bahrain. Payment at the counter.</p>
             {notice && <p className="editorial-cart-notice" role="status">{notice}</p>}
             {checkoutError && <p className="editorial-cart-error" role="alert">{checkoutError}</p>}
@@ -211,6 +255,43 @@ export function CartDrawer({
                 <p className="editorial-cart-field-note">
                   Your order reference goes here. Nothing else — no account needed.
                 </p>
+                {promo ? (
+                  <p className="editorial-cart-field-note">
+                    Code {promo.code} applied.{" "}
+                    <button type="button" className="editorial-cart-textlink" onClick={() => { setPromo(null); setPromoInput(""); }}>
+                      Remove
+                    </button>
+                  </p>
+                ) : promoOpen ? (
+                  <div className="editorial-cart-promo">
+                    <label className="editorial-cart-field" htmlFor="cart-promo">
+                      <span className="editorial-cart-field-label">Promo code</span>
+                      <input
+                        id="cart-promo"
+                        value={promoInput}
+                        onChange={(event) => setPromoInput(event.target.value.toUpperCase())}
+                        onKeyDown={(event) => {
+                          if (event.key === "Enter") {
+                            event.preventDefault();
+                            void applyPromo();
+                          }
+                        }}
+                        maxLength={24}
+                        autoCapitalize="characters"
+                        autoComplete="off"
+                        spellCheck={false}
+                      />
+                    </label>
+                    <button type="button" className="editorial-cart-secondary" onClick={() => void applyPromo()} disabled={promoBusy || !promoInput.trim()}>
+                      {promoBusy ? "Checking…" : "Apply"}
+                    </button>
+                  </div>
+                ) : (
+                  <button type="button" className="editorial-cart-textlink" onClick={() => setPromoOpen(true)}>
+                    Have a promo code?
+                  </button>
+                )}
+                {promoMessage && !promo && <p className="editorial-cart-error" role="alert">{promoMessage}</p>}
                 <div className="editorial-cart-checkout-actions">
                   <button
                     type="button"

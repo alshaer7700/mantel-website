@@ -4202,3 +4202,36 @@
     color: var(--editorial-ink);
   }
 }
+
+/* ── Promo code in the cart ─────────────────────────────────────────────── */
+@layer components {
+  .editorial-cart-discount span {
+    color: var(--editorial-ink);
+  }
+
+  .editorial-cart-promo {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: 12px;
+  }
+
+  .editorial-cart-promo .editorial-cart-secondary {
+    width: auto;
+    padding-inline: 18px;
+  }
+
+  .editorial-cart-textlink {
+    justify-self: start;
+    padding: 0;
+    background: none;
+    border: 0;
+    color: var(--editorial-ink);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+  }
+}
