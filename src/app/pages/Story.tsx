@@ -1,5 +1,6 @@
 import type { MenuCategory, Page } from "@/app/types";
-import type { PAGE_DEFAULTS } from "@/lib/content/pages";
+import type { PAGE_DEFAULTS, PageStyles } from "@/lib/content/pages";
+import { Styled } from "@/app/components/Styled";
 
 type Props = {
   linkTo: (page: Page, category?: MenuCategory) => {
@@ -7,6 +8,7 @@ type Props = {
     onClick: (event: React.MouseEvent) => void;
   };
   content: (typeof PAGE_DEFAULTS)["about"];
+  styles?: PageStyles;
   /** From Shop settings' opening hours; the shipped hours until those load. */
   hours: { days: string; hours: string }[];
 };
@@ -16,14 +18,14 @@ const FALLBACK_HOURS = [
   { days: "Weekend", hours: "8am – 12am" },
 ];
 
-export function Story({ linkTo, content, hours }: Props) {
+export function Story({ linkTo, content, styles, hours }: Props) {
   const rows = hours.length ? hours : FALLBACK_HOURS;
   return (
     <div className="editorial-about-page">
       <p className="editorial-overline">About Us</p>
       <div className="editorial-about-content">
-        <h1>{content.title}</h1>
-        <p className="editorial-about-placeholder" style={{ whiteSpace: "pre-line" }}>{content.text}</p>
+        <h1><Styled styles={styles} field="title">{content.title}</Styled></h1>
+        <p className="editorial-about-placeholder" style={{ whiteSpace: "pre-line" }}><Styled styles={styles} field="text">{content.text}</Styled></p>
 
         <dl className="editorial-about-hours" aria-label="Opening hours">
           {rows.map((row) => (
@@ -34,7 +36,7 @@ export function Story({ linkTo, content, hours }: Props) {
           ))}
         </dl>
 
-        <a {...linkTo("contact")} className="editorial-link">{content.link}</a>
+        <a {...linkTo("contact")} className="editorial-link"><Styled styles={styles} field="link">{content.link}</Styled></a>
       </div>
     </div>
   );

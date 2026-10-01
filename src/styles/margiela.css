@@ -4235,3 +4235,75 @@
     cursor: pointer;
   }
 }
+
+/* ── Stamp card page (/wallet) and the account's card ── */
+@layer components {
+  .editorial-stamps {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 28px;
+  }
+
+  .editorial-stamp {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1px dashed var(--editorial-line);
+  }
+
+  .editorial-stamp.is-reward {
+    border: 1px solid var(--editorial-red);
+  }
+
+  .editorial-stamp.is-on {
+    border: 1px solid var(--editorial-red);
+    background: var(--editorial-red);
+  }
+
+  .editorial-wallet-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 24px;
+    padding: 12px 20px;
+    background: #000;
+    color: #fff;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+  }
+
+  .editorial-wallet-button:hover,
+  .editorial-wallet-button:focus-visible {
+    background: var(--editorial-dark);
+  }
+}
+
+@layer components {
+  .editorial-account-stamps {
+    margin-top: 22px;
+    padding-top: 18px;
+    border-top: 1px solid var(--editorial-line);
+  }
+
+  .editorial-account-stamps .editorial-stamps {
+    margin-top: 12px;
+    gap: 8px;
+  }
+
+  .editorial-account-stamps .editorial-stamp {
+    width: 22px;
+    height: 22px;
+  }
+
+  .editorial-account-stamps-title {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--editorial-ink);
+  }
+}

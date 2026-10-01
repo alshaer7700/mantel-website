@@ -14,6 +14,8 @@ export type Page =
   | "refund"
   /* Where a newsletter's unsubscribe link lands (?t=token). Not in the nav. */
   | "unsubscribe"
+  /* A stamp card's private page (?t=token): live stamps, Apple Wallet. */
+  | "wallet"
   | "admin";
 
 /*

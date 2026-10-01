@@ -25,6 +25,7 @@ export const ROUTES: Record<Page, string> = {
   terms: "/terms",
   refund: "/refund",
   unsubscribe: "/unsubscribe",
+  wallet: "/wallet",
   admin: "/admin",
 };
 

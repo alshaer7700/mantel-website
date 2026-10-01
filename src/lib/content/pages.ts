@@ -126,3 +126,55 @@ export function toLegalDoc(values: PageValues): LegalDoc {
       .filter((s) => s.heading || s.paragraphs.length),
   };
 }
+
+/*
+ * Font and size for any box, chosen in Website pages. Kept beside the words
+ * in the same row, under "_styles" (mergePage ignores it), keyed by field id —
+ * or "list.field" for every row of a list, e.g. "items.answer". Size is a
+ * percentage of the size the website's design gives that text, so a heading
+ * stays a heading at 100%.
+ */
+export const TEXT_FONTS = {
+  "garamond-italic": { label: "EB Garamond italic", css: `"EB Garamond", Georgia, "Times New Roman", serif`, italic: true },
+  garamond: { label: "EB Garamond upright", css: `"EB Garamond", Georgia, "Times New Roman", serif`, italic: false },
+  mono: { label: "Fira Mono", css: `"Fira Mono", Menlo, Consolas, "Courier New", monospace`, italic: false },
+  georgia: { label: "Georgia", css: `Georgia, "Times New Roman", serif`, italic: false },
+  times: { label: "Times New Roman", css: `"Times New Roman", Times, serif`, italic: false },
+  arial: { label: "Arial", css: `Arial, Helvetica, sans-serif`, italic: false },
+  verdana: { label: "Verdana", css: `Verdana, Geneva, sans-serif`, italic: false },
+  courier: { label: "Courier New", css: `"Courier New", Courier, monospace`, italic: false },
+} as const;
+
+export type TextFont = keyof typeof TEXT_FONTS;
+export type TextStyle = { font?: TextFont; size?: number };
+export type PageStyles = Record<string, TextStyle>;
+
+export const STYLES_FIELD = "_styles";
+export const SIZE_MIN = 50;
+export const SIZE_MAX = 250;
+
+/** The styles saved with a page, with anything unknown or out of range dropped. */
+export function pageStyles(raw: unknown): PageStyles {
+  const src = raw && typeof raw === "object" ? (raw as Record<string, unknown>)[STYLES_FIELD] : null;
+  if (!src || typeof src !== "object") return {};
+  const out: PageStyles = {};
+  for (const [id, v] of Object.entries(src as Record<string, unknown>)) {
+    if (!v || typeof v !== "object") continue;
+    const { font, size } = v as { font?: unknown; size?: unknown };
+    const s: TextStyle = {};
+    if (typeof font === "string" && font in TEXT_FONTS) s.font = font as TextFont;
+    if (typeof size === "number" && Number.isFinite(size) && size !== 100) s.size = Math.min(SIZE_MAX, Math.max(SIZE_MIN, Math.round(size)));
+    if (s.font || s.size) out[id] = s;
+  }
+  return out;
+}
+
+/** Inline CSS for a styled box; undefined when it keeps the website's own look. */
+export function textStyleCss(s: TextStyle | undefined): { fontFamily?: string; fontStyle?: "italic" | "normal"; fontSize?: string } | undefined {
+  if (!s || (!s.font && !s.size)) return undefined;
+  const f = s.font ? TEXT_FONTS[s.font] : null;
+  return {
+    ...(f ? { fontFamily: f.css, fontStyle: f.italic ? "italic" : "normal" } : {}),
+    ...(s.size ? { fontSize: `${s.size}%` } : {}),
+  };
+}
