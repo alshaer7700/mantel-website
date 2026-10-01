@@ -3452,3 +3452,57 @@ a.adm-list-row:hover {
   letter-spacing: 0.08em;
   margin-top: 2mm;
 }
+
+/* ── Website pages: font and size per box ─────────────────────────────── */
+
+.adm .adm-cms-field {
+  display: grid;
+  gap: 6px;
+}
+
+.adm .adm-style-toggle {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 4px 0;
+  background: none;
+  border: 0;
+  color: var(--a-muted);
+  font-family: var(--a-ui);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  text-align: start;
+}
+
+.adm .adm-style-toggle:hover {
+  color: var(--a-ink);
+}
+
+.adm .adm-style-summary {
+  font-family: var(--a-font);
+  font-size: 13px;
+  letter-spacing: 0;
+}
+
+.adm .adm-style-summary.is-set {
+  color: var(--a-brand);
+}
+
+.adm .adm-style-panel {
+  display: grid;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--a-line);
+  background: var(--a-bg);
+}
+
+.adm .adm-style-preview {
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px dashed var(--a-line-strong);
+  color: var(--a-ink);
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}

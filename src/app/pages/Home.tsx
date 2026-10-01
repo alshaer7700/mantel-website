@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import type { MenuCategory, Page } from "@/app/types";
-import type { PAGE_DEFAULTS } from "@/lib/content/pages";
+import type { PAGE_DEFAULTS, PageStyles } from "@/lib/content/pages";
+import { Styled } from "@/app/components/Styled";
 import { formErrorMessage, subscribeNewsletter } from "@/lib/api/forms";
 
 type Props = {
@@ -10,6 +11,8 @@ type Props = {
   };
   /** Words and photos from the dashboard's Website pages, over the defaults. */
   content: (typeof PAGE_DEFAULTS)["home"];
+  /** Fonts and sizes chosen in Website pages. */
+  styles?: PageStyles;
   /** False until the published content has had a moment to arrive, so a
       changed photo doesn't flash the old one first. */
   imagesReady: boolean;
@@ -39,7 +42,7 @@ function readCookieConsent(): CookiePreferences | null {
   }
 }
 
-export function Home({ linkTo, content, imagesReady, mapsUrl }: Props) {
+export function Home({ linkTo, content, styles, imagesReady, mapsUrl }: Props) {
   const savedCookieConsent = readCookieConsent();
   const [cookieOpen, setCookieOpen] = useState(savedCookieConsent === null);
   const [showCookieOptions, setShowCookieOptions] = useState(false);
@@ -98,17 +101,17 @@ export function Home({ linkTo, content, imagesReady, mapsUrl }: Props) {
         <img className="editorial-hero-photo" src={content.hero_image} alt={content.hero_alt} style={imagesReady ? undefined : { visibility: "hidden" }} />
         <div className="editorial-hero-content">
           <div className="editorial-hero-links">
-            <a {...linkTo("menu")} className="editorial-link">{content.hero_link}</a>
+            <a {...linkTo("menu")} className="editorial-link"><Styled styles={styles} field="hero_link">{content.hero_link}</Styled></a>
           </div>
         </div>
       </section>
 
       <section className="editorial-intro" id="menu">
         <div className="editorial-intro-copy">
-          <p className="editorial-overline">{content.ritual_overline}</p>
-          <h2>{content.ritual_title}</h2>
+          <p className="editorial-overline"><Styled styles={styles} field="ritual_overline">{content.ritual_overline}</Styled></p>
+          <h2><Styled styles={styles} field="ritual_title">{content.ritual_title}</Styled></h2>
           <div className="editorial-inline-links">
-            <a {...linkTo("ritual")} className="editorial-link">{content.ritual_link}</a>
+            <a {...linkTo("ritual")} className="editorial-link"><Styled styles={styles} field="ritual_link">{content.ritual_link}</Styled></a>
             {/*
              * The one outbound link in this section, and the only reason it is a
              * plain <a> rather than a linkTo(): "Find us" means the pin on
@@ -133,15 +136,15 @@ export function Home({ linkTo, content, imagesReady, mapsUrl }: Props) {
 
       <section className="editorial-newsletter" aria-labelledby="newsletter-heading">
         <div>
-          <p className="editorial-overline">{content.newsletter_overline}</p>
-          <h2 id="newsletter-heading">{content.newsletter_title}</h2>
+          <p className="editorial-overline"><Styled styles={styles} field="newsletter_overline">{content.newsletter_overline}</Styled></p>
+          <h2 id="newsletter-heading"><Styled styles={styles} field="newsletter_title">{content.newsletter_title}</Styled></h2>
         </div>
         <div className="editorial-newsletter-copy">
           {newsletterStatus === "sent" ? (
-            <p className="editorial-newsletter-success" role="status">{content.newsletter_thanks}</p>
+            <p className="editorial-newsletter-success" role="status"><Styled styles={styles} field="newsletter_thanks">{content.newsletter_thanks}</Styled></p>
           ) : (
             <>
-              <p>{content.newsletter_text}</p>
+              <p><Styled styles={styles} field="newsletter_text">{content.newsletter_text}</Styled></p>
               <form className="editorial-newsletter-form" onSubmit={submitNewsletter} aria-busy={newsletterStatus === "sending"}>
                 <input
                   type="text"

@@ -29,7 +29,8 @@ import type { Page, MenuCategory, MenuItem } from "@/app/types";
 import { pathFor, routeFor } from "@/lib/routes";
 import { INSTAGRAM_URL, MAPS_URL, ORDERING_OPEN } from "@/lib/constants";
 import { describeOpening, fetchSite, hoursRows, isLive, type SiteInfo } from "@/lib/api/site";
-import { contentKey, mergePage, toLegalDoc, type PageKey } from "@/lib/content/pages";
+import { contentKey, mergePage, pageStyles, toLegalDoc, type PageKey } from "@/lib/content/pages";
+import { Styled } from "@/app/components/Styled";
 import { AnnouncementBar, MaintenancePage, SitePopup } from "@/app/components/SiteNotices";
 import { formErrorMessage, submitContactMessage } from "@/lib/api/forms";
 import { useDialogFocus } from "@/app/hooks/useDialogFocus";
@@ -516,6 +517,8 @@ export default function App() {
   }
 
   const pageText = <K extends PageKey>(key: K) => mergePage(key, site?.content[contentKey(key)]);
+  /* Fonts and sizes chosen per box in Website pages. */
+  const pageStyle = (key: PageKey) => pageStyles(site?.content[contentKey(key)]);
   const status = site?.status;
   const orderingOpen = ORDERING_OPEN && (status?.open ?? true);
   const opening = describeOpening(status?.next_open);
@@ -749,7 +752,7 @@ export default function App() {
       {page === "home" && (
         <main id="main-content" className="flex flex-col min-h-screen" style={{ paddingTop: navHeight }}>
           <div className="flex-1">
-            <Home linkTo={linkTo} content={pageText("home")} imagesReady={contentReady} mapsUrl={mapsUrl} />
+            <Home linkTo={linkTo} content={pageText("home")} styles={pageStyle("home")} imagesReady={contentReady} mapsUrl={mapsUrl} />
           </div>
           <EditorialFooter linkTo={linkTo} instagramUrl={instagramUrl} />
         </main>
@@ -759,7 +762,7 @@ export default function App() {
       {page === "ritual" && (
         <main id="main-content" className="flex flex-col min-h-screen" style={{ paddingTop: navHeight }}>
           <div className="flex-1">
-            <FridayEspresso linkTo={linkTo} content={pageText("friday")} mapsUrl={mapsUrl} />
+            <FridayEspresso linkTo={linkTo} content={pageText("friday")} styles={pageStyle("friday")} mapsUrl={mapsUrl} />
           </div>
           <EditorialFooter linkTo={linkTo} instagramUrl={instagramUrl} />
         </main>
@@ -789,6 +792,7 @@ export default function App() {
               onIncrement={incrementCart}
               onDecrement={decrementCart}
               content={pageText("pickup")}
+              styles={pageStyle("pickup")}
             />
           </div>
           <EditorialFooter linkTo={linkTo} instagramUrl={instagramUrl} />
@@ -822,7 +826,7 @@ export default function App() {
       {page === "story" && (
         <main id="main-content" className="flex flex-col min-h-screen" style={{ paddingTop: navHeight }}>
           <div className="flex-1 px-[var(--pad)]">
-            <Story linkTo={linkTo} content={pageText("about")} hours={hoursRows(site?.hours?.week)} />
+            <Story linkTo={linkTo} content={pageText("about")} styles={pageStyle("about")} hours={hoursRows(site?.hours?.week)} />
           </div>
           <EditorialFooter linkTo={linkTo} instagramUrl={instagramUrl} />
         </main>
@@ -869,8 +873,8 @@ export default function App() {
       {page === "faq" && (
         <main id="main-content" className="min-h-screen flex flex-col" style={{ paddingTop: navHeight }}>
           <div className="flex-1 max-w-2xl w-full mx-auto px-6 py-14">
-            <h1 className="font-serif font-semibold text-[length:var(--fs-section-title)] leading-[0.96] mb-12">{pageText("faq").title}</h1>
-            <FaqAccordion items={pageText("faq").items.filter((f) => f.question.trim())} />
+            <h1 className="font-serif font-semibold text-[length:var(--fs-section-title)] leading-[0.96] mb-12"><Styled styles={pageStyle("faq")} field="title">{pageText("faq").title}</Styled></h1>
+            <FaqAccordion items={pageText("faq").items.filter((f) => f.question.trim())} styles={pageStyle("faq")} />
           </div>
           <NewsletterSignup />
           <EditorialFooter linkTo={linkTo} instagramUrl={instagramUrl} />
@@ -880,7 +884,7 @@ export default function App() {
       {/* ══ POLICY PAGES ══ */}
       {(page === "privacy" || page === "terms" || page === "refund") && (
         <main id="main-content" className="min-h-screen flex flex-col" style={{ paddingTop: navHeight }}>
-          <PolicyPage doc={toLegalDoc(pageText(page))} />
+          <PolicyPage doc={toLegalDoc(pageText(page))} styles={pageStyle(page)} />
           <EditorialFooter linkTo={linkTo} instagramUrl={instagramUrl} />
         </main>
       )}

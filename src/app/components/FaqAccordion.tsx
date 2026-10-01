@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import type { FaqItem } from "@/app/content/legal";
+import type { PageStyles } from "@/lib/content/pages";
+import { Styled } from "@/app/components/Styled";
 
 /* Accordion styled after the inspiration reference: uppercase questions on
    thin full-width rules, chevron rotating open, quiet answer text. */
-export function FaqAccordion({ items }: { items: FaqItem[] }) {
+export function FaqAccordion({ items, styles }: { items: FaqItem[]; styles?: PageStyles }) {
   const [open, setOpen] = useState<number | null>(null);
 
   return (
@@ -17,7 +19,7 @@ export function FaqAccordion({ items }: { items: FaqItem[] }) {
             className="w-full flex items-center justify-between gap-4 py-5 text-left hover:opacity-60 transition-opacity"
           >
             <span className="font-serif font-medium text-[14px] tracking-[0.08em] uppercase">
-              {item.question}
+              <Styled styles={styles} field="items.question">{item.question}</Styled>
             </span>
             <ChevronDown
               size={16}
@@ -27,7 +29,7 @@ export function FaqAccordion({ items }: { items: FaqItem[] }) {
           </button>
           {open === i && (
             <p className="pb-5 pr-8 font-mono font-normal text-sm leading-relaxed text-muted-foreground">
-              {item.answer}
+              <Styled styles={styles} field="items.answer">{item.answer}</Styled>
             </p>
           )}
         </div>

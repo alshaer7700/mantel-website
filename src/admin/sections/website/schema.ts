@@ -6,9 +6,11 @@ import type { PageKey } from "@/lib/content/pages";
  * their originals) live in src/lib/content/pages.ts, shared with the website.
  */
 
-export type TextFieldDef = { id: string; label: string; kind: "text" | "textarea"; hint?: string; max?: number; rows?: number };
+/** noStyle: the box isn't shown as text on the page (a photo description), so it has no font or size. */
+export type TextFieldDef = { id: string; label: string; kind: "text" | "textarea"; hint?: string; max?: number; rows?: number; noStyle?: boolean };
 export type ImageFieldDef = { id: string; label: string; kind: "image"; hint?: string };
-export type ListFieldDef = { id: string; label: string; kind: "list"; item: TextFieldDef[]; itemLabel: string; addLabel: string; hint?: string; max?: number };
+/** styled: each row's boxes can take a font and size (one setting for all rows). */
+export type ListFieldDef = { id: string; label: string; kind: "list"; item: TextFieldDef[]; itemLabel: string; addLabel: string; hint?: string; max?: number; styled?: boolean };
 export type FieldDef = TextFieldDef | ImageFieldDef | ListFieldDef;
 export type GroupDef = { title: string; fields: FieldDef[] };
 export type PageDef = { key: PageKey; title: string; path: string; note?: string; groups: GroupDef[] };
@@ -28,6 +30,7 @@ const legalGroups = (): GroupDef[] => [
         id: "sections",
         label: "Sections",
         kind: "list",
+        styled: true,
         itemLabel: "Section",
         addLabel: "Add a section",
         max: 30,
@@ -50,7 +53,7 @@ export const PAGES: PageDef[] = [
         title: "Top of the page",
         fields: [
           { id: "hero_image", label: "Main photo", kind: "image", hint: "The large photo at the top. A tall photo works best." },
-          { id: "hero_alt", label: "Photo description", kind: "text", max: 160, hint: "Read out to people who can't see the photo." },
+          { id: "hero_alt", label: "Photo description", kind: "text", noStyle: true, max: 160, hint: "Read out to people who can't see the photo." },
           { id: "hero_link", label: "Link text", kind: "text", max: 30, hint: "Opens the menu." },
         ],
       },
@@ -61,7 +64,7 @@ export const PAGES: PageDef[] = [
           { id: "ritual_title", label: "Heading", kind: "text", max: 80 },
           { id: "ritual_link", label: "Link text", kind: "text", max: 30, hint: "Opens the Friday Espresso page." },
           { id: "ritual_image", label: "Photo", kind: "image" },
-          { id: "ritual_alt", label: "Photo description", kind: "text", max: 160 },
+          { id: "ritual_alt", label: "Photo description", kind: "text", noStyle: true, max: 160 },
         ],
       },
       {
@@ -102,8 +105,8 @@ export const PAGES: PageDef[] = [
         fields: [
           { id: "overline", label: "Small heading", kind: "text", max: 60 },
           { id: "title", label: "Heading", kind: "text", max: 80 },
-          { id: "note_1", label: "Note 01 on the photo", kind: "text", max: 40 },
-          { id: "note_2", label: "Note 02 on the photo", kind: "text", max: 40 },
+          { id: "note_1", label: "Note 01 on the photo", kind: "text", noStyle: true, max: 40 },
+          { id: "note_2", label: "Note 02 on the photo", kind: "text", noStyle: true, max: 40 },
         ],
       },
       {
@@ -172,6 +175,7 @@ export const PAGES: PageDef[] = [
             id: "items",
             label: "Questions",
             kind: "list",
+            styled: true,
             itemLabel: "Question",
             addLabel: "Add a question",
             max: 40,

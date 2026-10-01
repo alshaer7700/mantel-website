@@ -9,7 +9,8 @@ import {
   type TrayAnnotation,
 } from "@/app/content/ritual";
 import { TrayArt } from "@/app/components/ritual/TrayArt";
-import type { PAGE_DEFAULTS } from "@/lib/content/pages";
+import type { PAGE_DEFAULTS, PageStyles } from "@/lib/content/pages";
+import { Styled } from "@/app/components/Styled";
 
 /*
  * Friday Espresso — the page behind "View the details" in the home page's
@@ -95,18 +96,19 @@ type Props = {
   /** Words from the dashboard's Website pages. The photo and where its notes
       point stay in content/ritual.ts: they're measured off the picture. */
   content: (typeof PAGE_DEFAULTS)["friday"];
+  styles?: PageStyles;
   mapsUrl: string;
 };
 
-export function FridayEspresso({ linkTo, content, mapsUrl }: Props) {
+export function FridayEspresso({ linkTo, content, styles, mapsUrl }: Props) {
   const publishedExtraction = content.recipe.filter((spec) => spec.label.trim() && spec.value.trim());
   const annotations = TRAY_ANNOTATIONS.map((a, i) => ({ ...a, title: (i === 0 ? content.note_1 : i === 1 ? content.note_2 : a.title) || a.title }));
 
   return (
     <article className="editorial-ritual-page">
       <header className="editorial-ritual-head">
-        <p className="editorial-overline">{content.overline}</p>
-        <h1>{content.title}</h1>
+        <p className="editorial-overline"><Styled styles={styles} field="overline">{content.overline}</Styled></p>
+        <h1><Styled styles={styles} field="title">{content.title}</Styled></h1>
         <div className="editorial-inline-links">
           {ORDERING_OPEN && (
             <a {...linkTo("pickup")} className="editorial-link">Order before reach</a>
@@ -194,9 +196,9 @@ export function FridayEspresso({ linkTo, content, mapsUrl }: Props) {
         aria-labelledby="ritual-harvest-title"
       >
         <div className="editorial-ritual-specs-intro">
-          <p className="editorial-overline">{content.harvest_overline}</p>
-          <h2 id="ritual-harvest-title">{content.harvest_title}</h2>
-          <p style={{ whiteSpace: "pre-line" }}>{content.harvest_text}</p>
+          <p className="editorial-overline"><Styled styles={styles} field="harvest_overline">{content.harvest_overline}</Styled></p>
+          <h2 id="ritual-harvest-title"><Styled styles={styles} field="harvest_title">{content.harvest_title}</Styled></h2>
+          <p style={{ whiteSpace: "pre-line" }}><Styled styles={styles} field="harvest_text">{content.harvest_text}</Styled></p>
         </div>
       </section>
 
@@ -209,9 +211,9 @@ export function FridayEspresso({ linkTo, content, mapsUrl }: Props) {
       {publishedExtraction.length > 0 && (
         <section className="editorial-ritual-specs" aria-labelledby="ritual-recipe-title">
           <div className="editorial-ritual-specs-intro">
-            <p className="editorial-overline">{content.recipe_overline}</p>
-            <h2 id="ritual-recipe-title">{content.recipe_title}</h2>
-            <p>{content.recipe_text}</p>
+            <p className="editorial-overline"><Styled styles={styles} field="recipe_overline">{content.recipe_overline}</Styled></p>
+            <h2 id="ritual-recipe-title"><Styled styles={styles} field="recipe_title">{content.recipe_title}</Styled></h2>
+            <p><Styled styles={styles} field="recipe_text">{content.recipe_text}</Styled></p>
           </div>
 
           <dl className="editorial-ritual-spec-list">

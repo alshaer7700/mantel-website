@@ -5,7 +5,8 @@ import { SectionHead } from "@/app/components/SectionHead";
 import { PickUpList } from "@/app/components/pickup/PickUpList";
 import { LABEL } from "@/app/components/type";
 import { PICKUP_OPEN } from "@/lib/constants";
-import type { PAGE_DEFAULTS } from "@/lib/content/pages";
+import type { PAGE_DEFAULTS, PageStyles } from "@/lib/content/pages";
+import { Styled } from "@/app/components/Styled";
 
 /*
  * Order Before Reach: the only place on the site where a café item can be
@@ -28,9 +29,10 @@ type Props = {
   onIncrement: (id: string) => void;
   onDecrement: (id: string) => void;
   content: (typeof PAGE_DEFAULTS)["pickup"];
+  styles?: PageStyles;
 };
 
-export function PickUp({ linkTo, sections, loading, error, cartLines, onAdd, onIncrement, onDecrement, content }: Props) {
+export function PickUp({ linkTo, sections, loading, error, cartLines, onAdd, onIncrement, onDecrement, content, styles }: Props) {
   const hasItems = sections.some(([, items]) => items.length > 0);
   const itemCount = cartLines.reduce((total, line) => total + line.quantity, 0);
 
@@ -43,9 +45,9 @@ export function PickUp({ linkTo, sections, loading, error, cartLines, onAdd, onI
   if (!PICKUP_OPEN) {
     return (
       <div className="editorial-soon">
-        <p className="editorial-overline">{content.soon_overline}</p>
-        <h1>{content.soon_title}</h1>
-        <p className="editorial-soon-copy">{content.soon_text}</p>
+        <p className="editorial-overline"><Styled styles={styles} field="soon_overline">{content.soon_overline}</Styled></p>
+        <h1><Styled styles={styles} field="soon_title">{content.soon_title}</Styled></h1>
+        <p className="editorial-soon-copy"><Styled styles={styles} field="soon_text">{content.soon_text}</Styled></p>
         <div className="editorial-inline-links">
           <a {...linkTo("menu")} className="editorial-link">View the menu</a>
           <a {...linkTo("contact")} className="editorial-link">Contact us</a>
@@ -59,7 +61,7 @@ export function PickUp({ linkTo, sections, loading, error, cartLines, onAdd, onI
       <Shelf tag="Order before reach" note="Prices in BD">
         <SectionHead
           as="h1"
-          title={content.title}
+          title={<Styled styles={styles} field="title">{content.title}</Styled>}
           aside={
             <a {...linkTo("menu")} className={`${LABEL} editorial-menu-retail-link`}>
               View the full menu <span aria-hidden="true">↗</span>
@@ -68,7 +70,7 @@ export function PickUp({ linkTo, sections, loading, error, cartLines, onAdd, onI
         />
 
         <p className="font-serif text-[1rem] text-[color:var(--ink-muted)] max-w-[46ch] mb-[clamp(2rem,6vh,3.5rem)]">
-          {content.text}{" "}
+          <Styled styles={styles} field="text">{content.text}</Styled>{" "}
           {itemCount > 0 && (
             <span className="font-mono text-[13px] tracking-[0.02em] text-[color:var(--ink)]">
               {itemCount} item{itemCount === 1 ? "" : "s"} in your bag.

@@ -1,15 +1,15 @@
 import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, ChevronRight, ExternalLink, FileText, History, Plus, RotateCcw, Trash2, Upload } from "lucide-react";
+import { ArrowLeft, ChevronRight, ExternalLink, FileText, History, Plus, RotateCcw, Trash2, Type, Upload } from "lucide-react";
 import { useT } from "@/admin/i18n";
 import { useAdmin } from "@/admin/context";
 import { db, rpc, run } from "@/admin/lib/db";
 import { useAsync, useUnsavedGuard } from "@/admin/lib/useAsync";
 import { ago, dateTime } from "@/admin/lib/format";
-import { Button, IconButton, MoveButtons, TextArea, TextField, moveInArray } from "@/admin/ui/controls";
+import { Button, IconButton, MoveButtons, SelectField, TextArea, TextField, moveInArray } from "@/admin/ui/controls";
 import { ImagePicker } from "@/admin/ui/ImagePicker";
 import { Badge, Card, EmptyState, LoadError, Loading, Notice, PageHeader, SaveBar } from "@/admin/ui/layout";
 import { Modal, useConfirm, useToast } from "@/admin/ui/overlays";
-import { PAGE_DEFAULTS, contentKey, mergePage, type ListItem, type PageValues } from "@/lib/content/pages";
+import { PAGE_DEFAULTS, STYLES_FIELD, TEXT_FONTS, contentKey, mergePage, pageStyles, textStyleCss, type ListItem, type PageStyles, type PageValues, type TextFont, type TextStyle } from "@/lib/content/pages";
 import { PAGES, type FieldDef, type ListFieldDef, type PageDef } from "@/admin/sections/website/schema";
 
 /*
@@ -101,15 +101,20 @@ function PageEditor({ def }: { def: PageDef }) {
     return mergePage(def.key, r?.draft ?? r?.published ?? null) as PageValues;
   }, [row.data, row.loading, row.error, def.key]);
 
+  /* Fonts and sizes ride in the same row under "_styles"; mergePage leaves them out. */
+  const startStyles = useMemo<PageStyles>(() => pageStyles(row.data?.draft ?? row.data?.published ?? null), [row.data]);
+
   const [values, setValues] = useState<PageValues | null>(null);
+  const [styles, setStyles] = useState<PageStyles>({});
   const [busy, setBusy] = useState<"save" | "publish" | null>(null);
   const [historyOpen, setHistoryOpen] = useState(false);
 
   useEffect(() => {
     if (start) setValues(start);
   }, [start]);
+  useEffect(() => setStyles(startStyles), [startStyles]);
 
-  const dirty = !!values && !!start && !same(values, start);
+  const dirty = !!values && !!start && (!same(values, start) || !same(styles, startStyles));
   useUnsavedGuard(dirty);
 
   if (row.loading && !row.data && !row.error) return <Loading />;
@@ -118,12 +123,12 @@ function PageEditor({ def }: { def: PageDef }) {
 
   const r = row.data;
   const live = mergePage(def.key, r?.published ?? null) as PageValues;
-  const unpublished = !same(values, live);
+  const unpublished = !same(values, live) || !same(styles, pageStyles(r?.published ?? null));
 
   const saveDraft = async (): Promise<boolean> => {
     const { data: session } = await db.auth.getSession();
     const res = await run(db.from("site_content").upsert(
-      { key, draft: values, updated_at: new Date().toISOString(), updated_by: session.session?.user.id ?? null },
+      { key, draft: { ...values, [STYLES_FIELD]: styles }, updated_at: new Date().toISOString(), updated_by: session.session?.user.id ?? null },
       { onConflict: "key" },
     ));
     if (!res.ok) {
@@ -164,10 +169,19 @@ function PageEditor({ def }: { def: PageDef }) {
       body: t("The boxes are filled with the text the website started with. Nothing changes for visitors until you publish."),
       confirmLabel: t("Use the original text"),
     });
-    if (ok) setValues({ ...(PAGE_DEFAULTS[def.key] as PageValues) });
+    if (ok) {
+      setValues({ ...(PAGE_DEFAULTS[def.key] as PageValues) });
+      setStyles({});
+    }
   };
 
   const set = (id: string, v: string | ListItem[]) => setValues({ ...values, [id]: v });
+  const setStyle = (id: string, s: TextStyle | undefined) => {
+    const next = { ...styles };
+    if (s && (s.font || s.size)) next[id] = s;
+    else delete next[id];
+    setStyles(next);
+  };
 
   return (
     <>
@@ -191,7 +205,7 @@ function PageEditor({ def }: { def: PageDef }) {
           <Card key={g.title} title={t(g.title)}>
             <div className="adm-stack">
               {g.fields.map((f) => (
-                <FieldEditor key={f.id} field={f} value={values[f.id]} fallback={(PAGE_DEFAULTS[def.key] as PageValues)[f.id]} onChange={(v) => set(f.id, v)} />
+                <FieldEditor key={f.id} field={f} value={values[f.id]} fallback={(PAGE_DEFAULTS[def.key] as PageValues)[f.id]} onChange={(v) => set(f.id, v)} styles={styles} onStyle={setStyle} />
               ))}
             </div>
           </Card>
@@ -201,13 +215,14 @@ function PageEditor({ def }: { def: PageDef }) {
           <Button icon={<RotateCcw size={16} />} onClick={original}>{t("Go back to the original text")}</Button>
         </div>
       </div>
-      <SaveBar dirty={dirty} saving={busy === "save"} onSave={() => void save()} onDiscard={() => setValues(start)} message={t("Save as a draft, or publish to put it live")} />
+      <SaveBar dirty={dirty} saving={busy === "save"} onSave={() => void save()} onDiscard={() => { setValues(start); setStyles(startStyles); }} message={t("Save as a draft, or publish to put it live")} />
       <HistoryModal
         open={historyOpen}
         onClose={() => setHistoryOpen(false)}
         contentKey={key}
         onRestore={(v) => {
           setValues(mergePage(def.key, v) as PageValues);
+          setStyles(pageStyles(v));
           setHistoryOpen(false);
           toast.ok(t("Version loaded. Publish to put it back on the website."));
         }}
@@ -218,9 +233,11 @@ function PageEditor({ def }: { def: PageDef }) {
 
 /* ── Fields ──────────────────────────────────────────────────────────────── */
 
-function FieldEditor({ field, value, fallback, onChange }: { field: FieldDef; value: string | ListItem[] | undefined; fallback: string | ListItem[] | undefined; onChange: (v: string | ListItem[]) => void }) {
+type StyleProps = { styles: PageStyles; onStyle: (id: string, s: TextStyle | undefined) => void };
+
+function FieldEditor({ field, value, fallback, onChange, styles, onStyle }: { field: FieldDef; value: string | ListItem[] | undefined; fallback: string | ListItem[] | undefined; onChange: (v: string | ListItem[]) => void } & StyleProps) {
   const t = useT();
-  if (field.kind === "list") return <ListEditor field={field} value={Array.isArray(value) ? value : []} onChange={onChange} />;
+  if (field.kind === "list") return <ListEditor field={field} value={Array.isArray(value) ? value : []} onChange={onChange} styles={styles} onStyle={onStyle} />;
   const text = typeof value === "string" ? value : "";
   if (field.kind === "image") {
     const original = typeof fallback === "string" ? fallback : null;
@@ -236,16 +253,31 @@ function FieldEditor({ field, value, fallback, onChange }: { field: FieldDef; va
     );
   }
   const common = { label: t(field.label), value: text, onChange: (v: string) => onChange(v), maxLength: field.max, hint: field.hint ? t(field.hint) : undefined };
-  return field.kind === "textarea" ? <TextArea {...common} rows={field.rows ?? 3} /> : <TextField {...common} />;
+  const box = field.kind === "textarea" ? <TextArea {...common} rows={field.rows ?? 3} /> : <TextField {...common} />;
+  if (field.noStyle) return box;
+  return (
+    <div className="adm-cms-field">
+      {box}
+      <StylePicker value={styles[field.id]} sample={text} onChange={(s) => onStyle(field.id, s)} />
+    </div>
+  );
 }
 
-function ListEditor({ field, value, onChange }: { field: ListFieldDef; value: ListItem[]; onChange: (v: ListItem[]) => void }) {
+function ListEditor({ field, value, onChange, styles, onStyle }: { field: ListFieldDef; value: ListItem[]; onChange: (v: ListItem[]) => void } & StyleProps) {
   const t = useT();
   const blank = () => Object.fromEntries(field.item.map((f) => [f.id, ""]));
   const setItem = (i: number, id: string, v: string) => onChange(value.map((row, j) => (j === i ? { ...row, [id]: v } : row)));
   return (
     <div className="adm-stack" style={{ gap: 12 }}>
       {field.hint && <p className="adm-hint">{t(field.hint)}</p>}
+      {field.styled && (
+        <div className="adm-cms-item">
+          <span className="adm-overline">{t("Font and size for every {item}", { item: t(field.itemLabel).toLowerCase() })}</span>
+          {field.item.map((f) => (
+            <StylePicker key={f.id} label={t(f.label)} value={styles[`${field.id}.${f.id}`]} sample={value[0]?.[f.id] ?? ""} onChange={(s) => onStyle(`${field.id}.${f.id}`, s)} />
+          ))}
+        </div>
+      )}
       {value.length === 0 && <EmptyState icon={<FileText size={28} />} title={t("Nothing here yet")} />}
       {value.map((row, i) => (
         <div key={i} className="adm-cms-item">
@@ -265,6 +297,59 @@ function ListEditor({ field, value, onChange }: { field: ListFieldDef; value: Li
       {(!field.max || value.length < field.max) && (
         <div>
           <Button icon={<Plus size={16} />} onClick={() => onChange([...value, blank()])}>{t(field.addLabel)}</Button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ── Font and size ───────────────────────────────────────────────────────── */
+
+const SIZES = [60, 70, 80, 90, 100, 110, 125, 150, 175, 200, 250];
+
+/**
+ * A box's font and size, folded away under one small button so the page of
+ * boxes stays calm. Size is a percentage of what the website's design gives
+ * that text: 100% leaves it as designed.
+ */
+function StylePicker({ label, value, sample, onChange }: { label?: string; value: TextStyle | undefined; sample: string; onChange: (s: TextStyle | undefined) => void }) {
+  const t = useT();
+  const [open, setOpen] = useState(false);
+  const set = !!value && (!!value.font || !!value.size);
+  const summary = set
+    ? [value?.font ? t(TEXT_FONTS[value.font].label) : null, value?.size ? `${value.size}%` : null].filter(Boolean).join(" · ")
+    : t("Website's own font and size");
+  const css = textStyleCss(value);
+  return (
+    <div className="adm-style-picker">
+      <button type="button" className="adm-style-toggle" aria-expanded={open} onClick={() => setOpen(!open)}>
+        <Type size={14} aria-hidden="true" />
+        <span>{label ? `${label}: ` : ""}{t("Font and size")}</span>
+        <span className={set ? "adm-style-summary is-set" : "adm-style-summary"}>{summary}</span>
+      </button>
+      {open && (
+        <div className="adm-style-panel">
+          <div className="adm-form-grid">
+            <SelectField
+              label={t("Font")}
+              value={value?.font ?? ""}
+              onChange={(v) => onChange({ ...value, font: (v || undefined) as TextFont | undefined })}
+              options={[
+                { value: "", label: t("Website's own font") },
+                ...(Object.keys(TEXT_FONTS) as TextFont[]).map((k) => ({ value: k, label: t(TEXT_FONTS[k].label) })),
+              ]}
+            />
+            <SelectField
+              label={t("Size")}
+              value={String(value?.size ?? 100)}
+              onChange={(v) => onChange({ ...value, size: Number(v) === 100 ? undefined : Number(v) })}
+              options={SIZES.map((n) => ({ value: String(n), label: n === 100 ? t("100% (as designed)") : `${n}%` }))}
+            />
+          </div>
+          <p className="adm-style-preview" dir="auto">
+            <span style={{ ...css, fontSize: `${((value?.size ?? 100) / 100) * 18}px` }}>{sample.trim().slice(0, 120) || t("How the text will look")}</span>
+          </p>
+          {set && <div><Button size="sm" variant="ghost" icon={<RotateCcw size={14} />} onClick={() => onChange(undefined)}>{t("Back to the website's own font and size")}</Button></div>}
         </div>
       )}
     </div>

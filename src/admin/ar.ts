@@ -1517,4 +1517,13 @@ export const AR: Record<string, string> = {
   "That gift card isn't active.": "بطاقة الهدية هذه غير فعّالة.",
   "Enter an amount between BD 0.001 and BD 1000.": "أدخل مبلغًا بين 0.001 و1000 د.ب.",
   "You don't have access to this.": "ليست لديك صلاحية لهذا.",
+  "100% (as designed)": "100٪ (كما في التصميم)",
+  "Back to the website's own font and size": "العودة لخط الموقع وحجمه الأصليين",
+  "Font and size": "الخط والحجم",
+  "Font and size for every {item}": "الخط والحجم لكل {item}",
+  "How the text will look": "هكذا سيبدو النص",
+  "Website's own font": "خط الموقع الأصلي",
+  "Website's own font and size": "خط الموقع وحجمه الأصليين",
+  "EB Garamond italic": "EB Garamond مائل",
+  "EB Garamond upright": "EB Garamond مستقيم",
 };
