@@ -7,6 +7,15 @@
 [build.environment]
   NODE_VERSION = "24"
 
+# The Apple Wallet stamp card (supabase/functions/loyalty-pass). Proxied so
+# the link customers get is bymantel.com/wallet-pass?t=…; the query string
+# passes through. Must sit above the catch-all below.
+[[redirects]]
+  from = "/wallet-pass"
+  to = "https://llurzraacyoldqjwzbio.supabase.co/functions/v1/loyalty-pass"
+  status = 200
+  force = true
+
 # The app routes on the client, and Vite emits a single index.html. Without
 # this, a direct hit or a refresh on /menu asks Netlify for a file that was
 # never built and gets a 404. Status 200 rewrites rather than redirects, so the

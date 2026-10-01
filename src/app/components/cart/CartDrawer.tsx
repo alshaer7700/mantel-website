@@ -18,6 +18,8 @@ import { useDialogFocus } from "@/app/hooks/useDialogFocus";
  */
 export type CheckoutDetails = {
   customerEmail: string;
+  /** Only asked for while the stamp card is on: it is the card's number. */
+  customerPhone?: string;
   /** A code the cart checked; place_order checks it again against real prices. */
   promoCode?: string;
 };
@@ -37,6 +39,9 @@ type Props = {
   onCheckout: (details: CheckoutDetails) => Promise<PlaceOrderResult>;
   /** A signed-in customer's address, so the one field arrives already filled. */
   defaultEmail?: string;
+  /** Stamp card switched on: offer an optional mobile so the order earns a stamp. */
+  stampCard?: { stamps_needed: number; reward: string } | null;
+  defaultPhone?: string;
   id?: string;
 };
 
@@ -53,6 +58,8 @@ export function CartDrawer({
   onRemove,
   onCheckout,
   defaultEmail,
+  stampCard,
+  defaultPhone,
   id,
 }: Props) {
   const itemCount = lines.reduce((total, line) => total + line.quantity, 0);
@@ -69,6 +76,7 @@ export function CartDrawer({
         : undefined;
   const [checkoutOpen, setCheckoutOpen] = useState(false);
   const [customerEmail, setCustomerEmail] = useState(defaultEmail ?? "");
+  const [customerPhone, setCustomerPhone] = useState(defaultPhone ?? "");
   const [checkoutError, setCheckoutError] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(null);
@@ -105,12 +113,15 @@ export function CartDrawer({
   useEffect(() => {
     if (defaultEmail) setCustomerEmail((current) => current || defaultEmail);
   }, [defaultEmail]);
+  useEffect(() => {
+    if (defaultPhone) setCustomerPhone((current) => current || defaultPhone);
+  }, [defaultPhone]);
 
   const handleCheckout = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setCheckoutError("");
     setSubmitting(true);
-    const result = await onCheckout({ customerEmail, promoCode: promo?.code });
+    const result = await onCheckout({ customerEmail, customerPhone: stampCard ? customerPhone.trim() : undefined, promoCode: promo?.code });
     setSubmitting(false);
     if (!result.ok) {
       setCheckoutError(messageFor(result.error));
@@ -255,6 +266,26 @@ export function CartDrawer({
                 <p className="editorial-cart-field-note">
                   Your order reference goes here. Nothing else — no account needed.
                 </p>
+                {stampCard && (
+                  <>
+                    <label className="editorial-cart-field" htmlFor="cart-phone">
+                      <span className="editorial-cart-field-label">Mobile (optional)</span>
+                      <input
+                        id="cart-phone"
+                        type="tel"
+                        inputMode="tel"
+                        value={customerPhone}
+                        onChange={(event) => setCustomerPhone(event.target.value)}
+                        placeholder="3xxx xxxx"
+                        maxLength={24}
+                        autoComplete="tel"
+                      />
+                    </label>
+                    <p className="editorial-cart-field-note">
+                      For your stamp card: every order is a stamp, and {stampCard.stamps_needed} stamps get you {stampCard.reward.charAt(0).toLowerCase()}{stampCard.reward.slice(1)}.
+                    </p>
+                  </>
+                )}
                 {promo ? (
                   <p className="editorial-cart-field-note">
                     Code {promo.code} applied.{" "}

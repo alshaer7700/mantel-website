@@ -50,5 +50,9 @@
   "unsubscribe": {
     "title": "Unsubscribe — Mantel Bahrain",
     "description": "Stop receiving the Mantel newsletter."
+  },
+  "wallet": {
+    "title": "Your stamp card — Mantel Bahrain",
+    "description": "Your Mantel stamp card."
   }
 }

@@ -383,6 +383,8 @@ export type Database = {
         Returns: string
       }
       newsletter_unsubscribe: { Args: { p_token: string }; Returns: Json }
+      loyalty_card_public: { Args: { p_token: string }; Returns: Json }
+      my_loyalty: { Args: never; Returns: Json }
       check_promo: { Args: { p_code: string; p_subtotal: number; p_email?: string }; Returns: Json }
       ordering_status: { Args: never; Returns: Json }
       public_site: { Args: never; Returns: Json }

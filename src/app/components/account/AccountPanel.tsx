@@ -16,6 +16,7 @@ import { formatBhd } from "@/app/content/retail";
 import { messageFor, type AppError } from "@/lib/api/errors";
 import { ORDERING_OPEN } from "@/lib/constants";
 import { useDialogFocus } from "@/app/hooks/useDialogFocus";
+import { StampCardBlock } from "@/app/components/account/StampCardBlock";
 
 /*
  * The account, as one panel with six states rather than six pages.
@@ -81,6 +82,8 @@ export function AccountPanel({ session, recovering, onClose, onShopNow, navHeigh
   const [showPassword, setShowPassword] = useState(false);
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
+  /* The mobile as stored, so the stamp card reloads after a save, not per keystroke. */
+  const [savedPhone, setSavedPhone] = useState("");
 
   /* Follow the session: signing in or out moves the panel without the caller
      having to drive it. Recovery wins, because that is why the page opened. */
@@ -115,6 +118,7 @@ export function AccountPanel({ session, recovering, onClose, onShopNow, navHeigh
       if (!live || !p) return;
       setFullName(p.full_name);
       setPhone(p.phone ?? "");
+      setSavedPhone(p.phone ?? "");
     });
     return () => {
       live = false;
@@ -209,6 +213,7 @@ export function AccountPanel({ session, recovering, onClose, onShopNow, navHeigh
       run(async () => {
         const r = await saveProfile(session.user.id, { full_name: fullName, phone });
         if (!r.ok) return fail(r.error);
+        setSavedPhone(phone);
         setNotice("Saved.");
       });
     }
@@ -428,6 +433,7 @@ export function AccountPanel({ session, recovering, onClose, onShopNow, navHeigh
                     ? "Your details fill in at checkout, and past orders are under the Orders tab above."
                     : "Saved for checkout. Past orders will appear under the Orders tab once ordering opens."}
                 </p>
+                <StampCardBlock phoneKey={savedPhone} />
               </>
             )}
 

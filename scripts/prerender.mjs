@@ -27,7 +27,7 @@ const ORIGIN = "https://bymantel.com";
 /* The home page is index.html itself, already correct from the Vite build.
  * The staff dashboard is noindex and Disallow'd in robots.txt, so a preview
  * file for it would be pointless at best. */
-const SKIP = new Set(["home", "admin", "unsubscribe"]);
+const SKIP = new Set(["home", "admin", "unsubscribe", "wallet"]);
 
 const seo = JSON.parse(readFileSync("src/content/seo.json", "utf8"));
 const routesSource = readFileSync("src/lib/routes.ts", "utf8");

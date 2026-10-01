@@ -18,6 +18,7 @@ import { Cafe } from "@/app/pages/Cafe";
 import { PickUp } from "@/app/pages/PickUp";
 import { Story } from "@/app/pages/Story";
 import { Unsubscribe } from "@/app/pages/Unsubscribe";
+import { Wallet } from "@/app/pages/Wallet";
 import { ContactUs, type ContactForm } from "@/app/pages/ContactUs";
 import { useScrolled } from "@/app/hooks/useScrolled";
 import { SearchOverlay } from "@/app/components/SearchOverlay";
@@ -365,7 +366,7 @@ export default function App() {
     const description = product ? product.description : seo.description;
     document.title = title;
     updateMeta("name", "description", description);
-    updateMeta("name", "robots", page === "admin" || page === "unsubscribe" ? "noindex,nofollow" : "index,follow");
+    updateMeta("name", "robots", page === "admin" || page === "unsubscribe" || page === "wallet" ? "noindex,nofollow" : "index,follow");
     updateMeta("property", "og:title", title);
     updateMeta("property", "og:description", description);
     updateMeta("property", "og:url", canonicalUrl);
@@ -430,11 +431,12 @@ export default function App() {
       lines: cartLines.map((line) => ({ menuItemId: line.product.backendId as string, qty: line.quantity })),
       customerName: orderNameFrom(profileName, details.customerEmail),
       customerEmail: details.customerEmail || null,
-      /* The checkout stopped asking for a mobile. A signed-in customer's SAVED
-         one still rides along — a counter with a ready order and no way to
-         reach anyone is the problem the field existed for — and a guest simply
-         sends none, which the RPC accepts. */
-      customerPhone: profilePhone || null,
+      /* The checkout asks for a mobile only while the stamp card is on (it is
+         the card's number, supabase/038). Otherwise a signed-in customer's
+         SAVED one still rides along — a counter with a ready order and no way
+         to reach anyone is the problem the field existed for — and a guest
+         simply sends none, which the RPC accepts. */
+      customerPhone: details.customerPhone || profilePhone || null,
       paymentMethod: "cash",
       promoCode: details.promoCode ?? null,
     });
@@ -735,6 +737,8 @@ export default function App() {
         onRemove={removeFromCart}
         onCheckout={submitCartOrder}
         defaultEmail={session?.user.email ?? ""}
+        stampCard={site?.loyalty?.enabled ? site.loyalty : null}
+        defaultPhone={profilePhone}
       />
 
       {site && isLive(site.announcement) && site.announcement?.text.trim() && (
@@ -848,6 +852,15 @@ export default function App() {
         <main id="main-content" className="min-h-screen flex flex-col" style={{ paddingTop: navHeight }}>
           <div className="flex-1 px-[var(--pad)]">
             <Unsubscribe linkTo={linkTo} />
+          </div>
+          <EditorialFooter linkTo={linkTo} instagramUrl={instagramUrl} />
+        </main>
+      )}
+
+      {page === "wallet" && (
+        <main id="main-content" className="min-h-screen flex flex-col" style={{ paddingTop: navHeight }}>
+          <div className="flex-1 px-[var(--pad)]">
+            <Wallet linkTo={linkTo} />
           </div>
           <EditorialFooter linkTo={linkTo} instagramUrl={instagramUrl} />
         </main>

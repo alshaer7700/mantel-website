@@ -1,16 +1,18 @@
 import { useMemo, useState } from "react";
-import { Mail, Megaphone } from "lucide-react";
+import { Mail } from "lucide-react";
 import { useT } from "@/admin/i18n";
 import { useAdmin } from "@/admin/context";
 import { useAsync } from "@/admin/lib/useAsync";
 import { bahrainToday, dateOnly } from "@/admin/lib/format";
 import { ExportButton } from "@/admin/ui/ExportButton";
 import { db, run } from "@/admin/lib/db";
-import { Chips, SearchInput, Toggle } from "@/admin/ui/controls";
+import { Chips, SearchInput, Segmented, Toggle } from "@/admin/ui/controls";
 import { EmptyState, LoadError, Loading, PageHeader, Stat, Tabs } from "@/admin/ui/layout";
 import { useToast } from "@/admin/ui/overlays";
 import { NewslettersPanel } from "@/admin/sections/marketing/NewslettersPanel";
 import { PromosPanel } from "@/admin/sections/marketing/PromosPanel";
+import { LoyaltyPanel } from "@/admin/sections/marketing/LoyaltyPanel";
+import { GiftCardsPanel } from "@/admin/sections/marketing/GiftCardsPanel";
 
 type Subscriber = { email: string; status: "active" | "unsubscribed"; subscribed_at: string };
 
@@ -36,8 +38,29 @@ export function MarketingSection() {
           { value: "loyalty", label: t("Loyalty & gift cards") },
         ]}
       />
-      {tab === "subscribers" ? <Subscribers /> : tab === "campaigns" ? <NewslettersPanel /> : tab === "promos" ? <PromosPanel /> : <EmptyState icon={<Megaphone size={32} />} title={t("This screen is being built")} body={t("It will appear here in the next update.")} />}
+      {tab === "subscribers" ? <Subscribers /> : tab === "campaigns" ? <NewslettersPanel /> : tab === "promos" ? <PromosPanel /> : <LoyaltyAndGifts />}
     </>
+  );
+}
+
+/** Stamp cards and gift cards share a tab: both are what the counter checks. */
+function LoyaltyAndGifts() {
+  const t = useT();
+  const { rest, navigate } = useAdmin();
+  const sub = rest[1] === "gift-cards" ? "gift-cards" : "stamps";
+  return (
+    <div className="adm-stack" style={{ gap: 16 }}>
+      <Segmented
+        label={t("Show")}
+        value={sub}
+        onChange={(v) => navigate("marketing", "loyalty", v === "stamps" ? null : "gift-cards")}
+        options={[
+          { value: "stamps", label: t("Stamp cards") },
+          { value: "gift-cards", label: t("Gift cards") },
+        ]}
+      />
+      {sub === "stamps" ? <LoyaltyPanel /> : <GiftCardsPanel />}
+    </div>
   );
 }
 

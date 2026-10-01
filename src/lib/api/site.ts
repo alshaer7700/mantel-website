@@ -59,6 +59,8 @@ export type SiteInfo = {
   maintenance: { enabled: boolean; message: string } | null;
   /** Shop settings → Contact details. Blank fields fall back to lib/constants. */
   contact: { instagram?: string; maps_url?: string; email?: string } | null;
+  /** Marketing → Stamp cards. Off: the checkout doesn't ask for a mobile. */
+  loyalty: { enabled: boolean; stamps_needed: number; reward: string } | null;
 };
 
 /** One minute: long enough to spare reloads, short enough that a pause shows quickly. */
@@ -83,6 +85,7 @@ async function loadSite(): Promise<SiteInfo | null> {
     popup: (s.popup as Popup | undefined) ?? null,
     maintenance: (s.maintenance as SiteInfo["maintenance"] | undefined) ?? null,
     contact: (s.contact as SiteInfo["contact"] | undefined) ?? null,
+    loyalty: (s["marketing.loyalty"] as SiteInfo["loyalty"] | undefined) ?? null,
   };
 }
 

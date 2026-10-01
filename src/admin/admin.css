@@ -3351,3 +3351,104 @@ a.adm-list-row:hover {
     position: static;
   }
 }
+
+/* ── Loyalty & gift cards ─────────────────────────────────────────────── */
+
+.adm .adm-mono {
+  font-family: var(--a-mono);
+  letter-spacing: 0.04em;
+}
+
+.adm .adm-stamps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.adm .adm-stamp {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px dashed var(--a-line-strong);
+  display: inline-grid;
+  place-items: center;
+  color: var(--a-muted);
+}
+
+.adm .adm-stamp.is-on {
+  border: 1px solid var(--a-brand);
+  background: var(--a-brand);
+  color: #fff;
+}
+
+.adm .adm-stamp.is-reward:not(.is-on) {
+  border-style: solid;
+  color: var(--a-brand);
+}
+
+.adm .adm-stamp-count {
+  font-family: var(--a-display);
+  font-size: 30px;
+  line-height: 1.1;
+}
+
+.adm .adm-wallet-qr {
+  width: 240px;
+  height: 240px;
+  image-rendering: pixelated;
+  border: 1px solid var(--a-line);
+  background: #fff;
+  padding: 8px;
+}
+
+.adm .adm-dl {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 6px 16px;
+  margin: 0;
+}
+
+.adm .adm-dl dt {
+  color: var(--a-muted);
+}
+
+.adm .adm-dl dd {
+  margin: 0;
+}
+
+.mtl-gift {
+  padding-top: 18mm;
+  text-align: center;
+}
+
+.mtl-gift-amount {
+  font-size: 40pt;
+  line-height: 1.1;
+  margin: 5mm 0 7mm;
+}
+
+.mtl-gift-line {
+  font-size: 13pt;
+  margin: 0 0 3mm;
+}
+
+.mtl-gift-message {
+  font-size: 13pt;
+  max-width: 120mm;
+  margin: 6mm auto;
+  white-space: pre-wrap;
+}
+
+.mtl-gift-code {
+  display: inline-block;
+  border: 0.3mm solid currentColor;
+  padding: 5mm 10mm;
+  margin: 10mm 0 8mm;
+}
+
+.mtl-gift-code-value {
+  font-family: "Fira Mono", Menlo, Consolas, monospace;
+  font-size: 18pt;
+  letter-spacing: 0.08em;
+  margin-top: 2mm;
+}
