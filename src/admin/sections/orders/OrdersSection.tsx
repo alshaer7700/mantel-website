@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Bell, BellOff, ChevronDown, Plus, Receipt } from "lucide-react";
+import { Bell, BellOff, ChevronDown, Plus, Receipt, X } from "lucide-react";
 import { useT } from "@/admin/i18n";
 import { useAdmin } from "@/admin/context";
 import { useAsync, useInterval } from "@/admin/lib/useAsync";
@@ -16,6 +16,8 @@ import {
   bulkOrderStatus,
   fetchBoard,
   fetchOrders,
+  hasObjects,
+  isRetailOrder,
   setOrderStatus,
   type Order,
   type OrderStatus,
@@ -24,6 +26,9 @@ import { OrderDrawer } from "@/admin/sections/orders/OrderDrawer";
 import { ManualOrderModal } from "@/admin/sections/orders/ManualOrder";
 
 type Tab = "board" | "all";
+
+/** Both tabs fetch again this often while the screen is open. */
+const REFRESH_MS = 10000;
 
 export function OrdersSection() {
   const t = useT();
@@ -89,7 +94,7 @@ function BoardView({ version, onOpen, onChanged }: { version: number; onOpen: (i
   const [doneOpen, setDoneOpen] = useState(false);
   const [, tick] = useState(0);
 
-  useInterval(() => { void board.reload(); }, 15000);
+  useInterval(() => { void board.refresh(); }, REFRESH_MS);
   useInterval(() => tick((n) => n + 1), 30000);
 
   /* Chime and notify for orders that weren't here on the last look. */
@@ -150,18 +155,21 @@ function BoardView({ version, onOpen, onChanged }: { version: number; onOpen: (i
   if (board.loading && !board.data) return <Loading />;
   if (board.error && !board.data) return <LoadError message={board.error} onRetry={board.reload} />;
   const data = board.data!;
+  const cafe = data.active.filter((o) => !isRetailOrder(o));
+  /* Retail-only orders get their own column, grouped New, then Preparing, then Ready. */
+  const retail = COLUMNS.flatMap((col) => data.active.filter((o) => isRetailOrder(o) && o.status === col.status));
 
   return (
     <div className="adm-stack" style={{ gap: 16 }}>
       <div className="adm-spread">
-        <span className="adm-muted adm-small">{t("Updates every 15 seconds.")}</span>
+        <span className="adm-muted adm-small">{t("Updates every 10 seconds.")}</span>
         <Button size="sm" variant={sound ? "secondary" : "primary"} icon={sound ? <Bell size={14} /> : <BellOff size={14} />} onClick={toggleSound}>
           {sound ? t("Sound on") : t("Turn on sound for new orders")}
         </Button>
       </div>
       <div className="adm-board">
         {COLUMNS.map((col) => {
-          const orders = data.active.filter((o) => o.status === col.status);
+          const orders = cafe.filter((o) => o.status === col.status);
           return (
             <section key={col.status} className="adm-board-col" aria-label={t(col.title)}>
               <div className="adm-board-col-head">
@@ -175,6 +183,16 @@ function BoardView({ version, onOpen, onChanged }: { version: number; onOpen: (i
             </section>
           );
         })}
+        <section className="adm-board-col" aria-label={t("Objects / retail")}>
+          <div className="adm-board-col-head">
+            <h2 className="adm-overline" style={{ color: "var(--a-ink)" }}>{t("Objects / retail")}</h2>
+            <Badge tone={retail.some((o) => o.status === "received") ? "danger" : "neutral"}>{retail.length}</Badge>
+          </div>
+          {retail.length === 0 && <p className="adm-muted adm-small" style={{ padding: "8px 4px" }}>{t("No retail orders open.")}</p>}
+          {retail.map((o) => (
+            <Ticket key={o.id} order={o} fresh={fresh.has(o.id)} busy={busy === o.id} onOpen={() => onOpen(o.id)} onAdvance={advance} showStatus />
+          ))}
+        </section>
       </div>
 
       {data.done_today.length > 0 && (
@@ -205,11 +223,12 @@ function BoardView({ version, onOpen, onChanged }: { version: number; onOpen: (i
   );
 }
 
-function Ticket({ order, fresh, busy, onOpen, onAdvance }: { order: Order; fresh: boolean; busy: boolean; onOpen: () => void; onAdvance: (o: Order, to: OrderStatus) => void }) {
+function Ticket({ order, fresh, busy, onOpen, onAdvance, showStatus }: { order: Order; fresh: boolean; busy: boolean; onOpen: () => void; onAdvance: (o: Order, to: OrderStatus) => void; showStatus?: boolean }) {
   const t = useT();
   const next = NEXT_STEP[order.status];
   const waited = minutesSince(order.created_at);
   const late = order.status !== "ready" && (order.pickup_at ? new Date(order.pickup_at).getTime() < Date.now() : waited > 20);
+  const mixed = !isRetailOrder(order) && hasObjects(order);
   return (
     <article className={`adm-ticket ${fresh || order.status === "received" ? "is-new" : ""} ${late ? "is-late" : ""}`}>
       <button type="button" onClick={onOpen} style={{ all: "unset", cursor: "pointer", display: "grid", gap: 8 }}>
@@ -217,10 +236,12 @@ function Ticket({ order, fresh, busy, onOpen, onAdvance }: { order: Order; fresh
           <span className="adm-ticket-ref">{order.reference}</span>
           <span className="adm-muted adm-small" title={dateTime(order.created_at)}>{ago(order.created_at)}</span>
         </div>
+        {showStatus && <span style={{ justifySelf: "start" }}><Badge tone={STATUS[order.status].tone}>{t(STATUS[order.status].label)}</Badge></span>}
         <strong style={{ fontSize: 19, fontWeight: 500 }}>{order.customer_name}</strong>
         <ul className="adm-ticket-items">
           {order.items.map((i, k) => <li key={k}><span className="adm-num">{i.quantity}×</span> {i.name}</li>)}
         </ul>
+        {mixed && <span style={{ justifySelf: "start" }}><Badge tone="info">{t("Includes objects")}</Badge></span>}
         {order.notes && <p className="adm-ticket-note">{order.notes}</p>}
         <div className="adm-spread adm-small">
           <span className={late ? "adm-strong" : "adm-muted"} style={late ? { color: "var(--a-warn)" } : undefined}>
@@ -271,6 +292,8 @@ function HistoryView({ version, onOpen, onChanged }: { version: number; onOpen: 
     () => fetchOrders({ statuses, from: from || null, to: to || null, query: debounced, source, limit: PAGE, offset: page * PAGE }),
     [statuses, from, to, debounced, source, page, version],
   );
+
+  useInterval(() => { void orders.refresh(); }, REFRESH_MS);
 
   const setRange = (days: number | null) => {
     if (days === null) {
@@ -351,6 +374,7 @@ function HistoryView({ version, onOpen, onChanged }: { version: number; onOpen: 
     for (const id of pageIds) next.delete(id);
     return next;
   });
+  const clearAll = () => setSelected(new Set());
 
   return (
     <div className="adm-stack" style={{ gap: 16 }}>
@@ -399,11 +423,17 @@ function HistoryView({ version, onOpen, onChanged }: { version: number; onOpen: 
       {(pageIds.length > 0 || selected.size > 0) && (
         <div className="adm-spread">
           <div className="adm-row">
-            <Button size="sm" variant="ghost" disabled={pageIds.length === 0 || allOnPage} onClick={selectPage}>
-              {pages > 1 ? t("Select all on this page") : t("Select all")}
-            </Button>
-            <Button size="sm" variant="ghost" disabled={selected.size === 0} onClick={() => setSelected(new Set())}>{t("Clear")}</Button>
-            {selected.size > 0 && <strong className="adm-small">{t("{n} selected", { n: selected.size })}</strong>}
+            {!allOnPage && pageIds.length > 0 && (
+              <Button size="sm" variant="ghost" onClick={selectPage}>
+                {pages > 1 ? t("Select all on this page") : t("Select all")}
+              </Button>
+            )}
+            {selected.size > 0 && (
+              <>
+                <strong className="adm-small">{t("{n} selected", { n: selected.size })}</strong>
+                <Button size="sm" icon={<X size={14} />} onClick={clearAll}>{t("Clear selection")}</Button>
+              </>
+            )}
           </div>
           {selected.size > 0 && (
             <div className="adm-row">
