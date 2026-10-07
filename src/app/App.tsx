@@ -8,7 +8,7 @@ import { Home } from "@/app/pages/Home";
 import { FridayEspresso } from "@/app/pages/FridayEspresso";
 import { Objects } from "@/app/pages/Objects";
 import { ProductDetail } from "@/app/pages/ProductDetail";
-import { RETAIL_PRODUCTS } from "@/app/content/retail";
+import { RETAIL_PRODUCTS, shelfFromObjects } from "@/app/content/retail";
 import { fetchObjects } from "@/lib/api/objects";
 import { CartDrawer, type CheckoutDetails } from "@/app/components/cart/CartDrawer";
 import type { CartLine, CartProduct, RetailProduct } from "@/app/content/retail";
@@ -159,14 +159,11 @@ export default function App() {
     fetchObjects().then((result) => {
       if (!live) return;
       if (result.ok) {
-        const byName = new Map(result.objects.map((object) => [object.name.toLowerCase(), object]));
-        const merged = RETAIL_PRODUCTS.map((product) => {
-          const source = byName.get(product.name.toLowerCase());
-          return source
-            ? { ...product, backendId: source.id, price: Number(source.price), description: source.description || product.description }
-            : product;
-        });
-        setRetailProducts(merged);
+        /* The dashboard's Retail shop is the list: new products appear, hidden
+           or archived ones go. If it somehow comes back empty, keep the
+           built-in shelf rather than show an empty shop. */
+        const shelf = shelfFromObjects(result.objects);
+        if (shelf.length) setRetailProducts(shelf);
       } else {
         setRetailError(true);
       }

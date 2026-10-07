@@ -25,9 +25,22 @@ export type ShopObject = {
   /** Which line drawing stands in until a photograph exists. */
   art_key: string | null;
   sort_order: number;
+  /** The product page's address, /objects/<slug>. */
+  slug: string | null;
+  /** Every photo, in order, from Retail shop in the dashboard. */
+  images: string[] | null;
+  story: string | null;
+  care: string | null;
+  collection: string | null;
+  stock_qty: number | null;
+  sold_out_until: string | null;
+  /** Photos all the way round, front first, for the 360° turn (supabase/039). */
+  spin_images: string[] | null;
+  /** Font and size per text field, from Retail shop (supabase/040). */
+  text_styles: unknown;
 };
 
-const OBJECT_COLUMNS = "id, name, spec, description, price, image_url, art_key, sort_order";
+const OBJECT_COLUMNS = "id, name, spec, description, price, image_url, art_key, sort_order, slug, images, story, care, collection, stock_qty, sold_out_until, spin_images, text_styles";
 
 export type ObjectsResult =
   | { ok: true; objects: ShopObject[] }
@@ -50,6 +63,7 @@ async function loadObjects(): Promise<ObjectsResult> {
      * confirmed, so a policy regression would list a candle at 0.000.
      */
     .eq("is_available", true)
+    .is("archived_at", null)
     .order("sort_order"));
 
   if (error) return { ok: false, error: toAppError(error) };

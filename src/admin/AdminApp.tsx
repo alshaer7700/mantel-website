@@ -15,6 +15,7 @@ import { SignInGate, NotStaffGate, RecoveryGate } from "@/admin/gates/SignIn";
 import { TwoStepGate } from "@/admin/gates/TwoStep";
 import { CounterLock, useCounterLock } from "@/admin/gates/CounterLock";
 import { CommandPalette } from "@/admin/ui/CommandPalette";
+import { TEXT_SCALE, TEXT_SIZE_KEY, TEXT_SIZES, TextSizeContext, type TextSize } from "@/admin/lib/textSize";
 import { SectionView } from "@/admin/sections";
 
 const LANG_KEY = "mantel-admin-lang";
@@ -44,6 +45,11 @@ export default function AdminApp() {
   const [theme, setThemeState] = useState<"system" | "light" | "dark">(() => readLocal(THEME_KEY, ["system", "light", "dark"] as const, "light"));
   const [systemDark, setSystemDark] = useState(() => window.matchMedia?.("(prefers-color-scheme: dark)").matches ?? false);
   const [portalRoot, setPortalRoot] = useState<HTMLDivElement | null>(null);
+  const [textSize, setTextSizeState] = useState<TextSize>(() => readLocal<TextSize>(TEXT_SIZE_KEY, TEXT_SIZES, "normal"));
+  const setTextSize = useCallback((next: TextSize) => {
+    setTextSizeState(next);
+    writeLocal(TEXT_SIZE_KEY, next);
+  }, []);
 
   setActiveLang(lang);
 
@@ -88,7 +94,14 @@ export default function AdminApp() {
 
   return (
     <LangContext.Provider value={{ lang, setLang }}>
-      <div className="adm" dir={lang === "ar" ? "rtl" : "ltr"} data-theme={dark ? "dark" : "light"} ref={setPortalRoot}>
+      <TextSizeContext.Provider value={{ size: textSize, setSize: setTextSize }}>
+      <div
+        className="adm"
+        dir={lang === "ar" ? "rtl" : "ltr"}
+        data-theme={dark ? "dark" : "light"}
+        ref={setPortalRoot}
+        style={{ ["--adm-text-scale" as string]: String(TEXT_SCALE[textSize]) }}
+      >
         <PortalRootContext.Provider value={portalRoot}>
           <ToastProvider>
             <ConfirmProvider>
@@ -97,6 +110,7 @@ export default function AdminApp() {
           </ToastProvider>
         </PortalRootContext.Provider>
       </div>
+      </TextSizeContext.Provider>
     </LangContext.Provider>
   );
 }

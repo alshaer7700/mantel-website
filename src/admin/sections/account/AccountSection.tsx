@@ -7,6 +7,7 @@ import { Button, Segmented, TextField } from "@/admin/ui/controls";
 import { Badge, Card, Notice, PageHeader } from "@/admin/ui/layout";
 import { Modal, useToast } from "@/admin/ui/overlays";
 import { TwoStepSetup } from "@/admin/gates/TwoStep";
+import { useTextSize, type TextSize } from "@/admin/lib/textSize";
 import { SignInDetails } from "@/admin/sections/account/SignInDetails";
 
 export function AccountSection() {
@@ -14,6 +15,7 @@ export function AccountSection() {
   const toast = useToast();
   const { lang, setLang } = useLang();
   const { me, reloadMe, theme, setTheme } = useAdmin();
+  const textSize = useTextSize();
   const [name, setName] = useState(me.display_name);
   const [savingName, setSavingName] = useState(false);
   const [twoStepOpen, setTwoStepOpen] = useState(false);
@@ -78,6 +80,21 @@ export function AccountSection() {
               ]}
             />
             <p className="adm-hint">{t("Dark is easier on the eyes at the bar in the evening.")}</p>
+          </div>
+          <div className="adm-field">
+            <span className="adm-label">{t("Text size")}</span>
+            <Segmented<TextSize>
+              label={t("Text size")}
+              value={textSize.size}
+              onChange={textSize.setSize}
+              options={[
+                { value: "small", label: t("Small") },
+                { value: "normal", label: t("Normal") },
+                { value: "large", label: t("Large") },
+                { value: "xlarge", label: t("Extra large") },
+              ]}
+            />
+            <p className="adm-hint">{t("For the whole dashboard on this device. Printed documents don't change.")}</p>
           </div>
         </Card>
 

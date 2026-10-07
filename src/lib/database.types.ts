@@ -135,6 +135,16 @@ export type Database = {
           sort_order: number
           spec: string
           updated_at: string
+          slug: string | null
+          images: string[] | null
+          story: string | null
+          care: string | null
+          collection: string | null
+          stock_qty: number | null
+          sold_out_until: string | null
+          archived_at: string | null
+          spin_images: string[]
+          text_styles: Json
         }
         Insert: {
           art_key?: string | null
