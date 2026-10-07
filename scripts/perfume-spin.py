@@ -22,7 +22,10 @@ product's spin_images (supabase/039) point at those files.
 The current frames come from the four brushed-metal studio photos
 (oud3/leather3/vanilla3/wood3, run at 108 frames and 1.5x upscale, then
 scripts/perfume-spin-finish.py); the vanilla one has its label's missing
-"I" put back (FIX_I).
+"I" put back (FIX_I). Then scripts/perfume-spin-tidy.py gave the four one
+outline (no cap shadow by the neck, base cut where the glass meets its
+reflection) and refilled the glass behind the print: run it again after any
+rebuild of these four.
 """
 import json, sys, math
 import numpy as np, cv2
