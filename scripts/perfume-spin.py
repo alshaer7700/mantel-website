@@ -158,7 +158,20 @@ def fill_rows(img, hole):
             b = img[y, x1:min(W, x1 + 3)].mean(axis=0) if x1 < W else a
             t = (np.arange(x0, x1) - x0 + 1) / (x1 - x0 + 1)
             out[y, x0:x1] = a[None, :] * (1 - t[:, None]) + b[None, :] * t[:, None]
-    # soften the fill vertically a touch so rows don't streak
+    # A highlight next to a letter gets dragged across the gap as a streak a
+    # few rows tall. A vertical median over the filled pixels removes those
+    # while keeping the horizontal lines (meniscus, glass rim) that belong.
+    ys_, xs_ = np.where(hole)
+    y0, y1 = max(0, ys_.min() - 8), min(H, ys_.max() + 9)
+    x0, x1 = xs_.min(), xs_.max() + 1
+    region = out[y0:y1, x0:x1]
+    k = 15
+    padded = np.pad(region, ((k // 2, k // 2), (0, 0), (0, 0)), mode="edge")
+    stack = np.stack([padded[i:i + region.shape[0]] for i in range(k)], 0)
+    med = np.median(stack, axis=0)
+    sub = hole[y0:y1, x0:x1]
+    region[sub] = med[sub]
+    out[y0:y1, x0:x1] = region
     blur = cv2.GaussianBlur(out, (1, 5), 0)
     out[hole] = blur[hole]
     return out
@@ -234,64 +247,52 @@ def build(src, name, frames=36):
     alpha = np.where(text, np.clip((cleanL - L) / np.maximum(cleanL - inkL, 1), 0, 1), 0).astype(np.float32)
 
     # ── frames ────────────────────────────────────────────────────────────
-    ys = np.arange(y0, y1)
-    out_frames = []
+    # All label rows at once: for every pixel, which point of the original
+    # print is there at this angle (front surface), and which shows through
+    # from the back (mirrored, faint). cv2.remap does the sampling.
+    rows = np.array([y for y in range(y0, y1) if y in edges])
+    cs = np.array([(edges[y][0] + edges[y][1]) / 2 for y in rows], np.float32)[:, None]
+    hws = np.array([(edges[y][1] - edges[y][0]) / 2 for y in rows], np.float32)[:, None]
+    X = np.broadcast_to(xs[None, :], (len(rows), W)).astype(np.float32)
+    inside = np.abs(X - cs) < hws
+    psi = np.arcsin(np.clip((X - cs) / hws, -1, 1))
+    mapy = np.broadcast_to(rows[:, None].astype(np.float32), X.shape).copy()
+    band_alpha = alpha  # full image; remap reads rows by mapy
+
+    # sharpen the photo a touch (glass edges, cap highlights, print)
+    soft = cv2.GaussianBlur(clean, (0, 0), 1.1)
+    clean_sharp = np.clip(clean + 0.45 * (clean - soft), 0, 255)
+
+    ys_m, xs_m = np.where(mask > 0.01)
+    pad = 12
+    top, bot = max(0, ys_m.min() - pad), min(H - 1, ys_m.max() + pad)
+    left, right = max(0, xs_m.min() - pad), min(W - 1, xs_m.max() + pad)
+    results = []
     for f in range(frames):
         th = 2 * math.pi * f / frames
-        frame = clean.copy()
+        phi = psi - th
+        af = cv2.remap(band_alpha, (cs + hws * np.sin(phi)).astype(np.float32), mapy, cv2.INTER_CUBIC)
+        af = np.clip(af, 0, 1) * (inside & (np.cos(phi) > 0.02))
+        phib = (math.pi - psi) - th
+        ab = cv2.remap(band_alpha, (cs + hws * np.sin(phib)).astype(np.float32), mapy, cv2.INTER_CUBIC)
+        ab = np.clip(ab, 0, 1) * (inside & (np.cos(phib) > 0.02)) * 0.28
         a_tot = np.zeros((H, W), np.float32)
-        for y in ys:
-            if y not in edges: continue
-            a, b = edges[y]
-            c, hw = (a + b) / 2, (b - a) / 2
-            x = xs
-            u = np.clip((x - c) / hw, -1, 1)
-            inside = np.abs(x - c) < hw
-            psi = np.arcsin(u)
-            # front surface: the print that was at angle phi is now at phi + th
-            phi = psi - th
-            front = inside & (np.cos(phi) > 0.02)
-            src_x = c + hw * np.sin(phi)
-            af = np.interp(src_x, xs, alpha[y]) * front
-            # back surface, seen through the glass: mirrored and faint
-            phib = (math.pi - psi) - th
-            back = inside & (np.cos(phib) > 0.02)
-            src_xb = c + hw * np.sin(phib)
-            ab = np.interp(src_xb, xs, alpha[y]) * back * 0.28
-            a_tot[y] = np.maximum(af, ab)
-        a_tot = cv2.GaussianBlur(a_tot, (0, 0), 0.6)
-        frame = frame * (1 - a_tot[..., None]) + ink[None, None, :] * a_tot[..., None]
-        out_frames.append(frame)
-
-    # ── crop to the bottle, square canvas, consistent scale ───────────────
-    ys_m, xs_m = np.where(mask > 0.01)
-    top, bot = ys_m.min(), ys_m.max()
-    left, right = xs_m.min(), xs_m.max()
-    size = 1000
-    fill = 0.62  # bottle height as a share of the canvas
-    scale = size * fill / (bot - top + 1)
-    results = []
-    for frame in out_frames:
+        a_tot[rows] = np.maximum(af, ab)
+        a_tot = cv2.GaussianBlur(a_tot, (0, 0), 0.35)
+        frame = clean_sharp * (1 - a_tot[..., None]) + ink[None, None, :] * a_tot[..., None]
         rgba = np.dstack([frame, mask * 255]).clip(0, 255).astype(np.uint8)
-        crop = rgba[top:bot + 1, left:right + 1]
-        h, w = crop.shape[:2]
-        crop = cv2.resize(crop, (max(1, round(w * scale)), max(1, round(h * scale))), interpolation=cv2.INTER_AREA)
-        canvas = np.zeros((size, size, 4), np.uint8)
-        h, w = crop.shape[:2]
-        oy, ox = (size - h) // 2, (size - w) // 2
-        canvas[oy:oy + h, ox:ox + w] = crop
-        results.append(canvas)
+        results.append(rgba[top:bot + 1, left:right + 1])
     return results
 
 
 if __name__ == "__main__":
     src, out, name = sys.argv[1], sys.argv[2], sys.argv[3]
-    n = int(sys.argv[4]) if len(sys.argv) > 4 else 36
+    n = int(sys.argv[4]) if len(sys.argv) > 4 else 108
     import os
     os.makedirs(out, exist_ok=True)
     fr = build(src, name, n)
+    # full-resolution masters (the photo's own pixels, nothing scaled);
+    # scripts make the website frames, videos and GIFs from these
     for i, c in enumerate(fr):
-        rgba = cv2.cvtColor(c, cv2.COLOR_BGRA2RGBA)
-        from PIL import Image
-        Image.fromarray(rgba).save(f"{out}/{i + 1:02d}.webp", "WEBP", quality=82, method=6)
-    print(name, len(fr), "frames")
+        cv2.imwrite(f"{out}/{i + 1:03d}.png", c)
+    print(name, len(fr), "frames", fr[0].shape[1], "x", fr[0].shape[0])
