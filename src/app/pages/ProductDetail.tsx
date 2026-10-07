@@ -3,6 +3,7 @@ import { ChevronDown } from "lucide-react";
 import type { MenuCategory, Page } from "@/app/types";
 import { formatBhd, type CartLine, type RetailProduct } from "@/app/content/retail";
 import { ObjectSlides } from "@/app/components/objects/ObjectSlides";
+import { Styled } from "@/app/components/Styled";
 import { Spin360 } from "@/app/components/objects/Spin360";
 
 /*
@@ -43,8 +44,8 @@ export function ProductDetail({ linkTo, product, cartLines, onAdd }: Props) {
       </div>
 
       <div className="editorial-retail-detail-info">
-        <h1>{product.name}</h1>
-        <p className="editorial-retail-detail-description">{product.description}</p>
+        <h1><Styled styles={product.styles} field="name">{product.name}</Styled></h1>
+        <p className="editorial-retail-detail-description"><Styled styles={product.styles} field="description">{product.description}</Styled></p>
         <p className="editorial-retail-detail-price">{formatBhd(product.price)}</p>
 
         <button
@@ -112,7 +113,7 @@ function ProductAccordion({ product }: { product: RetailProduct }) {
               aria-hidden="true"
             />
           </button>
-          {open === key && <p>{body[key]}</p>}
+          {open === key && <p><Styled styles={product.styles} field={key === "object" ? "story" : key}>{body[key]}</Styled></p>}
         </div>
       ))}
     </div>

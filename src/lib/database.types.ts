@@ -144,6 +144,7 @@ export type Database = {
           sold_out_until: string | null
           archived_at: string | null
           spin_images: string[]
+          text_styles: Json
         }
         Insert: {
           art_key?: string | null

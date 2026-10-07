@@ -1,3 +1,4 @@
+import { cleanStyles, type PageStyles } from "@/lib/content/pages";
 import { db, rpc, run, type Result } from "@/admin/lib/db";
 
 export type Category = {
@@ -57,6 +58,8 @@ export type ObjectRow = {
   images: string[];
   /** Photos all the way round, front first, for the website's 360° turn. */
   spin_images: string[];
+  /** Font and size per text field on the website (supabase/040). */
+  text_styles: PageStyles;
   art_key: string | null;
   is_available: boolean;
   sort_order: number;
@@ -137,7 +140,7 @@ export async function loadMenuData(): Promise<Result<MenuData>> {
 export async function loadObjects(): Promise<Result<ObjectRow[]>> {
   const r = await run<ObjectRow[]>(db.from("objects").select("*").order("sort_order").order("name"));
   if (!r.ok) return r;
-  return { ok: true, value: (r.value ?? []).map((o) => ({ ...o, price: num(o.price), images: o.images ?? [], spin_images: o.spin_images ?? [], badges: o.badges ?? [] })) };
+  return { ok: true, value: (r.value ?? []).map((o) => ({ ...o, price: num(o.price), images: o.images ?? [], spin_images: o.spin_images ?? [], text_styles: cleanStyles(o.text_styles), badges: o.badges ?? [] })) };
 }
 
 export function saveMenuItem(item: Partial<MenuItemRow> & { id?: string }): Promise<Result<MenuItemRow>> {

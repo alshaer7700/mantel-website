@@ -1,6 +1,7 @@
 import type { MenuCategory, Page } from "@/app/types";
 import { formatBhd, type CartLine, type RetailProduct } from "@/app/content/retail";
 import { ObjectSlides } from "@/app/components/objects/ObjectSlides";
+import { Styled } from "@/app/components/Styled";
 import { Spin360 } from "@/app/components/objects/Spin360";
 
 type Props = {
@@ -76,8 +77,8 @@ export function Objects({ linkTo, products, loading, error, cartLines, onAdd }: 
               </a>
               <div className="editorial-object-info">
                 <div>
-                  <h2><a {...linkTo("objects", null, product.id)}>{product.name}</a></h2>
-                  <p>{product.description}</p>
+                  <h2><a {...linkTo("objects", null, product.id)}><Styled styles={product.styles} field="name">{product.name}</Styled></a></h2>
+                  <p><Styled styles={product.styles} field="description">{product.description}</Styled></p>
                 </div>
                 <div className="editorial-object-purchase">
                   <span>{formatBhd(product.price)}</span>

@@ -156,6 +156,11 @@ export const SIZE_MAX = 250;
 /** The styles saved with a page, with anything unknown or out of range dropped. */
 export function pageStyles(raw: unknown): PageStyles {
   const src = raw && typeof raw === "object" ? (raw as Record<string, unknown>)[STYLES_FIELD] : null;
+  return cleanStyles(src);
+}
+
+/** A field → { font, size } map (a page's "_styles", a product's text_styles), cleaned. */
+export function cleanStyles(src: unknown): PageStyles {
   if (!src || typeof src !== "object") return {};
   const out: PageStyles = {};
   for (const [id, v] of Object.entries(src as Record<string, unknown>)) {

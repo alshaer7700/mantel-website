@@ -43,7 +43,7 @@
   background: var(--a-bg);
   color: var(--a-ink);
   font-family: var(--a-font);
-  font-size: 17px;
+  font-size: calc(17px * var(--adm-text-scale, 1));
   line-height: 1.45;
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
@@ -75,7 +75,7 @@
   --a-font: var(--a-arabic);
   --a-display: var(--a-arabic);
   --a-ui: var(--a-arabic);
-  font-size: 16px;
+  font-size: calc(16px * var(--adm-text-scale, 1));
 }
 
 .adm *,
@@ -156,13 +156,13 @@
 
 .adm-brand strong {
   font-family: var(--a-display);
-  font-size: 24px;
+  font-size: calc(24px * var(--adm-text-scale, 1));
   font-weight: 500;
   letter-spacing: -0.01em;
 }
 
 .adm-brand span {
-  font-size: 12px;
+  font-size: calc(12px * var(--adm-text-scale, 1));
   color: var(--a-muted);
 }
 
@@ -173,7 +173,7 @@
 }
 
 .adm-nav-group {
-  font-size: 11px;
+  font-size: calc(11px * var(--adm-text-scale, 1));
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -229,7 +229,7 @@
   border-radius: 999px;
   background: var(--a-brand);
   color: #fff;
-  font-size: 12px;
+  font-size: calc(12px * var(--adm-text-scale, 1));
   font-weight: 600;
   display: inline-grid;
   place-items: center;
@@ -259,7 +259,7 @@
 }
 
 .adm-user span {
-  font-size: 12px;
+  font-size: calc(12px * var(--adm-text-scale, 1));
   color: var(--a-muted);
 }
 
@@ -356,7 +356,7 @@
 
 .adm-page-title {
   font-family: var(--a-display);
-  font-size: clamp(28px, 3.2vw, 36px);
+  font-size: calc(clamp(28px, 3.2vw, 36px) * var(--adm-text-scale, 1));
   font-weight: 500;
   line-height: 1.1;
   letter-spacing: -0.01em;
@@ -365,7 +365,7 @@
 
 .adm[dir="rtl"] .adm-page-title {
   font-weight: 700;
-  font-size: clamp(24px, 3vw, 30px);
+  font-size: calc(clamp(24px, 3vw, 30px) * var(--adm-text-scale, 1));
 }
 
 .adm-page-sub {
@@ -401,13 +401,13 @@
 }
 
 .adm-card-title {
-  font-size: 17px;
+  font-size: calc(17px * var(--adm-text-scale, 1));
   font-weight: 650;
 }
 
 .adm-card-sub {
   color: var(--a-muted);
-  font-size: 14px;
+  font-size: calc(14px * var(--adm-text-scale, 1));
 }
 
 .adm-grid {
@@ -458,7 +458,7 @@
 }
 
 .adm-small {
-  font-size: 13px;
+  font-size: calc(13px * var(--adm-text-scale, 1));
 }
 
 .adm-strong {
@@ -502,19 +502,19 @@ a.adm-stat:hover {
 
 .adm-stat-label {
   color: var(--a-muted);
-  font-size: 13px;
+  font-size: calc(13px * var(--adm-text-scale, 1));
   font-weight: 500;
 }
 
 .adm-stat-value {
-  font-size: 28px;
+  font-size: calc(28px * var(--adm-text-scale, 1));
   font-weight: 650;
   font-variant-numeric: tabular-nums;
   line-height: 1.15;
 }
 
 .adm-stat-note {
-  font-size: 13px;
+  font-size: calc(13px * var(--adm-text-scale, 1));
   color: var(--a-muted);
 }
 
@@ -541,7 +541,7 @@ a.adm-stat:hover {
   background: var(--a-surface);
   color: var(--a-ink);
   font-weight: 600;
-  font-size: 14px;
+  font-size: calc(14px * var(--adm-text-scale, 1));
   cursor: pointer;
   text-decoration: none;
   white-space: nowrap;
@@ -593,13 +593,13 @@ a.adm-stat:hover {
 .adm-btn-sm {
   min-height: 34px;
   padding: 5px 11px;
-  font-size: 13px;
+  font-size: calc(13px * var(--adm-text-scale, 1));
 }
 
 .adm-btn-lg {
   min-height: 52px;
   padding: 12px 22px;
-  font-size: 16px;
+  font-size: calc(16px * var(--adm-text-scale, 1));
 }
 
 .adm-btn-block {
@@ -641,7 +641,7 @@ a.adm-stat:hover {
 
 .adm-label {
   font-weight: 600;
-  font-size: 14px;
+  font-size: calc(14px * var(--adm-text-scale, 1));
   display: flex;
   align-items: center;
   gap: 6px;
@@ -650,16 +650,16 @@ a.adm-stat:hover {
 .adm-label-opt {
   font-weight: 400;
   color: var(--a-muted);
-  font-size: 13px;
+  font-size: calc(13px * var(--adm-text-scale, 1));
 }
 
 .adm-hint {
-  font-size: 13px;
+  font-size: calc(13px * var(--adm-text-scale, 1));
   color: var(--a-muted);
 }
 
 .adm-error {
-  font-size: 13px;
+  font-size: calc(13px * var(--adm-text-scale, 1));
   color: var(--a-brand);
   font-weight: 500;
 }
@@ -674,7 +674,7 @@ a.adm-stat:hover {
   border-radius: var(--a-radius-sm);
   background: var(--a-surface);
   color: var(--a-ink);
-  font-size: 15px;
+  font-size: calc(15px * var(--adm-text-scale, 1));
 }
 
 .adm-textarea {
@@ -716,7 +716,7 @@ a.adm-stat:hover {
   padding: 0 12px;
   background: var(--a-surface-2);
   color: var(--a-muted);
-  font-size: 14px;
+  font-size: calc(14px * var(--adm-text-scale, 1));
   border-inline-end: 1px solid var(--a-line);
 }
 
@@ -811,7 +811,7 @@ a.adm-stat:hover {
 
 .adm-toggle-text span {
   color: var(--a-muted);
-  font-size: 13px;
+  font-size: calc(13px * var(--adm-text-scale, 1));
 }
 
 .adm-check {
@@ -844,7 +844,7 @@ a.adm-stat:hover {
   border: 1px solid var(--a-line-strong);
   background: var(--a-surface);
   color: var(--a-ink-2);
-  font-size: 13px;
+  font-size: calc(13px * var(--adm-text-scale, 1));
   font-weight: 600;
   cursor: pointer;
 }
@@ -875,7 +875,7 @@ a.adm-stat:hover {
   padding: 6px 12px;
   border-radius: 5px;
   font-weight: 600;
-  font-size: 13px;
+  font-size: calc(13px * var(--adm-text-scale, 1));
   color: var(--a-muted);
   cursor: pointer;
   min-height: 32px;
@@ -930,7 +930,7 @@ a.adm-stat:hover {
   gap: 5px;
   padding: 2px 9px;
   border-radius: 999px;
-  font-size: 12px;
+  font-size: calc(12px * var(--adm-text-scale, 1));
   font-weight: 600;
   white-space: nowrap;
   background: var(--a-surface-2);
@@ -1038,7 +1038,7 @@ a.adm-list-row:hover {
 }
 
 .adm-list-meta {
-  font-size: 13px;
+  font-size: calc(13px * var(--adm-text-scale, 1));
   color: var(--a-muted);
   overflow-wrap: anywhere;
 }
@@ -1060,13 +1060,13 @@ a.adm-list-row:hover {
 .adm-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 14px;
+  font-size: calc(14px * var(--adm-text-scale, 1));
 }
 
 .adm-table th {
   text-align: start;
   font-weight: 600;
-  font-size: 12px;
+  font-size: calc(12px * var(--adm-text-scale, 1));
   color: var(--a-muted);
   padding: 10px 14px;
   border-bottom: 1px solid var(--a-line);
@@ -1122,7 +1122,7 @@ a.adm-list-row:hover {
 
 .adm-empty strong {
   color: var(--a-ink);
-  font-size: 16px;
+  font-size: calc(16px * var(--adm-text-scale, 1));
 }
 
 .adm-loading {
@@ -1183,7 +1183,7 @@ a.adm-list-row:hover {
 }
 
 .adm-modal-title {
-  font-size: 19px;
+  font-size: calc(19px * var(--adm-text-scale, 1));
   font-weight: 650;
 }
 
@@ -1241,7 +1241,7 @@ a.adm-list-row:hover {
 .adm-drawer-title {
   flex: 1;
   min-width: 0;
-  font-size: 18px;
+  font-size: calc(18px * var(--adm-text-scale, 1));
   font-weight: 650;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1392,7 +1392,7 @@ a.adm-list-row:hover {
   border: 1px solid var(--a-line-strong);
   background: var(--a-surface);
   color: var(--a-muted);
-  font-size: 12px;
+  font-size: calc(12px * var(--adm-text-scale, 1));
   font-weight: 700;
   cursor: pointer;
   padding: 0;
@@ -1408,7 +1408,7 @@ a.adm-list-row:hover {
   border-radius: 10px;
   background: var(--a-ink);
   color: var(--a-bg);
-  font-size: 13px;
+  font-size: calc(13px * var(--adm-text-scale, 1));
   font-weight: 400;
   line-height: 1.5;
   box-shadow: var(--a-shadow);
@@ -1441,7 +1441,7 @@ a.adm-list-row:hover {
 
 .adm-gate-title {
   font-family: var(--a-display);
-  font-size: 30px;
+  font-size: calc(30px * var(--adm-text-scale, 1));
   font-weight: 500;
   text-align: center;
   line-height: 1.15;
@@ -1449,7 +1449,7 @@ a.adm-list-row:hover {
 
 .adm[dir="rtl"] .adm-gate-title {
   font-weight: 700;
-  font-size: 26px;
+  font-size: calc(26px * var(--adm-text-scale, 1));
 }
 
 .adm-gate-sub {
@@ -1586,7 +1586,7 @@ a.adm-list-row:hover {
 
 .adm-board-col-head h2 {
   font-weight: 700;
-  font-size: 15px;
+  font-size: calc(15px * var(--adm-text-scale, 1));
 }
 
 .adm-ticket {
@@ -1618,13 +1618,13 @@ a.adm-list-row:hover {
 .adm-ticket-ref {
   font-family: var(--a-mono);
   font-weight: 700;
-  font-size: 13px;
+  font-size: calc(13px * var(--adm-text-scale, 1));
 }
 
 .adm-ticket-items {
   display: grid;
   gap: 2px;
-  font-size: 14px;
+  font-size: calc(14px * var(--adm-text-scale, 1));
 }
 
 .adm-ticket-items li {
@@ -1637,7 +1637,7 @@ a.adm-list-row:hover {
 }
 
 .adm-ticket-note {
-  font-size: 13px;
+  font-size: calc(13px * var(--adm-text-scale, 1));
   background: var(--a-warn-soft);
   color: var(--a-ink);
   padding: 6px 8px;
@@ -1653,7 +1653,7 @@ a.adm-list-row:hover {
 
 .adm-chart text {
   fill: var(--a-muted);
-  font-size: 11px;
+  font-size: calc(11px * var(--adm-text-scale, 1));
   font-family: var(--a-font);
 }
 
@@ -1768,7 +1768,7 @@ a.adm-list-row:hover {
 
 .adm-kbd {
   font-family: var(--a-mono);
-  font-size: 12px;
+  font-size: calc(12px * var(--adm-text-scale, 1));
   padding: 1px 6px;
   border: 1px solid var(--a-line-strong);
   border-bottom-width: 2px;
@@ -1798,7 +1798,7 @@ a.adm-list-row:hover {
   border-radius: 12px;
   border: 1px solid var(--a-line-strong);
   background: var(--a-surface);
-  font-size: 22px;
+  font-size: calc(22px * var(--adm-text-scale, 1));
   font-weight: 600;
   cursor: pointer;
   color: var(--a-ink);
@@ -1888,7 +1888,7 @@ a.adm-list-row:hover {
 }
 
 .adm .adm-overline {
-  font-size: 10px;
+  font-size: calc(10px * var(--adm-text-scale, 1));
   letter-spacing: 0.12em;
   color: var(--a-muted);
 }
@@ -1909,7 +1909,7 @@ a.adm-list-row:hover {
 
 .adm .adm-brand strong {
   font-family: var(--a-display);
-  font-size: 24px;
+  font-size: calc(24px * var(--adm-text-scale, 1));
   font-weight: 600;
   letter-spacing: -0.02em;
   line-height: 0.82;
@@ -1917,7 +1917,7 @@ a.adm-list-row:hover {
 
 .adm .adm-brand span {
   font-family: var(--a-ui);
-  font-size: 7px;
+  font-size: calc(7px * var(--adm-text-scale, 1));
   font-weight: 500;
   letter-spacing: 0.24em;
   text-transform: uppercase;
@@ -1925,13 +1925,13 @@ a.adm-list-row:hover {
 }
 
 .adm .adm-nav-group {
-  font-size: 9px;
+  font-size: calc(9px * var(--adm-text-scale, 1));
   letter-spacing: 0.14em;
   padding: 18px 10px 6px;
 }
 
 .adm .adm-nav-item {
-  font-size: 11px;
+  font-size: calc(11px * var(--adm-text-scale, 1));
   min-height: 40px;
   color: var(--a-ink);
   border-radius: 0;
@@ -1961,20 +1961,20 @@ a.adm-list-row:hover {
 .adm .adm-nav-count {
   border-radius: 0;
   font-family: var(--a-ui);
-  font-size: 10px;
+  font-size: calc(10px * var(--adm-text-scale, 1));
   letter-spacing: 0;
 }
 
 .adm .adm-user strong {
   font-family: var(--a-display);
-  font-size: 17px;
+  font-size: calc(17px * var(--adm-text-scale, 1));
   font-weight: 500;
   text-transform: none;
   letter-spacing: 0;
 }
 
 .adm .adm-user span {
-  font-size: 10px;
+  font-size: calc(10px * var(--adm-text-scale, 1));
 }
 
 .adm .adm-sidebar-foot {
@@ -2001,7 +2001,7 @@ a.adm-list-row:hover {
 }
 
 .adm .adm-topbar .adm-brand strong {
-  font-size: 21px;
+  font-size: calc(21px * var(--adm-text-scale, 1));
 }
 
 .adm .adm-topbar-tools {
@@ -2025,7 +2025,7 @@ a.adm-list-row:hover {
 
 .adm .adm-page-title {
   font-family: var(--a-display);
-  font-size: clamp(30px, 3.4vw, 44px);
+  font-size: calc(clamp(30px, 3.4vw, 44px) * var(--adm-text-scale, 1));
   font-weight: 500;
   letter-spacing: -0.035em;
   line-height: 0.96;
@@ -2034,12 +2034,12 @@ a.adm-list-row:hover {
 .adm[dir="rtl"] .adm-page-title {
   letter-spacing: 0;
   font-weight: 700;
-  font-size: clamp(26px, 3vw, 34px);
+  font-size: calc(clamp(26px, 3vw, 34px) * var(--adm-text-scale, 1));
   line-height: 1.2;
 }
 
 .adm .adm-page-sub {
-  font-size: 18px;
+  font-size: calc(18px * var(--adm-text-scale, 1));
   line-height: 1.35;
 }
 
@@ -2069,7 +2069,7 @@ a.adm-list-row:hover {
 
 .adm .adm-card-title {
   font-family: var(--a-display);
-  font-size: 22px;
+  font-size: calc(22px * var(--adm-text-scale, 1));
   font-weight: 500;
   letter-spacing: -0.02em;
   line-height: 1.1;
@@ -2078,24 +2078,24 @@ a.adm-list-row:hover {
 .adm[dir="rtl"] .adm-card-title {
   letter-spacing: 0;
   font-weight: 700;
-  font-size: 19px;
+  font-size: calc(19px * var(--adm-text-scale, 1));
 }
 
 .adm .adm-card-sub,
 .adm .adm-hint,
 .adm .adm-list-meta,
 .adm .adm-stat-note {
-  font-size: 15px;
+  font-size: calc(15px * var(--adm-text-scale, 1));
 }
 
 .adm .adm-stat-label {
-  font-size: 10px;
+  font-size: calc(10px * var(--adm-text-scale, 1));
   letter-spacing: 0.12em;
 }
 
 .adm .adm-stat-value {
   font-family: var(--a-display);
-  font-size: 40px;
+  font-size: calc(40px * var(--adm-text-scale, 1));
   font-weight: 500;
   letter-spacing: -0.03em;
   line-height: 1;
@@ -2108,7 +2108,7 @@ a.adm-list-row:hover {
 
 .adm .adm-list-title {
   font-weight: 500;
-  font-size: 18px;
+  font-size: calc(18px * var(--adm-text-scale, 1));
 }
 
 .adm .adm-list-row {
@@ -2118,7 +2118,7 @@ a.adm-list-row:hover {
 /* Buttons: the cart's black primary and hairline secondary. */
 .adm .adm-btn {
   border-radius: 0;
-  font-size: 11px;
+  font-size: calc(11px * var(--adm-text-scale, 1));
   min-height: 44px;
   padding: 10px 18px;
   border: 1px solid var(--a-line-strong);
@@ -2161,13 +2161,13 @@ a.adm-list-row:hover {
 }
 
 .adm .adm-btn-sm {
-  font-size: 10px;
+  font-size: calc(10px * var(--adm-text-scale, 1));
   min-height: 36px;
   padding: 6px 12px;
 }
 
 .adm .adm-btn-lg {
-  font-size: 12px;
+  font-size: calc(12px * var(--adm-text-scale, 1));
   min-height: 52px;
 }
 
@@ -2183,7 +2183,7 @@ a.adm-list-row:hover {
 
 /* Fields: ruled, not boxed — the checkout's email field. */
 .adm .adm-label {
-  font-size: 10px;
+  font-size: calc(10px * var(--adm-text-scale, 1));
   letter-spacing: 0.12em;
   color: var(--a-muted);
 }
@@ -2192,7 +2192,7 @@ a.adm-list-row:hover {
   text-transform: none;
   letter-spacing: 0;
   font-family: var(--a-font);
-  font-size: 14px;
+  font-size: calc(14px * var(--adm-text-scale, 1));
 }
 
 .adm .adm-input,
@@ -2203,7 +2203,7 @@ a.adm-list-row:hover {
   background: transparent;
   padding: 10px 0;
   font-family: var(--a-ui);
-  font-size: 16px;
+  font-size: calc(16px * var(--adm-text-scale, 1));
   letter-spacing: 0.01em;
 }
 
@@ -2227,7 +2227,7 @@ a.adm-list-row:hover {
   border-radius: 0;
   background: var(--a-surface);
   font-family: var(--a-font);
-  font-size: 17px;
+  font-size: calc(17px * var(--adm-text-scale, 1));
   padding: 10px 12px;
 }
 
@@ -2261,7 +2261,7 @@ a.adm-list-row:hover {
   border: 0;
   padding: 0 10px 0 0;
   font-family: var(--a-ui);
-  font-size: 11px;
+  font-size: calc(11px * var(--adm-text-scale, 1));
   letter-spacing: 0.08em;
 }
 
@@ -2299,7 +2299,7 @@ a.adm-list-row:hover {
 
 .adm .adm-toggle-text strong {
   font-weight: 500;
-  font-size: 17px;
+  font-size: calc(17px * var(--adm-text-scale, 1));
 }
 
 .adm .adm-check input {
@@ -2309,7 +2309,7 @@ a.adm-list-row:hover {
 /* Chips, segments, tabs, badges: mono labels on hairlines. */
 .adm .adm-chip {
   border-radius: 0;
-  font-size: 10px;
+  font-size: calc(10px * var(--adm-text-scale, 1));
   min-height: 34px;
   border-color: var(--a-line-strong);
   background: transparent;
@@ -2330,7 +2330,7 @@ a.adm-list-row:hover {
 
 .adm .adm-seg button {
   border-radius: 0;
-  font-size: 10px;
+  font-size: calc(10px * var(--adm-text-scale, 1));
 }
 
 .adm .adm-seg button[aria-pressed="true"] {
@@ -2345,13 +2345,13 @@ a.adm-list-row:hover {
 }
 
 .adm .adm-tab {
-  font-size: 11px;
+  font-size: calc(11px * var(--adm-text-scale, 1));
   padding: 12px 0;
 }
 
 .adm .adm-badge {
   border-radius: 0;
-  font-size: 9px;
+  font-size: calc(9px * var(--adm-text-scale, 1));
   letter-spacing: 0.1em;
   padding: 3px 7px;
   background: transparent;
@@ -2384,7 +2384,7 @@ a.adm-list-row:hover {
 .adm .adm-notice-ok svg { color: var(--a-ok); }
 
 .adm .adm-table th {
-  font-size: 9px;
+  font-size: calc(9px * var(--adm-text-scale, 1));
   letter-spacing: 0.12em;
   background: transparent;
   border-bottom-color: var(--a-line-strong);
@@ -2408,7 +2408,7 @@ a.adm-list-row:hover {
 .adm .adm-modal-title,
 .adm .adm-drawer-title {
   font-family: var(--a-display);
-  font-size: 24px;
+  font-size: calc(24px * var(--adm-text-scale, 1));
   font-weight: 500;
   letter-spacing: -0.02em;
 }
@@ -2417,7 +2417,7 @@ a.adm-list-row:hover {
 .adm[dir="rtl"] .adm-drawer-title {
   letter-spacing: 0;
   font-weight: 700;
-  font-size: 20px;
+  font-size: calc(20px * var(--adm-text-scale, 1));
 }
 
 .adm .adm-drawer-head,
@@ -2436,23 +2436,23 @@ a.adm-list-row:hover {
 }
 
 .adm .adm-toast p {
-  font-size: 16px;
+  font-size: calc(16px * var(--adm-text-scale, 1));
 }
 
 .adm .adm-toast button {
   border-radius: 0;
-  font-size: 10px;
+  font-size: calc(10px * var(--adm-text-scale, 1));
 }
 
 .adm .adm-help-btn {
   font-family: var(--a-ui);
-  font-size: 10px;
+  font-size: calc(10px * var(--adm-text-scale, 1));
 }
 
 .adm .adm-help-pop {
   border-radius: 0;
   font-family: var(--a-font);
-  font-size: 15px;
+  font-size: calc(15px * var(--adm-text-scale, 1));
 }
 
 /* Sign-in: the website's centred wordmark over a ruled form. */
@@ -2468,13 +2468,13 @@ a.adm-list-row:hover {
 }
 
 .adm .adm-gate-title {
-  font-size: clamp(30px, 4vw, 40px);
+  font-size: calc(clamp(30px, 4vw, 40px) * var(--adm-text-scale, 1));
   letter-spacing: -0.035em;
   line-height: 1;
 }
 
 .adm .adm-gate-sub {
-  font-size: 18px;
+  font-size: calc(18px * var(--adm-text-scale, 1));
 }
 
 .adm .adm-pinpad button {
@@ -2567,7 +2567,7 @@ a.adm-list-row:hover {
   background: var(--a-surface);
   border: 1px solid var(--a-line-strong);
   box-shadow: var(--a-shadow);
-  font-size: 13px;
+  font-size: calc(13px * var(--adm-text-scale, 1));
   color: var(--a-ink);
 }
 
@@ -2578,7 +2578,7 @@ a.adm-list-row:hover {
 .adm-heat-hour,
 .adm-heat-day {
   font-family: var(--a-ui);
-  font-size: 11px;
+  font-size: calc(11px * var(--adm-text-scale, 1));
   color: var(--a-muted);
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -2609,7 +2609,7 @@ a.adm-list-row:hover {
 .adm-details > summary {
   cursor: pointer;
   font-family: var(--a-ui);
-  font-size: 12px;
+  font-size: calc(12px * var(--adm-text-scale, 1));
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--a-muted);
@@ -2852,7 +2852,7 @@ a.adm-list-row:hover {
   padding-bottom: 12px;
   text-align: end;
   font-family: var(--a-mono);
-  font-size: 14px;
+  font-size: calc(14px * var(--adm-text-scale, 1));
 }
 
 @media (max-width: 480px) {
@@ -2875,7 +2875,7 @@ a.adm-list-row:hover {
   padding-top: 12px;
   margin-top: 4px;
   font-family: var(--a-ui);
-  font-size: 12px;
+  font-size: calc(12px * var(--adm-text-scale, 1));
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
@@ -2883,7 +2883,7 @@ a.adm-list-row:hover {
 .adm .adm-invoice-totals strong {
   text-transform: none;
   letter-spacing: 0;
-  font-size: 15px;
+  font-size: calc(15px * var(--adm-text-scale, 1));
 }
 
 .adm .adm-link-back {
@@ -2916,7 +2916,7 @@ a.adm-list-row:hover {
   background: var(--a-surface);
   color: var(--a-ink);
   font-family: var(--a-ui);
-  font-size: 12px;
+  font-size: calc(12px * var(--adm-text-scale, 1));
   padding: 0 6px;
   border-radius: 0;
 }
@@ -3053,7 +3053,7 @@ a.adm-list-row:hover {
   .adm .adm-cards td[data-label]::before {
     content: attr(data-label) " ";
     font-family: var(--a-ui);
-    font-size: 11px;
+    font-size: calc(11px * var(--adm-text-scale, 1));
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--a-muted);
@@ -3092,7 +3092,7 @@ a.adm-list-row:hover {
 
   .adm .adm-cards-invoices td:nth-child(1) { grid-area: num; }
   .adm .adm-cards-invoices td:nth-child(2) { grid-area: who; }
-  .adm .adm-cards-invoices td:nth-child(3) { grid-area: date; color: var(--a-muted); font-size: 13px; }
+  .adm .adm-cards-invoices td:nth-child(3) { grid-area: date; color: var(--a-muted); font-size: calc(13px * var(--adm-text-scale, 1)); }
   .adm .adm-cards-invoices td:nth-child(4) { grid-area: total; text-align: end; font-weight: 600; }
   .adm .adm-cards-invoices td:nth-child(5) { grid-area: status; text-align: end; }
 }
@@ -3127,7 +3127,7 @@ a.adm-list-row:hover {
 }
 
 .adm .adm-choice > span > span {
-  font-size: 14px;
+  font-size: calc(14px * var(--adm-text-scale, 1));
   color: var(--a-muted);
 }
 
@@ -3224,7 +3224,7 @@ a.adm-list-row:hover {
   background: #171311;
   color: #F5F3EE;
   font-family: var(--a-mono);
-  font-size: 11px;
+  font-size: calc(11px * var(--adm-text-scale, 1));
   letter-spacing: 0.04em;
   text-align: center;
 }
@@ -3388,7 +3388,7 @@ a.adm-list-row:hover {
 
 .adm .adm-stamp-count {
   font-family: var(--a-display);
-  font-size: 30px;
+  font-size: calc(30px * var(--adm-text-scale, 1));
   line-height: 1.1;
 }
 
@@ -3470,7 +3470,7 @@ a.adm-list-row:hover {
   border: 0;
   color: var(--a-muted);
   font-family: var(--a-ui);
-  font-size: 11px;
+  font-size: calc(11px * var(--adm-text-scale, 1));
   letter-spacing: 0.04em;
   cursor: pointer;
   text-align: start;
@@ -3482,7 +3482,7 @@ a.adm-list-row:hover {
 
 .adm .adm-style-summary {
   font-family: var(--a-font);
-  font-size: 13px;
+  font-size: calc(13px * var(--adm-text-scale, 1));
   letter-spacing: 0;
 }
 
@@ -3546,6 +3546,6 @@ a.adm-list-row:hover {
   background: #fff;
   color: #171310;
   font-family: var(--a-mono);
-  font-size: 10px;
+  font-size: calc(10px * var(--adm-text-scale, 1));
   text-transform: uppercase;
 }

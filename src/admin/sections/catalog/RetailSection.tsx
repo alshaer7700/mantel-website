@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Archive, ArchiveRestore, Copy, ListOrdered, Percent, Plus, ShoppingBag, Trash2 } from "lucide-react";
+import { StylePicker } from "@/admin/ui/StylePicker";
+import type { TextStyle } from "@/lib/content/pages";
 import { Spin360 } from "@/app/components/objects/Spin360";
 import { useLang, useT, pick } from "@/admin/i18n";
 import { useAdmin } from "@/admin/context";
@@ -217,7 +219,7 @@ type Draft = Omit<ObjectRow, "id" | "updated_at" | "archived_at" | "sold_out_unt
 const EMPTY: Draft = {
   slug: "", name: "", name_ar: "", spec: "", spec_ar: "", description: "", description_ar: "",
   story: "", story_ar: "", care: "", care_ar: "", collection: "", collection_ar: "",
-  price: 0, image_url: null, images: [], spin_images: [], art_key: null, is_available: false,
+  price: 0, image_url: null, images: [], spin_images: [], text_styles: {}, art_key: null, is_available: false,
   stock_qty: null, low_stock_at: 3, badges: [],
 };
 
@@ -247,6 +249,12 @@ function ObjectEditor({ open, item, nextSort, onClose, onSaved }: { open: boolea
   const dirty = JSON.stringify(draft) !== JSON.stringify(original);
   useUnsavedGuard(open && dirty);
   const set = <K extends keyof Draft>(k: K, v: Draft[K]) => setDraft((d) => ({ ...d, [k]: v }));
+  const setStyle = (field: string, s: TextStyle | undefined) => setDraft((d) => {
+    const next = { ...d.text_styles };
+    if (s && (s.font || s.size)) next[field] = s;
+    else delete next[field];
+    return { ...d, text_styles: next };
+  });
 
   const close = async () => {
     if (dirty && !(await confirm({ title: t("Leave without saving?"), body: t("Your changes to this product will be lost."), confirmLabel: t("Leave"), danger: true }))) return;
@@ -300,6 +308,10 @@ function ObjectEditor({ open, item, nextSort, onClose, onSaved }: { open: boolea
             hint={item ? t("Changing this breaks links people have already shared.") : t("Filled in from the name.")} />
           <BilingualField label={t("One-line spec")} en={draft.spec} ar={draft.spec_ar} onEn={(v) => set("spec", v)} onAr={(v) => set("spec_ar", v)} maxLength={120} hint={t("For example: Soy wax · 165g · 45 hours")} />
           <BilingualField label={t("Short description")} en={draft.description} ar={draft.description_ar} onEn={(v) => set("description", v)} onAr={(v) => set("description_ar", v)} maxLength={200} hint={t("Shown on the shelf card and in the bag.")} />
+        </div>
+        <div className="adm-stack" style={{ gap: 4 }}>
+          <StylePicker label={t("Name")} value={draft.text_styles.name} sample={draft.name} onChange={(s) => setStyle("name", s)} />
+          <StylePicker label={t("Short description")} value={draft.text_styles.description} sample={draft.description} onChange={(s) => setStyle("description", s)} />
         </div>
       </Card>
 
@@ -363,6 +375,11 @@ function ObjectEditor({ open, item, nextSort, onClose, onSaved }: { open: boolea
         <BilingualField label={t("The object")} en={draft.story} ar={draft.story_ar} onEn={(v) => set("story", v)} onAr={(v) => set("story_ar", v)} multiline rows={3} maxLength={800} />
         <BilingualField label={t("Care")} en={draft.care} ar={draft.care_ar} onEn={(v) => set("care", v)} onAr={(v) => set("care_ar", v)} multiline rows={3} maxLength={800} />
         <BilingualField label={t("Collection")} en={draft.collection} ar={draft.collection_ar} onEn={(v) => set("collection", v)} onAr={(v) => set("collection_ar", v)} multiline rows={3} maxLength={800} />
+        <div className="adm-stack" style={{ gap: 4 }}>
+          <StylePicker label={t("The object")} value={draft.text_styles.story} sample={draft.story} onChange={(s) => setStyle("story", s)} />
+          <StylePicker label={t("Care")} value={draft.text_styles.care} sample={draft.care} onChange={(s) => setStyle("care", s)} />
+          <StylePicker label={t("Collection")} value={draft.text_styles.collection} sample={draft.collection} onChange={(s) => setStyle("collection", s)} />
+        </div>
       </Card>
       {!item && <Notice>{t("New products are hidden until you switch on “Show on the website”.")}</Notice>}
     </Drawer>

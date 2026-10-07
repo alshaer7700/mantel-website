@@ -1,4 +1,5 @@
 import type { ShopObject } from "@/lib/api/objects";
+import { cleanStyles, type PageStyles } from "@/lib/content/pages";
 import retailCandleSticksUnlitImage from "@/imports/retail-candle-sticks-unlit.webp";
 import retailCandleSticksLitImage from "@/imports/retail-candle-sticks-lit.webp";
 import retailToteImage from "@/imports/retail-tote.webp";
@@ -59,6 +60,8 @@ export type RetailProduct = CartProduct & {
   soldOut?: boolean;
   /** Photos all the way round, front first: the product turns 360° (Spin360). */
   spin?: readonly string[];
+  /** Font and size per text field, chosen in Retail shop: name, description, story, care, collection. */
+  styles?: PageStyles;
 };
 
 export type CartLine = {
@@ -261,6 +264,7 @@ export function shelfFromObjects(objects: ShopObject[], now = Date.now()): Retai
       collection: text(o.collection, builtIn?.collection),
       soldOut: o.stock_qty === 0 || (!!o.sold_out_until && Date.parse(o.sold_out_until) > now),
       spin: spin.length > 1 ? spin : undefined,
+      styles: cleanStyles(o.text_styles),
     }];
   });
 }
