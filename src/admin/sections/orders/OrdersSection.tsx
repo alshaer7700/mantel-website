@@ -342,6 +342,15 @@ function HistoryView({ version, onOpen, onChanged }: { version: number; onOpen: 
 
   const data = orders.data;
   const pages = data ? Math.max(1, Math.ceil(data.total / PAGE)) : 1;
+  const pageIds = data?.rows.map((o) => o.id) ?? [];
+  const onPage = pageIds.filter((id) => selected.has(id)).length;
+  const allOnPage = pageIds.length > 0 && onPage === pageIds.length;
+  const selectPage = () => setSelected((s) => new Set([...s, ...pageIds]));
+  const clearPage = () => setSelected((s) => {
+    const next = new Set(s);
+    for (const id of pageIds) next.delete(id);
+    return next;
+  });
 
   return (
     <div className="adm-stack" style={{ gap: 16 }}>
@@ -387,14 +396,21 @@ function HistoryView({ version, onOpen, onChanged }: { version: number; onOpen: 
         <ExportButton spec={exportSpec} disabled={!data?.total} />
       </div>
 
-      {selected.size > 0 && (
-        <div className="adm-notice">
-          <div><strong>{t("{n} selected", { n: selected.size })}</strong></div>
+      {(pageIds.length > 0 || selected.size > 0) && (
+        <div className="adm-spread">
           <div className="adm-row">
-            <Button size="sm" onClick={() => bulk("completed")}>{t("Mark collected")}</Button>
-            <Button size="sm" onClick={() => bulk("ready")}>{t("Mark ready")}</Button>
-            <Button size="sm" variant="ghost" onClick={() => setSelected(new Set())}>{t("Clear")}</Button>
+            <Button size="sm" variant="ghost" disabled={pageIds.length === 0 || allOnPage} onClick={selectPage}>
+              {pages > 1 ? t("Select all on this page") : t("Select all")}
+            </Button>
+            <Button size="sm" variant="ghost" disabled={selected.size === 0} onClick={() => setSelected(new Set())}>{t("Clear")}</Button>
+            {selected.size > 0 && <strong className="adm-small">{t("{n} selected", { n: selected.size })}</strong>}
           </div>
+          {selected.size > 0 && (
+            <div className="adm-row">
+              <Button size="sm" onClick={() => bulk("completed")}>{t("Mark collected")}</Button>
+              <Button size="sm" onClick={() => bulk("ready")}>{t("Mark ready")}</Button>
+            </div>
+          )}
         </div>
       )}
 
@@ -413,7 +429,17 @@ function HistoryView({ version, onOpen, onChanged }: { version: number; onOpen: 
             <table className="adm-table adm-cards adm-cards-orders">
               <thead>
                 <tr>
-                  <th style={{ width: 36 }}><span className="sr-only">{t("Select")}</span></th>
+                  <th style={{ width: 36 }}>
+                    <label className="adm-check">
+                      <input
+                        type="checkbox"
+                        ref={(el) => { if (el) el.indeterminate = onPage > 0 && !allOnPage; }}
+                        checked={allOnPage}
+                        onChange={(e) => (e.target.checked ? selectPage() : clearPage())}
+                      />
+                      <span className="sr-only">{t("Select all on this page")}</span>
+                    </label>
+                  </th>
                   <th>{t("Order")}</th>
                   <th>{t("Customer")}</th>
                   <th>{t("Items")}</th>

@@ -306,6 +306,8 @@ export const AR: Record<string, string> = {
   "Any time": "أي وقت",
   "Download spreadsheet": "تنزيل جدول بيانات",
   "{n} selected": "تم تحديد {n}",
+  "Select all": "تحديد الكل",
+  "Select all on this page": "تحديد الكل في هذه الصفحة",
   "Mark collected": "تم الاستلام",
   "{n} orders updated": "تم تحديث {n} طلبات",
   "No orders match": "لا توجد طلبات مطابقة",
