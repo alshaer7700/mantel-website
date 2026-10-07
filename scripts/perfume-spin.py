@@ -176,8 +176,11 @@ def build(src, name, frames=36):
     xs = np.arange(W, dtype=np.float32)
     for y, (a, b) in edges.items():
         mask[y] = np.clip(xs - a + 0.5, 0, 1) * np.clip(b - xs + 0.5, 0, 1)
-    # the base's bottom edge curves (the camera looks slightly down), and the
-    # black box shows below that curve: carve it away column by column
+    # The base's bottom edge is half an ellipse (a round base seen from a
+    # little above). First drop the black box below it, column by column;
+    # then find the rim in the last rows of each column and fit
+    # y = y_side + depth * sqrt(1 - u^2) through it, so the cut is one clean
+    # curve rather than a jagged edge. Below it is the box's lit top.
     ybot = max(edges)
     for x in range(W):
         col = np.where(mask[:, x] > 0)[0]
@@ -186,6 +189,31 @@ def build(src, name, frames=36):
         while y > ybot - 90 and mask[y, x] > 0 and L[y, x] < 120:
             mask[y, x] = 0
             y -= 1
+    a0, b0 = edges[ybot - 60]
+    c, R = (a0 + b0) / 2, (b0 - a0) / 2
+    Ls = cv2.GaussianBlur(L, (3, 7), 0)
+    rx, ry = [], []
+    for x in range(int(c - 0.85 * R), int(c + 0.85 * R)):
+        col = np.where(mask[:, x] > 0)[0]
+        if not len(col): continue
+        bottom = col.max()
+        seg = Ls[bottom - 35:bottom + 1, x]
+        rim = bottom - 35 + int(seg.argmin())
+        rx.append(x); ry.append(rim)
+    rx, ry = np.array(rx, float), np.array(ry, float)
+    s_ = np.sqrt(np.clip(1 - ((rx - c) / R) ** 2, 0, 1))
+    A = np.stack([np.ones_like(s_), s_], 1)
+    keep = np.ones(len(rx), bool)
+    for _ in range(5):
+        (ys_, depth), *_ = np.linalg.lstsq(A[keep], ry[keep], rcond=None)
+        res = np.abs(A @ np.array([ys_, depth]) - ry)
+        keep = res < max(3.0, 2.0 * np.median(res[keep]))
+    depth = float(np.clip(depth, 5, 0.25 * R))
+    for x in range(W):
+        u = (x - c) / R
+        if abs(u) >= 1: continue
+        cut = int(round(ys_ + depth * math.sqrt(1 - u * u))) + 2
+        mask[cut + 1:, x] = 0
     mask = cv2.GaussianBlur(mask, (3, 3), 0)
 
     # ── lift the print off the glass ──────────────────────────────────────
