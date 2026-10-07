@@ -54,7 +54,8 @@ FIX_I = {"vanilla3": dict(rows=(1205, 1255), after=(560, 600))}
 
 def insert_i(alpha, rows, after):
     y0, y1 = rows
-    a = alpha[y0:y1]
+    # faint alpha around the letters is noise; moved, it would show as a box
+    a = np.where(alpha[y0:y1] > 0.15, alpha[y0:y1], 0)
     prof = a.sum(0)
     on = prof > 0.15 * prof[after[0] - 40:after[1] + 60].max()
     # N ends where the gap before the first L begins
@@ -64,20 +65,25 @@ def insert_i(alpha, rows, after):
     while not on[x]: x += 1
     l0 = x
     gap = l0 - n_end
-    # the L's stem: its heaviest columns, near the left of the glyph
+    # the word ends at the first wide gap ("N° 02" stays where it is)
+    x, run = l0, 0
+    while run < 3 * gap:
+        run = 0 if on[x] else run + 1
+        x += 1
+    w_end = x - run
+    # the L's stem: its heavy columns, near the left of the glyph
     seg = prof[l0:l0 + 20]
-    c = l0 + int(np.argmax(seg))
-    while c + 1 < l0 + 20 and prof[c + 1] > 0.85 * prof[c]: c += 1
-    half = c - l0
+    heavy = np.where(seg > 0.6 * seg.max())[0]
+    c = l0 + (heavy[0] + heavy[-1]) // 2
     glyph = np.concatenate([a[:, l0:c + 1], a[:, l0:c][:, ::-1]], 1)  # symmetric I
     w = glyph.shape[1]
     shift = w + gap
-    out = a.copy()
-    out[:, l0 + shift:] = a[:, l0:a.shape[1] - shift]
-    out[:, l0:l0 + shift] = 0
+    out = alpha[y0:y1].copy()
+    out[:, l0:w_end + shift] = 0
+    out[:, l0 + shift:w_end + shift] = a[:, l0:w_end]
     out[:, l0:l0 + w] = glyph
     alpha[y0:y1] = out
-    print(f"inserted I at x={l0}..{l0 + w} (stem half {half}px), moved LLA {shift}px")
+    print(f"inserted I at x={l0}..{l0 + w}, moved x={l0}..{w_end} by {shift}px")
 
 
 def refine_edges(L, rows, est_l, est_r, win=22):
