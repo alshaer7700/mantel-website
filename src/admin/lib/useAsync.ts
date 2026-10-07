@@ -6,6 +6,8 @@ export type AsyncState<T> = {
   error: string;
   loading: boolean;
   reload: () => Promise<void>;
+  /** reload() for polling: what's on screen stays put if this one fails. */
+  refresh: () => Promise<void>;
   setData: (next: T | null | ((current: T | null) => T | null)) => void;
 };
 
@@ -19,27 +21,32 @@ export function useAsync<T>(load: () => Promise<Result<T>>, deps: unknown[]): As
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const seq = useRef(0);
+  const hasData = useRef(false);
+  hasData.current = data !== null;
 
-  const reload = useCallback(async () => {
+  const run = useCallback(async (quiet: boolean) => {
     const mine = ++seq.current;
-    setLoading(true);
+    if (!quiet) setLoading(true);
     const result = await load();
     if (mine !== seq.current) return;
     if (result.ok) {
       setData(result.value);
       setError("");
-    } else {
+    } else if (!quiet || !hasData.current) {
       setError(result.error);
     }
     setLoading(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
 
+  const reload = useCallback(() => run(false), [run]);
+  const refresh = useCallback(() => run(true), [run]);
+
   useEffect(() => {
     void reload();
   }, [reload]);
 
-  return { data, error, loading, reload, setData };
+  return { data, error, loading, reload, refresh, setData };
 }
 
 /** Polls while the tab is visible. */

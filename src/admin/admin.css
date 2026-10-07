@@ -1552,11 +1552,18 @@ a.adm-list-row:hover {
 
 /* ── Order board ─────────────────────────────────────────────────────────── */
 
+/* New · Preparing · Ready for pickup · Objects / retail */
 .adm-board {
   display: grid;
   gap: 14px;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   align-items: start;
+}
+
+@media (max-width: 1200px) {
+  .adm-board {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 900px) {

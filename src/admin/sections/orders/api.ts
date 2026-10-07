@@ -49,6 +49,11 @@ export function normalizeOrder(raw: Order): Order {
   };
 }
 
+/** Only retail objects, nothing from the menu: handed over, not made at the bar. */
+export const isRetailOrder = (o: Order) => o.items.length > 0 && o.items.every((i) => i.kind === "object");
+
+export const hasObjects = (o: Order) => o.items.some((i) => i.kind === "object");
+
 export type Board = { active: Order[]; done_today: Order[]; server_time: string };
 
 export async function fetchBoard(): Promise<Result<Board>> {
