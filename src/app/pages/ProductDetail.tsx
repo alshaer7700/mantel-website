@@ -46,11 +46,13 @@ export function ProductDetail({ linkTo, product, cartLines, onAdd }: Props) {
           type="button"
           className="editorial-retail-detail-add"
           onClick={() => onAdd(product)}
-          disabled={!product.backendId}
+          disabled={!product.backendId || product.soldOut}
         >
           {!product.backendId
             ? "Loading…"
-            : quantity > 0
+            : product.soldOut
+              ? "Sold out"
+              : quantity > 0
               ? `Add another — ${formatBhd(product.price)} · ${quantity} in bag`
               : `Add to bag — ${formatBhd(product.price)}`}
         </button>

@@ -1,3 +1,4 @@
+import type { ShopObject } from "@/lib/api/objects";
 import retailCandleSticksUnlitImage from "@/imports/retail-candle-sticks-unlit.webp";
 import retailCandleSticksLitImage from "@/imports/retail-candle-sticks-lit.webp";
 import retailToteImage from "@/imports/retail-tote.webp";
@@ -54,6 +55,8 @@ export type RetailProduct = CartProduct & {
   story: string;
   care: string;
   collection: string;
+  /** Out of stock, or marked sold out in the dashboard: shown, not sellable. */
+  soldOut?: boolean;
 };
 
 export type CartLine = {
@@ -215,4 +218,44 @@ export const RETAIL_PRODUCTS: RetailProduct[] = [
 
 export function formatBhd(value: number): string {
   return `BD ${value.toFixed(3)}`;
+}
+
+/*
+ * The shelf as the dashboard has it (Retail shop): every available product,
+ * in its order, so one added there — a new perfume — appears with the same
+ * card, product page and bag as the rest. The products above still supply
+ * their photographs and words wherever the dashboard row leaves them blank
+ * (matched by web address, then by name), which is how the original seven
+ * keep their cut-out photos. A row with no photo at all is left off: a card
+ * without one wouldn't look like the others.
+ */
+export function shelfFromObjects(objects: ShopObject[], now = Date.now()): RetailProduct[] {
+  const bySlug = new Map(RETAIL_PRODUCTS.map((p) => [p.id, p]));
+  const byName = new Map(RETAIL_PRODUCTS.map((p) => [p.name.toLowerCase(), p]));
+  const seen = new Set<string>();
+  return objects.flatMap((o) => {
+    const builtIn = (o.slug ? bySlug.get(o.slug) : undefined) ?? byName.get(o.name.toLowerCase());
+    const id = o.slug || builtIn?.id || o.id;
+    if (seen.has(id)) return [];
+    const photos = (o.images ?? []).filter(Boolean);
+    const images: string[] = photos.length ? photos : o.image_url ? [o.image_url] : builtIn ? [...(builtIn.images ?? [builtIn.image])] : [];
+    const image = images[0];
+    if (!image) return [];
+    seen.add(id);
+    const text = (v: string | null | undefined, fallback = "") => (v && v.trim() ? v : fallback);
+    return [{
+      id,
+      backendId: o.id,
+      name: o.name,
+      price: Number(o.price),
+      description: text(o.description, builtIn?.description),
+      image,
+      images: images.length > 1 ? images : undefined,
+      tone: builtIn?.tone ?? "object",
+      story: text(o.story, builtIn?.story),
+      care: text(o.care, builtIn?.care),
+      collection: text(o.collection, builtIn?.collection),
+      soldOut: o.stock_qty === 0 || (!!o.sold_out_until && Date.parse(o.sold_out_until) > now),
+    }];
+  });
 }

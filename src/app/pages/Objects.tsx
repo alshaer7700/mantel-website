@@ -79,10 +79,10 @@ export function Objects({ linkTo, products, loading, error, cartLines, onAdd }: 
                   <button
                     type="button"
                     onClick={() => onAdd(product)}
-                    disabled={loading || !product.backendId}
-                    aria-label={`Add ${product.name} to cart`}
+                    disabled={loading || !product.backendId || product.soldOut}
+                    aria-label={product.soldOut ? `${product.name} is sold out` : `Add ${product.name} to cart`}
                   >
-                    {loading ? "Loading…" : quantity > 0 ? `Add another · ${quantity}` : "Add to bag +"}
+                    {loading ? "Loading…" : product.soldOut ? "Sold out" : quantity > 0 ? `Add another · ${quantity}` : "Add to bag +"}
                   </button>
                 </div>
               </div>
