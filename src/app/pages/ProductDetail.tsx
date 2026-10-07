@@ -3,6 +3,7 @@ import { ChevronDown } from "lucide-react";
 import type { MenuCategory, Page } from "@/app/types";
 import { formatBhd, type CartLine, type RetailProduct } from "@/app/content/retail";
 import { ObjectSlides } from "@/app/components/objects/ObjectSlides";
+import { Spin360 } from "@/app/components/objects/Spin360";
 
 /*
  * One object's own page: /objects/<id>. Reached from the Objects shelf by
@@ -34,7 +35,11 @@ export function ProductDetail({ linkTo, product, cartLines, onAdd }: Props) {
       </nav>
 
       <div className="editorial-retail-detail-image">
-        <ObjectSlides images={product.images ?? [product.image]} alt={product.name} zoomable />
+        {product.spin ? (
+          <Spin360 frames={product.spin} alt={product.name} autoplay />
+        ) : (
+          <ObjectSlides images={product.images ?? [product.image]} alt={product.name} zoomable />
+        )}
       </div>
 
       <div className="editorial-retail-detail-info">

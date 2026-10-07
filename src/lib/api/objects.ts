@@ -34,9 +34,11 @@ export type ShopObject = {
   collection: string | null;
   stock_qty: number | null;
   sold_out_until: string | null;
+  /** Photos all the way round, front first, for the 360° turn (supabase/039). */
+  spin_images: string[] | null;
 };
 
-const OBJECT_COLUMNS = "id, name, spec, description, price, image_url, art_key, sort_order, slug, images, story, care, collection, stock_qty, sold_out_until";
+const OBJECT_COLUMNS = "id, name, spec, description, price, image_url, art_key, sort_order, slug, images, story, care, collection, stock_qty, sold_out_until, spin_images";
 
 export type ObjectsResult =
   | { ok: true; objects: ShopObject[] }

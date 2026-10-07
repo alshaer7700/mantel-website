@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Archive, ArchiveRestore, Copy, ListOrdered, Percent, Plus, ShoppingBag, Trash2 } from "lucide-react";
+import { Spin360 } from "@/app/components/objects/Spin360";
 import { useLang, useT, pick } from "@/admin/i18n";
 import { useAdmin } from "@/admin/context";
 import { useAsync, useUnsavedGuard } from "@/admin/lib/useAsync";
@@ -216,7 +217,7 @@ type Draft = Omit<ObjectRow, "id" | "updated_at" | "archived_at" | "sold_out_unt
 const EMPTY: Draft = {
   slug: "", name: "", name_ar: "", spec: "", spec_ar: "", description: "", description_ar: "",
   story: "", story_ar: "", care: "", care_ar: "", collection: "", collection_ar: "",
-  price: 0, image_url: null, images: [], art_key: null, is_available: false,
+  price: 0, image_url: null, images: [], spin_images: [], art_key: null, is_available: false,
   stock_qty: null, low_stock_at: 3, badges: [],
 };
 
@@ -338,6 +339,24 @@ function ObjectEditor({ open, item, nextSort, onClose, onSaved }: { open: boolea
           fallback={item ? BUILT_IN[item.slug] : undefined}
           hint={t("The first photo is the main one. Cut-outs on a transparent background match the rest of the shelf best.")}
         />
+      </Card>
+
+      <Card title={t("360° turn")} subtitle={t("Optional. Photos taken all the way round the product, so customers can turn it on the website.")}>
+        <GalleryPicker
+          label={t("Photos all the way round")}
+          value={draft.spin_images}
+          onChange={(v) => set("spin_images", v.slice(0, 72))}
+          folder="retail"
+          sequence
+          hint={t("Put the product on a turntable and take a photo every 10° to 15° (24 to 36 photos), same distance and light, starting from the front. Upload them all at once: they're put in order by file name.")}
+        />
+        {draft.spin_images.length > 1 && (
+          <div className="adm-stack" style={{ gap: 6 }}>
+            <span className="adm-small adm-muted">{t("Try it: tap to turn, or drag left and right.")}</span>
+            <div className="adm-spin-preview"><Spin360 frames={draft.spin_images} alt={draft.name || t("Product")} /></div>
+          </div>
+        )}
+        {draft.spin_images.length === 1 && <p className="adm-small adm-muted" style={{ margin: 0 }}>{t("Add more photos: it needs at least two to turn.")}</p>}
       </Card>
 
       <Card title={t("The product page")} subtitle={t("The three folding sections under the price.")}>

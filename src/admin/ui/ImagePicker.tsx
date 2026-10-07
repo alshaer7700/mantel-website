@@ -102,7 +102,13 @@ export function ImagePicker({ label, value, onChange, folder = "general", hint, 
 }
 
 /** Several photos in order — the first is the one the shelf and the cart show. */
-export function GalleryPicker({ label, value, onChange, folder = "general", hint, fallback }: { label: ReactNode; value: string[]; onChange: (v: string[]) => void; folder?: string; hint?: ReactNode; fallback?: readonly string[] }) {
+/**
+ * Several photos in order. `sequence` is for a 360° set: uploads go in by file
+ * name (cameras number their shots, so the order comes out right however the
+ * picker hands them over), the first is labelled "Front", and there is a
+ * button to clear the set.
+ */
+export function GalleryPicker({ label, value, onChange, folder = "general", hint, fallback, sequence = false }: { label: ReactNode; value: string[]; onChange: (v: string[]) => void; folder?: string; hint?: ReactNode; fallback?: readonly string[]; sequence?: boolean }) {
   const t = useT();
   const toast = useToast();
   const input = useRef<HTMLInputElement>(null);
@@ -113,7 +119,9 @@ export function GalleryPicker({ label, value, onChange, folder = "general", hint
     if (!files?.length) return;
     setUploading(true);
     const added: string[] = [];
-    for (const file of Array.from(files)) {
+    const list = Array.from(files);
+    if (sequence) list.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
+    for (const file of list) {
       const result = await uploadImage(file, folder);
       if (result.ok) added.push(result.value.url);
       else toast.error(result.error);
@@ -152,7 +160,8 @@ export function GalleryPicker({ label, value, onChange, folder = "general", hint
               {value.map((src, index) => (
                 <div key={`${src}-${index}`} className="adm-gallery-item" style={{ cursor: "default" }}>
                   <img src={src} alt="" />
-                  {index === 0 && <span className="adm-badge adm-badge-dark" style={{ position: "absolute", bottom: 4, insetInlineStart: 4 }}>{t("Main")}</span>}
+                  {index === 0 && <span className="adm-badge adm-badge-dark" style={{ position: "absolute", bottom: 4, insetInlineStart: 4 }}>{sequence ? t("Front") : t("Main")}</span>}
+                  {sequence && index > 0 && <span className="adm-badge" style={{ position: "absolute", bottom: 4, insetInlineStart: 4 }}>{index + 1}</span>}
                   <div className="adm-gallery-tools">
                     <button type="button" onClick={() => move(index, -1)} aria-label={t("Move earlier")} disabled={index === 0}><ArrowLeft size={14} className="adm-flip-rtl" /></button>
                     <button type="button" onClick={() => move(index, 1)} aria-label={t("Move later")} disabled={index === value.length - 1}><ArrowRight size={14} className="adm-flip-rtl" /></button>
@@ -166,6 +175,7 @@ export function GalleryPicker({ label, value, onChange, folder = "general", hint
             <input id={id} ref={input} type="file" accept="image/*" multiple hidden onChange={(e) => { void uploadMany(e.target.files); e.target.value = ""; }} />
             <Button icon={<Upload size={16} />} loading={uploading} onClick={() => input.current?.click()}>{t("Upload photos")}</Button>
             <Button icon={<Images size={16} />} onClick={() => setLibraryOpen(true)}>{t("Choose from library")}</Button>
+            {sequence && value.length > 0 && <Button variant="ghost" icon={<Trash2 size={16} />} onClick={() => onChange([])}>{t("Remove all")}</Button>}
           </div>
           <MediaLibraryModal
             open={libraryOpen}

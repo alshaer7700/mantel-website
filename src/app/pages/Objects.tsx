@@ -1,6 +1,7 @@
 import type { MenuCategory, Page } from "@/app/types";
 import { formatBhd, type CartLine, type RetailProduct } from "@/app/content/retail";
 import { ObjectSlides } from "@/app/components/objects/ObjectSlides";
+import { Spin360 } from "@/app/components/objects/Spin360";
 
 type Props = {
   linkTo: (page: Page, category?: MenuCategory, objectSlug?: string | null) => {
@@ -67,7 +68,11 @@ export function Objects({ linkTo, products, loading, error, cartLines, onAdd }: 
                 <span className="editorial-object-index" aria-hidden="true">
                   {String(index + 1).padStart(2, "0")}
                 </span>
-                <ObjectSlides images={product.images ?? [product.image]} alt={product.name} />
+                {product.spin ? (
+                  <Spin360 frames={product.spin} alt={product.name} interactive={false} playOnHover />
+                ) : (
+                  <ObjectSlides images={product.images ?? [product.image]} alt={product.name} />
+                )}
               </a>
               <div className="editorial-object-info">
                 <div>

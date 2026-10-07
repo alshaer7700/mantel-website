@@ -57,6 +57,8 @@ export type RetailProduct = CartProduct & {
   collection: string;
   /** Out of stock, or marked sold out in the dashboard: shown, not sellable. */
   soldOut?: boolean;
+  /** Photos all the way round, front first: the product turns 360° (Spin360). */
+  spin?: readonly string[];
 };
 
 export type CartLine = {
@@ -238,7 +240,9 @@ export function shelfFromObjects(objects: ShopObject[], now = Date.now()): Retai
     const id = o.slug || builtIn?.id || o.id;
     if (seen.has(id)) return [];
     const photos = (o.images ?? []).filter(Boolean);
-    const images: string[] = photos.length ? photos : o.image_url ? [o.image_url] : builtIn ? [...(builtIn.images ?? [builtIn.image])] : [];
+    const spin = (o.spin_images ?? []).filter(Boolean);
+    /* A perfume may have only its 360° photos: the front one is its picture. */
+    const images: string[] = photos.length ? photos : o.image_url ? [o.image_url] : spin.length ? [spin[0]!] : builtIn ? [...(builtIn.images ?? [builtIn.image])] : [];
     const image = images[0];
     if (!image) return [];
     seen.add(id);
@@ -256,6 +260,7 @@ export function shelfFromObjects(objects: ShopObject[], now = Date.now()): Retai
       care: text(o.care, builtIn?.care),
       collection: text(o.collection, builtIn?.collection),
       soldOut: o.stock_qty === 0 || (!!o.sold_out_until && Date.parse(o.sold_out_until) > now),
+      spin: spin.length > 1 ? spin : undefined,
     }];
   });
 }

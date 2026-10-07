@@ -55,6 +55,8 @@ export type ObjectRow = {
   price: number;
   image_url: string | null;
   images: string[];
+  /** Photos all the way round, front first, for the website's 360° turn. */
+  spin_images: string[];
   art_key: string | null;
   is_available: boolean;
   sort_order: number;
@@ -135,7 +137,7 @@ export async function loadMenuData(): Promise<Result<MenuData>> {
 export async function loadObjects(): Promise<Result<ObjectRow[]>> {
   const r = await run<ObjectRow[]>(db.from("objects").select("*").order("sort_order").order("name"));
   if (!r.ok) return r;
-  return { ok: true, value: (r.value ?? []).map((o) => ({ ...o, price: num(o.price), images: o.images ?? [], badges: o.badges ?? [] })) };
+  return { ok: true, value: (r.value ?? []).map((o) => ({ ...o, price: num(o.price), images: o.images ?? [], spin_images: o.spin_images ?? [], badges: o.badges ?? [] })) };
 }
 
 export function saveMenuItem(item: Partial<MenuItemRow> & { id?: string }): Promise<Result<MenuItemRow>> {

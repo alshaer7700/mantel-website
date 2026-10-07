@@ -1526,4 +1526,13 @@ export const AR: Record<string, string> = {
   "Website's own font and size": "خط الموقع وحجمه الأصليين",
   "EB Garamond italic": "EB Garamond مائل",
   "EB Garamond upright": "EB Garamond مستقيم",
+  "360° turn": "دوران 360°",
+  "Add more photos: it needs at least two to turn.": "أضف صورًا أكثر: يحتاج صورتين على الأقل ليدور.",
+  "Front": "الأمام",
+  "Optional. Photos taken all the way round the product, so customers can turn it on the website.": "اختياري. صور ملتقطة حول المنتج بالكامل، ليتمكن العملاء من تدويره في الموقع.",
+  "Photos all the way round": "صور من كل الجهات",
+  "Product": "المنتج",
+  "Put the product on a turntable and take a photo every 10° to 15° (24 to 36 photos), same distance and light, starting from the front. Upload them all at once: they're put in order by file name.": "ضع المنتج على قاعدة دوّارة والتقط صورة كل 10° إلى 15° (من 24 إلى 36 صورة)، بنفس المسافة والإضاءة، بدءًا من الأمام. ارفعها كلها مرة واحدة: تترتب حسب اسم الملف.",
+  "Remove all": "حذف الكل",
+  "Try it: tap to turn, or drag left and right.": "جرّبه: اضغط ليدور، أو اسحب يمينًا ويسارًا.",
 };

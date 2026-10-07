@@ -143,6 +143,7 @@ export type Database = {
           stock_qty: number | null
           sold_out_until: string | null
           archived_at: string | null
+          spin_images: string[]
         }
         Insert: {
           art_key?: string | null
