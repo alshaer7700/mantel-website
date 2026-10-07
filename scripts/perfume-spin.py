@@ -30,6 +30,10 @@ SPECS = {
     "leather": dict(cap=(505, 960, 892, 1205), body=(450, 1040, 1225, 1390, 1995), top_half=150, band=(1425, 1735)),
     "oud":     dict(cap=(420, 900, 870, 1215), body=(355, 998, 1240, 1430, 2050), top_half=185, band=(1455, 1795)),
     "wood":    dict(cap=(445, 940, 790, 1150), body=(380, 1035, 1160, 1360, 1995), top_half=185, band=(1380, 1715)),
+    # the retouched studio photos (2026-10), measured at 941x1672 and given
+    # here for the 1.5x upscale the script works on (see --upscale)
+    "oud2":     dict(cap=(432, 934, 705, 1070), body=(356, 1016, 1106, 1300, 1895), top_half=184, band=(1335, 1688), base=(1848, 1893)),
+    "leather2": dict(cap=(420, 926, 690, 1054), body=(338, 1012, 1060, 1280, 1895), top_half=244, band=(1287, 1638), base=(1858, 1895)),
     "vanilla": dict(cap=(480, 978, 748, 1120), body=(408, 1078, 1135, 1320, 1995), top_half=180, band=(1365, 1705)),
 }
 
@@ -177,9 +181,12 @@ def fill_rows(img, hole):
     return out
 
 
-def build(src, name, frames=36):
+def build(src, name, frames=36, upscale=1.0):
     sp = SPECS[name]
-    img = cv2.imread(src).astype(np.float32)
+    img = cv2.imread(src)
+    if upscale != 1.0:
+        img = cv2.resize(img, None, fx=upscale, fy=upscale, interpolation=cv2.INTER_LANCZOS4)
+    img = img.astype(np.float32)
     H, W = img.shape[:2]
     L = cv2.cvtColor(img.astype(np.uint8), cv2.COLOR_BGR2LAB)[..., 0].astype(np.float32)
 
@@ -195,38 +202,50 @@ def build(src, name, frames=36):
     # y = y_side + depth * sqrt(1 - u^2) through it, so the cut is one clean
     # curve rather than a jagged edge. Below it is the box's lit top.
     ybot = max(edges)
-    for x in range(W):
+    if "base" in sp:
+        # measured: the base's curve meets the sides at y_side and is
+        # lowest (y_mid) at the centre; no box to carve on these photos
+        y_side, y_mid = sp["base"]
+        a0, b0 = edges[min(ybot, y_side) - 40]
+        c, R = (a0 + b0) / 2, (b0 - a0) / 2
+        for x in range(W):
+            u = (x - c) / R
+            cut = y_side if abs(u) >= 1 else y_side + (y_mid - y_side) * math.sqrt(1 - u * u)
+            mask[int(round(cut)) + 1:, x] = 0
+        sp = dict(sp, _based=True)
+    for x in (range(W) if "_based" not in sp else []):
         col = np.where(mask[:, x] > 0)[0]
         if not len(col): continue
         y = col.max()
         while y > ybot - 90 and mask[y, x] > 0 and L[y, x] < 120:
             mask[y, x] = 0
             y -= 1
-    a0, b0 = edges[ybot - 60]
-    c, R = (a0 + b0) / 2, (b0 - a0) / 2
-    Ls = cv2.GaussianBlur(L, (3, 7), 0)
-    rx, ry = [], []
-    for x in range(int(c - 0.85 * R), int(c + 0.85 * R)):
-        col = np.where(mask[:, x] > 0)[0]
-        if not len(col): continue
-        bottom = col.max()
-        seg = Ls[bottom - 35:bottom + 1, x]
-        rim = bottom - 35 + int(seg.argmin())
-        rx.append(x); ry.append(rim)
-    rx, ry = np.array(rx, float), np.array(ry, float)
-    s_ = np.sqrt(np.clip(1 - ((rx - c) / R) ** 2, 0, 1))
-    A = np.stack([np.ones_like(s_), s_], 1)
-    keep = np.ones(len(rx), bool)
-    for _ in range(5):
-        (ys_, depth), *_ = np.linalg.lstsq(A[keep], ry[keep], rcond=None)
-        res = np.abs(A @ np.array([ys_, depth]) - ry)
-        keep = res < max(3.0, 2.0 * np.median(res[keep]))
-    depth = float(np.clip(depth, 5, 0.25 * R))
-    for x in range(W):
-        u = (x - c) / R
-        if abs(u) >= 1: continue
-        cut = int(round(ys_ + depth * math.sqrt(1 - u * u))) + 2
-        mask[cut + 1:, x] = 0
+    if "_based" not in sp:
+        a0, b0 = edges[ybot - 60]
+        c, R = (a0 + b0) / 2, (b0 - a0) / 2
+        Ls = cv2.GaussianBlur(L, (3, 7), 0)
+        rx, ry = [], []
+        for x in range(int(c - 0.85 * R), int(c + 0.85 * R)):
+            col = np.where(mask[:, x] > 0)[0]
+            if not len(col): continue
+            bottom = col.max()
+            seg = Ls[bottom - 35:bottom + 1, x]
+            rim = bottom - 35 + int(seg.argmin())
+            rx.append(x); ry.append(rim)
+        rx, ry = np.array(rx, float), np.array(ry, float)
+        s_ = np.sqrt(np.clip(1 - ((rx - c) / R) ** 2, 0, 1))
+        A = np.stack([np.ones_like(s_), s_], 1)
+        keep = np.ones(len(rx), bool)
+        for _ in range(5):
+            (ys_, depth), *_ = np.linalg.lstsq(A[keep], ry[keep], rcond=None)
+            res = np.abs(A @ np.array([ys_, depth]) - ry)
+            keep = res < max(3.0, 2.0 * np.median(res[keep]))
+        depth = float(np.clip(depth, 5, 0.25 * R))
+        for x in range(W):
+            u = (x - c) / R
+            if abs(u) >= 1: continue
+            cut = int(round(ys_ + depth * math.sqrt(1 - u * u))) + 2
+            mask[cut + 1:, x] = 0
     mask = cv2.GaussianBlur(mask, (3, 3), 0)
 
     # ── lift the print off the glass ──────────────────────────────────────
@@ -290,7 +309,8 @@ if __name__ == "__main__":
     n = int(sys.argv[4]) if len(sys.argv) > 4 else 108
     import os
     os.makedirs(out, exist_ok=True)
-    fr = build(src, name, n)
+    up = float(sys.argv[5]) if len(sys.argv) > 5 else 1.0
+    fr = build(src, name, n, up)
     # full-resolution masters (the photo's own pixels, nothing scaled);
     # scripts make the website frames, videos and GIFs from these
     for i, c in enumerate(fr):
