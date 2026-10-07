@@ -15,12 +15,18 @@ function usePortalRoot() {
   return useContext(PortalRootContext) ?? document.body;
 }
 
+/* Open pop-ups, newest last. Only the top one answers Escape and Tab, so
+   Escape in "Cancel order" closes that pop-up and leaves the order open. */
+const openTraps: object[] = [];
+
 function useFocusTrap(open: boolean, onClose: () => void) {
   const ref = useRef<HTMLDivElement>(null);
   const closeRef = useRef(onClose);
   closeRef.current = onClose;
   useEffect(() => {
     if (!open) return;
+    const trap = {};
+    openTraps.push(trap);
     const previous = document.activeElement as HTMLElement | null;
     const node = ref.current;
     const focusable = () =>
@@ -28,6 +34,7 @@ function useFocusTrap(open: boolean, onClose: () => void) {
     const first = node?.querySelector<HTMLElement>("[data-autofocus]") ?? focusable()[0];
     first?.focus();
     const onKey = (e: KeyboardEvent) => {
+      if (openTraps[openTraps.length - 1] !== trap) return;
       if (e.key === "Escape") {
         e.stopPropagation();
         closeRef.current();
@@ -50,6 +57,7 @@ function useFocusTrap(open: boolean, onClose: () => void) {
     const overflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => {
+      openTraps.splice(openTraps.indexOf(trap), 1);
       document.removeEventListener("keydown", onKey, true);
       document.body.style.overflow = overflow;
       previous?.focus?.();
