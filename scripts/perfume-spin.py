@@ -19,6 +19,10 @@ How the frames were made for the four by Mantel. bottles (2026-10):
      shows faintly mirrored through the glass.
 Output goes to public/products/perfumes/<slug>/01..36.webp, and the
 product's spin_images (supabase/039) point at those files.
+The current frames come from the four brushed-metal studio photos
+(oud3/leather3/vanilla3/wood3, run at 108 frames and 1.5x upscale, then
+scripts/perfume-spin-finish.py); the vanilla one has its label's missing
+"I" put back (FIX_I).
 """
 import json, sys, math
 import numpy as np, cv2
@@ -35,7 +39,51 @@ SPECS = {
     "oud2":     dict(cap=(432, 934, 705, 1070), body=(356, 1016, 1106, 1300, 1895), top_half=184, band=(1335, 1688), base=(1848, 1893)),
     "leather2": dict(cap=(420, 926, 690, 1054), body=(338, 1012, 1060, 1280, 1895), top_half=244, band=(1287, 1638), base=(1858, 1895)),
     "vanilla": dict(cap=(480, 978, 748, 1120), body=(408, 1078, 1135, 1320, 1995), top_half=180, band=(1365, 1705)),
+    # the four on brushed metal (2026-10): one setup, the same framing, so one
+    # set of measurements (941x1672, given for the 1.5x upscale)
+    **{n: dict(cap=(510, 896, 700, 994), body=(435, 974, 1005, 1180, 1760), top_half=158, band=(1200, 1505), base=(1736, 1760), sides="both")
+       for n in ("oud3", "leather3", "vanilla3", "wood3")},
 }
+
+# The vanilla photo's label reads "VANLLA": the print's "I" is missing. Put it
+# back in the lifted print: an I built from the first L's stem (its left half,
+# mirrored), with "LLA" moved over to make room. Rows and the search window
+# are at the 1.5x upscale.
+FIX_I = {"vanilla3": dict(rows=(1205, 1255), after=(560, 600))}
+
+
+def insert_i(alpha, rows, after):
+    y0, y1 = rows
+    # faint alpha around the letters is noise; moved, it would show as a box
+    a = np.where(alpha[y0:y1] > 0.15, alpha[y0:y1], 0)
+    prof = a.sum(0)
+    on = prof > 0.15 * prof[after[0] - 40:after[1] + 60].max()
+    # N ends where the gap before the first L begins
+    x = after[0]
+    while x < after[1] and on[x]: x += 1
+    n_end = x
+    while not on[x]: x += 1
+    l0 = x
+    gap = l0 - n_end
+    # the word ends at the first wide gap ("N° 02" stays where it is)
+    x, run = l0, 0
+    while run < 3 * gap:
+        run = 0 if on[x] else run + 1
+        x += 1
+    w_end = x - run
+    # the L's stem: its heavy columns, near the left of the glyph
+    seg = prof[l0:l0 + 20]
+    heavy = np.where(seg > 0.6 * seg.max())[0]
+    c = l0 + (heavy[0] + heavy[-1]) // 2
+    glyph = np.concatenate([a[:, l0:c + 1], a[:, l0:c][:, ::-1]], 1)  # symmetric I
+    w = glyph.shape[1]
+    shift = w + gap
+    out = alpha[y0:y1].copy()
+    out[:, l0:w_end + shift] = 0
+    out[:, l0 + shift:w_end + shift] = a[:, l0:w_end]
+    out[:, l0:l0 + w] = glyph
+    alpha[y0:y1] = out
+    print(f"inserted I at x={l0}..{l0 + w}, moved x={l0}..{w_end} by {shift}px")
 
 
 def refine_edges(L, rows, est_l, est_r, win=22):
@@ -129,6 +177,22 @@ def grabcut_edges(img, L, sp):
     hp = np.pad(hw, k // 2, mode="edge")
     hw = np.array([np.median(hp[i:i + k]) for i in range(len(hw))])
     edges = {}
+    if sp.get("sides") == "both":
+        # Plain backdrop on both sides: keep each side's own edge, and below
+        # the shoulder hold the wall straight, so the clear glass under the
+        # liquid (which GrabCut can take for backdrop) isn't notched.
+        def smooth(v):
+            vp = np.pad(np.array(v, float), k // 2, mode="edge")
+            return np.array([np.median(vp[i:i + k]) for i in range(len(v))])
+        ls, rs = smooth([left[y] for y in rows]), smooth([right[y] for y in rows])
+        wall = [i for i, y in enumerate(rows) if sp["body"][3] <= y <= sp["base"][0] - 60]
+        lw, rw = np.median(ls[wall]), np.median(rs[wall])
+        for i in wall:
+            ls[i], rs[i] = min(ls[i], lw), max(rs[i], rw)
+        for y, a, b in zip(rows, ls, rs):
+            if b - a > 10:
+                edges[y] = (a, b)
+        return edges
     for y, h in zip(rows, hw):
         c = cap_axis if y <= sp["cap"][3] else axis
         if h > 5:
@@ -264,6 +328,8 @@ def build(src, name, frames=36, upscale=1.0):
     ink = np.percentile(img[text], 3, axis=0) if text.any() else np.array([25, 22, 20], np.float32)
     inkL = float(np.percentile(L[text], 3)) if text.any() else 20.0
     alpha = np.where(text, np.clip((cleanL - L) / np.maximum(cleanL - inkL, 1), 0, 1), 0).astype(np.float32)
+    if name in FIX_I:
+        insert_i(alpha, **FIX_I[name])
 
     # ── frames ────────────────────────────────────────────────────────────
     # All label rows at once: for every pixel, which point of the original
