@@ -138,6 +138,8 @@ export function CartDrawer({
     if (submitting) return;
     setCheckoutOpen(false);
     setCheckoutError("");
+    /* The receipt is a one-time view: clear it so the next order opens on the cart. */
+    setOrderId(null);
     onClose();
   };
 
