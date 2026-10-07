@@ -84,16 +84,20 @@ const SECTION_LABEL: Record<SectionKey, string> = {
 function ProductAccordion({ product }: { product: RetailProduct }) {
   /* The Object opens by default — it is the one line every visitor came to
      read; Care and Collection are there for whoever wants more. */
-  const [open, setOpen] = useState<SectionKey | null>("object");
   const body: Record<SectionKey, string> = {
     object: product.story,
     care: product.care,
     collection: product.collection,
   };
+  /* A product added in the dashboard may leave a section blank: skip it
+     rather than show a heading that opens onto nothing. */
+  const shown = SECTIONS.filter((key) => body[key]?.trim());
+  const [open, setOpen] = useState<SectionKey | null>(shown[0] ?? null);
 
+  if (!shown.length) return null;
   return (
     <div className="editorial-retail-detail-accordion">
-      {SECTIONS.map((key) => (
+      {shown.map((key) => (
         <div key={key} className="editorial-retail-detail-accordion-row">
           <button
             type="button"
